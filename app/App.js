@@ -1,13 +1,8 @@
 import React, { Component } from 'react'
-import { Joystream, TorrentInfo, StateT } from '../../../'
+import { Session, TorrentInfo, StateT } from 'joystream-node'
 var debug = require('debug')('electron:app')
 
-
-var joystream = new Joystream({
-  db: 'leveldb',
-  prefix: '/home/lola/joystream/test',
-  network : 'testnet'
-})
+var session = new Session()
 
 class App extends Component {
 
@@ -29,7 +24,7 @@ class App extends Component {
       savePath: '/home/lola/joystream/test/'
     }
 
-    joystream.addTorrent(addTorrentParams, this.torrentAdded)
+    session.addTorrent(addTorrentParams, this.torrentAdded)
 
   }
 
@@ -41,21 +36,19 @@ class App extends Component {
       savePath: '/home/lola/joystream/test/'
     }
 
-    joystream.addTorrent(addTorrentParams, this.torrentAdded)
+    session.addTorrent(addTorrentParams, this.torrentAdded)
   }
 
-  torrentAdded (err, smth) {
+  torrentAdded (err, torrent) {
     if (err) {
       console.log(err)
     } else {
-      this.setState({torrents: joystream.torrents})
+      this.setState({torrents: session.torrents})
     }
   }
 
   render () {
     let rows = [];
-
-    console.log(joystream)
 
     this.state.torrents.forEach((torrent, infoHash) => {
       var torrentHandle = torrent.handle
