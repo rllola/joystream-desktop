@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Session, TorrentInfo, StateT } from 'joystream-node'
+import TorrentList from './TorrentList'
 var debug = require('debug')('electron:app')
 
 var session = new Session()
@@ -48,40 +49,6 @@ class App extends Component {
   }
 
   render () {
-    let rows = [];
-
-    this.state.torrents.forEach((torrent, infoHash) => {
-      var torrentHandle = torrent.handle
-      var torrentInfo = torrentHandle.torrentFile()
-      var status = torrentHandle.status()
-
-      if (!torrentInfo) {
-        // torrent_info not yet set need to come from peers
-        torrent.on('metadata_received_alert', (torrentInfo) => {
-          this.forceUpdate()
-        })
-      } else {
-
-        torrent.on('state_update_alert', (state, progress) => {
-          this.forceUpdate()
-        })
-
-        torrent.on('torrent_finished_alert', () =>{
-          this.forceUpdate()
-        })
-
-        var statusText = StateT.properties[status.state].name
-
-        rows.push(
-          <tr key={torrentHandle.infoHash()}>
-            <td>{torrentInfo.name()}</td>
-            <td>{Number(torrentInfo.totalSize() / 1000000).toFixed(2)} Mb</td>
-            <td>{Number(status.progress*100).toFixed(0)}%</td>
-            <td>{statusText}</td>
-          </tr>)
-      }
-    })
-
     return (
       <div className="container">
         <h1>Joystream</h1>
@@ -91,19 +58,7 @@ class App extends Component {
         <a href="#" onClick={this.addTorrentFile} > Add a torrent with torrent file </a>
         <br/>
         <br/>
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Size</th>
-              <th>Progress</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            { rows }
-          </tbody>
-        </table>
+        <TorrentList torrents={this.state.torrents}/>
       </div>
     )
   }
