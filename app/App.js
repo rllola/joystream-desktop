@@ -1,65 +1,24 @@
 import React, { Component } from 'react'
-import { Session, TorrentInfo, StateT } from 'joystream-node'
-import TorrentList from './TorrentList'
-var debug = require('debug')('electron:app')
+import { HashRouter as Router, Route } from 'react-router-dom'
 
-var session = new Session()
+import Sidebar from './Sidebar'
+import Downloading from './Downloading'
+import Seeding from './Seeding'
+import Wallet from './Wallet'
 
 class App extends Component {
-
-  constructor (props) {
-    super(props)
-
-    this.addTorrent = this.addTorrent.bind(this)
-    this.addTorrentFile = this.addTorrentFile.bind(this)
-    this.torrentAdded = this.torrentAdded.bind(this)
-
-    this.state = {
-      torrents: new Map()
-    }
-  }
-
-  addTorrentFile () {
-    let addTorrentParams = {
-      ti: new TorrentInfo('/home/lola/joystream/test/306497171.torrent'),
-      savePath: '/home/lola/joystream/test/'
-    }
-
-    session.addTorrent(addTorrentParams, this.torrentAdded)
-
-  }
-
-  addTorrent () {
-
-    let addTorrentParams = {
-      infoHash: '6a9759bffd5c0af65319979fb7832189f4f3c35d',
-      name: 'sintel.mp4',
-      savePath: '/home/lola/joystream/test/'
-    }
-
-    session.addTorrent(addTorrentParams, this.torrentAdded)
-  }
-
-  torrentAdded (err, torrent) {
-    if (err) {
-      console.log(err)
-    } else {
-      this.setState({torrents: session.torrents})
-    }
-  }
-
   render () {
     return (
-      <div className="container">
-        <h1>Joystream</h1>
-        <br/>
-        <a href="#" onClick={this.addTorrent} > Add a torrent </a>
-        <br/>
-        <a href="#" onClick={this.addTorrentFile} > Add a torrent with torrent file </a>
-        <br/>
-        <br/>
-        <TorrentList torrents={this.state.torrents}/>
-      </div>
+      <Router>
+        <div className="container-fluid">
+          <div className="row">
+              <Sidebar />
+              <Route exact path="/" component={Downloading}/>
+              <Route exact path="/seeding" component={Seeding}/>
+              <Route exact path="/wallet" component={Wallet}/>
+          </div>
+        </div>
+      </Router>
     )
   }
 }
