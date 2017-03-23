@@ -1,20 +1,18 @@
 import React, { Component } from 'react'
-import { TorrentInfo, StateT } from 'joystream-node'
+import { TorrentInfo } from 'joystream-node'
+import { inject, observer } from 'mobx-react'
 
-import TorrentList from './TorrentList'
+import TorrentList from './TorrentList/'
 
+@inject('joystreamStore')
+@observer
 class Downloading extends Component {
 
   constructor (props) {
     super(props)
 
-    this.addTorrent = this.addTorrent.bind(this)
     this.addTorrentFile = this.addTorrentFile.bind(this)
-    this.torrentAdded = this.torrentAdded.bind(this)
 
-    this.state = {
-      torrents: new Map()
-    }
   }
 
   addTorrentFile () {
@@ -23,27 +21,8 @@ class Downloading extends Component {
       savePath: '/home/lola/joystream/test/'
     }
 
-    session.addTorrent(addTorrentParams, this.torrentAdded)
+    this.props.joystreamStore.addTorrent(addTorrentParams)
 
-  }
-
-  addTorrent () {
-
-    let addTorrentParams = {
-      infoHash: '6a9759bffd5c0af65319979fb7832189f4f3c35d',
-      name: 'sintel.mp4',
-      savePath: '/home/lola/joystream/test/'
-    }
-
-    session.addTorrent(addTorrentParams, this.torrentAdded)
-  }
-
-  torrentAdded (err, torrent) {
-    if (err) {
-      console.log(err)
-    } else {
-      this.setState({torrents: session.torrents})
-    }
   }
 
   render () {
@@ -51,12 +30,15 @@ class Downloading extends Component {
       <div style={{marginTop: '20px'}} className="col-10">
         <h3>Downloading</h3>
         <br/>
-        <a href="#" onClick={this.addTorrent} > Add a torrent </a>
+        <form className="form-inline">
+          <label className="sr-only" for="torrentFile">Torrent file</label>
+          <input type="file" className="form-control-file" id="torrentFile" aria-describedby="torrent file" />
+          <label className="sr-only" for="torrentIdentifier">Torrent Hash or Magnet Link</label>
+          <input type="text" className="form-control" placeholder="Torrent Hash or Magnet Link" id="torrentIdentifier" aria-describedby="Torrent Hash or Magnet Link" />
+        </form>
         <br/>
-        <a href="#" onClick={this.addTorrentFile} > Add a torrent with torrent file </a>
         <br/>
-        <br/>
-        <TorrentList torrents={this.state.torrents}/>
+        <TorrentList torrents={this.props.joystreamStore.torrents}/>
       </div>
     )
   }

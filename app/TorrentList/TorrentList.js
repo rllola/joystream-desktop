@@ -2,19 +2,7 @@ import React, { Component } from 'react'
 import Torrent from './Torrent'
 
 class TorrentList extends Component {
-
-  constructor (props) {
-    super(props)
-  }
-
   render () {
-    let rows = []
-
-    this.props.torrents.forEach((torrent, infoHash) => {
-      console.log(torrent)
-      rows.push(<Torrent key={infoHash} torrent={torrent} />)
-    })
-
     return (
       <table className="table">
         <thead>
@@ -26,7 +14,9 @@ class TorrentList extends Component {
           </tr>
         </thead>
         <tbody>
-          { rows }
+          {this.props.torrents.map((torrent, infoHash) => {
+            return <Torrent key={infoHash} torrent={torrent} />
+          })}
         </tbody>
       </table>
     )
