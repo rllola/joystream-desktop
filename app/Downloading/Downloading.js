@@ -11,11 +11,11 @@ class Downloading extends Component {
     return (
       <div style={{marginTop: '20px'}} className="col-10">
         <h3>Downloading</h3>
-        <br/>
+        <br />
         <AddTorrent />
-        <br/>
-        <br/>
-        <TorrentList torrents={this.props.joystreamStore.torrents}/>
+        <br />
+        <br />
+        <TorrentList torrents={this.props.joystreamStore.torrents} />
       </div>
     )
   }

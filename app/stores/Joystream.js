@@ -1,10 +1,10 @@
-import { observable, computed } from 'mobx'
+import { observable, action } from 'mobx'
 import { Session } from 'joystream-node'
 
 class Joystream {
   @observable torrents = []
 
-  constructor() {
+  constructor () {
     this.session = new Session()
 
     // Initiate array
@@ -12,14 +12,19 @@ class Joystream {
   }
 
   addTorrent (addTorrentParams) {
-    session.addTorrent(addTorrentParams, (err, torrent) => {
+    this.session.addTorrent(addTorrentParams, (err, torrent) => {
       if (err) {
         console.log(err)
       } else {
-        torrents.push(torrent)
+        this.setTorrents()
       }
     })
   }
+
+  @action setTorrents () {
+    this.torrents = Array.from(this.session.torrents)
+  }
+
 }
 
 const joystreamStore = new Joystream()

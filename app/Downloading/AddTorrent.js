@@ -8,17 +8,52 @@ class AddTorrent extends Component {
     super(props)
 
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleChangeFile = this.handleChangeFile.bind(this)
+    this.handleChangeUrl = this.handleChangeUrl.bind(this)
+
+    this.state = {
+      file: '',
+      url: ''
+    }
   }
 
-  handleSubmit(event) {
+  handleSubmit (event) {
     event.preventDefault()
 
-    let addTorrentParams = {
-      ti: new TorrentInfo('/home/lola/joystream/test/306497171.torrent'),
-      savePath: '/home/lola/joystream/test/'
+    if (this.state.file && this.state.url) {
+      return
+    }
+
+    let addTorrentParams
+
+    if (this.state.file) {
+      addTorrentParams = {
+        ti: new TorrentInfo(this.state.file.path),
+        savePath: '/home/lola/joystream/test/'
+      }
+    } else {
+      if (this.state.url.startsWith('magnet:')) {
+        addTorrentParams = {
+          url: this.state.url,
+          savePath: '/home/lola/joystream/test/'
+        }
+      } else {
+        addTorrentParams = {
+          infoHash: this.state.url,
+          savePath: '/home/lola/joystream/test/'
+        }
+      }
     }
 
     this.props.joystreamStore.addTorrent(addTorrentParams)
+  }
+
+  handleChangeFile (event) {
+    this.setState({file: event.target.files[0]})
+  }
+
+  handleChangeUrl (event) {
+    this.setState({url: event.target.value})
   }
 
   render () {
@@ -41,14 +76,14 @@ class AddTorrent extends Component {
     }
 
     return (
-      <form className="form-inline">
+      <form className="form-inline" onSubmit={this.handleSubmit}>
         <label className="custom-file mb-2 mr-sm-2 mb-sm-0">
-          <input type="file" className="custom-file-input" />
+          <input type="file" onChange={this.handleChangeFile} className="custom-file-input" />
           <span style={customFileControlBefore}>Browse</span>
-          <span className="custom-file-control">Choose file...</span>
+          <span className="custom-file-control">{ this.state.file ? this.state.file.name : 'Choose file...'}</span>
         </label>
         <label>
-          <input type="text" className="form-control mb-2 mr-sm-2 mb-sm-0" placeholder="Torrent Hash or Magnet Link"/>
+          <input type="text" value={this.state.url} onChange={this.handleChangeUrl} className="form-control mb-2 mr-sm-2 mb-sm-0" placeholder="Torrent Hash or Magnet Link"/>
         </label>
         <button type="submit" className="btn btn-primary">Add</button>
     </form>
