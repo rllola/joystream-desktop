@@ -17,8 +17,23 @@ import walletStore from './stores/Wallet'
 const stores = { joystreamStore, walletStore }
 
 class App extends Component {
+  constructor() {
+    super()
+
+    this.state = {
+      walletOpened: false
+    }
+  }
+
+  componentDidMount () {
+    walletStore.open().then(() => {
+      this.setState({walletOpened: true})
+    })
+  }
+
   render () {
     return (
+      this.state.walletOpened ?
       <Router>
         <Provider {...stores}>
           <div className="container-fluid">
@@ -31,6 +46,8 @@ class App extends Component {
           </div>
         </Provider>
       </Router>
+      :
+      null
     )
   }
 }
