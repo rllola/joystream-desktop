@@ -2,7 +2,7 @@ import { observable, action } from 'mobx'
 import bcoin from 'bcoin'
 
 class Wallet {
-  @observable balance = 0.0
+  @observable balance = 0
 
   constructor () {
     let options = {
@@ -14,6 +14,16 @@ class Wallet {
 
   async open () {
     await this.node.open()
+  }
+
+  getBalance () {
+    this.node.wallet.getBalance().then((balance) => {
+      this.balance = balance.confirmed
+    })
+  }
+
+  connect () {
+    return this.node.connect()
   }
 
   getAddress () {

@@ -28,6 +28,7 @@ class App extends Component {
   componentDidMount () {
     walletStore.open().then(() => {
       this.setState({walletOpened: true})
+      walletStore.connect()
     })
   }
 
