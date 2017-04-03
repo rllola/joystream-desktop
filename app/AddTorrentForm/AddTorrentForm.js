@@ -51,7 +51,7 @@ class AddTorrentForm extends Component {
   }
 
   handleChangeFile (event) {
-    this.setState({file: event.target.files[0]})
+    this.setState({file: event.target.files[0], url: ''})
   }
 
   handleChangeUrl (event) {
