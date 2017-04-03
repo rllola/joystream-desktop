@@ -11,6 +11,8 @@ class AddTorrentForm extends Component {
     this.handleChangeFile = this.handleChangeFile.bind(this)
     this.handleChangeUrl = this.handleChangeUrl.bind(this)
 
+    this.pathSave = __dirname + '/../../'
+
     this.state = {
       file: '',
       url: ''
@@ -29,18 +31,18 @@ class AddTorrentForm extends Component {
     if (this.state.file) {
       addTorrentParams = {
         ti: new TorrentInfo(this.state.file.path),
-        savePath: '/home/lola/joystream/test/'
+        savePath: this.pathSave
       }
     } else {
       if (this.state.url.startsWith('magnet:')) {
         addTorrentParams = {
           url: this.state.url,
-          savePath: '/home/lola/joystream/test/'
+          savePath: this.pathSave
         }
       } else {
         addTorrentParams = {
           infoHash: this.state.url,
-          savePath: '/home/lola/joystream/test/'
+          savePath: this.pathSave
         }
       }
     }
