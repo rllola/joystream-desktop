@@ -1,5 +1,5 @@
 {
-  "presets": ["es2016-node5", "react"],
-  "plugins": ["transform-async-to-generator", "array-includes"],
+  "presets": ["react", "es2015", "stage-0"],
+  "plugins": ["transform-decorators-legacy", "transform-async-to-generator"],
   "sourceMaps": "inline"
 }

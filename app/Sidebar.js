@@ -5,7 +5,7 @@ class Sidebar extends Component {
   render () {
     return (
       <div className="col-2">
-        <img style={{ width:'100%', marginTop: '20px' }} src="../assets/img/main_logo.png" />
+        <img style={{ width: '100%', marginTop: '20px' }} src="../assets/img/main_logo.png" />
         <br />
         <br />
         <ul className="list-unstyled text-center">

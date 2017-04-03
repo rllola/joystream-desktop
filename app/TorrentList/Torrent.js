@@ -2,13 +2,14 @@ import React, { Component } from 'react'
 import { StateT } from 'joystream-node'
 
 class Torrent extends Component {
-
   constructor (props) {
     super(props)
+
   }
 
   render () {
     var torrentHandle = this.props.torrent.handle
+    console.log(this.props.torrent)
     var torrentInfo = torrentHandle.torrentFile()
     var status = torrentHandle.status()
 
