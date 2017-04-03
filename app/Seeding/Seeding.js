@@ -2,15 +2,17 @@ import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 
 import TorrentList from '../TorrentList/'
-import SeedTorrentForm from '../SeedTorrentForm/'
+import AddTorrentForm from '../AddTorrentForm'
 
+@inject('joystreamStore')
+@observer
 class Seeding extends Component {
   render () {
     return (
       <div style={{marginTop: '20px'}} className="col-10">
-        <h3>Downloading</h3>
+        <h3>Seeding</h3>
         <br />
-        <SeedTorrentForm />
+        <AddTorrentForm />
         <br />
         <br />
         <TorrentList torrents={this.props.joystreamStore.torrents} />

@@ -3,7 +3,7 @@ import { TorrentInfo } from 'joystream-node'
 import { inject } from 'mobx-react'
 
 @inject('joystreamStore')
-class AddTorrent extends Component {
+class AddTorrentForm extends Component {
   constructor (props) {
     super(props)
 
@@ -91,4 +91,4 @@ class AddTorrent extends Component {
   }
 }
 
-export default AddTorrent
+export default AddTorrentForm
