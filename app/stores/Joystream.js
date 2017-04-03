@@ -8,7 +8,7 @@ class Joystream {
     this.session = new Session()
 
     // Initiate array
-    this.torrents.replace(Array.from(this.session.torrents))
+    this.torrents = Array.from(this.session.torrents)
   }
 
   @action
