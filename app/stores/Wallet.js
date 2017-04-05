@@ -1,6 +1,8 @@
 import { observable, action } from 'mobx'
 import bcoin from 'bcoin'
 
+const logError = require('debug')('wallet:error')
+
 class Wallet {
   @observable balance = 0
 
@@ -10,6 +12,10 @@ class Wallet {
       network: 'testnet'
     }
     this.node = new bcoin.spvnode(options)
+
+    this.node.on('error', function(err){
+        logError(err.message)
+    })
   }
 
   async open () {
