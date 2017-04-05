@@ -5,7 +5,9 @@ class Joystream {
   @observable torrents = []
 
   constructor () {
-    this.session = new Session()
+    this.session = new Session({
+      port: process.env.PORT
+    })
 
     // Initiate array
     this.torrents = Array.from(this.session.torrents)
