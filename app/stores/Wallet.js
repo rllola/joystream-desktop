@@ -6,20 +6,31 @@ class Wallet {
 
   constructor () {
     let options = {
-      prefix: __dirname,
-      network: 'testnet'
+      'prefix': __dirname,
+      'network': 'testnet',
+      //'db': 'leveldb',
+      //'wallet-db': 'leveldb',
+      'plugins': ['walletdb'],
+      'loader': function(name) {
+          if(name === 'walletdb') return bcoin.walletplugin
+      }
     }
+
     this.node = new bcoin.spvnode(options)
+
+    // the wallet will be assigned after the node is started with call to open()
+    this.wallet = null
   }
 
   async open () {
     await this.node.open()
+    this.wallet = await this.node.plugins.walletdb.get('primary')
   }
 
-  getBalance () {
-    this.node.wallet.getBalance().then((balance) => {
-      this.balance = balance.confirmed
-    })
+  async getBalance () {
+    let balance = await this.wallet.getBalance()
+    this.balance = balance.confirmed
+    return this.balance
   }
 
   connect () {
@@ -27,7 +38,7 @@ class Wallet {
   }
 
   getAddress () {
-    return this.node.wallet.getAddress()
+    return this.wallet.getAddress()
   }
 }
 
