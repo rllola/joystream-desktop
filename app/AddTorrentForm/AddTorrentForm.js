@@ -3,13 +3,15 @@ import { TorrentInfo } from 'joystream-node'
 import { inject } from 'mobx-react'
 
 @inject('joystreamStore')
-class AddTorrent extends Component {
+class AddTorrentForm extends Component {
   constructor (props) {
     super(props)
 
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleChangeFile = this.handleChangeFile.bind(this)
     this.handleChangeUrl = this.handleChangeUrl.bind(this)
+
+    this.pathSave = __dirname + '/../../'
 
     this.state = {
       file: '',
@@ -29,18 +31,18 @@ class AddTorrent extends Component {
     if (this.state.file) {
       addTorrentParams = {
         ti: new TorrentInfo(this.state.file.path),
-        savePath: '/home/lola/joystream/test/'
+        savePath: this.pathSave
       }
     } else {
       if (this.state.url.startsWith('magnet:')) {
         addTorrentParams = {
           url: this.state.url,
-          savePath: '/home/lola/joystream/test/'
+          savePath: this.pathSave
         }
       } else {
         addTorrentParams = {
           infoHash: this.state.url,
-          savePath: '/home/lola/joystream/test/'
+          savePath: this.pathSave
         }
       }
     }
@@ -49,11 +51,11 @@ class AddTorrent extends Component {
   }
 
   handleChangeFile (event) {
-    this.setState({file: event.target.files[0]})
+    this.setState({file: event.target.files[0], url: ''})
   }
 
   handleChangeUrl (event) {
-    this.setState({url: event.target.value})
+    this.setState({url: event.target.value, file: ''})
   }
 
   render () {
@@ -91,4 +93,4 @@ class AddTorrent extends Component {
   }
 }
 
-export default AddTorrent
+export default AddTorrentForm

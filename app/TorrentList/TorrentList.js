@@ -14,9 +14,8 @@ class TorrentList extends Component {
           </tr>
         </thead>
         <tbody>
-          {this.props.torrents.map((torrent, index) => {
-            console.log(torrent[1])
-            return <Torrent key={torrent[0]} torrent={torrent[1]} />
+          {this.props.torrents.map(([infoHash, torrent], index) => {
+            return <Torrent key={infoHash} torrent={torrent} />
           })}
         </tbody>
       </table>
