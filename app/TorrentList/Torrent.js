@@ -9,7 +9,6 @@ class Torrent extends Component {
 
   render () {
     var torrentHandle = this.props.torrent.handle
-    console.log(this.props.torrent)
     var torrentInfo = torrentHandle.torrentFile()
     var status = torrentHandle.status()
 

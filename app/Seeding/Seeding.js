@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
+import { StateT } from 'joystream-node'
 
 import TorrentList from '../TorrentList/'
 import AddTorrentForm from '../AddTorrentForm'
@@ -15,7 +16,7 @@ class Seeding extends Component {
         <AddTorrentForm />
         <br />
         <br />
-        <TorrentList torrents={this.props.joystreamStore.torrents} />
+        <TorrentList torrents={this.props.joystreamStore.torrents} status={StateT.SEEDING} />
       </div>
     )
   }
