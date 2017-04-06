@@ -1,15 +1,15 @@
-import { observable, action } from 'mobx'
+import { observable, action, computed } from 'mobx'
 import bcoin from 'bcoin'
 
 class Wallet {
+  @observable wallet = null
   @observable balance = 0
+  @observable address = null
 
   constructor () {
     let options = {
       'prefix': __dirname,
       'network': 'testnet',
-      //'db': 'leveldb',
-      //'wallet-db': 'leveldb',
       'plugins': ['walletdb'],
       'loader': function(name) {
           if(name === 'walletdb') return bcoin.walletplugin
@@ -17,29 +17,30 @@ class Wallet {
     }
 
     this.node = new bcoin.spvnode(options)
-
-    // the wallet will be assigned after the node is started with call to open()
-    this.wallet = null
   }
 
   async open () {
     await this.node.open()
     this.wallet = await this.node.plugins.walletdb.get('primary')
+
+    // setup initial state
+    this.address = this.wallet.getAddress()
+    this.updateBalance()
+
+    // update the balance and address when they change
+    this.wallet.on('balance', (balance)=>this.balance = balance.unconfirmed)
+    this.wallet.on('address', ()=>this.address = this.wallet.getAddress())
   }
 
-  async getBalance () {
+  async updateBalance () {
     let balance = await this.wallet.getBalance()
-    this.balance = balance.confirmed
-    return this.balance
+    this.balance = balance.unconfirmed
   }
 
   connect () {
     return this.node.connect()
   }
 
-  getAddress () {
-    return this.wallet.getAddress()
-  }
 }
 
 const walletStore = new Wallet()

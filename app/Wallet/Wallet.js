@@ -6,7 +6,7 @@ import QRCode from 'qrcode-react'
 @observer
 class Wallet extends Component {
   componentWillMount () {
-    this.props.walletStore.getBalance()
+
   }
 
   render () {
@@ -14,8 +14,8 @@ class Wallet extends Component {
       <div style={{marginTop: '20px'}} className="col-10">
         <h3>Wallet</h3>
         <p>Balance : {this.props.walletStore.balance}</p>
-        <QRCode value={this.props.walletStore.getAddress().toString()} />
-        <p>Address : {this.props.walletStore.getAddress().toString()}</p>
+        <QRCode value={this.props.walletStore.address.toString()} />
+        <p>Address : {this.props.walletStore.address.toString()}</p>
       </div>
     )
   }
