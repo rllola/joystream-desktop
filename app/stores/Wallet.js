@@ -2,7 +2,6 @@ import { observable, action, computed } from 'mobx'
 import bcoin from 'bcoin'
 
 class Wallet {
-  @observable wallet = null
   @observable balance = 0
   @observable address = null
 
