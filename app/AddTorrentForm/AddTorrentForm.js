@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { TorrentInfo } from 'joystream-node'
 import { inject } from 'mobx-react'
+import path from 'path'
+import os from 'os'
 
 @inject('joystreamStore')
 class AddTorrentForm extends Component {
@@ -11,7 +13,7 @@ class AddTorrentForm extends Component {
     this.handleChangeFile = this.handleChangeFile.bind(this)
     this.handleChangeUrl = this.handleChangeUrl.bind(this)
 
-    this.pathSave = __dirname + '/../../'
+    this.pathSave = process.env.SAVE_PATH ? process.env.SAVE_PATH : path.join(os.homedir(), 'joystream','download', path.sep)
 
     this.state = {
       file: '',
