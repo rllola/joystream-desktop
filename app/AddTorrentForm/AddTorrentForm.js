@@ -13,7 +13,7 @@ class AddTorrentForm extends Component {
     this.handleChangeFile = this.handleChangeFile.bind(this)
     this.handleChangeUrl = this.handleChangeUrl.bind(this)
 
-    this.pathSave = process.env.SAVE_PATH ? process.env.SAVE_PATH : path.join(os.homedir(), '/joystream/download/')
+    this.pathSave = process.env.SAVE_PATH ? process.env.SAVE_PATH : path.join(os.homedir(), 'joystream','download', path.sep)
 
     this.state = {
       file: '',
