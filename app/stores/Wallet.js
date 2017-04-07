@@ -9,17 +9,17 @@ class Wallet {
 
   constructor () {
     let options = {
-      'prefix': __dirname,
-      'network': 'testnet',
-      'plugins': ['walletdb'],
-      'loader': function(name) {
-          if(name === 'walletdb') return bcoin.walletplugin
+      prefix: __dirname,
+      network: 'testnet',
+      port: process.env.WALLET_PORT,
+      plugins: ['walletdb'],
+      loader: function (name) {
+          if (name === 'walletdb') return bcoin.walletplugin
       }
     }
 
     this.node = new bcoin.spvnode(options)
-
-    this.node.on('error', function(err){
+    this.node.on('error', function (err) {
         logError(err.message)
     })
   }
@@ -33,8 +33,8 @@ class Wallet {
     this.updateBalance()
 
     // update the balance and address when they change
-    this.wallet.on('balance', (balance)=>this.balance = balance.unconfirmed)
-    this.wallet.on('address', ()=>this.address = this.wallet.getAddress())
+    this.wallet.on('balance', (balance) => { this.balance = balance.unconfirmed })
+    this.wallet.on('address', () => { this.address = this.wallet.getAddress() })
   }
 
   async updateBalance () {

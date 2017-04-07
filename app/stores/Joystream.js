@@ -6,7 +6,7 @@ class Joystream {
 
   constructor () {
     this.session = new Session({
-      port: process.env.PORT
+      port: process.env.LIBTORRENT_PORT
     })
 
     // Initiate array
