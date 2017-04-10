@@ -3,7 +3,9 @@ import { inject, observer } from 'mobx-react'
 import QRCode from 'qrcode-react'
 
 // Wallet implemented as a functional stateless component
-const Wallet = inject('walletStore')(observer(({walletStore}) => {
+function Wallet(props) {
+    const walletStore = props.walletStore
+
     if (walletStore.address == null)
         return null
 
@@ -15,6 +17,6 @@ const Wallet = inject('walletStore')(observer(({walletStore}) => {
         <p>Address : {walletStore.address.toString()}</p>
       </div>
     )
-}))
+}
 
-export default Wallet
+export default inject('walletStore')(observer(Wallet))

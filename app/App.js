@@ -9,8 +9,11 @@ import Sidebar from './Sidebar'
 import Downloading from './Downloading'
 import Seeding from './Seeding'
 import Wallet from './Wallet'
+import { observer } from 'mobx-react'
 
-export default class App extends Component {
+export default
+@observer
+class App extends Component {
   constructor(props) {
     super(props)
   }
