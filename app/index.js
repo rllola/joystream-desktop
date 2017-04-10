@@ -2,7 +2,7 @@
 import 'babel-polyfill'
 import 'bcoin'
 import WalletStore from './stores/Wallet.js'
-import JoystreamStore from './stores/Joystream.js'
+import SessionStore from './stores/Session.js'
 import { Session } from 'joystream-node'
 
 // React
@@ -36,16 +36,16 @@ const session = new Session({
 })
 
 
-spvnode.open().then(async function(){
-    let wallet = await spvnode.plugins.walletdb.get('primary')
-
+spvnode.open()
+  .then(async function() {
     console.log('spvnode opened')
-
     spvnode.connect()
+
+    const wallet = await spvnode.plugins.walletdb.get('primary')
 
     const stores = {
         walletStore: new WalletStore(wallet),
-        joystreamStore: new JoystreamStore(session)
+        sessionStore: new SessionStore(session)
     }
 
     ReactDOM.render(

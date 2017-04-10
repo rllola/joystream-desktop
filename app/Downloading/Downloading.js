@@ -5,7 +5,7 @@ import { StateT } from 'joystream-node'
 import TorrentList from '../TorrentList/'
 import AddTorrentForm from '../AddTorrentForm'
 
-@inject('joystreamStore')
+@inject('sessionStore')
 @observer
 class Downloading extends Component {
   render () {
@@ -16,7 +16,7 @@ class Downloading extends Component {
         <AddTorrentForm />
         <br />
         <br />
-        <TorrentList torrents={this.props.joystreamStore.torrents} status={StateT.DOWNLOADING} />
+        <TorrentList torrents={this.props.sessionStore.torrents} status={StateT.DOWNLOADING} />
       </div>
     )
   }

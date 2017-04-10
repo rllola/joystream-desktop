@@ -1,6 +1,6 @@
 import { observable, action } from 'mobx'
 
-export default class Joystream {
+export default class Session {
   @observable torrents = []
 
   constructor (session) {
