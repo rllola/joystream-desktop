@@ -1,4 +1,4 @@
-import { observable, action, computed } from 'mobx'
+import { observable, action, computed, runInAction } from 'mobx'
 import bcoin from 'bcoin'
 
 export default class WalletStore {
@@ -8,19 +8,28 @@ export default class WalletStore {
   constructor (wallet) {
     this.wallet = wallet
 
-    // update the balance and address when they change, make arrow functions -> actions
-    this.wallet.on('balance', (balance) => { this.balance = balance.unconfirmed })
-    this.wallet.on('address', () => { this.address = this.wallet.getAddress() })
+    this.wallet.on('balance', action('on-balance-handler', (balance) => {
+        this.balance = balance.unconfirmed
+    }))
+
+    this.wallet.on('address', this.updateAddress)
 
     // setup initial state
-    this.updateBalanceAndAddress()
+    this.updateBalance()
+    this.updateAddress()
   }
 
-  // make this an action
-  async updateBalanceAndAddress () {
+  @action
+  updateBalance = async() => {
+    const balance = await this.wallet.getBalance()
+    runInAction("update wallet balance", () => {
+        this.balance = balance.unconfirmed
+    })
+  }
+
+  @action.bound
+  updateAddress() {
     this.address = this.wallet.getAddress()
-    let balance = await this.wallet.getBalance()
-    this.balance = balance.unconfirmed
   }
 
 }
