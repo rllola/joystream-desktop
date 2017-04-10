@@ -1,13 +1,10 @@
 import { observable, action } from 'mobx'
-import { Session } from 'joystream-node'
 
-class Joystream {
+export default class Joystream {
   @observable torrents = []
 
-  constructor () {
-    this.session = new Session({
-      port: process.env.LIBTORRENT_PORT
-    })
+  constructor (session) {
+    this.session = session
 
     // Initiate array
     this.torrents = Array.from(this.session.torrents)
@@ -24,7 +21,3 @@ class Joystream {
     })
   }
 }
-
-const joystreamStore = new Joystream()
-
-export default joystreamStore

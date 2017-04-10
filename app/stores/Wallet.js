@@ -1,27 +1,12 @@
 import { observable, action, computed } from 'mobx'
 import bcoin from 'bcoin'
 
-const logError = require('debug')('wallet:error')
-
-class Wallet {
+export default class WalletStore {
   @observable balance = 0
   @observable address = null
 
-  constructor () {
-    let options = {
-      prefix: __dirname,
-      network: 'testnet',
-      port: process.env.WALLET_PORT,
-      plugins: ['walletdb'],
-      loader: function (name) {
-          if (name === 'walletdb') return bcoin.walletplugin
-      }
-    }
-
-    this.node = new bcoin.spvnode(options)
-    this.node.on('error', function (err) {
-        logError(err.message)
-    })
+  constructor (spvnode) {
+    this.node = spvnode
   }
 
   async open () {
@@ -47,7 +32,3 @@ class Wallet {
   }
 
 }
-
-const walletStore = new Wallet()
-
-export default walletStore

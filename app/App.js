@@ -10,15 +10,9 @@ import Downloading from './Downloading'
 import Seeding from './Seeding'
 import Wallet from './Wallet'
 
-// Stores
-import joystreamStore from './stores/Joystream'
-import walletStore from './stores/Wallet'
-
-const stores = { joystreamStore, walletStore }
-
-class App extends Component {
-  constructor() {
-    super()
+export default class App extends Component {
+  constructor(props) {
+    super(props)
 
     this.state = {
       walletOpened: false
@@ -26,9 +20,9 @@ class App extends Component {
   }
 
   componentDidMount () {
-    walletStore.open().then(() => {
+    this.props.stores.walletStore.open().then(() => {
       this.setState({walletOpened: true})
-      walletStore.connect()
+      this.props.stores.walletStore.connect()
     })
   }
 
@@ -36,7 +30,7 @@ class App extends Component {
     return (
       this.state.walletOpened ?
       <Router>
-        <Provider {...stores}>
+        <Provider {...this.props.stores}>
           <div className="container-fluid">
             <div className="row">
               <Sidebar />
@@ -52,5 +46,3 @@ class App extends Component {
     )
   }
 }
-
-export default App
