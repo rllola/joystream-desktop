@@ -10,6 +10,9 @@ class Wallet extends Component {
   }
 
   render () {
+    if (this.props.walletStore.address == null)
+        return null
+
     return (
       <div style={{marginTop: '20px'}} className="col-10">
         <h3>Wallet</h3>
