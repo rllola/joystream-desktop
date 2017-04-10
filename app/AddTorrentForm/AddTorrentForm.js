@@ -4,7 +4,7 @@ import { inject } from 'mobx-react'
 import path from 'path'
 import os from 'os'
 
-@inject('joystreamStore')
+@inject('sessionStore')
 class AddTorrentForm extends Component {
   constructor (props) {
     super(props)
@@ -49,7 +49,7 @@ class AddTorrentForm extends Component {
       }
     }
 
-    this.props.joystreamStore.addTorrent(addTorrentParams)
+    this.props.sessionStore.addTorrent(addTorrentParams)
   }
 
   handleChangeFile (event) {

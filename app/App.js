@@ -9,34 +9,19 @@ import Sidebar from './Sidebar'
 import Downloading from './Downloading'
 import Seeding from './Seeding'
 import Wallet from './Wallet'
+import { observer } from 'mobx-react'
 
-// Stores
-import joystreamStore from './stores/Joystream'
-import walletStore from './stores/Wallet'
-
-const stores = { joystreamStore, walletStore }
-
+export default
+@observer
 class App extends Component {
-  constructor() {
-    super()
-
-    this.state = {
-      walletOpened: false
-    }
-  }
-
-  componentDidMount () {
-    walletStore.open().then(() => {
-      this.setState({walletOpened: true})
-      walletStore.connect()
-    })
+  constructor(props) {
+    super(props)
   }
 
   render () {
     return (
-      this.state.walletOpened ?
       <Router>
-        <Provider {...stores}>
+        <Provider {...this.props.stores}>
           <div className="container-fluid">
             <div className="row">
               <Sidebar />
@@ -47,10 +32,6 @@ class App extends Component {
           </div>
         </Provider>
       </Router>
-      :
-      null
     )
   }
 }
-
-export default App
