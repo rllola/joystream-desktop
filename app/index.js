@@ -35,12 +35,21 @@ const session = new Session({
   port: process.env.LIBTORRENT_PORT
 })
 
-const stores = {
-    walletStore: new WalletStore(spvnode),
-    joystreamStore: new JoystreamStore(session)
-}
 
-ReactDOM.render(
-  <App stores={stores}/>,
-  document.getElementById('root')
-)
+spvnode.open().then(async function(){
+    let wallet = await spvnode.plugins.walletdb.get('primary')
+
+    console.log('spvnode opened')
+
+    spvnode.connect()
+
+    const stores = {
+        walletStore: new WalletStore(wallet),
+        joystreamStore: new JoystreamStore(session)
+    }
+
+    ReactDOM.render(
+      <App stores={stores}/>,
+      document.getElementById('root')
+    )
+})
