@@ -13,22 +13,10 @@ import Wallet from './Wallet'
 export default class App extends Component {
   constructor(props) {
     super(props)
-
-    this.state = {
-      walletOpened: false
-    }
-  }
-
-  componentDidMount () {
-    this.props.stores.walletStore.open().then(() => {
-      this.setState({walletOpened: true})
-      this.props.stores.walletStore.connect()
-    })
   }
 
   render () {
     return (
-      this.state.walletOpened ?
       <Router>
         <Provider {...this.props.stores}>
           <div className="container-fluid">
@@ -41,8 +29,6 @@ export default class App extends Component {
           </div>
         </Provider>
       </Router>
-      :
-      null
     )
   }
 }
