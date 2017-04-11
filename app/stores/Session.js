@@ -8,20 +8,28 @@ export default class Session {
     this.session = session
 
     // Initiate array
-    this.initTorrents()
+    action(() => {
+      for(var [infoHash, torrent] in this.session.torrents) {
+        this.torrents.push(new Torrent(torrent))
+      }
+    })()
 
     this.session.on('torrent_added', action((torrent) => {
       this.torrents.push(new Torrent(torrent))
     }))
 
-    this.session.on('torrent_removed', this.initTorrents)
+    this.session.on('torrent_removed', action((infoHash) => {
+      this.torrents.replace(this.torrents.filter(function(torrent){
+        return torrent.infoHash != infoHash
+      }))
+    }))
   }
 
-  @action.bound
-  initTorrents () {
-    for(var [infoHash, torrent] in this.session.torrents) {
-      this.torrents.push(new Torrent(torrent))
-    }
+  @action
+  removeTorrent(infoHash) {
+    this.session.removeTorrent(infoHash, (err, result)=>{
+      if(err) console.log(err)
+    })
   }
 
   @action
