@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
+import {observer} from 'mobx-react'
 import Torrent from './Torrent'
 
+@observer
 class TorrentList extends Component {
-  filterByStatus ([infoHash, torrent]) {
-    return torrent.handle.status().state === this.props.status
+  filterByStatus (torrent) {
+    return torrent.state === this.props.status
   }
 
   render () {
@@ -18,8 +20,8 @@ class TorrentList extends Component {
           </tr>
         </thead>
         <tbody>
-          {this.props.torrents.filter(this.filterByStatus.bind(this)).map(([infoHash, torrent], index) => {
-            return <Torrent key={infoHash} torrent={torrent} />
+          {this.props.torrents.filter(this.filterByStatus.bind(this)).map((torrent, index) => {
+            return <Torrent key={torrent.infoHash} torrent={torrent} />
           })}
         </tbody>
       </table>
