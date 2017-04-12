@@ -1,6 +1,8 @@
 // babel-polyfill for generator (async/await)
 import 'babel-polyfill'
 import 'bcoin'
+import path from 'path'
+import os from 'os'
 import WalletStore from './stores/Wallet.js'
 import SessionStore from './stores/Session.js'
 import { Session } from 'joystream-node'
@@ -14,6 +16,9 @@ import App from './App'
 
 console.log(process.env.PORT)
 console.log(process.env.SAVE_PATH)
+
+// Torrent content save path
+const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream','download', path.sep)
 
 // Create SPVNode
 const spvnode = new bcoin.spvnode({
@@ -45,7 +50,7 @@ spvnode.open()
 
     const stores = {
         walletStore: new WalletStore(wallet),
-        sessionStore: new SessionStore(session)
+        sessionStore: new SessionStore({session, savePath})
     }
 
     ReactDOM.render(

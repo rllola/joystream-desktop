@@ -1,12 +1,13 @@
 import { observable, action, computed } from 'mobx'
 import Torrent from './Torrent.js'
-import { StateT } from 'joystream-node'
+import { StateT, TorrentInfo } from 'joystream-node'
 
 export default class Session {
   @observable torrents = []
 
-  constructor (session) {
+  constructor ({session, savePath}) {
     this.session = session
+    this.savePath = savePath
 
     // Initiate array
     action(() => {
@@ -64,5 +65,38 @@ export default class Session {
     this.session.addTorrent(addTorrentParams, (err, torrent) => {
       if (err) console.log(err)
     })
+  }
+
+  @action
+  addTorrentFile (filePath) {
+    this.addTorrent({
+      ti: new TorrentInfo(filePath),
+      savePath: this.savePath
+    })
+  }
+
+  @action
+  addTorrentUrl (url) {
+    if (url.startsWith('magnet:')) {
+      this.addTorrent({
+        url: url,
+        savePath: this.savePath
+      })
+    } else {
+      this.addTorrent({
+        infoHash: url,
+        savePath: this.savePath
+      })
+    }
+  }
+
+  // Action to handle user attempting to add a torrent
+  @action.bound
+  handleAddTorrent(torrent) {
+    if (torrent.file) {
+      this.addTorrentFile(torrent.file.path)
+    } else {
+      this.addTorrentUrl(torrent.url)
+    }
   }
 }

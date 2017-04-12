@@ -1,10 +1,5 @@
 import React, { Component } from 'react'
-import { TorrentInfo } from 'joystream-node'
-import { inject } from 'mobx-react'
-import path from 'path'
-import os from 'os'
 
-@inject('sessionStore')
 class AddTorrentForm extends Component {
   constructor (props) {
     super(props)
@@ -13,10 +8,8 @@ class AddTorrentForm extends Component {
     this.handleChangeFile = this.handleChangeFile.bind(this)
     this.handleChangeUrl = this.handleChangeUrl.bind(this)
 
-    this.pathSave = process.env.SAVE_PATH ? process.env.SAVE_PATH : path.join(os.homedir(), 'joystream','download', path.sep)
-
     this.state = {
-      file: '',
+      file: null,
       url: ''
     }
   }
@@ -24,40 +17,27 @@ class AddTorrentForm extends Component {
   handleSubmit (event) {
     event.preventDefault()
 
-    if (this.state.file && this.state.url) {
+    if (this.state.file == null && this.state.url == '') {
       return
     }
 
-    let addTorrentParams
+    this.props.onSubmit(this.state)
 
-    if (this.state.file) {
-      addTorrentParams = {
-        ti: new TorrentInfo(this.state.file.path),
-        savePath: this.pathSave
-      }
-    } else {
-      if (this.state.url.startsWith('magnet:')) {
-        addTorrentParams = {
-          url: this.state.url,
-          savePath: this.pathSave
-        }
-      } else {
-        addTorrentParams = {
-          infoHash: this.state.url,
-          savePath: this.pathSave
-        }
-      }
-    }
-
-    this.props.sessionStore.addTorrent(addTorrentParams)
+    this.setState({
+      file: null,
+      url: ''
+    })
   }
 
   handleChangeFile (event) {
     this.setState({file: event.target.files[0], url: ''})
+
+    // clear file input selection
+    event.target.value = ""
   }
 
   handleChangeUrl (event) {
-    this.setState({url: event.target.value, file: ''})
+    this.setState({url: event.target.value, file: null})
   }
 
   render () {
