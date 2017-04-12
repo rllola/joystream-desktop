@@ -28,13 +28,27 @@ export default class Session {
 
   @computed get torrentsDownloading() {
     return this.torrents.filter(function(torrent){
-      return torrent.state === StateT.DOWNLOADING
+      return ( torrent.state === StateT.DOWNLOADING ||
+        torrent.state == StateT.DOWNLOADING_METADATA ||
+        torrent.state == StateT.ALLOCATING)
     })
   }
 
   @computed get torrentsSeeding() {
     return this.torrents.filter(function(torrent){
       return torrent.state === StateT.SEEDING
+    })
+  }
+
+  @computed get torrentsCompleted() {
+    return this.torrents.filter(function(torrent){
+      return torrent.state === StateT.FINISHED || torrent.state === StateT.SEEDING
+    })
+  }
+
+  @computed get torrentsChecking() {
+    return this.torrents.filter(function(torrent){
+      return torrent.state === StateT.CHECKING_FILES || torrent.state === StateT.CHECKING_RESUME_DATA
     })
   }
 
