@@ -4,10 +4,6 @@ import Torrent from './Torrent'
 
 @observer
 class TorrentList extends Component {
-  filterByStatus (torrent) {
-    return torrent.state === this.props.status
-  }
-
   render () {
     return (
       <table className="table">
@@ -20,7 +16,7 @@ class TorrentList extends Component {
           </tr>
         </thead>
         <tbody>
-          {this.props.torrents.filter(this.filterByStatus.bind(this)).map((torrent, index) => {
+          {this.props.torrents.map((torrent, index) => {
             return <Torrent key={torrent.infoHash} torrent={torrent} />
           })}
         </tbody>

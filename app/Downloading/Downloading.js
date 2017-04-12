@@ -16,7 +16,7 @@ class Downloading extends Component {
         <AddTorrentForm />
         <br />
         <br />
-        <TorrentList torrents={this.props.sessionStore.torrents} status={StateT.DOWNLOADING} />
+        <TorrentList torrents={this.props.sessionStore.torrentsDownloading} />
       </div>
     )
   }

@@ -1,5 +1,6 @@
-import { observable, action } from 'mobx'
+import { observable, action, computed } from 'mobx'
 import Torrent from './Torrent.js'
+import { StateT } from 'joystream-node'
 
 export default class Session {
   @observable torrents = []
@@ -23,6 +24,18 @@ export default class Session {
         return torrent.infoHash != infoHash
       }))
     }))
+  }
+
+  @computed get torrentsDownloading() {
+    return this.torrents.filter(function(torrent){
+      return torrent.state === StateT.DOWNLOADING
+    })
+  }
+
+  @computed get torrentsSeeding() {
+    return this.torrents.filter(function(torrent){
+      return torrent.state === StateT.SEEDING
+    })
   }
 
   @action
