@@ -16,7 +16,7 @@ class Seeding extends Component {
         <AddTorrentForm />
         <br />
         <br />
-        <TorrentList torrents={this.props.sessionStore.torrents} status={StateT.SEEDING} />
+        <TorrentList torrents={this.props.sessionStore.torrentsSeeding} />
       </div>
     )
   }
