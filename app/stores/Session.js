@@ -11,7 +11,7 @@ export default class Session {
 
     // Initiate array
     action(() => {
-      for(var [infoHash, torrent] in this.session.torrents) {
+      for (var [, torrent] in this.session.torrents) {
         this.torrents.push(new Torrent(torrent))
       }
     })()
@@ -21,42 +21,42 @@ export default class Session {
     }))
 
     this.session.on('torrent_removed', action((infoHash) => {
-      this.torrents.replace(this.torrents.filter(function(torrent){
-        return torrent.infoHash != infoHash
+      this.torrents.replace(this.torrents.filter(function (torrent) {
+        return torrent.infoHash !== infoHash
       }))
     }))
   }
 
-  @computed get torrentsDownloading() {
-    return this.torrents.filter(function(torrent){
-      return ( torrent.state === StateT.DOWNLOADING ||
-        torrent.state == StateT.DOWNLOADING_METADATA ||
-        torrent.state == StateT.ALLOCATING)
+  @computed get torrentsDownloading () {
+    return this.torrents.filter(function (torrent) {
+      return (torrent.state === StateT.DOWNLOADING ||
+        torrent.state === StateT.DOWNLOADING_METADATA ||
+        torrent.state === StateT.ALLOCATING)
     })
   }
 
-  @computed get torrentsSeeding() {
-    return this.torrents.filter(function(torrent){
+  @computed get torrentsSeeding () {
+    return this.torrents.filter(function (torrent) {
       return torrent.state === StateT.SEEDING
     })
   }
 
-  @computed get torrentsCompleted() {
-    return this.torrents.filter(function(torrent){
+  @computed get torrentsCompleted () {
+    return this.torrents.filter(function (torrent) {
       return torrent.state === StateT.FINISHED || torrent.state === StateT.SEEDING
     })
   }
 
-  @computed get torrentsChecking() {
-    return this.torrents.filter(function(torrent){
+  @computed get torrentsChecking () {
+    return this.torrents.filter(function (torrent) {
       return torrent.state === StateT.CHECKING_FILES || torrent.state === StateT.CHECKING_RESUME_DATA
     })
   }
 
   @action
-  removeTorrent(infoHash) {
-    this.session.removeTorrent(infoHash, (err, result)=>{
-      if(err) console.log(err)
+  removeTorrent (infoHash) {
+    this.session.removeTorrent(infoHash, (err, result) => {
+      if (err) console.log(err)
     })
   }
 
@@ -92,7 +92,7 @@ export default class Session {
 
   // Action to handle user attempting to add a torrent
   @action.bound
-  handleAddTorrent(torrent) {
+  handleAddTorrent (torrent) {
     if (torrent.file) {
       this.addTorrentFile(torrent.file.path)
     } else {

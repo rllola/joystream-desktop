@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
-import { StateT } from 'joystream-node'
 
 import TorrentList from '../TorrentList/'
 import AddTorrentForm from '../AddTorrentForm'

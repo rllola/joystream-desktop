@@ -17,7 +17,7 @@ class AddTorrentForm extends Component {
   handleSubmit (event) {
     event.preventDefault()
 
-    if (this.state.file == null && this.state.url == '') {
+    if (this.state.file === null && this.state.url === '') {
       return
     }
 
@@ -33,7 +33,7 @@ class AddTorrentForm extends Component {
     this.setState({file: event.target.files[0], url: ''})
 
     // clear file input selection
-    event.target.value = ""
+    event.target.value = ''
   }
 
   handleChangeUrl (event) {
@@ -41,10 +41,6 @@ class AddTorrentForm extends Component {
   }
 
   render () {
-    var afterStyle = {
-      boxSizing: 'inherit'
-    }
-
     var customFileControlBefore = {
       position: 'absolute',
       right: '-1px',
@@ -64,13 +60,13 @@ class AddTorrentForm extends Component {
         <label className="custom-file mb-2 mr-sm-2 mb-sm-0">
           <input type="file" onChange={this.handleChangeFile} className="custom-file-input" />
           <span style={customFileControlBefore}>Browse</span>
-          <span className="custom-file-control">{ this.state.file ? this.state.file.name : 'Choose file...'}</span>
+          <span className="custom-file-control">{this.state.file ? this.state.file.name : 'Choose file...'}</span>
         </label>
         <label>
-          <input type="text" value={this.state.url} onChange={this.handleChangeUrl} className="form-control mb-2 mr-sm-2 mb-sm-0" placeholder="Torrent Hash or Magnet Link"/>
+          <input type="text" value={this.state.url} onChange={this.handleChangeUrl} className="form-control mb-2 mr-sm-2 mb-sm-0" placeholder="Torrent Hash or Magnet Link" />
         </label>
         <button type="submit" className="btn btn-primary">Add</button>
-    </form>
+      </form>
     )
   }
 }

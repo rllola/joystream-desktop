@@ -1,6 +1,6 @@
 // babel-polyfill for generator (async/await)
 import 'babel-polyfill'
-import 'bcoin'
+import bcoin from 'bcoin'
 import path from 'path'
 import os from 'os'
 import WalletStore from './stores/Wallet.js'
@@ -18,7 +18,7 @@ console.log(process.env.PORT)
 console.log(process.env.SAVE_PATH)
 
 // Torrent content save path
-const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream','download', path.sep)
+const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream', 'download', path.sep)
 
 // Create SPVNode
 const spvnode = new bcoin.spvnode({
@@ -27,12 +27,12 @@ const spvnode = new bcoin.spvnode({
   port: process.env.WALLET_PORT,
   plugins: ['walletdb'],
   loader: function (name) {
-      if (name === 'walletdb') return bcoin.walletplugin
+    if (name === 'walletdb') return bcoin.walletplugin
   }
 })
 
 spvnode.on('error', function (err) {
-    console.log(err.message)
+  console.log(err.message)
 })
 
 // Create joystream libtorrent session
@@ -40,21 +40,21 @@ const session = new Session({
   port: process.env.LIBTORRENT_PORT
 })
 
-
-spvnode.open()
-  .then(async function() {
+spvnode
+  .open()
+  .then(async function () {
     console.log('spvnode opened')
     spvnode.connect()
 
     const wallet = await spvnode.plugins.walletdb.get('primary')
 
     const stores = {
-        walletStore: new WalletStore(wallet),
-        sessionStore: new SessionStore({session, savePath})
+      walletStore: new WalletStore(wallet),
+      sessionStore: new SessionStore({session, savePath})
     }
 
     ReactDOM.render(
-      <App stores={stores}/>,
+      <App stores={stores} />,
       document.getElementById('root')
     )
-})
+  })
