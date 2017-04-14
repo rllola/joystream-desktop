@@ -32,4 +32,27 @@ export default class WalletStore {
     this.address = this.wallet.getAddress()
   }
 
+  generatePrivateKey () {
+    return bcoin.ec.generatePrivateKey()
+  }
+
+  // Create, fund and sign a transaction from array of outputs
+  // (commitments of a joystream contract)
+  createAndSend (rawOutputs, feeRate) {
+    // return the transaction (promise)
+    let outputs = []
+
+    // Get each output and sign it
+    for (let i in rawOutputs) {
+      outputs.push(bcoin.output.fromRaw(rawOutputs[i]))
+    }
+
+    // Wait for all the outputs to be signed
+    return this.wallet.send({
+      sort: false,
+      outputs: outputs,
+      rate: feeRate
+    })
+  }
+
 }
