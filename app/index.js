@@ -28,7 +28,8 @@ const spvnode = new bcoin.spvnode({
   plugins: ['walletdb'],
   loader: function (name) {
     if (name === 'walletdb') return bcoin.walletplugin
-  }
+  },
+  useWorkers: false
 })
 
 spvnode.on('error', function (err) {
