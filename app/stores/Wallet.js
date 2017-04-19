@@ -52,6 +52,10 @@ export default class WalletStore {
       sort: false,
       outputs: outputs,
       rate: feeRate
+    }).then((transaction) => {
+      return transaction.toRaw()
+    }).catch((error) => {
+      throw error
     })
   }
 
