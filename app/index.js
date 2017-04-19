@@ -14,8 +14,7 @@ import ReactDOM from 'react-dom'
 // Main component
 import App from './App'
 
-console.log(process.env.PORT)
-console.log(process.env.SAVE_PATH)
+bcoin.set({ useWorkers: false })
 
 // Torrent content save path
 const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream', 'download', path.sep)
@@ -28,8 +27,7 @@ const spvnode = new bcoin.spvnode({
   plugins: ['walletdb'],
   loader: function (name) {
     if (name === 'walletdb') return bcoin.walletplugin
-  },
-  useWorkers: false
+  }
 })
 
 spvnode.on('error', function (err) {
