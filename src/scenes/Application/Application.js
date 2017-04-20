@@ -2,19 +2,18 @@ import React, { Component } from 'react'
 import { HashRouter as Router, Route } from 'react-router-dom'
 import { Provider } from 'mobx-react'
 import MobxReactDevTools from 'mobx-react-devtools'
-
-// components
-import Sidebar from './Sidebar'
-
-// Views
-import Downloading from './Downloading'
-import Seeding from './Seeding'
-import Wallet from './Wallet'
 import { observer } from 'mobx-react'
 
-export default
+// Components
+import Sidebar from './components/Sidebar'
+
+// Our scenes
+import Downloading from '../Downloading'
+import Seeding from '../Seeding'
+import Wallet from '../Wallet'
+
 @observer
-class App extends Component {
+class Application extends Component {
   constructor(props) {
     super(props)
   }
@@ -37,3 +36,5 @@ class App extends Component {
     )
   }
 }
+
+export default Application
