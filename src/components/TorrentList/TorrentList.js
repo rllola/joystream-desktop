@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {observer} from 'mobx-react'
-import Torrent from './Torrent'
+import Torrent from './components/Torrent'
 
 @observer
 class TorrentList extends Component {
