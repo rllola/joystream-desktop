@@ -8,7 +8,9 @@ class Torrent {
   @observable size = 0
   @observable name = ''
 
-  constructor (torrent) {
+  constructor(torrent) {
+    this.torrentObject = torrent
+
     this.handle = torrent.handle
 
     this.infoHash = this.handle.infoHash()
@@ -88,6 +90,7 @@ class Torrent {
   @computed get libtorrentStateText () {
     return StateT.properties[this.libtorrentState].name
   }
+
 }
 
 export default Torrent
