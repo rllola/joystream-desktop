@@ -25,6 +25,8 @@ export default class Session {
         return torrent.infoHash !== infoHash
       }))
     }))
+
+    window.SessionStore = this
   }
 
   @computed get torrentsDownloading () {

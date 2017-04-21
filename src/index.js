@@ -3,7 +3,10 @@ import 'babel-polyfill'
 import bcoin from 'bcoin'
 import path from 'path'
 import os from 'os'
+import levelup from 'levelup'
 import { Session } from 'joystream-node'
+import TorrentsStorage from './db/Torrents'
+import SessionConnector from './db/Torrents/SessionConnector'
 
 // React
 import React from 'react'
@@ -25,6 +28,20 @@ process.env.BCOIN_NO_NATIVE = '1'
 // Torrent content save path
 const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream', 'download', path.sep)
 
+// Application database path
+const dbPath = path.join(os.homedir(), 'joystream', 'data', path.sep)
+
+// Initialise database
+let db = levelup(dbPath, {
+  keyEncoding: 'utf8',
+  valueEncoding: 'json',
+  createIfMissing: true
+}, function (err, db) {
+  if (err) return console.log('failed to open level db', err)
+})
+
+require('level-namespace')(db)
+
 // Create SPVNode
 const spvnode = new bcoin.spvnode({
   prefix: __dirname,
@@ -44,6 +61,15 @@ spvnode.on('error', function (err) {
 const session = new Session({
   port: process.env.LIBTORRENT_PORT
 })
+
+// connect the session to the database
+let connector = new SessionConnector({
+  session,
+  store: new TorrentsStorage(db.namespace('torrents'))
+})
+
+// load all torrents from database
+connector.load()
 
 spvnode
   .open()
