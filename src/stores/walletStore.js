@@ -14,6 +14,8 @@ export default class WalletStore {
 
     this.wallet.on('address', this.updateAddress)
 
+    this.createAndSend = this.createAndSend.bind(this)
+
     // setup initial state
     this.updateBalance()
     this.updateAddress()
