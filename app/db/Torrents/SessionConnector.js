@@ -127,12 +127,12 @@ class SessionConnector extends EventEmitter {
       // resume torrent, schedule to go to buy or sell mode...
       this.loading.delete(infoHash)
     } else {
-      this.store.save(torrentToStorageValue(torrent))
+      this.store.save(torrentToStorageValue(torrent)).catch(err => this.emit('error', err))
     }
   }
 
   _onTorrentRemoved (infoHash) {
-    this.store.remove(infoHash)
+    this.store.remove(infoHash).catch(err => this.emit('error', err))
   }
 }
 
