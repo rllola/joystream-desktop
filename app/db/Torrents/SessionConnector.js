@@ -87,29 +87,33 @@ class SessionConnector {
 
     console.log('found', torrents.length, 'torrents in database')
 
-    torrents.forEach((torrent) => {
+    torrents.forEach((value) => {
+      const infoHash = value.infoHash
+
       try {
-        var params = valueToAddTorrentParams(torrent)
+        var params = valueToAddTorrentParams(value)
       } catch (e) {
         console.log(e)
         // remove this torrent from the database ?
-        this.store.remove(torrent.infoHash)
+        this.store.remove(infoHash)
         return
       }
 
-      this.loading.set(torrent.infoHash, {
-        buyerTerms: torrent.buyerTerms,
-        sellerTerms: torrent.sellerTerms,
-        paused: torrent.paused
+      this.loading.set(infoHash, {
+        buyerTerms: value.buyerTerms,
+        sellerTerms: value.sellerTerms
       })
 
       try {
         this.session.addTorrent(params, (err, result) => {
-          if (err) return console.log(err)
+          if (err) {
+            this.loading.delete(infoHash)
+            return console.log(err)
+          }
         })
       } catch (e) {
-        this.loading.delete(torrent.infoHash)
-        this.store.remove(torrent.infoHash)
+        console.log(e)
+        this.loading.delete(infoHash)
       }
     })
 
