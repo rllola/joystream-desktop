@@ -8,8 +8,7 @@ function valueToAddTorrentParams (value) {
     name: value.name,
     savePath: value.savePath,
     uploadLimit: value.uploadLimit,
-    downloadLimit: value.downloadLimit,
-    resumeData: value.resumeData ? Buffer.from(value.resumeData, 'base64') : undefined
+    downloadLimit: value.downloadLimit
   }
 
   if (value.ti) {
@@ -25,7 +24,7 @@ function valueToAddTorrentParams (value) {
 function torrentToStorageValue (torrent) {
   let handle = torrent.handle
 
-  if (!handle || !handle.isValid()) return null
+  if (!handle.isValid()) return null
 
   let value = {
     infoHash: handle.infoHash(),
@@ -38,13 +37,7 @@ function torrentToStorageValue (torrent) {
 
   if (ti) {
     value.name = ti.isValid() ? ti.name() : handle.infoHash()
-    value.ti = ti.toBuffer().toString('base64')
-  }
-
-  // we might want to create a separate namespace in the db
-  // for the resume data so it can be updated independently of the torrent info
-  if (torrent.resumeData) {
-    value.resumeData = torrent.resumeData.toString('base64')
+    value.ti = ti.toBencodedEntry().toString('base64')
   }
 
   return value
