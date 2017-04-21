@@ -68,6 +68,10 @@ let connector = new SessionConnector({
   store: new TorrentsStorage(db.namespace('torrents'))
 })
 
+connector.on('error', (err) => {
+  console.log(err)
+})
+
 // load all torrents from database
 connector.load()
 

@@ -1,4 +1,6 @@
 import { TorrentInfo } from 'joystream-node'
+import EventEmitter from 'events'
+const debug = require('debug')('SessionConnector')
 
 // convert a stored torrent into an addTorrentParams object
 function valueToAddTorrentParams (value) {
@@ -57,8 +59,9 @@ function torrentToStorageValue (torrent) {
   // sellerTerms : null
 }
 
-class SessionConnector {
+class SessionConnector extends EventEmitter {
   constructor ({session, store}) {
+    super()
     this.session = session
     this.store = store
     this.loading = new Map()
@@ -81,11 +84,11 @@ class SessionConnector {
       var torrents = await this.store.getAll()
     } catch (e) {
       this.isLoading = false
-      console.log(e.message)
+      this.emit('error', e.message)
       return
     }
 
-    console.log('found', torrents.length, 'torrents in database')
+    debug('found ' + torrents.length + ' torrents in database')
 
     torrents.forEach((value) => {
       const infoHash = value.infoHash
@@ -93,9 +96,9 @@ class SessionConnector {
       try {
         var params = valueToAddTorrentParams(value)
       } catch (e) {
-        console.log(e)
         // remove this torrent from the database ?
         this.store.remove(infoHash)
+        this.emit('error', e.message)
         return
       }
 
@@ -105,15 +108,16 @@ class SessionConnector {
       })
 
       try {
+        debug('adding torrent to session: ' + infoHash)
         this.session.addTorrent(params, (err, result) => {
           if (err) {
             this.loading.delete(infoHash)
-            return console.log(err)
+            this.emit('error', err)
           }
         })
       } catch (e) {
-        console.log(e)
         this.loading.delete(infoHash)
+        this.emit('error', e.message)
       }
     })
 
@@ -121,9 +125,10 @@ class SessionConnector {
   }
 
   _onTorrentAdded (torrent) {
-    let infoHash = torrent.infoHash
+    let infoHash = torrent.handle.infoHash()
 
     if (this.loading.has(infoHash)) {
+      debug('successfully added torrent from database: ' + infoHash)
       // check if this is a torrent we loaded from the database
       let loadedTorrent = this.loading.get(infoHash)
       // resume torrent, schedule to go to buy or sell mode...
