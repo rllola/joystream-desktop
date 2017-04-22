@@ -3,16 +3,17 @@ import 'babel-polyfill'
 import bcoin from 'bcoin'
 import path from 'path'
 import os from 'os'
-import WalletStore from './stores/Wallet.js'
-import SessionStore from './stores/Session.js'
 import { Session } from 'joystream-node'
 
 // React
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+import WalletStore from './stores/walletStore'
+import SessionStore from './stores/sessionStore'
+
 // Main component
-import App from './App'
+import Application from './scenes/Application'
 
 // Disable workers which are not available in electron
 bcoin.set({ useWorkers: false })
@@ -58,7 +59,7 @@ spvnode
     }
 
     ReactDOM.render(
-      <App stores={stores} />,
+      <Application stores={stores} />,
       document.getElementById('root')
     )
-  })
+})

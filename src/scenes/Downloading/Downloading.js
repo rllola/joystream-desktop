@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 
-import TorrentList from '../TorrentList/'
-import AddTorrentForm from '../AddTorrentForm'
+import TorrentList from '../../components/TorrentList'
+import AddTorrentForm from '../../components/AddTorrentForm'
 
 @inject('sessionStore')
 @observer
