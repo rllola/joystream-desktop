@@ -63,6 +63,7 @@ class SessionConnector extends EventEmitter {
     // setup listeners on session
     session.on('torrent_added', this._onTorrentAdded.bind(this))
     session.on('torrent_removed', this._onTorrentRemoved.bind(this))
+    session.on('metadata_received', this._onMetaDataReceived.bind(this))
 
     // also handle
     // metadata received
@@ -126,13 +127,24 @@ class SessionConnector extends EventEmitter {
       let loadedTorrent = this.loading.get(infoHash)
       // resume torrent, schedule to go to buy or sell mode...
       this.loading.delete(infoHash)
-    } else {
-      this.store.save(torrentToStorageValue(torrent)).catch(err => this.emit('error', err))
+      return
     }
+
+    this._saveTorrent(torrent)
   }
 
   _onTorrentRemoved (infoHash) {
     this.store.remove(infoHash).catch(err => this.emit('error', err))
+  }
+
+  _onMetaDataReceived (torrentInfo) {
+    const infoHash = torrentInfo.infoHash()
+    let torrent = this.session.torrents.get(infoHash)
+    this._saveTorrent(torrent)
+  }
+
+  _saveTorrent (torrent) {
+    this.store.save(torrentToStorageValue(torrent)).catch(err => this.emit('error', err))
   }
 }
 
