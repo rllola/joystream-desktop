@@ -65,7 +65,8 @@ const session = new Session({
 // connect the session to the database
 let connector = new SessionConnector({
   session,
-  store: new TorrentsStorage(db.namespace('torrents'))
+  torrents: new TorrentsStorage(db.namespace('torrents')),
+  resumeData: new TorrentsStorage(db.namespace('fastresume'))
 })
 
 connector.on('error', (err) => {

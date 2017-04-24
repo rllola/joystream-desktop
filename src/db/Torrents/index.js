@@ -3,19 +3,18 @@ class Storage {
     this.db = db
   }
 
-  save (torrent) {
-    console.log('saving torrent to database:', torrent.infoHash)
+  save (value) {
     return new Promise((resolve, reject) => {
-      this.db.put(torrent.infoHash, torrent, (err) => {
+      this.db.put(value.infoHash, value, (err) => {
         if (err) return reject(err)
         resolve()
       })
     })
   }
 
-  remove (infoHash) {
+  remove (key) {
     return new Promise((resolve, reject) => {
-      this.db.del(infoHash, (err) => {
+      this.db.del(key, (err) => {
         if (err) return reject(err)
         resolve()
       })
@@ -34,6 +33,15 @@ class Storage {
         .on('end', function () {
           resolve(all)
         })
+    })
+  }
+
+  getOne (key) {
+    return new Promise((resolve, reject) => {
+      this.db.get(key, function (err, value) {
+        if (err) return resolve(null)
+        resolve(value)
+      })
     })
   }
 }

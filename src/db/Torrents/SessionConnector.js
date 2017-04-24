@@ -42,9 +42,6 @@ function torrentToStorageValue (torrent) {
 
   return value
 
-  // what if a torrent was added by a magnetlink, will ti be valid before metadata is downloaded?
-  // do we need to save the url?
-
   // application specific state (paused/started...)
   // terms and mode
   // mode: torrent.torrentPlugin.?
@@ -53,10 +50,11 @@ function torrentToStorageValue (torrent) {
 }
 
 class SessionConnector extends EventEmitter {
-  constructor ({session, store}) {
+  constructor ({session, torrents, resumeData}) {
     super()
     this.session = session
-    this.store = store
+    this.torrents = torrents
+    this.resumeData = resumeData
     this.loading = new Map()
     this.isLoading = false
 
@@ -64,10 +62,7 @@ class SessionConnector extends EventEmitter {
     session.on('torrent_added', this._onTorrentAdded.bind(this))
     session.on('torrent_removed', this._onTorrentRemoved.bind(this))
     session.on('metadata_received', this._onMetaDataReceived.bind(this))
-
-    // also handle
-    // metadata received
-    // resume data generated
+    session.on('resumedata', this._onResumeData.bind(this))
   }
 
   async load () {
@@ -75,7 +70,7 @@ class SessionConnector extends EventEmitter {
     this.isLoading = true
 
     try {
-      var torrents = await this.store.getAll()
+      var torrents = await this.torrents.getAll()
     } catch (e) {
       this.isLoading = false
       this.emit('error', e.message)
@@ -84,14 +79,14 @@ class SessionConnector extends EventEmitter {
 
     debug('found ' + torrents.length + ' torrents in database')
 
-    torrents.forEach((value) => {
+    torrents.forEach(async (value) => {
       const infoHash = value.infoHash
 
       try {
         var params = valueToAddTorrentParams(value)
       } catch (e) {
         // remove this torrent from the database ?
-        this.store.remove(infoHash)
+        this.torrents.remove(infoHash)
         this.emit('error', e.message)
         return
       }
@@ -100,6 +95,13 @@ class SessionConnector extends EventEmitter {
         buyerTerms: value.buyerTerms,
         sellerTerms: value.sellerTerms
       })
+
+      // Load resume data if found
+      let resume = await this.resumeData.getOne(infoHash)
+      if (resume) {
+        debug('found resume data for ' + infoHash)
+        params.resumeData = Buffer.from(resume.data, 'base64')
+      }
 
       try {
         debug('adding torrent to session: ' + infoHash)
@@ -134,7 +136,7 @@ class SessionConnector extends EventEmitter {
   }
 
   _onTorrentRemoved (infoHash) {
-    this.store.remove(infoHash).catch(err => this.emit('error', err))
+    this.torrents.remove(infoHash).catch(err => this.emit('error', err))
   }
 
   _onMetaDataReceived (torrentInfo) {
@@ -144,7 +146,12 @@ class SessionConnector extends EventEmitter {
   }
 
   _saveTorrent (torrent) {
-    this.store.save(torrentToStorageValue(torrent)).catch(err => this.emit('error', err))
+    this.torrents.save(torrentToStorageValue(torrent)).catch(err => this.emit('error', err))
+  }
+
+  _onResumeData (infoHash, buffer) {
+    let value = { infoHash, data: buffer.toString('base64') }
+    this.resumeData.save(value).catch(err => this.emit('error', err))
   }
 }
 
