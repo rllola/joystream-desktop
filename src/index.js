@@ -62,6 +62,9 @@ const session = new Session({
   port: process.env.LIBTORRENT_PORT
 })
 
+// post torrent updates every 3 seconds. Is this the best place for it?
+setInterval(() => session.postTorrentUpdates(), 3000)
+
 // connect the session to the database
 let connector = new SessionConnector({
   session,
