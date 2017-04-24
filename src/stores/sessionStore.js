@@ -33,7 +33,9 @@ export default class Session {
     return this.torrents.filter(function (torrent) {
       return (torrent.state === StateT.DOWNLOADING ||
         torrent.state === StateT.DOWNLOADING_METADATA ||
-        torrent.state === StateT.ALLOCATING)
+        torrent.state === StateT.ALLOCATING ||
+        torrent.state === StateT.CHECKING_FILES ||
+        torrent.state === StateT.CHECKING_RESUME_DATA)
     })
   }
 
