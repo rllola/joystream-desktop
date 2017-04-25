@@ -1,3 +1,3 @@
-import Completed from './Downloading'
+import Completed from './Completed'
 
 export default Completed

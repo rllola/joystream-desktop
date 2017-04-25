@@ -21,4 +21,4 @@ class Completed extends Component {
   }
 }
 
-export default Downloading
+export default Completed

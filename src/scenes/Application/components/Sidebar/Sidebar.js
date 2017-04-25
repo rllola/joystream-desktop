@@ -11,6 +11,7 @@ class Sidebar extends Component {
         <ul className="list-unstyled text-center">
           <li><Link to="/">Download</Link></li>
           <li><Link to="/seeding">Seeding</Link></li>
+          <li><Link to="/completed">Completed</Link></li>
           <li><Link to="/wallet">Wallet</Link></li>
         </ul>
       </div>
