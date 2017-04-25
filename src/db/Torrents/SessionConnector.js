@@ -61,8 +61,6 @@ class SessionConnector extends EventEmitter {
     // setup listeners on session
     session.on('torrent_added', this._onTorrentAdded.bind(this))
     session.on('torrent_removed', this._onTorrentRemoved.bind(this))
-    session.on('metadata_received', this._onMetaDataReceived.bind(this))
-    session.on('resumedata', this._onResumeData.bind(this))
   }
 
   async load () {
@@ -122,6 +120,9 @@ class SessionConnector extends EventEmitter {
 
   _onTorrentAdded (torrent) {
     let infoHash = torrent.handle.infoHash()
+
+    torrent.on('metadata', this._onMetaDataReceived.bind(this))
+    torrent.on('resumedata', this._onResumeData.bind(this, infoHash))
 
     if (this.loading.has(infoHash)) {
       debug('successfully added torrent from database: ' + infoHash)
