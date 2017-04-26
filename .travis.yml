@@ -11,7 +11,7 @@ addons:
     packages:
     - rpm
 install:
-  - npm install -g electron-forge
+  - npm install -g electron-forge node-gyp
   - npm install
 script:
   - npm test
