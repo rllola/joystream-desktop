@@ -22,14 +22,14 @@ before_install:
   - conan user travis -p trav444 -r=joystream
 
 install:
-  - npm install -g electron-forge node-gyp
+  - npm install -g electron-forge
   - npm install
 script:
   - npm test
 deploy:
   provider: script
   skip_cleanup: true
-  script: electron-forge publish
+  script: BCOIN_NO_NATIVE=1 electron-forge publish
   on:
     branch:
       - development
