@@ -2,12 +2,12 @@
   "name": "joystream-demo",
   "version": "0.0.0",
   "description": "A minimal Joystream application in electron",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
     "start": "BCOIN_NO_NATIVE=1 electron-forge start",
     "test": "echo 'No test !' && exit 0",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
+    "package": "BCOIN_NO_NATIVE=1 electron-forge package",
+    "make": "BCOIN_NO_NATIVE=1 electron-forge make"
   },
   "keywords": [
     "Joystream",

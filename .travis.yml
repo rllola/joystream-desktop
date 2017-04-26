@@ -21,4 +21,4 @@ deploy:
   script: electron-forge publish
   on:
     branch:
-      - master
+      - development
