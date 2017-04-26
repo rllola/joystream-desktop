@@ -8,9 +8,9 @@ class Torrent extends Component {
     return (
       <tr>
         <td>{torrent.name}</td>
-        <td>{torrent.size} Mb</td>
+        <td>{torrent.sizeMB} Mb</td>
         <td>{torrent.progressPercent}%</td>
-        <td>{torrent.statusText}</td>
+        <td>{torrent.libtorrentStateText}</td>
       </tr>
     )
   }

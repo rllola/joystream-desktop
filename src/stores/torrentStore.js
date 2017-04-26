@@ -3,7 +3,7 @@ import { StateT } from 'joystream-node'
 
 class Torrent {
 
-  @observable state
+  @observable libtorrentState
   @observable progress = 0
   @observable size = 0
   @observable name = ''
@@ -15,44 +15,81 @@ class Torrent {
 
     const torrentInfo = this.handle.torrentFile()
 
-    if (torrentInfo) {
-      this.name = torrentInfo.name()
-      this.size = Number(torrentInfo.totalSize() / 1048576).toFixed(2)
-    } else {
-      this.name = this.handle.infoHash()
-    }
+    this.setTorrentInfo(torrentInfo)
 
-    this.updateFromStatus()
+    const status = this.handle.status()
 
-    torrent.on('state_update_alert', action((state, progress) => {
-      this.state = state
-      this.progress = progress
-    }))
+    this.setStatus(status)
 
-    torrent.on('metadata_received_alert', this.updateFromStatus)
+    torrent.on('state_update_alert', this.onStateUpdated)
 
-    torrent.on('torrent_finished_alert', this.updateFromStatus)
+    torrent.on('metadata', this.onMetadataReceived)
+
+    torrent.on('torrent_finished_alert', this.onFinished)
   }
 
   @action.bound
-  updateFromStatus () {
-    const status = this.handle.status()
-    this.state = status.state
-    this.progress = status.progress
+  onStateUpdated (state, progress) {
+    this.setStatus({state, progress})
+  }
 
-    const torrentInfo = this.handle.torrentFile()
-    if (torrentInfo) {
-      this.name = torrentInfo.name()
-      this.size = Number(torrentInfo.totalSize() / 1048576).toFixed(2)
+  @action.bound
+  onMetadataReceived (torrentInfo) {
+    this.setTorrentInfo(torrentInfo)
+  }
+
+  @action.bound
+  onFinished () {
+    // Happens when a torrent switches from being a downloader to a seed.
+    // It will only be generated once per torrent.
+  }
+
+  @action.bound
+  setTorrentInfo (info) {
+    if (info) {
+      this.setName(info.name())
+      this.setSize(info.totalSize())
+    } else {
+      this.setName(this.infoHash)
     }
+  }
+
+  @action.bound
+  setStatus ({state, progress}) {
+    this.setLibtorrentState(state)
+    this.setProgress(progress)
+  }
+
+  @action.bound
+  setSize (size) {
+    this.size = size
+  }
+
+  @action.bound
+  setName (name) {
+    this.name = name
+  }
+
+  @action.bound
+  setLibtorrentState (state) {
+    this.libtorrentState = state
+  }
+
+  @action.bound
+  setProgress (progress) {
+    this.progress = progress
+  }
+
+  @computed get sizeMB () {
+    return Number(this.size / 1048576).toFixed(2)
   }
 
   @computed get progressPercent () {
     return Number(this.progress * 100).toFixed(0)
   }
 
-  @computed get statusText () {
-    return StateT.properties[this.state].name
+  @computed get libtorrentStateText () {
+    return StateT.properties[this.libtorrentState].name
   }
 }
 

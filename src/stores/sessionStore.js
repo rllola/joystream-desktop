@@ -31,35 +31,35 @@ export default class Session {
 
   @computed get torrentsDownloading () {
     return this.torrents.filter(function (torrent) {
-      return (torrent.state === StateT.DOWNLOADING ||
-        torrent.state === StateT.DOWNLOADING_METADATA ||
-        torrent.state === StateT.ALLOCATING ||
-        torrent.state === StateT.CHECKING_FILES ||
-        torrent.state === StateT.CHECKING_RESUME_DATA)
+      return (torrent.libtorrentState === StateT.DOWNLOADING ||
+        torrent.libtorrentState === StateT.DOWNLOADING_METADATA ||
+        torrent.libtorrentState === StateT.ALLOCATING ||
+        torrent.libtorrentState === StateT.CHECKING_FILES ||
+        torrent.libtorrentState === StateT.CHECKING_RESUME_DATA)
     })
   }
 
   @computed get torrentsSeeding () {
     return this.torrents.filter(function (torrent) {
-      return torrent.state === StateT.SEEDING
+      return torrent.libtorrentState === StateT.SEEDING
     })
   }
 
   @computed get torrentsCompleted () {
     return this.torrents.filter(function (torrent) {
-      return torrent.state === StateT.FINISHED || torrent.state === StateT.SEEDING
+      return torrent.libtorrentState === StateT.FINISHED || torrent.libtorrentState === StateT.SEEDING
     })
   }
 
   @computed get torrentsChecking () {
     return this.torrents.filter(function (torrent) {
-      return torrent.state === StateT.CHECKING_FILES || torrent.state === StateT.CHECKING_RESUME_DATA
+      return torrent.libtorrentState === StateT.CHECKING_FILES || torrent.libtorrentState === StateT.CHECKING_RESUME_DATA
     })
   }
 
   @action
   removeTorrent (infoHash) {
-    this.session.removeTorrent(infoHash, (err, result) => {
+    this.session.removeTorrent(infoHash, (err) => {
       if (err) console.log(err)
     })
   }
