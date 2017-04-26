@@ -20,7 +20,7 @@ bcoin.set({ useWorkers: false })
 
 // Use of pure js bcoin library because electron doesn't compile with openssl
 // which is needed.
-process.env.BCOIN_NO_NATIVE = '1'
+// process.env.BCOIN_NO_NATIVE = '1'
 
 // Torrent content save path
 const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream', 'download', path.sep)
