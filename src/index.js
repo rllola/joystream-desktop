@@ -7,6 +7,7 @@ import levelup from 'levelup'
 import { Session } from 'joystream-node'
 import TorrentsStorage from './db/Torrents'
 import SessionConnector from './db/Torrents/SessionConnector'
+const constants = require('./constants')
 
 // React
 import React from 'react'
@@ -62,8 +63,8 @@ const session = new Session({
   port: process.env.LIBTORRENT_PORT
 })
 
-// post torrent updates every 3 seconds. Is this the best place for it?
-setInterval(() => session.postTorrentUpdates(), 3000)
+// Request regular torrent state updates
+setInterval(() => session.postTorrentUpdates(), constants.POST_TORRENT_UPDATES_INTERVAL)
 
 // connect the session to the database
 let connector = new SessionConnector({
