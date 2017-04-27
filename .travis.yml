@@ -17,8 +17,11 @@ addons:
     packages:
     - rpm
 before_install:
-  - 'if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CFLAGS="-I/usr/local/opt/openssl/include $CFLAGS" LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"; fi'
-  - pip install conan
+  # 2016-10: Apple doesn't include openssl any more because of security
+  # problems openssl had. Manually specify path to includes/libs.
+  - if [ "$TRAVIS_OS_NAME" = osx ]; then brew install openssl; fi
+  - if [ "$TRAVIS_OS_NAME" = osx ]; then export CPPFLAGS="-I/usr/local/opt/openssl/include"; fi
+  - if [ "$TRAVIS_OS_NAME" = osx ]; then export LDFLAGS="-L/usr/local/opt/openssl/lib"; fi  - pip install conan
   - conan remote add joystream https://conan.joystream.co:9300 True
   - conan user travis -p trav444 -r=joystream
 install:
@@ -27,7 +30,7 @@ install:
 script:
   - npm test
 before_deploy:
-  - ln -s ~/.conan ~/.electron-gyp
+  - ln -s $HOME/.conan/ $HOME/.electron-gyp/
 deploy:
   provider: script
   skip_cleanup: true
