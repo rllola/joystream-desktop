@@ -17,6 +17,7 @@ addons:
     packages:
     - rpm
 before_install:
+  - 'if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CFLAGS="-I/usr/local/opt/openssl/include $CFLAGS" LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"; fi'
   - pip install conan
   - conan remote add joystream https://conan.joystream.co:9300 True
   - conan user travis -p trav444 -r=joystream
