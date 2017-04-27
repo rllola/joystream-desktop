@@ -2,9 +2,12 @@
   "name": "joystream-demo",
   "version": "0.0.0",
   "description": "A minimal Joystream application in electron",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron-forge start",
+    "test": "echo 'No test !' && exit 0",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "keywords": [
     "Joystream",
@@ -15,22 +18,27 @@
   "devDependencies": {
     "babel": "^6.23.0",
     "babel-eslint": "^7.2.1",
-    "babel-plugin-transform-async-to-generator": "^6.22.0",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.4.0",
     "babel-preset-es2015": "^6.24.0",
-    "babel-preset-react": "^6.23.0",
+    "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.22.0",
+    "cmake-js": "^3.4.1",
     "electron-prebuilt-compile": "1.6.2",
     "mobx": "^3.1.8",
     "mobx-react": "^4.1.5",
     "mobx-react-devtools": "^4.2.11",
+    "node-gyp": "^3.6.0",
     "webpack": "^2.3.1"
   },
   "dependencies": {
     "bcoin": "1.0.0-beta.12",
     "bootstrap": "^4.0.0-alpha.6",
     "debug": "^2.6.0",
+    "electron-compile": "^6.4.0",
+    "joystream-node": "git+ssh://git@github.com/JoyStream/joystream-node.git#development",
     "jquery": "^3.2.1",
     "lodash": "^4.17.4",
     "mobx": "^3.1.7",
@@ -44,5 +52,34 @@
   },
   "standard": {
     "parser": "babel-eslint"
+  },
+  "config": {
+    "forge": {
+      "make_targets": {
+        "win32": [
+          "squirrel"
+        ],
+        "darwin": [
+          "zip"
+        ],
+        "linux": [
+          "deb",
+          "rpm"
+        ]
+      },
+      "electronPackagerConfig": {},
+      "electronWinstallerConfig": {
+        "name": "Joystream"
+      },
+      "electronInstallerDebian": {},
+      "electronInstallerRedhat": {},
+      "github_repository": {
+        "owner": "JoyStream",
+        "name": "joystream-electron"
+      },
+      "windowsStoreConfig": {
+        "packageName": "Joystream"
+      }
+    }
   }
 }
