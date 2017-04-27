@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 
-import TorrentList from '../../components/TorrentList'
+import CompletedTorrentList from './components/CompletedTorrentList'
 import AddTorrentForm from '../../components/AddTorrentForm'
 
 @inject('sessionStore')
@@ -15,7 +15,7 @@ class Completed extends Component {
         <AddTorrentForm onSubmit={this.props.sessionStore.handleAddTorrent} />
         <br />
         <br />
-        <TorrentList torrents={this.props.sessionStore.torrentsCompleted} />
+        <CompletedTorrentList torrents={this.props.sessionStore.torrentsCompleted} />
       </div>
     )
   }
