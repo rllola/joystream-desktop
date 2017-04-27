@@ -31,7 +31,7 @@ install:
 script:
   - npm test
 before_deploy:
-  - ln -s $HOME/.conan/ $HOME/.electron-gyp/
+  - ln -sf $HOME/.conan $HOME/.electron-gyp
 deploy:
   provider: script
   skip_cleanup: true
