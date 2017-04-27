@@ -8,6 +8,8 @@ import bcoin from 'bcoin'
 import path from 'path'
 import os from 'os'
 import { Session } from 'joystream-node'
+import TorrentsStorage from './db/Torrents'
+const constants = require('./constants')
 
 // React
 import React from 'react'
@@ -24,6 +26,20 @@ bcoin.set({ useWorkers: false })
 
 // Torrent content save path
 const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream', 'download', path.sep)
+
+// Application database path
+const dbPath = path.join(os.homedir(), 'joystream', 'data', path.sep)
+
+let db = TorrentsStorage.open(dbPath, {
+  // 'table' names to use
+  'torrents': 'torrents',
+  'resume_data': 'resume_data',
+  'torrent_settings': 'torrent_settings'
+})
+
+db.on('error', function (err) {
+  console.log(err)
+})
 
 // Create SPVNode
 const spvnode = new bcoin.spvnode({
@@ -45,21 +61,38 @@ const session = new Session({
   port: process.env.LIBTORRENT_PORT
 })
 
+// Create mobx session store
+let sessionStore = new SessionStore({session, savePath, db})
+
+// Request regular torrent state updates
+setInterval(() => session.postTorrentUpdates(), constants.POST_TORRENT_UPDATES_INTERVAL)
+
+// Load persisted torrents from database into session store
+db.forEachTorrent(function (params) {
+  sessionStore.loadTorrent(params).then((torrent) => {
+    if (torrent) {
+      // success loading torrent
+    } else {
+      // loading torrent failed
+    }
+  })
+})
+
 spvnode
   .open()
   .then(async function () {
-    console.log('spvnode opened')
-    spvnode.connect()
-
     const wallet = await spvnode.plugins.walletdb.get('primary')
-
-    const stores = {
+    await spvnode.connect()
+    spvnode.startSync()
+    return wallet
+  }).then((wallet) => {
+    return {
       walletStore: new WalletStore(wallet),
-      sessionStore: new SessionStore({session, savePath})
+      sessionStore
     }
-
+  }).then((stores) => {
     ReactDOM.render(
       <Application stores={stores} />,
       document.getElementById('root')
     )
-})
+  })

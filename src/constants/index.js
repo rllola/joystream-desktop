@@ -1,0 +1,3 @@
+export default {
+  POST_TORRENT_UPDATES_INTERVAL: 3000
+}
