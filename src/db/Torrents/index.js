@@ -1,49 +1,19 @@
-class Storage {
-  constructor (db) {
-    this.db = db
-  }
+import levelup from 'levelup'
+import Store from './store'
+import namespace from 'level-namespace'
 
-  save (value) {
-    return new Promise((resolve, reject) => {
-      this.db.put(value.infoHash, value, (err) => {
-        if (err) return reject(err)
-        resolve()
-      })
-    })
-  }
+function open (dbPath, namespaces) {
+  let db = levelup(dbPath, {
+    keyEncoding: 'utf8',
+    valueEncoding: 'json',
+    createIfMissing: true
+  }, function (err, db) {
+    if (err) return console.log('failed to open level db from: ', dbPath, err)
+  })
 
-  remove (key) {
-    return new Promise((resolve, reject) => {
-      this.db.del(key, (err) => {
-        if (err) return reject(err)
-        resolve()
-      })
-    })
-  }
+  namespace(db)
 
-  getAll () {
-    return new Promise((resolve, reject) => {
-      let all = []
-
-      this.db.valueStream()
-        .on('data', function (data) {
-          all.push(data)
-        })
-        .on('error', reject)
-        .on('end', function () {
-          resolve(all)
-        })
-    })
-  }
-
-  getOne (key) {
-    return new Promise((resolve, reject) => {
-      this.db.get(key, function (err, value) {
-        if (err) return resolve(null)
-        resolve(value)
-      })
-    })
-  }
+  return new Store(db, namespaces)
 }
 
-export default Storage
+export default {open}

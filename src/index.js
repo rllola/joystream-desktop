@@ -3,10 +3,8 @@ import 'babel-polyfill'
 import bcoin from 'bcoin'
 import path from 'path'
 import os from 'os'
-import levelup from 'levelup'
 import { Session } from 'joystream-node'
 import TorrentsStorage from './db/Torrents'
-import SessionConnector from './db/Torrents/SessionConnector'
 const constants = require('./constants')
 
 // React
@@ -32,16 +30,16 @@ const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream', '
 // Application database path
 const dbPath = path.join(os.homedir(), 'joystream', 'data', path.sep)
 
-// Initialise database
-let db = levelup(dbPath, {
-  keyEncoding: 'utf8',
-  valueEncoding: 'json',
-  createIfMissing: true
-}, function (err, db) {
-  if (err) return console.log('failed to open level db', err)
+let db = TorrentsStorage.open(dbPath, {
+  // 'table' names to use
+  'torrents': 'torrents',
+  'resume_data': 'resume_data',
+  'torrent_settings': 'torrent_settings'
 })
 
-require('level-namespace')(db)
+db.on('error', function (err) {
+  console.log(err)
+})
 
 // Create SPVNode
 const spvnode = new bcoin.spvnode({
@@ -63,38 +61,38 @@ const session = new Session({
   port: process.env.LIBTORRENT_PORT
 })
 
+// Create mobx session store
+let sessionStore = new SessionStore({session, savePath, db})
+
 // Request regular torrent state updates
 setInterval(() => session.postTorrentUpdates(), constants.POST_TORRENT_UPDATES_INTERVAL)
 
-// connect the session to the database
-let connector = new SessionConnector({
-  session,
-  torrents: new TorrentsStorage(db.namespace('torrents')),
-  resumeData: new TorrentsStorage(db.namespace('fastresume'))
+// Load persisted torrents from database into session store
+db.forEachTorrent(function (params) {
+  sessionStore.loadTorrent(params).then((torrent) => {
+    if (torrent) {
+      // success loading torrent
+    } else {
+      // loading torrent failed
+    }
+  })
 })
-
-connector.on('error', (err) => {
-  console.log(err)
-})
-
-// load all torrents from database
-connector.load()
 
 spvnode
   .open()
   .then(async function () {
-    console.log('spvnode opened')
-    spvnode.connect()
-
     const wallet = await spvnode.plugins.walletdb.get('primary')
-
-    const stores = {
+    await spvnode.connect()
+    spvnode.startSync()
+    return wallet
+  }).then((wallet) => {
+    return {
       walletStore: new WalletStore(wallet),
-      sessionStore: new SessionStore({session, savePath})
+      sessionStore
     }
-
+  }).then((stores) => {
     ReactDOM.render(
       <Application stores={stores} />,
       document.getElementById('root')
     )
-})
+  })
