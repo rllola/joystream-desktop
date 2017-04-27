@@ -26,6 +26,8 @@ install:
   - npm install
 script:
   - npm test
+before_deploy:
+  - ln -s ~/.conan ~/.electron-gyp
 deploy:
   provider: script
   skip_cleanup: true
