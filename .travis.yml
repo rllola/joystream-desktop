@@ -16,12 +16,10 @@ addons:
   apt:
     packages:
     - rpm
-before_install:
+install:
   - pip install --user conan
   - conan remote add joystream https://conan.joystream.co:9300 True
   - conan user travis -p trav444 -r=joystream
-
-install:
   - npm install -g electron-forge
   - npm install
 script:
