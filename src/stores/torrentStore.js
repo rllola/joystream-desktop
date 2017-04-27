@@ -21,24 +21,21 @@ class Torrent {
 
     this.setStatus(status)
 
-    torrent.on('state_update_alert', this.onStateUpdated)
+    torrent.on('state_update_alert', this.onStateUpdated.bind(this))
 
-    torrent.on('metadata', this.onMetadataReceived)
+    torrent.on('metadata', this.onMetadataReceived.bind(this))
 
-    torrent.on('torrent_finished_alert', this.onFinished)
+    torrent.on('torrent_finished_alert', this.onFinished.bind(this))
   }
 
-  @action.bound
   onStateUpdated (state, progress) {
     this.setStatus({state, progress})
   }
 
-  @action.bound
   onMetadataReceived (torrentInfo) {
     this.setTorrentInfo(torrentInfo)
   }
 
-  @action.bound
   onFinished () {
     // Happens when a torrent switches from being a downloader to a seed.
     // It will only be generated once per torrent.
