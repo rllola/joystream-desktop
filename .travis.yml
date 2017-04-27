@@ -1,0 +1,27 @@
+dist: trusty
+sudo: required
+language: node_js
+node_js:
+  - "7"
+os:
+  - osx
+  - linux
+addons:
+  apt:
+    sources:
+      - george-edison55-precise-backports
+    packages:
+      - cmake
+      - cmake-data
+  apt:
+    packages:
+    - rpm
+before_install:
+  - pip install conan
+  - conan remote add joystream https://conan.joystream.co:9300 True
+  - conan user travis -p trav444 -r=joystream
+install:
+  - npm install -g electron-forge
+  - npm install
+script:
+  - npm test
