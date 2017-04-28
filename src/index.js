@@ -30,6 +30,9 @@ const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream', '
 // Application database path
 const dbPath = path.join(os.homedir(), 'joystream', 'data', path.sep)
 
+// Path to bcoin databases (spvchain db and wallet db)
+const walletPrefix = process.env.WALLET_PATH || path.join(os.homedir(), 'joystream', 'wallet')
+
 let db = TorrentsStorage.open(dbPath, {
   // 'table' names to use
   'torrents': 'torrents',
@@ -43,7 +46,8 @@ db.on('error', function (err) {
 
 // Create SPVNode
 const spvnode = new bcoin.spvnode({
-  prefix: __dirname,
+  prefix: walletPrefix,
+  db: 'leveldb',
   network: 'testnet',
   port: process.env.WALLET_PORT,
   plugins: ['walletdb'],
@@ -79,12 +83,8 @@ db.forEachTorrent(function (params) {
 })
 
 spvnode
-  .open()
-  .then(async function () {
-    const wallet = await spvnode.plugins.walletdb.get('primary')
-    await spvnode.connect()
-    spvnode.startSync()
-    return wallet
+  .open().then(async function () {
+    return await spvnode.plugins.walletdb.get('primary')
   }).then((wallet) => {
     return {
       walletStore: new WalletStore(wallet),
@@ -95,4 +95,7 @@ spvnode
       <Application stores={stores} />,
       document.getElementById('root')
     )
+  }).then(async function () {
+    await spvnode.connect()
+    spvnode.startSync()
   })
