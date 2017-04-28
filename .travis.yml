@@ -31,6 +31,7 @@ install:
 script:
   - npm test
 before_deploy:
+  - mkdir ~/.electron-gyp
   - ln -s $HOME/.conan $HOME/.electron-gyp/.conan
 deploy:
   provider: script
