@@ -1,5 +1,5 @@
 {
-  "name": "joystream",
+  "name": "joystream-demo",
   "version": "0.0.0",
   "description": "A minimal Joystream application in electron",
   "main": "src/main.js",
@@ -25,7 +25,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.22.0",
     "cmake-js": "^3.4.1",
-    "electron-prebuilt-compile": "1.6.2",
+    "electron-prebuilt-compile": "1.6.4",
     "mobx-react-devtools": "^4.2.11",
     "node-gyp": "^3.6.0",
     "webpack": "^2.3.1"
