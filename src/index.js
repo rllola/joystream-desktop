@@ -9,6 +9,8 @@ import path from 'path'
 import os from 'os'
 import { Session } from 'joystream-node'
 import TorrentsStorage from './db/Torrents'
+import mkdirp from 'mkdirp'
+
 const constants = require('./constants')
 
 // React
@@ -45,6 +47,8 @@ db.on('error', function (err) {
 })
 
 // Create SPVNode
+mkdirp.sync(walletPrefix)
+
 const spvnode = new bcoin.spvnode({
   prefix: walletPrefix,
   db: 'leveldb',
