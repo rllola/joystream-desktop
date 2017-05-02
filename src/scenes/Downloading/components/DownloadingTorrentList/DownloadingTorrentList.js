@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import {observer} from 'mobx-react'
-import Torrent from './components/Torrent'
+import { observer } from 'mobx-react'
+import DownloadingTorrent from './components/DownloadingTorrent'
 
 @observer
-class TorrentList extends Component {
+class DownloadingTorrentList extends Component {
   render () {
     return (
       <table className="table">
@@ -17,7 +17,7 @@ class TorrentList extends Component {
         </thead>
         <tbody>
           {this.props.torrents.map((torrent, index) => {
-            return <Torrent key={torrent.infoHash} torrent={torrent} />
+            return <DownloadingTorrent key={torrent.infoHash} torrent={torrent} />
           })}
         </tbody>
       </table>
@@ -25,4 +25,4 @@ class TorrentList extends Component {
   }
 }
 
-export default TorrentList
+export default DownloadingTorrentList

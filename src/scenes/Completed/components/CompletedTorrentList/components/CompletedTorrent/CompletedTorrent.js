@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import {observer} from 'mobx-react'
+import { observer } from 'mobx-react'
 
 @observer
-class Torrent extends Component {
+class CompletedTorrent extends Component {
   render () {
     let torrent = this.props.torrent
     return (
@@ -16,4 +16,4 @@ class Torrent extends Component {
   }
 }
 
-export default Torrent
+export default CompletedTorrent
