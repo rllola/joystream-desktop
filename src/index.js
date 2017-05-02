@@ -26,6 +26,9 @@ import Application from './scenes/Application'
 // Disable workers which are not available in electron
 bcoin.set({ useWorkers: false })
 
+// Create default application data directory
+mkdirp.sync(path.join(os.homedir(), 'joystream'))
+
 // Torrent content save path
 const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream', 'download', path.sep)
 
