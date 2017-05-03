@@ -48,6 +48,7 @@ class SeedingTorrent extends Component {
   }
 
   render () {
+    let torrent = this.props.torrent
     return (
       <tr>
         <td>{torrent.name}</td>
