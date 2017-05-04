@@ -4,6 +4,9 @@ import { Provider } from 'mobx-react'
 import MobxReactDevTools from 'mobx-react-devtools'
 import { observer } from 'mobx-react'
 
+
+import Header from '../Header'
+
 // Components
 import Sidebar from './components/Sidebar'
 
@@ -21,20 +24,24 @@ class Application extends Component {
 
   render () {
     return (
-      <Router>
-        <Provider {...this.props.stores}>
-          <div className="container-fluid">
-            <div className="row">
-              <Sidebar />
-              <Route exact path="/" component={Downloading} />
-              <Route exact path="/seeding" component={Seeding} />
-              <Route exact path="/completed" component={Completed} />
-              <Route exact path="/wallet" component={Wallet} />
-              <div><MobxReactDevTools/></div>
+      <div>
+        <Header>
+        </Header>
+        <Router>
+          <Provider {...this.props.stores}>
+            <div className="container-fluid">
+              <div className="row">
+                <Sidebar />
+                <Route exact path="/" component={Downloading} />
+                <Route exact path="/seeding" component={Seeding} />
+                <Route exact path="/completed" component={Completed} />
+                <Route exact path="/wallet" component={Wallet} />
+                <div><MobxReactDevTools/></div>
+              </div>
             </div>
-          </div>
-        </Provider>
-      </Router>
+          </Provider>
+        </Router>
+      </div>
     )
   }
 }

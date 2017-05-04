@@ -1,0 +1,145 @@
+@import 'constants';
+
+.context-menu {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border: 1px solid #D6D6D6;
+  border-radius: 5px;
+  width: 289px;
+  padding: 2px;
+
+  .item {
+    display: flex;
+    padding: 15px;
+
+    .icon {
+      margin-right: 15px; /** same as item.margin **/
+      background-repeat: no-repeat;
+      min-width: 22px;
+    }
+
+    .explainer-column {
+      flex-grow: 1;
+
+      .label {
+        font-size: 18px;
+        color: $menu-primary-text-color;
+      }
+
+      .description {
+        font-size: 12px;
+        color: $menu-secondary-text-color;
+        margin-top: 7px;
+      }
+    }
+  }
+
+  .swarm-item {
+    cursor: default;
+
+    .icon {
+      background-image: url('../img/icon/swarm.svg');
+    }
+
+    .information {
+      display: flex;
+      flex-grow: row;
+      flex-wrap: wrap;
+
+      .info-box {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+        width: 70px;
+
+        .title {
+          font-size: 12px;
+          color: $menu-secondary-text-color;
+        }
+
+        .value {
+          font-size: 20px;
+          color: $menu-primary-text-color;
+        }
+      }
+    }
+  }
+
+  .clickable {
+    cursor: pointer;
+
+    .pause {
+      background-image: url('../img/icon/pause.svg')
+    }
+
+    .continue {
+      background-image: url('../img/icon/continue.svg');
+    }
+
+    .change-price {
+      background-image: url('../img/icon/change-price.svg');
+    }
+
+    .change-price-disabled {
+      background-image: url('../img/icon/change-price-disabled.svg');
+    }
+
+    .remove {
+      background-image: url('../img/icon/remove.svg');
+    }
+
+    .remove-and-delete-data {
+      background-image: url('../img/icon/trash.svg');
+    }
+  }
+
+  .clickable:hover {
+    color: white;
+    background-color: #778EF8;
+
+    .pause {
+      background-image: url('../img/icon/pause-hover.svg')
+    }
+
+    .continue {
+      background-image: url('../img/icon/continue-hover.svg');
+    }
+
+    .change-price {
+      background-image: url('../img/icon/change-price-hover.svg');
+    }
+
+    .change-price-disabled {
+      background-image: url('../img/icon/change-price-disabled-hover.svg');
+    }
+
+    .remove {
+      background-image: url('../img/icon/remove-hover.svg');
+    }
+
+    .remove-and-delete-data {
+      background-image: url('../img/icon/trash-hover.svg');
+    }
+
+    .explainer-column {
+
+      .label {
+        font-size: 18px;
+        color: white;
+      }
+
+      .description {
+        color: white;
+      }
+    }
+  }
+
+  .separator {
+    border-top: solid 1px #EDEDED;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-left: 53px; /** should be deduced from other values **/
+    margin-right: 15px;
+  }
+}
