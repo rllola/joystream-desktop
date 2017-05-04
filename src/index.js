@@ -16,12 +16,10 @@ const constants = require('./constants')
 // React
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { AppContainer } from 'react-hot-loader'
 
 import WalletStore from './stores/walletStore'
 import SessionStore from './stores/sessionStore'
-
-// Main component
-import Application from './scenes/Application'
 
 // Disable workers which are not available in electron
 bcoin.set({ useWorkers: false })
@@ -101,13 +99,40 @@ spvnode
       sessionStore
     }
   }).then((stores) => {
-    ReactDOM.render(
-      <Application stores={stores} />,
-      document.getElementById('root')
-    )
+
+    // Bind renderer to stores
+    // not sure how to pass arguments to hot.accept below, so
+    // this is next best thing
+    var store_renderer = renderer.bind(null, stores)
+
+    // first time render
+    store_renderer()
+
+    if (module.hot) {
+      module.hot.accept(store_renderer)
+    }
+
   }).then(async function () {
     await spvnode.connect()
     spvnode.startSync()
   }).catch(function (err) {
     console.log(err)
   })
+
+  // Renderer:
+  // Put here temporarily, cleaned up when this entire index file is refactored
+  function renderer(stores) {
+
+    console.log("trying to render")
+
+    // NB: We have to re-require Application every time, or else this won't work
+    var Application = require('./scenes/Application').default
+
+    ReactDOM.render(
+        <AppContainer>
+        <Application stores={stores} />
+        </AppContainer>
+      ,
+      document.getElementById('root')
+    )
+  }
