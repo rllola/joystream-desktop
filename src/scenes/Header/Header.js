@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, BrowserRouter, Route} from 'react-router-dom'
 
 class Header extends Component {
 
@@ -8,6 +8,7 @@ class Header extends Component {
     /** we need some state here to drive button and wallet stats **/
   }
 
+  // Consider factor out the individual buttons? the header will need onclick handlers anyway.
   render () {
     return (
       <header className="header">
@@ -15,10 +16,10 @@ class Header extends Component {
         <img className="logo" src="img/logo-contrast.svg"/>
 
         <nav>
-          <div className="button">Downloading</div>
-          <div className="button">Uploading</div>
-          <div className="button">Completed</div>
-          <div className="button" id="more-button"></div>
+            <Link to="/" > <div className="button">Downloading</div> </Link>
+            <Link to="/seeding" > <div className="button">Uploading</div> </Link>
+            <Link to="/completed" > <div className="button">Completed</div> </Link>
+            <div className="button" id="more-button"></div>
         </nav>
 
         <div className="flex-spacer"></div>

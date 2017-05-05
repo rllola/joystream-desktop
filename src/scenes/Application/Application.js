@@ -24,24 +24,25 @@ class Application extends Component {
 
   render () {
     return (
-      <div>
-        <Header>
-        </Header>
         <Router>
           <Provider {...this.props.stores}>
-            <div className="container-fluid">
-              <div className="row">
-                <Sidebar />
-                <Route exact path="/" component={Downloading} />
-                <Route exact path="/seeding" component={Seeding} />
-                <Route exact path="/completed" component={Completed} />
-                <Route exact path="/wallet" component={Wallet} />
-                <div><MobxReactDevTools/></div>
-              </div>
+
+            <div> { /* Provider needs a single child */ }
+
+              <Header>
+              </Header>
+
+              <Route path="/" component={Downloading} />
+              <Route exact path="/seeding" component={Seeding} />
+              <Route exact path="/completed" component={Completed} />
+              <Route exact path="/wallet" component={Wallet} />
+
+              <div><MobxReactDevTools/></div>
+
             </div>
+
           </Provider>
         </Router>
-      </div>
     )
   }
 }
