@@ -28,6 +28,7 @@ class Header extends Component {
           <span id="label">balance</span>
           <span id="quantity">91234 mB</span>
         </div>
+
       </header>
     )
   }

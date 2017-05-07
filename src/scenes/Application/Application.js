@@ -18,6 +18,7 @@ import Wallet from '../Wallet'
 
 @observer
 class Application extends Component {
+
   constructor(props) {
     super(props)
   }
@@ -25,7 +26,7 @@ class Application extends Component {
   render () {
     return (
         <Router>
-          <Provider {...this.props.stores}>
+          <Provider {...this.props.stores}> { /* The merits of this providers seems dubious, reconsider later */ }
 
             <div> { /* Provider needs a single child */ }
 
