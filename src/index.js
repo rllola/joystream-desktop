@@ -80,15 +80,26 @@ let sessionStore = new SessionStore({session, savePath, db})
 setInterval(() => session.postTorrentUpdates(), constants.POST_TORRENT_UPDATES_INTERVAL)
 
 // Load persisted torrents from database into session store
-db.forEachTorrent(function (params) {
-  sessionStore.loadTorrent(params).then((torrent) => {
-    if (torrent) {
-      // success loading torrent
-    } else {
-      // loading torrent failed
-    }
+db.getInfoHashes()
+  .then((infoHashes) => {
+    return Promise.all(infoHashes.map((infoHash) => {
+      return db.getTorrentAddParameters(infoHash)
+    }))
   })
-})
+  .then((parameters) => {
+    return Promise.all(parameters.map((params) => {
+      if(params) {
+        return sessionStore.loadTorrent(params)
+      }
+      return null
+    }))
+  })
+  .then((torrents) => {
+    return torrents.filter((torrent) => torrent !== null)
+  })
+  .then((torrents) => {
+    console.log('Loaded ', torrents.length, ' torrents from db')
+  })
 
 spvnode
   .open().then(async function () {
