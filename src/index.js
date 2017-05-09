@@ -4,12 +4,15 @@ process.env.BCOIN_NO_NATIVE = '1'
 
 // babel-polyfill for generator (async/await)
 import 'babel-polyfill'
-import bcoin from 'bcoin'
+
 import path from 'path'
 import os from 'os'
+import mkdirp from 'mkdirp'
 import { Session } from 'joystream-node'
 import TorrentsStorage from './db/Torrents'
-import mkdirp from 'mkdirp'
+import bcoin from 'bcoin'
+
+import ApplicationStore from './stores/ApplicationStore'
 
 const constants = require('./constants')
 
@@ -18,38 +21,29 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { AppContainer } from 'react-hot-loader'
 
-import WalletStore from './stores/walletStore'
-import SessionStore from './stores/sessionStore'
-
 // Disable workers which are not available in electron
 bcoin.set({ useWorkers: false })
 
 // Create default application data directory
 mkdirp.sync(path.join(os.homedir(), 'joystream'))
 
-// Torrent content save path
-const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream', 'download', path.sep)
-
 // Application database path
 const dbPath = path.join(os.homedir(), 'joystream', 'data', path.sep)
 
-// Path to bcoin databases (spvchain db and wallet db)
-const walletPrefix = process.env.WALLET_PATH || path.join(os.homedir(), 'joystream', 'wallet')
-
-let db = TorrentsStorage.open(dbPath, {
+const db = TorrentsStorage.open(dbPath, {
   // 'table' names to use
   'torrents': 'torrents',
   'resume_data': 'resume_data',
   'torrent_settings': 'torrent_settings'
 })
 
-db.on('error', function (err) {
-  console.log(err)
-})
+// Path to bcoin databases (spvchain db and wallet db)
+const walletPrefix = process.env.WALLET_PATH || path.join(os.homedir(), 'joystream', 'wallet')
 
-// Create SPVNode
+// Create wallet directory
 mkdirp.sync(walletPrefix)
 
+// Create SPVNode
 const spvnode = new bcoin.spvnode({
   prefix: walletPrefix,
   db: 'leveldb',
@@ -64,86 +58,47 @@ const spvnode = new bcoin.spvnode({
   })
 })
 
-spvnode.on('error', function (err) {
-  console.log(err.message)
-})
-
 // Create joystream libtorrent session
 const session = new Session({
   port: process.env.LIBTORRENT_PORT
 })
 
-// Create mobx session store
-let sessionStore = new SessionStore({session, savePath, db})
+// Torrent content save path
+const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream', 'download', path.sep)
 
-// Request regular torrent state updates
-setInterval(() => session.postTorrentUpdates(), constants.POST_TORRENT_UPDATES_INTERVAL)
+// create ApplicationStore instance
+const applicationStore = new ApplicationStore({session, savePath, spvnode, db})
 
-// Load persisted torrents from database into session store
-db.getInfoHashes()
-  .then((infoHashes) => {
-    return Promise.all(infoHashes.map((infoHash) => {
-      return db.getTorrentAddParameters(infoHash)
-    }))
-  })
-  .then((parameters) => {
-    return Promise.all(parameters.map((params) => {
-      if(params) {
-        return sessionStore.loadTorrent(params)
-      }
-      return null
-    }))
-  })
-  .then((torrents) => {
-    return torrents.filter((torrent) => torrent !== null)
-  })
-  .then((torrents) => {
-    console.log('Loaded ', torrents.length, ' torrents from db')
-  })
+applicationStore.once('ready', function (stores) {
+  // add the application state to the stores
+  stores.applicationStore = applicationStore
 
-spvnode
-  .open().then(async function () {
-    return await spvnode.plugins.walletdb.get('primary')
-  }).then((wallet) => {
-    return {
-      walletStore: new WalletStore(wallet),
-      sessionStore
-    }
-  }).then((stores) => {
-
-    // Bind renderer to stores
-    // not sure how to pass arguments to hot.accept below, so
-    // this is next best thing
-    var store_renderer = renderer.bind(null, stores)
-
-    // first time render
-    store_renderer()
-
-    if (module.hot) {
-      module.hot.accept(store_renderer)
-    }
-
-  }).then(async function () {
-    await spvnode.connect()
-    spvnode.startSync()
-  }).catch(function (err) {
-    console.log(err)
-  })
-
-  // Renderer:
-  // Put here temporarily, cleaned up when this entire index file is refactored
-  function renderer(stores) {
-
-    console.log("trying to render")
-
+  function render () {
     // NB: We have to re-require Application every time, or else this won't work
-    var Application = require('./scenes/Application').default
+    const Application = require('./scenes/Application').default
 
     ReactDOM.render(
-        <AppContainer>
+      <AppContainer>
         <Application stores={stores} />
-        </AppContainer>
+      </AppContainer>
       ,
       document.getElementById('root')
     )
   }
+
+  if (module.hot) {
+    module.hot.accept(render)
+  }
+
+  render()
+})
+
+function logError (err) {
+  console.error(err.message)
+}
+
+// Error logging
+db.on('error', logError)
+session.on('error', logError)
+spvnode.on('error', logError)
+applicationStore.on('error', logError)
