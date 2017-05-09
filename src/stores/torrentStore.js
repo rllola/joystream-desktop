@@ -9,27 +9,22 @@ class Torrent {
   @observable name = ''
 
   constructor (torrent) {
-    this.handle = torrent.handle
+    // Keep a reference to the underlying torrent instance to access the torrentPlugin
+    this.torrent = torrent
 
-    this.infoHash = this.handle.infoHash()
+    this.infoHash = torrent.handle.infoHash()
 
-    const torrentInfo = this.handle.torrentFile()
+    const torrentInfo = torrent.handle.torrentFile()
 
     this.setTorrentInfo(torrentInfo)
 
-    const status = this.handle.status()
+    const status = torrent.handle.status()
 
     this.setStatus(status)
-
-    torrent.on('state_update_alert', this.onStateUpdated.bind(this))
-
-    torrent.on('metadata', this.onMetadataReceived.bind(this))
-
-    torrent.on('torrent_finished_alert', this.onFinished.bind(this))
   }
 
-  onStateUpdated (state, progress) {
-    this.setStatus({state, progress})
+  onStateUpdated (statusUpdate) {
+    this.setStatus(statusUpdate)
   }
 
   onMetadataReceived (torrentInfo) {
