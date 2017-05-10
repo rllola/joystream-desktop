@@ -23,7 +23,7 @@ class Application extends EventEmitter {
     // Request regular torrent state updates
     this._intervalTorrentUpdates = setInterval(() => this._session.postTorrentUpdates(), constants.POST_TORRENT_UPDATES_INTERVAL)
 
-    this.walletStore = null
+    this.walletStore = new WalletStore()
 
     this.sessionStore = new SessionStore({
       session: this._session,
@@ -34,32 +34,37 @@ class Application extends EventEmitter {
     this.stores = {
       applicationStore: this,
       sessionStore: this.sessionStore,
-      walletStore: () => {
-        return this.walletStore
-      }
+      walletStore: this.walletStore
     }
   }
 
   async _initWallet () {
+    // Try to initialize spvnode
+    try {
+      await this._spvnode.open()
+    } catch (e) {
+      this.emit('error', e)
+      return
+    }
+
     // Try to open the wallet
-    await this._spvnode.open()
-    this._wallet = await this._spvnode.plugins.walletdb.get('primary')
+    try {
+      this._wallet = await this._spvnode.plugins.walletdb.get('primary')
+    } catch (e) {
+      this.emit('error', e)
+      return
+    }
+
+    // If wallet was successfully initialized update the walletStore
+    // and start syncing
+    this.walletStore.setWallet(this._wallet)
+
+    // Start synching
+    this._syncWallet()
   }
 
   async start () {
-
-    // Try to initialize wallet and walletStore
-    try {
-      await this._initWallet()
-
-      this.walletStore = new WalletStore(this._wallet)
-
-      // Start spv sync
-      this._syncWallet()
-
-    } catch (e) {
-      this.emit('error', e)
-    }
+    this._initWallet()
 
     this.loadingTorrents = true
 

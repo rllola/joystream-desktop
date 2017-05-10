@@ -2,19 +2,29 @@ import { observable, action } from 'mobx'
 import bcoin from 'bcoin'
 
 export default class WalletStore {
+  @observable ready = false
   @observable balance = 0
   @observable address = null
 
-  constructor (wallet) {
+  constructor () {
+    this.wallet = null
+  }
+
+  @action
+  setWallet (wallet) {
+    // only set the wallet once
+    if (this.wallet) return
+
     this.wallet = wallet
-
-    this.wallet.on('balance', this.onBalance.bind(this))
-
-    this.wallet.on('address', this.onAddress.bind(this))
 
     // setup initial state
     this.updateBalance()
     this.updateAddress()
+
+    this.ready = true
+
+    this.wallet.on('balance', this.onBalance.bind(this))
+    this.wallet.on('address', this.onAddress.bind(this))
   }
 
   onBalance (balance) {
