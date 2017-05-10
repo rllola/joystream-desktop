@@ -1,8 +1,6 @@
 import EventEmitter from 'events'
 import util from './util'
-import Partition from './partition'
-
-const debug = require('debug')('TorrentStore')
+import LevelPromiseInterface from './level-promise-interface'
 
 class Store extends EventEmitter {
 
@@ -10,9 +8,9 @@ class Store extends EventEmitter {
   constructor (db, namespaces) {
     super()
 
-    this.torrents = new Partition(db.namespace(namespaces['torrents']))
-    this.resume_data = new Partition(db.namespace(namespaces['resume_data']))
-    this.torrent_plugin_settings = new Partition(db.namespace(namespaces['torrent_plugin_settings']))
+    this.torrents = new LevelPromiseInterface(db.namespace(namespaces['torrents']))
+    this.resume_data = new LevelPromiseInterface(db.namespace(namespaces['resume_data']))
+    this.torrent_plugin_settings = new LevelPromiseInterface(db.namespace(namespaces['torrent_plugin_settings']))
   }
 
   saveTorrent (torrent) {

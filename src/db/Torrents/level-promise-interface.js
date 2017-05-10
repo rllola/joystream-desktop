@@ -1,4 +1,4 @@
-class Partition {
+class LevelPromiseInterface {
   constructor (db) {
     this.db = db
   }
@@ -67,4 +67,4 @@ class Partition {
   }
 }
 
-export default Partition
+export default LevelPromiseInterface
