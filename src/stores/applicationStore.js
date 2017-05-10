@@ -7,7 +7,6 @@ import WalletStore from './walletStore'
 import SessionStore from './sessionStore'
 
 class Application extends EventEmitter {
-  @observable ready = false
   @observable syncingWallet = false
   @observable loadingTorrents = false
 
@@ -85,14 +84,22 @@ class Application extends EventEmitter {
     this.syncingWallet = true
   }
 
+  // This should be the action to take when the application needs to be shutdown gracefully
+  @action
   stop () {
     // We probably want to keep processing alerts until we exit the application so we shouldn't
     // clear the interval?
     // clearInterval(this._intervalTorrentUpdates)
 
-    this._session.pause(() => {
+    this._session.pauseLibtorrent(() => {
 
     })
+
+    // Wait for torrents to complete generating resume data
+
+    // Close all open payment channels (broadcast settlement contracts)
+
+    // Minimizing tasks at shutdown is preferred
 
     this._spvnode.close()
   }

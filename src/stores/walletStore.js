@@ -10,7 +10,6 @@ export default class WalletStore {
     this.wallet = null
   }
 
-  @action
   setWallet (wallet) {
     // only set the wallet once
     if (this.wallet) return
