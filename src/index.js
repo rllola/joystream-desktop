@@ -9,7 +9,7 @@ import path from 'path'
 import os from 'os'
 import mkdirp from 'mkdirp'
 import { Session } from 'joystream-node'
-import TorrentsStorage from './db/Torrents'
+import TorrentsStorage from './db'
 import bcoin from 'bcoin'
 
 import ApplicationStore from './stores/ApplicationStore'
