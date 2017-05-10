@@ -10,9 +10,6 @@ export default class Session {
     this.session = session
     this.savePath = savePath
     this.db = db
-
-    // for debugging from console
-    if (window) window.SessionStore = this
   }
 
   @computed get torrentsDownloading () {
