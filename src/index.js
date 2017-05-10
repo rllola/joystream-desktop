@@ -34,7 +34,7 @@ const db = TorrentsStorage.open(dbPath, {
   // 'table' names to use
   'torrents': 'torrents',
   'resume_data': 'resume_data',
-  'torrent_settings': 'torrent_settings'
+  'torrent_plugin_settings': 'torrent_plugin_settings'
 })
 
 // Path to bcoin databases (spvchain db and wallet db)

@@ -12,7 +12,7 @@ class Store extends EventEmitter {
 
     this.torrents = new Partition(db.namespace(namespaces['torrents']))
     this.resume_data = new Partition(db.namespace(namespaces['resume_data']))
-    this.torrent_settings = new Partition(db.namespace(namespaces['torrent_settings']))
+    this.torrent_plugin_settings = new Partition(db.namespace(namespaces['torrent_plugin_settings']))
   }
 
   saveTorrent (torrent) {
@@ -27,15 +27,15 @@ class Store extends EventEmitter {
   }
 
   saveTorrentSettings (infoHash, settings) {
-    //encode settings ?
-    return this.torrent_settings.save(infoHash, settings)
+    // encode settings ?
+    return this.torrent_plugin_settings.save(infoHash, settings)
   }
 
   removeTorrent (infoHash) {
     return Promise.all([
       this.torrents.remove(infoHash),
       this.resume_data.remove(infoHash),
-      this.torrent_settings.remove(infoHash)
+      this.torrent_plugin_settings.remove(infoHash)
     ]).catch(err => this.emit('error', err))
   }
 
@@ -76,7 +76,7 @@ class Store extends EventEmitter {
   }
 
   async getTorrentSettings (infoHash) {
-    let settings = await this.torrent_settings.getOne(infoHash)
+    let settings = await this.torrent_plugin_settings.getOne(infoHash)
     // decode settings?
     return settings
   }
