@@ -31,7 +31,7 @@ mkdirp.sync(path.join(os.homedir(), 'joystream'))
 const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream', 'download', path.sep)
 
 // Application database path
-const dbPath = path.join(os.homedir(), 'joystream', 'data', path.sep)
+const dbPath = process.env.DATA_PATH || path.join(os.homedir(), 'joystream', 'data', path.sep)
 
 // Path to bcoin databases (spvchain db and wallet db)
 const walletPrefix = process.env.WALLET_PATH || path.join(os.homedir(), 'joystream', 'wallet')
