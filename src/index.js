@@ -28,7 +28,7 @@ bcoin.set({ useWorkers: false })
 const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream', 'download', path.sep)
 
 // Application database path
-const dbPath = path.join(os.homedir(), 'joystream', 'data', path.sep)
+const dbPath = process.env.DATA_PATH || path.join(os.homedir(), 'joystream', 'data', path.sep)
 
 let db = TorrentsStorage.open(dbPath, {
   // 'table' names to use
