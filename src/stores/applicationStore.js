@@ -19,7 +19,16 @@ class Application extends EventEmitter {
     this._wallet = null
     this._db = db
 
-    this.sessionStore = null
+    // TODO: Instead of passing db directly, pass in an object with @actions -> proxy db calls
+    this.sessionStore = new SessionStore({
+      session: this._session,
+      savePath: this._savePath,
+      db: this._db
+    })
+
+    // Request regular torrent state updates
+    this._intervalTorrentUpdates = setInterval(() => this._session.postTorrentUpdates(), constants.POST_TORRENT_UPDATES_INTERVAL)
+
     this.walletStore = null
 
     this._init()
@@ -45,16 +54,6 @@ class Application extends EventEmitter {
     await this._initWallet()
 
     if (this._wallet) this.walletStore = new WalletStore(this._wallet)
-
-    // TODO: Instead of passing db directly, pass in an object with @actions -> proxy db calls
-    this.sessionStore = new SessionStore({
-      session: this._session,
-      savePath: this._savePath,
-      db: this._db
-    })
-
-    // Request regular torrent state updates
-    this._intervalTorrentUpdates = setInterval(() => this._session.postTorrentUpdates(), constants.POST_TORRENT_UPDATES_INTERVAL)
 
     this.emit('ready', this.stores())
 
