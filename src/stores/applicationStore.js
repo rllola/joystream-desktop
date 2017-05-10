@@ -99,9 +99,14 @@ class Application extends EventEmitter {
 
     // Close all open payment channels (broadcast settlement contracts)
 
+    // Make sure db is flushed to disk
+
     // Minimizing tasks at shutdown is preferred
 
     this._spvnode.close()
+
+    // emit event to indicate that we are done.. maybe some cleanup routine
+    // is needed in index.js and call process.exit ?
   }
 
   async _loadTorrentsFromDb () {
