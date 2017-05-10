@@ -4,7 +4,7 @@ import QRCode from 'qrcode-react'
 
 // Wallet implemented as a functional stateless component
 function Wallet (props) {
-  const walletStore = props.walletStore
+  const walletStore = props.walletStore()
 
   if (walletStore == null) return null
 

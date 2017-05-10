@@ -69,29 +69,26 @@ const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream', '
 // create ApplicationStore instance
 const applicationStore = new ApplicationStore({session, savePath, spvnode, db})
 
-applicationStore.once('ready', function (stores) {
-  // add the application state to the stores
-  stores.applicationStore = applicationStore
+function render (stores) {
+  // NB: We have to re-require Application every time, or else this won't work
+  const Application = require('./scenes/Application').default
 
-  function render () {
-    // NB: We have to re-require Application every time, or else this won't work
-    const Application = require('./scenes/Application').default
+  ReactDOM.render(
+    <AppContainer>
+      <Application stores={stores} />
+    </AppContainer>
+    ,
+    document.getElementById('root')
+  )
+}
 
-    ReactDOM.render(
-      <AppContainer>
-        <Application stores={stores} />
-      </AppContainer>
-      ,
-      document.getElementById('root')
-    )
-  }
+if (module.hot) {
+  module.hot.accept(render.bind(null, applicationStore.stores))
+}
 
-  if (module.hot) {
-    module.hot.accept(render)
-  }
+render(applicationStore.stores)
 
-  render()
-})
+applicationStore.start()
 
 function logError (err) {
   console.error(err.message)

@@ -9,6 +9,7 @@ import SessionStore from './sessionStore'
 class Application extends EventEmitter {
   @observable ready = false
   @observable syncingWallet = false
+  @observable loadingTorrents = false
 
   constructor ({session, savePath, spvnode, db}) {
     super()
@@ -19,48 +20,59 @@ class Application extends EventEmitter {
     this._wallet = null
     this._db = db
 
-    // TODO: Instead of passing db directly, pass in an object with @actions -> proxy db calls
+    // Request regular torrent state updates
+    this._intervalTorrentUpdates = setInterval(() => this._session.postTorrentUpdates(), constants.POST_TORRENT_UPDATES_INTERVAL)
+
+    this.walletStore = null
+
     this.sessionStore = new SessionStore({
       session: this._session,
       savePath: this._savePath,
       db: this._db
     })
 
-    // Request regular torrent state updates
-    this._intervalTorrentUpdates = setInterval(() => this._session.postTorrentUpdates(), constants.POST_TORRENT_UPDATES_INTERVAL)
-
-    this.walletStore = null
-
-    this._init()
-  }
-
-  async _initWallet () {
-    if (this._wallet) return
-
-    // Try to open the wallet
-    try {
-      await this._spvnode.open()
-      try {
-        this._wallet = await this._spvnode.plugins.walletdb.get('primary')
-      } catch (e) {
-        console.log('Failed to get SPV Wallet')
+    this.stores = {
+      applicationStore: this,
+      sessionStore: this.sessionStore,
+      walletStore: () => {
+        return this.walletStore
       }
-    } catch (e) {
-      console.error('Failed to open SPV Node')
     }
   }
 
-  async _init () {
-    await this._initWallet()
+  async _initWallet () {
+    // Try to open the wallet
+    await this._spvnode.open()
+    this._wallet = await this._spvnode.plugins.walletdb.get('primary')
+  }
 
-    if (this._wallet) this.walletStore = new WalletStore(this._wallet)
+  async start () {
 
-    this.emit('ready', this.stores())
+    // Try to initialize wallet and walletStore
+    try {
+      await this._initWallet()
 
-    this.ready = true
+      this.walletStore = new WalletStore(this._wallet)
 
-    this._loadTorrentsFromDb()
+      // Start spv sync
+      this._syncWallet()
 
+    } catch (e) {
+      this.emit('error', e)
+    }
+
+    this.loadingTorrents = true
+
+    try {
+      await this._loadTorrentsFromDb()
+    } catch (e) {
+      this.emit('error', e)
+    }
+
+    this.loadingTorrents = false
+  }
+
+  async _syncWallet () {
     await this._spvnode.connect()
 
     this._spvnode.startSync()
@@ -69,14 +81,15 @@ class Application extends EventEmitter {
   }
 
   stop () {
-    clearInterval(this._intervalTorrentUpdates)
-  }
+    // We probably want to keep processing alerts until we exit the application so we shouldn't
+    // clear the interval?
+    // clearInterval(this._intervalTorrentUpdates)
 
-  stores () {
-    return {
-      sessionStore: this.sessionStore,
-      walletStore: this.walletStore
-    }
+    this._session.pause(() => {
+
+    })
+
+    this._spvnode.close()
   }
 
   async _loadTorrentsFromDb () {
