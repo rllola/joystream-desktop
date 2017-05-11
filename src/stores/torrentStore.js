@@ -1,5 +1,6 @@
 import { observable, action, computed } from 'mobx'
-import { StateT } from 'joystream-node'
+import { StateT, InnerStateTypeInfo } from 'joystream-node'
+import { TorrentMode } from '../utils'
 
 class Torrent {
 
@@ -8,11 +9,17 @@ class Torrent {
   @observable size = 0
   @observable name = ''
   @observable buyers = []
+  @observable mode
 
   constructor(torrent) {
     this.handle = torrent.handle
+
     // Keep a reference to the underlying torrent instance to access the torrentPlugin
     this.torrent = torrent
+
+    const mode = torrent.torrentPlugin.status.session.mode
+
+    this.setMode(mode)
 
     this.infoHash = torrent.handle.infoHash()
 
@@ -31,6 +38,14 @@ class Torrent {
     torrent.on('torrent_finished_alert', this.onFinished.bind(this))
 
     torrent.on('readyToSellTo', this.receivedNewBuyer.bind(this))
+
+    torrent.on('SessionToSellMode', (alert) => {
+      this.setMode(TorrentMode.SELL_MODE)
+    })
+
+    torrent.on('SessionToBuyMode', (alert) => {
+      this.setMode(TorrentMode.BUY_MODE)
+    })
   }
 
   onStateUpdated (statusUpdate) {
@@ -55,9 +70,15 @@ class Torrent {
     this.handle.pause()
   }
 
-  @action
   toSellMode (sellerTerms, callback) {
-    this.torrent.toSellMode(sellerTerms, callback)
+    this.torrent.toSellMode(sellerTerms, (resp) => {
+      this.setMode(1)
+      callback(resp)
+    })
+  }
+
+  startSelling (connection, contractSk, finalPkHash, callback) {
+    this.torrent.startSelling(connection, contractSk, finalPkHash, callback)
   }
 
   @action.bound
@@ -94,6 +115,11 @@ class Torrent {
   @action.bound
   setProgress (progress) {
     this.progress = progress
+  }
+
+  @action.bound
+  setMode (mode) {
+    this.mode = mode
   }
 
   @action.bound

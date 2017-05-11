@@ -1,18 +1,14 @@
 import React, { Component } from 'react'
-import {observer, inject} from 'mobx-react'
-import { StateT } from 'joystream-node'
+import { inject } from 'mobx-react'
+import utils from '../../../../../../utils/'
 
 @inject('walletStore')
-@observer
 class SeedingTorrent extends Component {
+
   constructor (props) {
     super(props)
 
     this.startSelling = this.startSelling.bind(this)
-
-    this.state = {
-      inSellMode: false
-    }
   }
 
   startSelling () {
@@ -27,7 +23,6 @@ class SeedingTorrent extends Component {
 
     this.props.torrent.toSellMode(sellerTerms, (err, result) => {
       if (!err) {
-        this.setState({inSellMode: true})
         console.log('Looking for buyers')
       } else {
         console.log(err)
@@ -42,7 +37,7 @@ class SeedingTorrent extends Component {
 
       buyer.contractSent = true
 
-      this.torrent.torrentObject.startSelling(buyer.peerPlugin.status.connection, contractSk, finalPkHash, (err, result) => {
+      this.props.torrent.startSelling(buyer.peerPlugin.status.connection, contractSk, finalPkHash, (err, result) => {
         if (!err) {
           console.log('Selling to peer !')
         } else {
@@ -62,7 +57,7 @@ class SeedingTorrent extends Component {
         <td>{torrent.sizeMB} Mb</td>
         <td>{torrent.progressPercent}%</td>
         <td>{torrent.libtorrentStateText}</td>
-        <td>{ this.state.inSellMode ? <p>Looking for buyers ({this.props.torrent.buyers.length})</p> : <button className="btn btn-default" onClick={this.startSelling}>Start selling</button>}</td>
+        <td>{torrent.mode == utils.TorrentMode.SELL_MODE ? <p>Looking for buyers ({torrent.buyers.length})</p> : <button className="btn btn-default" onClick={this.startSelling}>Start selling</button>}</td>
       </tr>
     )
   }

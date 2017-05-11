@@ -6,8 +6,6 @@ class DownloadingTorrent extends Component {
   constructor (props) {
     super(props)
 
-    this.torrent = this.props.torrent
-
     this.startBuying = this.startBuying.bind(this)
   }
 
@@ -20,11 +18,9 @@ class DownloadingTorrent extends Component {
       maxContractFeePerKb: 20000
     }
 
-    this.torrent.pause()
-
     this.torrent.torrentObject.toBuyMode(buyerTerms, (err, result) => {
       if (!err) {
-        /*this.torrent.on('readyToBuyTo', (seller) => {
+        this.torrent.on('readyToBuyTo', (seller) => {
           console.log(seller.contractSent)
           if (!seller.contractSent) {
             let contractSk = this.props.walletStore.generatePrivateKey()
@@ -45,13 +41,12 @@ class DownloadingTorrent extends Component {
 
             this.torrent.torrentObject.startBuyingFromSeller(seller.peerPlugin.status.connection, contractSk, finalPkHash, value, this.props.walletStore.createAndSend, callback)
           }
-        })*/
+        })
       } else {
         console.log(err)
       }
     })
   }
-
 
   render () {
     let torrent = this.props.torrent
