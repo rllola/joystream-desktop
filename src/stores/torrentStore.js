@@ -1,5 +1,5 @@
 import { observable, action, computed } from 'mobx'
-import { StateT, InnerStateTypeInfo } from 'joystream-node'
+import { StateT } from 'joystream-node'
 import { TorrentMode } from '../utils'
 
 class Torrent {
@@ -9,9 +9,10 @@ class Torrent {
   @observable size = 0
   @observable name = ''
   @observable buyers = []
+  @observable sellers = []
   @observable mode
 
-  constructor(torrent) {
+  constructor (torrent) {
     this.handle = torrent.handle
 
     // Keep a reference to the underlying torrent instance to access the torrentPlugin
@@ -39,11 +40,15 @@ class Torrent {
 
     torrent.on('readyToSellTo', this.receivedNewBuyer.bind(this))
 
+    torrent.on('readyToBuyTo', this.receivedNewSeller.bind(this))
+
     torrent.on('SessionToSellMode', (alert) => {
+      console.log(alert)
       this.setMode(TorrentMode.SELL_MODE)
     })
 
     torrent.on('SessionToBuyMode', (alert) => {
+      console.log(alert)
       this.setMode(TorrentMode.BUY_MODE)
     })
   }
@@ -65,20 +70,28 @@ class Torrent {
     this.addBuyer(buyer)
   }
 
-  @action
+  receivedNewSeller (seller) {
+    this.addSeller(seller)
+  }
+
   pause () {
     this.handle.pause()
   }
 
   toSellMode (sellerTerms, callback) {
-    this.torrent.toSellMode(sellerTerms, (resp) => {
-      this.setMode(1)
-      callback(resp)
-    })
+    this.torrent.toSellMode(sellerTerms, callback)
   }
 
   startSelling (connection, contractSk, finalPkHash, callback) {
     this.torrent.startSelling(connection, contractSk, finalPkHash, callback)
+  }
+
+  toBuyMode (buyerTerms, callback) {
+    this.torrent.toBuyMode(buyerTerms, callback)
+  }
+
+  startBuying (connection, contractSk, finalPkHash, value, asyncSign, callback) {
+    this.torrent.startBuyingFromSeller(connection, contractSk, finalPkHash, value, asyncSign, callback)
   }
 
   @action.bound
@@ -125,6 +138,11 @@ class Torrent {
   @action.bound
   addBuyer (buyer) {
     this.buyers.push(buyer)
+  }
+
+  @action.bound
+  addSeller (seller) {
+    this.sellers.push(seller)
   }
 
   @computed get sizeMB () {

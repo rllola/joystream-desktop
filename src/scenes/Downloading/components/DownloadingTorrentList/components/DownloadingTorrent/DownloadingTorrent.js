@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { observer } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
+import utils from '../../../../../../utils/'
 
-@observer
+@inject('walletStore')
 class DownloadingTorrent extends Component {
   constructor (props) {
     super(props)
@@ -18,34 +19,34 @@ class DownloadingTorrent extends Component {
       maxContractFeePerKb: 20000
     }
 
-    this.torrent.torrentObject.toBuyMode(buyerTerms, (err, result) => {
+    this.props.torrent.toBuyMode(buyerTerms, (err, result) => {
       if (!err) {
-        this.torrent.on('readyToBuyTo', (seller) => {
-          console.log(seller.contractSent)
-          if (!seller.contractSent) {
-            let contractSk = this.props.walletStore.generatePrivateKey()
-            let finalPkHash = this.props.walletStore.address.hash
-            let value = 50000
-
-            seller.contractSent = true
-
-            const callback = (err, result) => {
-              console.log('Hey')
-              if (!err) {
-                console.log('Buying to peer !')
-              } else {
-                seller.contractSent = false
-                console.error(err)
-              }
-            }
-
-            this.torrent.torrentObject.startBuyingFromSeller(seller.peerPlugin.status.connection, contractSk, finalPkHash, value, this.props.walletStore.createAndSend, callback)
-          }
-        })
+        console.log('Ok')
       } else {
         console.log(err)
       }
     })
+  }
+
+  BuyFrom (seller) {
+    if (!seller.contractSent) {
+      let contractSk = this.props.walletStore.generatePrivateKey()
+      let finalPkHash = this.props.walletStore.address.hash
+      let value = 50000
+
+      seller.contractSent = true
+
+      const callback = (err, result) => {
+        if (!err) {
+          console.log('Buying to peer !')
+        } else {
+          seller.contractSent = false
+          console.error(err)
+        }
+      }
+
+      this.props.torrent.startBuying(seller.peerPlugin.status.connection, contractSk, finalPkHash, value, this.props.walletStore.createAndSend, callback)
+    }
   }
 
   render () {
@@ -56,7 +57,8 @@ class DownloadingTorrent extends Component {
         <td>{torrent.sizeMB} Mb</td>
         <td>{torrent.progressPercent}%</td>
         <td>{torrent.libtorrentStateText}</td>
-        <td><button className="btn btn-default" onClick={this.startBuying}>Start buying</button></td>
+        {/* If we have a buyer show button startSelling or startSelling directly after finding it */}
+        <td>{torrent.mode == utils.TorrentMode.BUY_MODE ? <p>Looking for sellers ({torrent.sellers.length})</p> : <button className="btn btn-default" onClick={this.startBuying}>Start buying</button>}</td>
       </tr>
     )
   }
