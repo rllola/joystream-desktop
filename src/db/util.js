@@ -12,6 +12,9 @@ function torrentHandleToStoreValue (handle) {
     savePath: handle.savePath(),
     uploadLimit: handle.uploadLimit(),
     downloadLimit: handle.downloadLimit()
+    //maxUploads:
+    //maxConnections:
+    //sequentialDownload:
   }
 
   let ti = handle.torrentFile()
@@ -23,14 +26,37 @@ function torrentHandleToStoreValue (handle) {
 
   return value
 
-  // some additional values to persists from handle.status()
-  // http://www.libtorrent.org/reference-Core.html#torrent_status
+  /*
+  enum flags_t {
+   flag_seed_mode,
+   flag_override_resume_data,
+   flag_upload_mode,
+   flag_share_mode,
+   flag_apply_ip_filter,
+   flag_paused,
+   flag_auto_managed,
+   flag_duplicate_is_error,
+   flag_merge_resume_trackers,
+   flag_update_subscribe,
+   flag_super_seeding,
+   flag_sequential_download,
+   flag_use_resume_save_path,
+   flag_pinned,
+   flag_merge_resume_http_seeds,
+   flag_stop_when_ready,
+  };
+  */
 
-  // application specific state (paused/started...)
-  // terms and mode
-  // mode: torrent.torrentPlugin.?
-  // buyterTerms : torrent.terms
-  // sellerTerms : null
+  // some additional values to persists from handle.status() that can be restored using flags
+  // http://www.libtorrent.org/reference-Core.html#torrent_status
+  /* some can be set as flags other are calls on torrent handle
+  bool stop_when_ready;
+  bool seed_mode;
+  bool auto_managed;
+  bool ip_filter_applies;
+  bool upload_mode;
+  bool share_mode;
+  */
 }
 
 // convert a stored torrent value to an addTorrentParams object
