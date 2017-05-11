@@ -12,7 +12,7 @@ import { Session } from 'joystream-node'
 import TorrentsStorage from './db'
 import bcoin from 'bcoin'
 
-import ApplicationStore from './stores/ApplicationStore'
+import ApplicationStore from './stores/applicationStore'
 
 const constants = require('./constants')
 
