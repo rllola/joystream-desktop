@@ -7,6 +7,7 @@ class Torrent {
   @observable progress = 0
   @observable size = 0
   @observable name = ''
+  @observable buyers = []
 
   constructor(torrent) {
     this.torrentObject = torrent
@@ -28,6 +29,8 @@ class Torrent {
     torrent.on('metadata', this.onMetadataReceived.bind(this))
 
     torrent.on('torrent_finished_alert', this.onFinished.bind(this))
+
+    torrent.on('readyToSellTo', this.receivedNewBuyer.bind(this))
   }
 
   onStateUpdated (state, progress) {
@@ -41,6 +44,20 @@ class Torrent {
   onFinished () {
     // Happens when a torrent switches from being a downloader to a seed.
     // It will only be generated once per torrent.
+  }
+
+  receivedNewBuyer (buyer) {
+    this.addBuyer(buyer)
+  }
+
+  @action
+  pause () {
+    this.handle.pause()
+  }
+
+  @action
+  toSellMode (sellerTerms, callback) {
+    this.torrentObject.toSellMode(sellerTerms, callback)
   }
 
   @action.bound
@@ -77,6 +94,11 @@ class Torrent {
   @action.bound
   setProgress (progress) {
     this.progress = progress
+  }
+
+  @action.bound
+  addBuyer (buyer) {
+    this.buyers.push(buyer)
   }
 
   @computed get sizeMB () {
