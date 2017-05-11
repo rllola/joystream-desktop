@@ -4,56 +4,58 @@ process.env.BCOIN_NO_NATIVE = '1'
 
 // babel-polyfill for generator (async/await)
 import 'babel-polyfill'
-import bcoin from 'bcoin'
+
 import path from 'path'
 import os from 'os'
+import mkdirp from 'mkdirp'
 import { Session } from 'joystream-node'
-import TorrentsStorage from './db/Torrents'
+import TorrentsStorage from './db'
+import bcoin from 'bcoin'
+
+import ApplicationStore from './stores/applicationStore'
+
 const constants = require('./constants')
 
 // React
 import React from 'react'
 import ReactDOM from 'react-dom'
-
-import WalletStore from './stores/walletStore'
-import SessionStore from './stores/sessionStore'
-
-// Main component
-import Application from './scenes/Application'
+import { AppContainer } from 'react-hot-loader'
 
 // Disable workers which are not available in electron
 bcoin.set({ useWorkers: false })
 
-// Torrent content save path
-const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream', 'download', path.sep)
+// Create default application data directory
+mkdirp.sync(path.join(os.homedir(), 'joystream'))
 
 // Application database path
 const dbPath = process.env.DATA_PATH || path.join(os.homedir(), 'joystream', 'data', path.sep)
 
-let db = TorrentsStorage.open(dbPath, {
+const db = TorrentsStorage.open(dbPath, {
   // 'table' names to use
   'torrents': 'torrents',
   'resume_data': 'resume_data',
-  'torrent_settings': 'torrent_settings'
+  'torrent_plugin_settings': 'torrent_plugin_settings'
 })
 
-db.on('error', function (err) {
-  console.log(err)
-})
+// Path to bcoin databases (spvchain db and wallet db)
+const walletPrefix = process.env.WALLET_PATH || path.join(os.homedir(), 'joystream', 'wallet')
+
+// Create wallet directory
+mkdirp.sync(walletPrefix)
 
 // Create SPVNode
 const spvnode = new bcoin.spvnode({
-  prefix: __dirname,
+  prefix: walletPrefix,
+  db: 'leveldb',
   network: 'testnet',
   port: process.env.WALLET_PORT,
   plugins: ['walletdb'],
   loader: function (name) {
     if (name === 'walletdb') return bcoin.walletplugin
-  }
-})
-
-spvnode.on('error', function (err) {
-  console.log(err.message)
+  },
+  logger: new bcoin.logger({
+    level: 'info'
+  })
 })
 
 // Create joystream libtorrent session
@@ -61,38 +63,39 @@ const session = new Session({
   port: process.env.LIBTORRENT_PORT
 })
 
-// Create mobx session store
-let sessionStore = new SessionStore({session, savePath, db})
+// Torrent content save path
+const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream', 'download', path.sep)
 
-// Request regular torrent state updates
-setInterval(() => session.postTorrentUpdates(), constants.POST_TORRENT_UPDATES_INTERVAL)
+// create ApplicationStore instance
+const applicationStore = new ApplicationStore({session, savePath, spvnode, db})
 
-// Load persisted torrents from database into session store
-db.forEachTorrent(function (params) {
-  sessionStore.loadTorrent(params).then((torrent) => {
-    if (torrent) {
-      // success loading torrent
-    } else {
-      // loading torrent failed
-    }
-  })
-})
+function render (stores) {
+  // NB: We have to re-require Application every time, or else this won't work
+  const Application = require('./scenes/Application').default
 
-spvnode
-  .open()
-  .then(async function () {
-    const wallet = await spvnode.plugins.walletdb.get('primary')
-    await spvnode.connect()
-    spvnode.startSync()
-    return wallet
-  }).then((wallet) => {
-    return {
-      walletStore: new WalletStore(wallet),
-      sessionStore
-    }
-  }).then((stores) => {
-    ReactDOM.render(
-      <Application stores={stores} />,
-      document.getElementById('root')
-    )
-  })
+  ReactDOM.render(
+    <AppContainer>
+      <Application stores={stores} />
+    </AppContainer>
+    ,
+    document.getElementById('root')
+  )
+}
+
+if (module.hot) {
+  module.hot.accept(render.bind(null, applicationStore.stores))
+}
+
+render(applicationStore.stores)
+
+applicationStore.start()
+
+function logError (err) {
+  console.error(err.message)
+}
+
+// Error logging
+db.on('error', logError)
+session.on('error', logError)
+spvnode.on('error', logError)
+applicationStore.on('error', logError)

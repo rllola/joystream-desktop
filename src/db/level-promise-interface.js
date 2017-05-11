@@ -1,4 +1,4 @@
-class Partition {
+class LevelPromiseInterface {
   constructor (db) {
     this.db = db
   }
@@ -50,6 +50,21 @@ class Partition {
       })
     })
   }
+
+  getAllKeys () {
+    return new Promise((resolve, reject) => {
+      let keys = []
+
+      this.db.keyStream()
+        .on('data', function (key) {
+          keys.push(key)
+        })
+        .on('error', reject)
+        .on('end', function () {
+          resolve(keys)
+        })
+    })
+  }
 }
 
-export default Partition
+export default LevelPromiseInterface

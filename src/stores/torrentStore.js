@@ -10,17 +10,17 @@ class Torrent {
   @observable buyers = []
 
   constructor(torrent) {
-    this.torrentObject = torrent
-
     this.handle = torrent.handle
+    // Keep a reference to the underlying torrent instance to access the torrentPlugin
+    this.torrent = torrent
 
-    this.infoHash = this.handle.infoHash()
+    this.infoHash = torrent.handle.infoHash()
 
-    const torrentInfo = this.handle.torrentFile()
+    const torrentInfo = torrent.handle.torrentFile()
 
     this.setTorrentInfo(torrentInfo)
 
-    const status = this.handle.status()
+    const status = torrent.handle.status()
 
     this.setStatus(status)
 
@@ -33,8 +33,8 @@ class Torrent {
     torrent.on('readyToSellTo', this.receivedNewBuyer.bind(this))
   }
 
-  onStateUpdated (state, progress) {
-    this.setStatus({state, progress})
+  onStateUpdated (statusUpdate) {
+    this.setStatus(statusUpdate)
   }
 
   onMetadataReceived (torrentInfo) {
@@ -57,7 +57,7 @@ class Torrent {
 
   @action
   toSellMode (sellerTerms, callback) {
-    this.torrentObject.toSellMode(sellerTerms, callback)
+    this.torrent.toSellMode(sellerTerms, callback)
   }
 
   @action.bound
