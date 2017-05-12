@@ -1,16 +1,20 @@
-import { Component } from 'react'
+import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
-
 import PropTypes from 'prop-types'
+
+import DownloadingTorrentsTable from './DownloadingTorrentsTable'
 
 @inject('sessionStore')
 @observer
 class Downloading extends Component {
 
+    log_props() {
+        console.log(this.props)
+    }
+
     render() {
         return (
-
-            <div>
+            <div className="downloading-scene-container">
 
                 <section className="middle-section">
 
@@ -47,8 +51,9 @@ class Downloading extends Component {
 
 Downloading.propTypes = {
     //torrents :
-    revenue : PropTypes.number.isRequired,
-    down_speed : PropTypes.number.isRequired,
+    //revenue : PropTypes.number.isRequired,
+    //down_speed : PropTypes.number.isRequired,
+    //onStartDownload : PropTypes.func.isRequired
 }
 
 export default Downloading

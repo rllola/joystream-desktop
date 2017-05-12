@@ -4,6 +4,7 @@
 
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
+import PropTypes from 'prop-types'
 
 import Table from '../../components/Table'
 import {Field, Row} from  '../../components/Table'
@@ -17,9 +18,9 @@ import {Field, Row} from  '../../components/Table'
 function StartDownloadingHint(props) {
 
     return (
-        <Row>
-            <h1>yo - no torrents here!</h1>
-        </Row>)
+        <div className="hint-row">
+            Drop a torrent file here to start download
+        </div>)
 }
 
 @observer
@@ -28,39 +29,45 @@ class DownloadingTorrent extends Component {
     constructor(props) {
         super(props)
 
-        this.state = { showToolbar : false }
+        this.showToolbar(false)
+    }
+
+    showToolbar(show) {
+        this.setState({ showToolbar : show })
     }
 
     render(props) {
 
-        // how to render toolbar
-        // how to render drop down from toolbar????
+        // provided info_hash parametrised callbacks for each action in toolbar/context menu?
+        // pause
+        // start
+        // remove
+        // open folder on disk
 
         return (
-
-            // onMouseEnter&onMouseLeave must mutate this.showToolbar
-
-            <Row onMouseEnter={() => { console.log(" entering UI element for downloading torrent: ...") }}
-                 onMouseLeave={() => { console.log(" leaving UI element for downloading torrent: ...") }}>
+            <Row onMouseEnter={() => { this.showToolbar(true) }}
+                 onMouseLeave={() => { this.showToolbar(false) }}>
 
                 <Field>
-                    The greatest CC motion picture ever.mp4
+                    {this.props.torrent.name}
                 </Field>
                 <Field>
                     <span class="label paused-label">Paused</span>
                 </Field>
                 <Field>
-                    34 MB/s
+                    {this.props.torrent.sizeMB /** later use converter **/ }
                 </Field>
                 <Field>
-                    <span class="label paid-label">Paid</span>
+                    <span class="label paid-label">not set</span>
                 </Field>
                 <Field>
-                    234 mB
+                    not set mB
                 </Field>
                 <Field>
-                    412 mB
+                    not set mB
                 </Field>
+
+                { ( showToolbar ? <span><h1>show toolbar</h1></span> : null) }
 
             </Row>
         )
@@ -72,15 +79,6 @@ DownloadingTorrent.propTypes = {
 }
 
 const DownloadingTorrentsTable = function(props) {
-
-    // A) How to give event handlers for each torrent???? where do we get info_hash or whtever from? or do we do something else?
-    // B) what about
-
-    // provided info_hash parametrised callbacks for each action in toolbar/context menu?
-    // pause
-    // start
-    // remove
-    // open folder on disk
 
     return (
         <Table column_titles={["", "State", "Size", "Progress", "Speed", "ETA", "Mode"]}>
@@ -96,7 +94,7 @@ DownloadingTorrentsTable.propTypes = {
 function to_torrent_elements(torrents) {
 
     if(torrents.length == 0)
-        return <StartDownloadingHint />
+        return <StartDownloadingHint key={0}/>
     else
         return torrents.map((t) => {
             return <DownloadingTorrent torrent={t}/>

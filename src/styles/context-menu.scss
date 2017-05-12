@@ -19,7 +19,7 @@
       min-width: 22px;
     }
 
-    .explainer-column {
+    .body {
       flex-grow: 1;
 
       .label {
@@ -35,6 +35,29 @@
     }
   }
 
+  .clickable-item {
+    cursor: pointer;
+  }
+
+  .clickable-item:hover {
+    color: white;
+    background-color: #778EF8;
+
+    .body {
+
+      .label {
+        font-size: 18px;
+        color: white;
+      }
+
+      .description {
+        color: white;
+      }
+    }
+  }
+
+  // Swarm item
+
   .swarm-item {
     cursor: default;
 
@@ -42,9 +65,9 @@
       background-image: url('../img/icon/swarm.svg');
     }
 
-    .information {
+    .body {
       display: flex;
-      flex-grow: row;
+      flex-grow: 1;
       flex-wrap: wrap;
 
       .info-box {
@@ -66,76 +89,65 @@
     }
   }
 
-  .clickable {
-    cursor: pointer;
+  // Icons
 
-    .pause {
-      background-image: url('../img/icon/pause.svg')
-    }
-
-    .continue {
-      background-image: url('../img/icon/continue.svg');
-    }
-
-    .change-price {
-      background-image: url('../img/icon/change-price.svg');
-    }
-
-    .change-price-disabled {
-      background-image: url('../img/icon/change-price-disabled.svg');
-    }
-
-    .remove {
-      background-image: url('../img/icon/remove.svg');
-    }
-
-    .remove-and-delete-data {
-      background-image: url('../img/icon/trash.svg');
-    }
+  .icon-pause {
+    background-image: url('../img/icon/pause.svg')
   }
 
-  .clickable:hover {
-    color: white;
-    background-color: #778EF8;
-
-    .pause {
-      background-image: url('../img/icon/pause-hover.svg')
-    }
-
-    .continue {
-      background-image: url('../img/icon/continue-hover.svg');
-    }
-
-    .change-price {
-      background-image: url('../img/icon/change-price-hover.svg');
-    }
-
-    .change-price-disabled {
-      background-image: url('../img/icon/change-price-disabled-hover.svg');
-    }
-
-    .remove {
-      background-image: url('../img/icon/remove-hover.svg');
-    }
-
-    .remove-and-delete-data {
-      background-image: url('../img/icon/trash-hover.svg');
-    }
-
-    .explainer-column {
-
-      .label {
-        font-size: 18px;
-        color: white;
-      }
-
-      .description {
-        color: white;
-      }
-    }
+  .icon-pause:hover {
+    background-image: url('../img/icon/pause-hover.svg')
   }
 
-  .separator {
+  .icon-continue {
+    background-image: url('../img/icon/continue.svg');
+  }
+
+  .icon-continue:hover {
+    background-image: url('../img/icon/continue-hover.svg');
+  }
+
+  .icon-change-price {
+    background-image: url('../img/icon/change-price.svg');
+  }
+
+  .icon-change-price:hover {
+    background-image: url('../img/icon/change-price-hover.svg');
+  }
+
+  .icon-change-price-disabled {
+    background-image: url('../img/icon/change-price-disabled.svg');
+  }
+
+  .icon-change-price-disabled:hover {
+    background-image: url('../img/icon/change-price-disabled.svg');
+  }
+
+  .icon-remove {
+    background-image: url('../img/icon/remove.svg');
+  }
+
+  .icon-remove:hover {
+    background-image: url('../img/icon/remove-hover.svg');
+  }
+
+  .icon-remove-and-delete-data {
+    background-image: url('../img/icon/trash.svg');
+  }
+
+  .icon-remove-and-delete-data:hover {
+    background-image: url('../img/icon/trash-hover.svg');
+  }
+
+  .full-separator {
+    border-top: solid 1px #EDEDED;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-left: 15px; /** should be deduced from other values **/
+    margin-right: 15px;
+  }
+
+  .half-separator {
     border-top: solid 1px #EDEDED;
     margin-top: 2px;
     margin-bottom: 2px;

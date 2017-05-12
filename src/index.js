@@ -58,10 +58,10 @@ const spvnode = new bcoin.spvnode({
   plugins: ['walletdb'],
   loader: function (name) {
     if (name === 'walletdb') return bcoin.walletplugin
-  },
+  }/**,
   logger: new bcoin.logger({
     level: 'info'
-  })
+  })*/
 })
 
 spvnode.on('error', function (err) {

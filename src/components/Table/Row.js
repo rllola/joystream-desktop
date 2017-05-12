@@ -2,6 +2,7 @@
  * Created by bedeho on 06/05/17.
  */
 
+import React from 'react'
 import PropTypes from 'prop-types'
 
 const Row = (props) => {

@@ -23,22 +23,24 @@ class Application extends Component {
     super(props)
   }
 
+  /* The merits of this providers seems dubious, reconsider later */
+  /* Provider needs a single child */
   render () {
     return (
         <Router>
-          <Provider {...this.props.stores}> { /* The merits of this providers seems dubious, reconsider later */ }
+          <Provider {...this.props.stores}>
 
-            <div> { /* Provider needs a single child */ }
+            <div className="app-container">
 
-              <Header>
-              </Header>
+                <Header>
+                </Header>
 
-              <Route path="/" component={Downloading} />
-              <Route exact path="/seeding" component={Seeding} />
-              <Route exact path="/completed" component={Completed} />
-              <Route exact path="/wallet" component={Wallet} />
+                <Route path="/" component={Downloading}/>
+                <Route exact path="/seeding" component={Seeding} />
+                <Route exact path="/completed" component={Completed} />
+                <Route exact path="/wallet" component={Wallet} />
 
-              <div><MobxReactDevTools/></div>
+                <div><MobxReactDevTools/></div>
 
             </div>
 
@@ -47,5 +49,7 @@ class Application extends Component {
     )
   }
 }
+
+/** Downloading revenue={7893} down_speed={924} **/
 
 export default Application
