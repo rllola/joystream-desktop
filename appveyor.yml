@@ -1,0 +1,24 @@
+platform:
+  - x64
+
+init:
+  - git config --global core.autocrlf input
+
+install:
+  - ps: Install-Product node 7 x64
+  - npm install npm -g
+  - npm install -g electron-forge
+  - pip install conan
+  - conan remote add joystream https://conan.joystream.co:9300 True
+  - conan user travis -p trav444 -r=joystream
+  - npm install
+
+build_script:
+  - electron-forge publish
+
+test: off
+
+branches:
+    only:
+      - master
+      - appveyor
