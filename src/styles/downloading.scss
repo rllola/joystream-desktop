@@ -18,3 +18,13 @@
     }
   }
 }
+
+.progress-bar {
+  height : 15px;
+  border-radius: $max-border-radius;
+
+  /** This is the progress bar div **/
+  div {
+    background-color: #55C855
+  }
+}

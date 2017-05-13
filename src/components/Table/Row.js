@@ -16,11 +16,9 @@ const Row = (props) => {
     )
 }
 
-/**
 Row.propTypes = {
-    onMouseEnter : PropTypes.func.isRequired,
-    onMouseLeave : PropTypes.func.isRequired
+    onMouseEnter : PropTypes.func,
+    onMouseLeave : PropTypes.func
 }
-*/
 
 export default Row

@@ -17,9 +17,11 @@ function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({width: 800, height: 600})
 
-  // and load the index.html of the app.
+  // Load file for the app
+  var filename_to_load = process.env.COMPONENT_DEVELOPMENT_MODE ? 'component-development/index.html' : 'index.html'
+
   win.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
+    pathname: path.join(__dirname, filename_to_load),
     protocol: 'file:',
     slashes: true
   }))

@@ -9,16 +9,12 @@ import PropTypes from 'prop-types'
 import Table from '../../components/Table'
 import {Field, Row} from  '../../components/Table'
 
-//// Move each of these out into their own js file promptly
-
-// TorrentToolbar
-
-// TorrentContextMenu
+import LinearProgress from 'material-ui/LinearProgress'
 
 function StartDownloadingHint(props) {
 
     return (
-        <div className="hint-row">
+        <div className="row hint-row">
             Drop a torrent file here to start download
         </div>)
 }
@@ -28,47 +24,47 @@ class DownloadingTorrent extends Component {
 
     constructor(props) {
         super(props)
-
-        this.showToolbar(false)
     }
 
-    showToolbar(show) {
+    componentDidMount() {
+
+        // Start out with hidden toolbar
+        this.setShowToolbar(true)
+    }
+
+    setShowToolbar(show) {
         this.setState({ showToolbar : show })
     }
 
     render(props) {
 
-        // provided info_hash parametrised callbacks for each action in toolbar/context menu?
-        // pause
-        // start
-        // remove
-        // open folder on disk
-
         return (
-            <Row onMouseEnter={() => { this.showToolbar(true) }}
-                 onMouseLeave={() => { this.showToolbar(false) }}>
+            <Row onMouseEnter={() => { /*this.setShowToolbar(true)*/ }}
+                 onMouseLeave={() => { /*this.setShowToolbar(false)*/ }}>
 
                 <Field>
                     {this.props.torrent.name}
                 </Field>
                 <Field>
-                    <span class="label paused-label">Paused</span>
+                    <span className="label paused-label">Paused</span>
                 </Field>
                 <Field>
-                    {this.props.torrent.sizeMB /** later use converter **/ }
+                    {this.props.torrent.size /** later use converter **/ }
                 </Field>
                 <Field>
-                    <span class="label paid-label">not set</span>
+                    <LinearProgress color="#55C855" style={{  height : 15, borderRadius: 10000}} mode="determinate" value={this.props.torrent.progress} min={0} max={100}/>
                 </Field>
                 <Field>
-                    not set mB
+                    {this.props.torrent.download_speed} Kb/s
                 </Field>
                 <Field>
-                    not set mB
+                    {this.props.torrent.downloaded_quantity}
                 </Field>
+                <Field>
+                    <span className="label paid-label">paid</span>
 
-                { ( showToolbar ? <span><h1>show toolbar</h1></span> : null) }
-
+                    { ( this.state && this.state.showToolbar ? <span><h1>show toolbar</h1></span> : null) }
+                </Field>
             </Row>
         )
     }
@@ -97,7 +93,7 @@ function to_torrent_elements(torrents) {
         return <StartDownloadingHint key={0}/>
     else
         return torrents.map((t) => {
-            return <DownloadingTorrent torrent={t}/>
+            return <DownloadingTorrent torrent={t} key={t.info_hash}/>
         })
 }
 

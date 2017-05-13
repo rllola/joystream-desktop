@@ -2,34 +2,6 @@
  * Created by bedeho on 09/05/17.
  */
 
-
-// Item
-
-// is each one of these some sort of item subclass?
-
-// Separator
-
-// More-Item (the dot dot dot thing)
-// Open-Folder-Item ()
-
-<Toolbar>
-
-    <Item icon_url="....png" icon_url_hover="" alt="This is the alt"  />
-
-    <ClickableItem />
-    <Separator />
-</Toolbar>
-
-//<DownloadingTorrentToolbar />
-// we define this in the downloading component,
-// which just has a set of items
-
-// the basic styling is in Toolbar.scss
-
-// the downloading specific styling, if any, is inthe dowonloaing.scss
-
-// need to soem how define with of this thing
-
 /**
  * A item separator
  */
@@ -61,12 +33,8 @@ Item.propTypes = {
 }
 
 /**
- * A clickable item
+ * The toolbar
  */
-const ClickableItem = (props) =>  {
-    return <Item />
-}
-
 const Toolbar = (props) => {
 
     // props about:

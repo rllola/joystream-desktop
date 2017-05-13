@@ -23,7 +23,7 @@ $content-padding: 10px;
   .content {
     display: flex;
     flex-direction: column;
-    padding: $content-padding;
+    padding-bottom: $content-padding;
     background-color: $grey-background;
 
     border-top-width: 2px;
@@ -40,7 +40,8 @@ $content-padding: 10px;
 
       background-color: white;
       color: $primary-text-color;
-      margin-bottom: 10px;
+      margin: $content-padding;
+      margin-bottom: 0; // top margin of next row is enough. and container bottom padding
       padding: $row-padding;
       border-radius: $max-border-radius;
       font-family: $major-font-family;
@@ -53,12 +54,9 @@ $content-padding: 10px;
     .hint-row {
       background-color: #D9D9D9;
       color: #818181;
-      margin-bottom: 10px;
-      padding: 15px;
-      border-radius: 10000px;
       font-family: TrebuchetMS;
       font-size: 24px;
-      text-align: center;
+      justify-content: center;
     }
 
     /* Drop bottom margin on last torrent */
