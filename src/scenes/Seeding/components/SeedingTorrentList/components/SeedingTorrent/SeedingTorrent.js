@@ -51,8 +51,6 @@ class SeedingTorrent extends Component {
   render () {
     let torrent = this.props.torrent
 
-    console.log(torrent.mode)
-
     return (
       <tr>
         <td>{torrent.name}</td>
@@ -60,7 +58,7 @@ class SeedingTorrent extends Component {
         <td>{torrent.progressPercent}%</td>
         <td>{torrent.libtorrentStateText}</td>
         {/* If we have a buyer show button startSelling or startSelling directly after finding it */}
-        <td>{torrent.mode == utils.TorrentMode.SELL_MODE ? <p>Looking for buyers ({torrent.buyers.length})</p> : <button className="btn btn-default" onClick={this.startSelling}>Start selling</button>}</td>
+        <td>{torrent.mode == utils.TorrentMode.SELL_MODE ? <p>In Sell Mode</p> : <button className="btn btn-default" onClick={this.startSelling}>Start selling</button>}</td>
       </tr>
     )
   }

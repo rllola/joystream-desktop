@@ -1,6 +1,6 @@
 import { observable, action, computed } from 'mobx'
 import { StateT } from 'joystream-node'
-import { TorrentMode } from '../utils'
+import utils from '../utils'
 
 class Torrent {
 
@@ -8,8 +8,6 @@ class Torrent {
   @observable progress = 0
   @observable size = 0
   @observable name = ''
-  @observable buyers = []
-  @observable sellers = []
   @observable mode
 
   constructor (torrent) {
@@ -42,14 +40,12 @@ class Torrent {
 
     torrent.on('readyToBuyTo', this.receivedNewSeller.bind(this))
 
-    torrent.on('SessionToSellMode', (alert) => {
-      console.log(alert)
-      this.setMode(TorrentMode.SELL_MODE)
+    torrent.on('sessionToSellMode', (alert) => {
+      this.setMode(utils.TorrentMode.SELL_MODE)
     })
 
-    torrent.on('SessionToBuyMode', (alert) => {
-      console.log(alert)
-      this.setMode(TorrentMode.BUY_MODE)
+    torrent.on('sessionToBuyMode', (alert) => {
+      this.setMode(utils.TorrentMode.BUY_MODE)
     })
   }
 
@@ -133,16 +129,6 @@ class Torrent {
   @action.bound
   setMode (mode) {
     this.mode = mode
-  }
-
-  @action.bound
-  addBuyer (buyer) {
-    this.buyers.push(buyer)
-  }
-
-  @action.bound
-  addSeller (seller) {
-    this.sellers.push(seller)
   }
 
   @computed get sizeMB () {
