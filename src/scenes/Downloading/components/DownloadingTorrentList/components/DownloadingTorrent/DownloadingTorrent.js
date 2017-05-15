@@ -23,31 +23,28 @@ class DownloadingTorrent extends Component {
     this.props.torrent.toBuyMode(buyerTerms, (err, result) => {
       if (!err) {
         console.log('Ok')
+        // Temporary
+        torrent.on('readyToBuyTo', this.buyFrom.bind(this))
       } else {
         console.log(err)
       }
     })
   }
 
-  BuyFrom (seller) {
-    if (!seller.contractSent) {
-      let contractSk = this.props.walletStore.generatePrivateKey()
-      let finalPkHash = this.props.walletStore.address.hash
-      let value = 50000
+  buyFrom (seller) {
+    let contractSk = this.props.walletStore.generatePrivateKey()
+    let finalPkHash = this.props.walletStore.address.hash
+    let value = 50000
 
-      seller.contractSent = true
-
-      const callback = (err, result) => {
-        if (!err) {
-          console.log('Buying to peer !')
-        } else {
-          seller.contractSent = false
-          console.error(err)
-        }
+    const callback = (err, result) => {
+      if (!err) {
+        console.log('Buying to peer !')
+      } else {
+        console.error(err)
       }
-
-      this.props.torrent.startBuying(seller.peerPlugin.status.connection, contractSk, finalPkHash, value, this.props.walletStore.createAndSend, callback)
     }
+    
+    this.props.torrent.startBuying(seller.peerPlugin.status.connection, contractSk, finalPkHash, value, this.props.walletStore.createAndSend, callback)
   }
 
   render () {

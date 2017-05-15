@@ -1,5 +1,6 @@
 import { observable, action, computed } from 'mobx'
 import { StateT } from 'joystream-node'
+import bcoin from 'bcoin'
 import utils from '../utils'
 
 class Torrent {
@@ -8,6 +9,10 @@ class Torrent {
   @observable progress = 0
   @observable size = 0
   @observable name = ''
+  @observable buyerPeers = []
+  @observable sellerPeers = []
+  @observable observerPeers = []
+  @observable normalPeers = []
   @observable mode
 
   constructor (torrent) {
@@ -36,10 +41,6 @@ class Torrent {
 
     torrent.on('torrent_finished_alert', this.onFinished.bind(this))
 
-    torrent.on('readyToSellTo', this.receivedNewBuyer.bind(this))
-
-    torrent.on('readyToBuyTo', this.receivedNewSeller.bind(this))
-
     torrent.on('sessionToSellMode', (alert) => {
       this.setMode(utils.TorrentMode.SELL_MODE)
     })
@@ -60,14 +61,6 @@ class Torrent {
   onFinished () {
     // Happens when a torrent switches from being a downloader to a seed.
     // It will only be generated once per torrent.
-  }
-
-  receivedNewBuyer (buyer) {
-    this.addBuyer(buyer)
-  }
-
-  receivedNewSeller (seller) {
-    this.addSeller(seller)
   }
 
   pause () {

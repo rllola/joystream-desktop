@@ -25,6 +25,8 @@ class SeedingTorrent extends Component {
     this.props.torrent.toSellMode(sellerTerms, (err, result) => {
       if (!err) {
         console.log('Looking for buyers')
+        // Temporary
+        torrent.on('readyToSellTo', this.sellTo.bind(this))
       } else {
         console.log(err)
       }
@@ -32,21 +34,16 @@ class SeedingTorrent extends Component {
   }
 
   sellTo (buyer) {
-    if (!buyer.contractSent) {
-      let contractSk = this.props.walletStore.generatePrivateKey()
-      let finalPkHash = this.props.walletStore.address.hash
+    let contractSk = this.props.walletStore.generatePrivateKey()
+    let finalPkHash = this.props.walletStore.address.hash
 
-      buyer.contractSent = true
-
-      this.props.torrent.startSelling(buyer.peerPlugin.status.connection, contractSk, finalPkHash, (err, result) => {
-        if (!err) {
-          console.log('Selling to peer !')
-        } else {
-          buyer.contractSent = false
-          console.error(err)
-        }
-      })
-    }
+    this.props.torrent.startSelling(buyer.peerPlugin.status.connection, contractSk, finalPkHash, (err, result) => {
+      if (!err) {
+        console.log('Selling to peer !')
+      } else {
+        console.error(err)
+      }
+    })
   }
 
   render () {
