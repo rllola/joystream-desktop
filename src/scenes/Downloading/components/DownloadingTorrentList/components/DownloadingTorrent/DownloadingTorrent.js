@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
+import { StateT } from 'joystream-node'
 import utils from '../../../../../../utils/'
 
 @inject('walletStore')
@@ -56,9 +57,9 @@ class DownloadingTorrent extends Component {
         <td>{torrent.name}</td>
         <td>{torrent.sizeMB} Mb</td>
         <td>{torrent.progressPercent}%</td>
-        <td>{torrent.libtorrentStateText}</td>
+        <td>{StateT.properties[torrent.libtorrentState].name}</td>
         {/* If we have a buyer show button startSelling or startSelling directly after finding it */}
-        <td>{torrent.mode == utils.TorrentMode.BUY_MODE ? <p>Looking for sellers ({torrent.sellers.length})</p> : <button className="btn btn-default" onClick={this.startBuying}>Start buying</button>}</td>
+        <td>{torrent.mode == utils.TorrentMode.BUY_MODE ? <p>In Buy Mode</p> : <button className="btn btn-default" onClick={this.startBuying}>Start buying</button>}</td>
       </tr>
     )
   }

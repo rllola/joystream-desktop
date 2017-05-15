@@ -139,10 +139,6 @@ class Torrent {
     return Number(this.progress * 100).toFixed(0)
   }
 
-  @computed get libtorrentStateText () {
-    return StateT.properties[this.libtorrentState].name
-  }
-
 }
 
 export default Torrent
