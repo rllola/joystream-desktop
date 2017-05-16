@@ -37,7 +37,7 @@ InfoBox.propTypes = {
 const SwarmItem = (props) => {
 
     return (
-        <Item class="swarm-item" label="Swarm">
+        <Item className="swarm-item" label="Swarm">
             <InfoBox title="BUYERS" value ={props.number_of_buyers} />
             <InfoBox title="SELLERS" value ={props.number_of_sellers} />
             <InfoBox title="OBSERVERS" value ={props.number_of_observers} />

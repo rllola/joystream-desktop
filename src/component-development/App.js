@@ -10,7 +10,7 @@ import Downloading from './downloading'
 const App = (props) => {
 
     const style = {
-        margin: 12,
+        margin: 20,
     }
 
     return (

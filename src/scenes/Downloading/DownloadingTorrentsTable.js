@@ -9,7 +9,105 @@ import PropTypes from 'prop-types'
 import Table from '../../components/Table'
 import {Field, Row} from  '../../components/Table'
 
+import TorrentToolbar from './TorrentToolbar'
+
 import LinearProgress from 'material-ui/LinearProgress'
+import Chip from 'material-ui/Chip'
+
+import bytes from 'bytes'
+import humanizeDuration from 'humanize-duration'
+
+/**
+ * Validates non-negative integers
+ * @param n
+ */
+function isNonNegativeInteger(n) {
+    return Number.isInteger(n) && n >= 0
+}
+
+/**
+ * Human readable ETA for download of given number of bytes
+ * at a given rate.
+ *
+ * @param bytes {Number} Total number of bytes to be downloaded
+ * @param bytes_per_second {Numbre} Byte rate, per second, at which bytes are downloaded
+ */
+function readableETAString(bytes, bytes_per_second) {
+
+    if(!isNonNegativeInteger(bytes))
+        throw Error('bytes: must be non-negative integer')
+
+    if(!isNonNegativeInteger(bytes_per_second))
+        throw Error('bytes_per_second: must be non-negative integer')
+
+    if(bytes_per_second == 0 || bytes == 0)
+        return ""
+
+    var total_seconds = bytes/bytes_per_second
+    var total_ms = 1000 * total_seconds
+
+    // Factor out humanizer setup, instead get humanizer injected or something
+    var ETAString = humanizeDuration(total_ms, {
+        round: true,
+        units: ['y', 'mo', 'w', 'd', 'h', 'm'],
+        language: 'shortEn',
+        languages: {
+            shortEn: {
+                y: function() { return 'y' },
+                mo: function() { return 'mo' },
+                w: function() { return 'w' },
+                d: function() { return 'd' },
+                h: function() { return 'h' },
+                m: function() { return 'm' },
+                s: function() { return 's' },
+                ms: function() { return 'ms' },
+            }
+        }
+    })
+
+    return ETAString
+}
+
+const ModeIndicator = (props) => {
+
+    if(props.paid)
+        return <span className="label paid-label">paid</span>
+    else
+        return<span className="label free-label">free</span>
+}
+
+ModeIndicator.propTypes = {
+    paid : PropTypes.bool.isRequired
+}
+
+const StatusIndicator = (props) => {
+
+    if(props.paused)
+        return <span className="label paused-label">paused</span>
+    else
+        return<span className="label inactive-label">started</span>
+}
+
+StatusIndicator.propTypes = {
+    paused : PropTypes.bool.isRequired
+}
+
+const ProgressIndicator = (props) => {
+    return <LinearProgress color="#55C855" style={{  height : 15, borderRadius: 10000}} mode="determinate" value={props.progress} min={0} max={100}/>
+}
+
+ProgressIndicator.propTypes = {
+    progress : PropTypes.number.isRequired
+}
+
+const ETAIndicator = (props) => {
+    return <span>{readableETAString(props.bytes_remaining, props.bytes_per_second)}</span>
+}
+
+ETAIndicator.propTypes = {
+    bytes_remaining: PropTypes.number.isRequired,
+    bytes_per_second : PropTypes.number.isRequired
+}
 
 function StartDownloadingHint(props) {
 
@@ -17,6 +115,16 @@ function StartDownloadingHint(props) {
         <div className="row hint-row">
             Drop a torrent file here to start download
         </div>)
+}
+
+const ToolbarContainer = (props) => {
+    return (
+        <div style={{position: "relative"}}>
+            <span style={{ position : "absolute",  left: -200,  top: -50,}}>
+                <TorrentToolbar />
+            </span>
+        </div>
+    )
 }
 
 @observer
@@ -29,7 +137,7 @@ class DownloadingTorrent extends Component {
     componentDidMount() {
 
         // Start out with hidden toolbar
-        this.setShowToolbar(true)
+        this.setShowToolbar(false)
     }
 
     setShowToolbar(show) {
@@ -39,32 +147,31 @@ class DownloadingTorrent extends Component {
     render(props) {
 
         return (
-            <Row onMouseEnter={() => { /*this.setShowToolbar(true)*/ }}
-                 onMouseLeave={() => { /*this.setShowToolbar(false)*/ }}>
+            <Row onMouseEnter={() => { this.setShowToolbar(true) }}
+                 onMouseLeave={() => { this.setShowToolbar(false) }}>
 
                 <Field>
                     {this.props.torrent.name}
                 </Field>
                 <Field>
-                    <span className="label paused-label">Paused</span>
+                    <StatusIndicator paused={this.props.torrent.paused} />
                 </Field>
                 <Field>
-                    {this.props.torrent.size /** later use converter **/ }
+                    {bytes(this.props.torrent.size)}
                 </Field>
                 <Field>
-                    <LinearProgress color="#55C855" style={{  height : 15, borderRadius: 10000}} mode="determinate" value={this.props.torrent.progress} min={0} max={100}/>
+                    <ProgressIndicator progress={this.props.torrent.progress}/>
                 </Field>
                 <Field>
-                    {this.props.torrent.download_speed} Kb/s
+                    {bytes(this.props.torrent.download_speed)}/s
                 </Field>
                 <Field>
-                    {this.props.torrent.downloaded_quantity}
+                    <ETAIndicator bytes_remaining={this.props.torrent.size - this.props.torrent.downloaded_quantity} bytes_per_second={this.props.torrent.download_speed} />
                 </Field>
                 <Field>
-                    <span className="label paid-label">paid</span>
-
-                    { ( this.state && this.state.showToolbar ? <span><h1>show toolbar</h1></span> : null) }
+                    <ModeIndicator paid={this.props.torrent.paid /** temproary **/} />
                 </Field>
+                { ( this.state && this.state.showToolbar ? <ToolbarContainer /> : null) }
             </Row>
         )
     }
@@ -77,7 +184,7 @@ DownloadingTorrent.propTypes = {
 const DownloadingTorrentsTable = function(props) {
 
     return (
-        <Table column_titles={["", "State", "Size", "Progress", "Speed", "ETA", "Mode"]}>
+        <Table column_titles={["", "State", "Size", "Progress", "Speed", "Arrival", "Mode"]}>
             { to_torrent_elements(props.torrents) }
         </Table>
     )

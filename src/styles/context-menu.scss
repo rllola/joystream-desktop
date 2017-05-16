@@ -1,4 +1,4 @@
-@import 'constants';
+@import '_constants';
 
 .context-menu {
   display: flex;
@@ -62,7 +62,7 @@
     cursor: default;
 
     .icon {
-      background-image: url('../img/icon/swarm.svg');
+      background-image: url('../assets/icon/swarm.svg');
     }
 
     .body {
@@ -92,51 +92,51 @@
   // Icons
 
   .icon-pause {
-    background-image: url('../img/icon/pause.svg')
+    background-image: url('../assets/icon/pause.svg')
   }
 
   .icon-pause:hover {
-    background-image: url('../img/icon/pause-hover.svg')
+    background-image: url('../assets/icon/pause-hover.svg')
   }
 
   .icon-continue {
-    background-image: url('../img/icon/continue.svg');
+    background-image: url('../assets/icon/continue.svg');
   }
 
   .icon-continue:hover {
-    background-image: url('../img/icon/continue-hover.svg');
+    background-image: url('../assets/icon/continue-hover.svg');
   }
 
   .icon-change-price {
-    background-image: url('../img/icon/change-price.svg');
+    background-image: url('../assets/icon/change-price.svg');
   }
 
   .icon-change-price:hover {
-    background-image: url('../img/icon/change-price-hover.svg');
+    background-image: url('../assets/icon/change-price-hover.svg');
   }
 
   .icon-change-price-disabled {
-    background-image: url('../img/icon/change-price-disabled.svg');
+    background-image: url('../assets/icon/change-price-disabled.svg');
   }
 
   .icon-change-price-disabled:hover {
-    background-image: url('../img/icon/change-price-disabled.svg');
+    background-image: url('../assets/icon/change-price-disabled.svg');
   }
 
   .icon-remove {
-    background-image: url('../img/icon/remove.svg');
+    background-image: url('../assets/icon/remove.svg');
   }
 
   .icon-remove:hover {
-    background-image: url('../img/icon/remove-hover.svg');
+    background-image: url('../assets/icon/remove-hover.svg');
   }
 
   .icon-remove-and-delete-data {
-    background-image: url('../img/icon/trash.svg');
+    background-image: url('../assets/icon/trash.svg');
   }
 
   .icon-remove-and-delete-data:hover {
-    background-image: url('../img/icon/trash-hover.svg');
+    background-image: url('../assets/icon/trash-hover.svg');
   }
 
   .full-separator {

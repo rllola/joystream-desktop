@@ -12,6 +12,11 @@
     display: flex;
     flex-direction: column;
   }
+
+  // Fixes broken rendering of text,
+  // confirmed to work on
+  // - OSX
+  -webkit-font-smoothing: antialiased;
 }
 
 .header {
@@ -60,18 +65,18 @@
   }
 
   #more-button {
-    background-image: url('../img/dots-normal.svg');
+    background-image: url('../assets/img/dots-normal.svg');
     background-repeat: no-repeat;
     background-position: center;
     width: 70px;
   }
 
   #more-button:hover {
-    background-image: url('../img/dots-hover.svg');
+    background-image: url('../assets/img/dots-hover.svg');
   }
 
   #more-button:active {
-    background-image: url('../img/dots-normal.svg');
+    background-image: url('../assets/img/dots-normal.svg');
   }
 
   .balance {

@@ -29,25 +29,15 @@ class ContextMenu extends Component {
 
     render() {
 
-        const style = {
-            position : absolute,
-            top : props.top,
-            right : props.right
-        }
-
         return (
-            <div className="context-menu" style={style}>
-                {props.children}
+            <div className="context-menu">
+                {this.props.children}
             </div>
         )
-
     }
-
 }
 
 ContextMenu.propTypes = {
-    top : PropTypes.number.isRequired,
-    right : PropTypes.number.isRequired,
     onHide : PropTypes.func
 }
 

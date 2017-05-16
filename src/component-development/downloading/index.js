@@ -4,19 +4,23 @@
 
 import React from 'react'
 import DownloadingTorrentsTable from '../../scenes/Downloading/DownloadingTorrentsTable'
+import TorrentToolbar from '../../scenes/Downloading/TorrentToolbar'
+import TorrentContextMenu from '../../scenes/Downloading/TorrentContextMenu'
 
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 
 class MockTorrent {
 
-    constructor(info_hash, name, size, downloaded_quantity, progress, download_speed) {
+    constructor(info_hash, name, size, downloaded_quantity, progress, download_speed, paused, paid) {
         this.info_hash = info_hash
         this.name = name
         this.size = size
         this.downloaded_quantity = downloaded_quantity
         this.progress = progress
         this.download_speed = download_speed
+        this.paused = paused
+        this.paid = paid
     }
 }
 
@@ -35,8 +39,8 @@ const ScenarioContainer = (props) => {
 const Downloading = (props) => {
 
     var torrents = [
-        new MockTorrent("info_hash_1", "My fake torrent", 1023, 213, 22, 3245),
-        new MockTorrent("info_hash_2","Another mocked one", 50123, 1235, 89, 9890)
+        new MockTorrent("info_hash_1", "My fake torrent", 1025, 213, 22, 32, false, true),
+        new MockTorrent("info_hash_2","Another mocked one", 50124, 1235, 89, 98, true, false)
     ]
 
     return (
@@ -49,6 +53,15 @@ const Downloading = (props) => {
             <ScenarioContainer title="Non-empty table" subtitle="A non-empty table">
                 <DownloadingTorrentsTable torrents={torrents} />
             </ScenarioContainer>
+
+            <ScenarioContainer title="Toolbar">
+                <TorrentToolbar />
+            </ScenarioContainer>
+
+            <ScenarioContainer title="Context menu">
+                <TorrentContextMenu />
+            </ScenarioContainer>
+
         </div>
     )
 }

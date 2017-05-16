@@ -12,10 +12,10 @@ function createWindow () {
 
   // Enable live reloading
   // https://github.com/electron/electron-compile/blob/master/README.md
-  enableLiveReload({strategy: 'react-hmr'});
+  enableLiveReload({strategy: 'react-hmr'})
 
   // Create the browser window.
-  win = new BrowserWindow({width: 800, height: 600})
+  win = new BrowserWindow({width: 1024, height: 800})
 
   // Load file for the app
   var filename_to_load = process.env.COMPONENT_DEVELOPMENT_MODE ? 'component-development/index.html' : 'index.html'

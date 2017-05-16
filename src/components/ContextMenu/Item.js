@@ -11,7 +11,7 @@ import PropTypes from 'prop-types'
 const Item = (props) => {
 
     return (
-        <div className={"item " + (props.onClick ? "clickable-item " : null) + (props.class ? props.class : null)}
+        <div className={"item " + (props.onClick ? "clickable-item " : "") + (props.className ? props.className : "")}
              onClick={props.onClick ? props.onClick : null}>
             <div className="icon"></div>
             <div className="body">
@@ -25,7 +25,7 @@ const Item = (props) => {
 
 Item.propTypes = {
     onClick : PropTypes.func,
-    class : PropTypes.string,
+    className : PropTypes.string,
     label: PropTypes.string,
     description: PropTypes.string
 }

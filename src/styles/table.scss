@@ -91,11 +91,18 @@ $content-padding: 10px;
   }
 
   .label {
-    padding-top: 6px;
-    font-size: 16px;
-    border-radius: $max-border-radius;
-    padding-bottom: 6px;
+
+    // thes emust be same
     padding-left: 13px;
     padding-right: 13px;
+
+    // these must be same
+    padding-top: 3px;
+    padding-bottom: 3px;
+
+    font-size: 16px;
+    border-radius: $max-border-radius;
+
+
   }
 }
