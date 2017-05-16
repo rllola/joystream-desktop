@@ -1,6 +1,4 @@
 import { observable, action, computed } from 'mobx'
-import { StateT } from 'joystream-node'
-import bcoin from 'bcoin'
 import utils from '../utils'
 
 class Torrent {
@@ -9,10 +7,12 @@ class Torrent {
   @observable progress = 0
   @observable size = 0
   @observable name = ''
-  @observable buyerPeers = []
-  @observable sellerPeers = []
-  @observable observerPeers = []
-  @observable normalPeers = []
+  /* Need to be @computed
+    @observable buyerPeers = []
+    @observable sellerPeers = []
+    @observable observerPeers = []
+    @observable normalPeers = []
+  */
   @observable mode
 
   constructor (torrent) {
@@ -65,22 +65,6 @@ class Torrent {
 
   pause () {
     this.handle.pause()
-  }
-
-  toSellMode (sellerTerms, callback) {
-    this.torrent.toSellMode(sellerTerms, callback)
-  }
-
-  startSelling (connection, contractSk, finalPkHash, callback) {
-    this.torrent.startSelling(connection, contractSk, finalPkHash, callback)
-  }
-
-  toBuyMode (buyerTerms, callback) {
-    this.torrent.toBuyMode(buyerTerms, callback)
-  }
-
-  startBuying (connection, contractSk, finalPkHash, value, asyncSign, callback) {
-    this.torrent.startBuyingFromSeller(connection, contractSk, finalPkHash, value, asyncSign, callback)
   }
 
   @action.bound

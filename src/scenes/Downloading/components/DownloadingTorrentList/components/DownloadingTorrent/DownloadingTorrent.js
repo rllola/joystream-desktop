@@ -3,7 +3,7 @@ import { inject, observer } from 'mobx-react'
 import { StateT } from 'joystream-node'
 import utils from '../../../../../../utils/'
 
-@inject('walletStore')
+@inject('applicationStore')
 class DownloadingTorrent extends Component {
   constructor (props) {
     super(props)
@@ -20,31 +20,7 @@ class DownloadingTorrent extends Component {
       maxContractFeePerKb: 20000
     }
 
-    this.props.torrent.toBuyMode(buyerTerms, (err, result) => {
-      if (!err) {
-        console.log('Ok')
-        // Temporary
-        torrent.on('readyToBuyTo', this.buyFrom.bind(this))
-      } else {
-        console.log(err)
-      }
-    })
-  }
-
-  buyFrom (seller) {
-    let contractSk = this.props.walletStore.generatePrivateKey()
-    let finalPkHash = this.props.walletStore.address.hash
-    let value = 50000
-
-    const callback = (err, result) => {
-      if (!err) {
-        console.log('Buying to peer !')
-      } else {
-        console.error(err)
-      }
-    }
-    
-    this.props.torrent.startBuying(seller.peerPlugin.status.connection, contractSk, finalPkHash, value, this.props.walletStore.createAndSend, callback)
+    this.props.applicationStore.buyingTorrent(this.props.torrent.handle.infoHash(), buyerTerms)
   }
 
   render () {

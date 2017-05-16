@@ -1,5 +1,7 @@
 import { observable, action, computed, runInAction } from 'mobx'
 import {EventEmitter} from 'events'
+import bcoin from 'bcoin'
+import assert from 'assert'
 
 const constants = require('../constants')
 
@@ -35,6 +37,70 @@ class Application extends EventEmitter {
       sessionStore: this.sessionStore,
       walletStore: this.walletStore
     }
+  }
+
+  buyingTorrent (infoHash, buyerTerms) {
+    // check wallet
+
+    assert(this._session.torrents.has(infoHash))
+
+    const torrent = this._session.torrents.get(infoHash)
+
+    torrent.toBuyMode(buyerTerms, (err, result) => {
+      if (!err) {
+        console.log('Ok')
+        // Temporary
+        torrent.on('readyToBuyTo', (seller) => {
+          let contractSk = this.walletStore.generatePrivateKey()
+          let finalPkHash = this.walletStore.address.hash
+          let value = 50000
+
+          const callback = (err, result) => {
+            if (!err) {
+              console.log('Buying to peer !')
+            } else {
+              console.error(err)
+            }
+          }
+
+          torrent.startBuying(seller.peerPlugin.status.connection, contractSk, finalPkHash, value, this.walletStore.createAndSend, callback)
+        })
+      } else {
+        console.log(err)
+      }
+    })
+
+  }
+
+  sellingTorrent (infoHash, sellerTerms) {
+    // check wallet
+
+    console.log(infoHash)
+
+    assert(this._session.torrents.has(infoHash))
+
+    const torrent = this._session.torrents.get(infoHash)
+
+    torrent.toSellMode(sellerTerms, (err, result) => {
+      if (!err) {
+        console.log('Looking for buyers')
+        // Temporary
+        torrent.on('readyToSellTo', (buyer) => {
+          let contractSk = this.walletStore.generatePrivateKey()
+          let finalPkHash = this.walletStore.address.hash
+
+          torrent.startSelling(buyer.peerPlugin.status.connection, contractSk, finalPkHash, (err, result) => {
+            if (!err) {
+              console.log('Selling to peer !')
+            } else {
+              console.error(err)
+            }
+          })
+        })
+      } else {
+        console.log(err)
+      }
+    })
   }
 
   async _initWallet () {
