@@ -22,6 +22,7 @@ install:
   - npm install
 
 build_script:
+  - mklink /J C:\Users\appveyor\.conan C:\Users\appveyor\.electron-gyp\.conan
   - electron-forge publish
 
 test: off
