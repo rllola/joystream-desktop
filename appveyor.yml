@@ -4,6 +4,8 @@ platform:
 environment:
   priv_key:
     secure: <encryped-value>
+  GITHUB_TOKEN:
+    secure: <encryped-value>
 
 init:
   - git config --global core.autocrlf input
