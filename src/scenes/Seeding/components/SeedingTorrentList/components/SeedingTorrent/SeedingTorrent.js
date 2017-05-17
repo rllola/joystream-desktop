@@ -1,4 +1,3 @@
-import React, { Component } from 'react'
 import { inject } from 'mobx-react'
 import { StateT } from 'joystream-node'
 import utils from '../../../../../../utils/'
