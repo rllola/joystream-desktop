@@ -22,7 +22,9 @@ class SeedingTorrent extends Component {
       settlementFee: 5000
     }
 
-    this.props.applicationStore.sellingTorrent(this.props.torrent.handle.infoHash(), sellerTerms)
+    let infoHash = this.props.torrent.handle.infoHash()
+
+    this.props.applicationStore.sellingTorrent(infoHash, sellerTerms)
   }
 
   render () {

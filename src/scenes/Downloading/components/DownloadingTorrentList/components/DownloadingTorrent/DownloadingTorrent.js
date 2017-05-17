@@ -20,7 +20,9 @@ class DownloadingTorrent extends Component {
       maxContractFeePerKb: 20000
     }
 
-    this.props.applicationStore.buyingTorrent(this.props.torrent.handle.infoHash(), buyerTerms)
+    let infoHash = this.props.torrent.handle.infoHash()
+
+    this.props.applicationStore.buyingTorrent(infoHash, buyerTerms)
   }
 
   render () {
