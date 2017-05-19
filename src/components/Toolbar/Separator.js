@@ -4,10 +4,7 @@
 
 import React from 'react'
 
-/**
- * A item separator
- */
-const Separator = (props) => {
+const Separator = () => {
     return <div className="separator"></div>;
 }
 

@@ -10,6 +10,7 @@ import Table from '../../components/Table'
 import {Field, Row} from  '../../components/Table'
 
 import TorrentToolbar from './TorrentToolbar'
+import TorrentContextMenu from '../../scenes/Downloading/TorrentContextMenu'
 
 import LinearProgress from 'material-ui/LinearProgress'
 import Chip from 'material-ui/Chip'
@@ -120,8 +121,11 @@ function StartDownloadingHint(props) {
 const ToolbarContainer = (props) => {
     return (
         <div style={{position: "relative"}}>
-            <span style={{ position : "absolute",  left: -200,  top: -50,}}>
-                <TorrentToolbar />
+            <span style={{ position : "absolute",  left: -132,  top: -20,}}>
+                <TorrentToolbar canSpeedup={true}
+                                onSpeedupClicked={() => {console.log("speedup clicked")}}
+                                onOpenFolderClicked={() => {console.log("open folder clicked")}}
+                                onMoreClicked={() => {console.log("more clicked")}}/>
             </span>
         </div>
     )
@@ -146,6 +150,10 @@ class DownloadingTorrent extends Component {
 
     render(props) {
 
+        // TODO
+        // Remember to set all props on TorrentToolBar container to different functions or
+        // fields on props.torrent ???
+
         return (
             <Row onMouseEnter={() => { this.setShowToolbar(true) }}
                  onMouseLeave={() => { this.setShowToolbar(false) }}>
@@ -169,7 +177,7 @@ class DownloadingTorrent extends Component {
                     <ETAIndicator bytes_remaining={this.props.torrent.size - this.props.torrent.downloaded_quantity} bytes_per_second={this.props.torrent.download_speed} />
                 </Field>
                 <Field>
-                    <ModeIndicator paid={this.props.torrent.paid /** temproary **/} />
+                    <ModeIndicator paid={this.props.torrent.paid /** temporary **/} />
                 </Field>
                 { ( this.state && this.state.showToolbar ? <ToolbarContainer /> : null) }
             </Row>

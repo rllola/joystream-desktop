@@ -39,45 +39,33 @@
     .separator {
       width: 0px;
       border-left: 2px solid #B3B3B3;
-      height: 30px; /** same as .button **/
+      /**height: 30px;  same as .button **/
       padding-left: 0px;
       padding-right: 0px;
     }
-
-    .speedup-button {
-      . {
-        background-image: url('../img/icon/speedup.svg');
-      }
-    }
-
-    .speedup:hover {
-      .button {
-        background-image: url('../img/icon/speedup-hover.svg');
-      }
-    }
-
-    .open-folder {
-      .button {
-        background-image: url('../img/icon/open-folder.svg');
-      }
-    }
-
-    .open-folder:hover {
-      .button {
-        background-image: url('../img/icon/open-folder-hover.svg');
-      }
-    }
-
-    .more {
-      .button {
-        background-image: url('../img/icon/more.svg');
-      }
-    }
-
-    .more:hover {
-      .button {
-        background-image: url('../img/icon/more-hover.svg');
-      }
-    }
   }
+}
+
+.speedup {
+  background-image: url('../assets/icon/speedup.svg');
+}
+
+.speedup:hover {
+  background-image: url('../assets/icon/speedup-hover.svg');
+}
+
+.open-folder {
+  background-image: url('../assets/icon/open-folder.svg');
+}
+
+.open-folder:hover {
+  background-image: url('../assets/icon/open-folder-hover.svg');
+}
+
+.more {
+  background-image: url('../assets/icon/more.svg');
+}
+
+.more:hover {
+  background-image: url('../assets/icon/more-hover.svg');
 }

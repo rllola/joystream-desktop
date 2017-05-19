@@ -36,11 +36,13 @@ const ScenarioContainer = (props) => {
     )
 }
 
-const Downloading = (props) => {
+const Downloading = () => {
 
     var torrents = [
         new MockTorrent("info_hash_1", "My fake torrent", 1025, 213, 22, 32, false, true),
-        new MockTorrent("info_hash_2","Another mocked one", 50124, 1235, 89, 98, true, false)
+        new MockTorrent("info_hash_2", "Great content being downloaded", 47839, 21123, 231, 32, false, false),
+        new MockTorrent("info_hash_3", "My archive of stuff", 1021212, 21123, 231, 32, true, true),
+        new MockTorrent("info_hash_4", "Another mocked one", 50124, 1235, 89, 98, true, false)
     ]
 
     return (
@@ -55,11 +57,25 @@ const Downloading = (props) => {
             </ScenarioContainer>
 
             <ScenarioContainer title="Toolbar">
-                <TorrentToolbar />
+                <TorrentToolbar canSpeedup = {true}
+                                onSpeedupClicked={() => {console.log("speedup clicked")}}
+                                onOpenFolderClicked={() => {console.log("open folder clicked")}}
+                                onMoreClicked={() => {console.log("more clicked")}}/>
             </ScenarioContainer>
 
             <ScenarioContainer title="Context menu">
-                <TorrentContextMenu />
+                <TorrentContextMenu onHide={() => { console.log("context menu hidden")}}
+                                    paused={true}
+                                    onChangePauseStatus = {() => {console.log("torrent context menu: change pause status")}}
+                                    changePriceEnabled={true}
+                                    onContinueClicked={() => { console.log("continue clicked")}}
+                                    onChangePriceClicked={() => { console.log("change price clicked")}}
+                                    onRemoveClicked={() => { console.log("remove clicked")}}
+                                    onRemoveAndDeleteDataClicked={() => { console.log("remove and delete data clicked")}}
+                                    number_of_buyers={24}
+                                    number_of_sellers={13}
+                                    number_of_observers={0}
+                                    number_of_normal_peers={768}/>
             </ScenarioContainer>
 
         </div>

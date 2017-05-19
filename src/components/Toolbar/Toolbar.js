@@ -14,8 +14,6 @@ const Toolbar = (props) => {
             </div>
         </div>
     )
-
-    // { props.children.map((c) => { console.log(c); return c }
 }
 
 export default Toolbar

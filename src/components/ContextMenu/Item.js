@@ -11,17 +11,18 @@ import PropTypes from 'prop-types'
 const Item = (props) => {
 
     return (
-        <div className={"item " + (props.onClick ? "clickable-item " : "") + (props.className ? props.className : "")}
+        <div className={"item " + (props.onClick ? "item-clickable " : "") + (props.className ? props.className : "")}
              onClick={props.onClick ? props.onClick : null}>
             <div className="icon"></div>
             <div className="body">
                 {props.label ? <div className="label">{props.label}</div> : null }
-                {props.description ? <div className="description"> {props.description} </div> : null }
-                {props.children}
+                {props.description ? <div className="description"> {props.description} </div> : props.children }
             </div>
         </div>
     )
 }
+
+// how to make icons optional, and how to set icon font, and how to have hover?
 
 Item.propTypes = {
     onClick : PropTypes.func,

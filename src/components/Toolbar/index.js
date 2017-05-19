@@ -4,6 +4,7 @@
 import Toolbar from './Toolbar'
 import Separator from './Separator'
 import Section from './Section'
+import ButtonSection from './ButtonSection'
 
 export default Toolbar
-export {Separator, Section}
+export {Separator, Section, ButtonSection}

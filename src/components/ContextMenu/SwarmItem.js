@@ -38,10 +38,12 @@ const SwarmItem = (props) => {
 
     return (
         <Item className="swarm-item" label="Swarm">
-            <InfoBox title="BUYERS" value ={props.number_of_buyers} />
-            <InfoBox title="SELLERS" value ={props.number_of_sellers} />
-            <InfoBox title="OBSERVERS" value ={props.number_of_observers} />
-            <InfoBox title="NORMAL" value ={props.number_of_normal_peers} />
+            <div className="info-box-container">
+                <InfoBox title="BUYERS" value ={props.number_of_buyers} />
+                <InfoBox title="SELLERS" value ={props.number_of_sellers} />
+                <InfoBox title="OBSERVERS" value ={props.number_of_observers} />
+                <InfoBox title="NORMAL" value ={props.number_of_normal_peers} />
+            </div>
         </Item>
     )
 }
