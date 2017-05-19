@@ -10,9 +10,11 @@ let win
 
 function createWindow () {
 
-  // Enable live reloading
-  // https://github.com/electron/electron-compile/blob/master/README.md
-  enableLiveReload({strategy: 'react-hmr'});
+  if (process.env.NODE_ENV === 'development') {
+    // Enable live reloading
+    // https://github.com/electron/electron-compile/blob/master/README.md
+    enableLiveReload({strategy: 'react-hmr'});
+  }
 
   // Create the browser window.
   win = new BrowserWindow({width: 800, height: 600})
@@ -24,8 +26,10 @@ function createWindow () {
     slashes: true
   }))
 
-  // Open the DevTools.
-  win.webContents.openDevTools()
+  if (process.env.NODE_ENV === 'development') {
+    // Open the DevTools.
+    win.webContents.openDevTools()
+  }
 
   // Emitted when the window is closed.
   win.on('closed', () => {

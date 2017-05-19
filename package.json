@@ -4,10 +4,10 @@
   "description": "A minimal Joystream application in electron",
   "main": "src/main.js",
   "scripts": {
-    "start": "electron-forge start",
+    "start": "NODE_ENV=development electron-forge start",
     "test": "echo 'No test !' && exit 0",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "NODE_ENV=production electron-forge make"
   },
   "keywords": [
     "Joystream",
