@@ -64,9 +64,9 @@ const Downloading = () => {
             </ScenarioContainer>
 
             <ScenarioContainer title="Context menu">
-                <TorrentContextMenu onHide={() => { console.log("context menu hidden")}}
+                <TorrentContextMenu onHide={() => { console.log("hide context menu now")}}
                                     paused={true}
-                                    onChangePauseStatus = {() => {console.log("torrent context menu: change pause status")}}
+                                    onChangePauseStatus = {() => {console.log("change pause status clicked")}}
                                     changePriceEnabled={true}
                                     onContinueClicked={() => { console.log("continue clicked")}}
                                     onChangePriceClicked={() => { console.log("change price clicked")}}

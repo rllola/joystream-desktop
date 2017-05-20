@@ -46,6 +46,23 @@
   }
 }
 
+// Styling react-tooltip
+.button-section-tooltip {
+  font-size: 14px !important;
+  border-radius: 10000px;
+  //color: #ff6e00 !important;
+  //background-color: orange !important;
+  /**
+  &.place-top {
+    &:after {
+      border-top-color: orange !important;
+      border-top-style: solid !important;
+      border-top-width: 6px !important;
+    }
+  }
+  */
+}
+
 .speedup {
   background-image: url('../assets/icon/speedup.svg');
 }

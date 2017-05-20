@@ -4,20 +4,35 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
+import isRequiredIf from 'react-proptype-conditional-require'
+
 import SvgIcon from 'material-ui/SvgIcon'
 
 import ContextMenu, {Separator, Item, SwarmItem} from '../../components/ContextMenu'
 
 function getPauseStatusProps(props) {
 
+    if(props.paused) {
+
+        return {
+            onClick : props.onChangePauseStatus,
+            className : "continue-item",
+            label : "Continue",
+        }
+
+    } else {
+        return {
+            onClick : props.onChangePauseStatus,
+            className : "pause-item",
+            label : "Pause"
+        }
+    }
+
 }
 
 function getChangePriceProps(props) {
 
     if(props.changePriceEnabled) {
-
-        if(!props.onChangePriceClicked)
-            throw Error("When changePriceEnabled is true, then onChangePriceClicked must be provided.")
 
         return {
             onClick : props.onChangePriceClicked,
@@ -44,9 +59,9 @@ const TorrentContextMenu = (props) => {
     return (
         <ContextMenu onHide={props.onHide}>
 
-            <Item onClick={props.onContinueClicked}
-                  className="continue-item"
-                  label="Continue"/>
+            <Item onClick={changePauseStatusProps.onClick}
+                  className={changePauseStatusProps.className}
+                  label={changePauseStatusProps.label}/>
 
             <Item onClick={changePriceProps.onClick}
                   className={changePriceProps.className}
@@ -80,10 +95,10 @@ const TorrentContextMenu = (props) => {
 TorrentContextMenu.propTypes = {
     onHide : PropTypes.func,
     paused : PropTypes.bool.isRequired,
-    onChangePauseStatus : PropTypes.func.isRequired, // whetehr paused or not
+    onChangePauseStatus : PropTypes.func.isRequired, // whether paused or not
 
     changePriceEnabled: PropTypes.bool.isRequired,
-    onChangePriceClicked : PropTypes.func, // only required if changePriceEnabled is set
+    onChangePriceClicked : isRequiredIf(PropTypes.func, props => props.changePriceEnabled, 'onChangePriceClicked is required when changePriceEnabled is true'),
 
     onRemoveClicked : PropTypes.func.isRequired,
     onRemoveAndDeleteDataClicked : PropTypes.func.isRequired,

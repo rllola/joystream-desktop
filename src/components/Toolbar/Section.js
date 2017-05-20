@@ -10,14 +10,15 @@ const Section = (props) =>  {
     var classes = "section " +  (props.className ? props.className : "")
 
     return (
-        <div className={classes}>
+        <div className={classes} onClick={props.onClick ? props.onClick : null}>
             {props.children}
         </div>
     )
 }
 
 Section.propTypes = {
-    className : PropTypes.string
+    className : PropTypes.string,
+    onClick : PropTypes.func
 }
 
 export default Section
