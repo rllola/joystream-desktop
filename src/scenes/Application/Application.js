@@ -14,7 +14,6 @@ import Wallet from '../Wallet'
 
 let MobxReactDevTools
 if (process.env.NODE_ENV === 'development') {
-  console.log('Development')
   MobxReactDevTools = require('mobx-react-devtools').default
 }
 
