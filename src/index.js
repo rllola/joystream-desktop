@@ -19,7 +19,6 @@ const constants = require('./constants')
 // React
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { AppContainer } from 'react-hot-loader'
 
 // Disable workers which are not available in electron
 bcoin.set({ useWorkers: false })
@@ -73,13 +72,23 @@ function render (stores) {
   // NB: We have to re-require Application every time, or else this won't work
   const Application = require('./scenes/Application').default
 
-  ReactDOM.render(
-    <AppContainer>
-      <Application stores={stores} />
-    </AppContainer>
-    ,
-    document.getElementById('root')
-  )
+  if (process.env.NODE_ENV === 'development') {
+
+    const AppContainer = require('react-hot-loader').AppContainer
+
+    ReactDOM.render(
+      <AppContainer>
+        <Application stores={stores} />
+      </AppContainer>
+      ,
+      document.getElementById('root')
+    )
+  } else {
+    ReactDOM.render(
+      <Application stores={stores} />,
+      document.getElementById('root')
+    )
+  }
 }
 
 if (module.hot) {

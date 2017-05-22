@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { HashRouter as Router, Route } from 'react-router-dom'
 import { Provider } from 'mobx-react'
-import MobxReactDevTools from 'mobx-react-devtools'
 import { observer } from 'mobx-react'
 
 // Components
@@ -13,12 +12,13 @@ import Seeding from '../Seeding'
 import Completed from '../Completed'
 import Wallet from '../Wallet'
 
+let MobxReactDevTools
+if (process.env.NODE_ENV === 'development') {
+  MobxReactDevTools = require('mobx-react-devtools').default
+}
+
 @observer
 class Application extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   render () {
     return (
       <Router>
@@ -30,7 +30,7 @@ class Application extends Component {
               <Route exact path="/seeding" component={Seeding} />
               <Route exact path="/completed" component={Completed} />
               <Route exact path="/wallet" component={Wallet} />
-              <div><MobxReactDevTools/></div>
+              {process.env.NODE_ENV === 'development' ? <div><MobxReactDevTools/></div> : null}
             </div>
           </div>
         </Provider>
