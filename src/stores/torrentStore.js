@@ -16,16 +16,11 @@ class Torrent {
   @observable mode
 
   constructor (torrent) {
-    this.handle = torrent.handle
-
-    // Keep a reference to the underlying torrent instance to access the torrentPlugin
     this.torrent = torrent
 
-    const mode = torrent.torrentPlugin.status.session.mode
+    this.setMode(utils.TorrentMode.NOT_SET)
 
-    this.setMode(mode)
-
-    this.infoHash = torrent.handle.infoHash()
+    this.infoHash = torrent.infoHash
 
     const torrentInfo = torrent.handle.torrentFile()
 
@@ -35,11 +30,11 @@ class Torrent {
 
     this.setStatus(status)
 
-    torrent.on('state_update_alert', this.onStateUpdated.bind(this))
+    torrent.on('status_update', this.onStateUpdated.bind(this))
 
     torrent.on('metadata', this.onMetadataReceived.bind(this))
 
-    torrent.on('torrent_finished_alert', this.onFinished.bind(this))
+    torrent.on('finished', this.onFinished.bind(this))
 
     torrent.on('sessionToSellMode', (alert) => {
       this.setMode(utils.TorrentMode.SELL_MODE)
@@ -64,7 +59,7 @@ class Torrent {
   }
 
   pause () {
-    this.handle.pause()
+    this.torrent.handle.pause()
   }
 
   @action.bound
