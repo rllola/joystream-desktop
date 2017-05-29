@@ -3,7 +3,7 @@ import {EventEmitter} from 'events'
 import bcoin from 'bcoin'
 import assert from 'assert'
 
-const constants = require('../constants')
+import constants from '../constants'
 
 import WalletStore from './walletStore'
 import SessionStore from './sessionStore'

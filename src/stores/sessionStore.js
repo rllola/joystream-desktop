@@ -71,7 +71,10 @@ export default class Session {
       this.loadingCount++
       this.session.addTorrent(addTorrentParams, (err, torrent) => {
         this.loadingCount--
-        if (err) return resolve(null)
+        if (err) {
+          console.log(err)
+          return resolve(null)
+        }
         let observableTorrent = this._insertTorrent(torrent)
         resolve(observableTorrent)
       })
@@ -87,7 +90,6 @@ export default class Session {
 
     torrent.on('metadata', (torrentInfo) => {
       this.db.saveTorrent(torrent)
-      observableTorrent.onMetadataReceived(torrentInfo)
     })
 
     torrent.on('resumedata', (buff) => {
@@ -95,22 +97,12 @@ export default class Session {
     })
 
     // Save resume data when paused or finished
-    torrent.on('torrent_paused_alert', () => {
+    torrent.on('paused', () => {
       torrent.handle.saveResume_data()
     })
 
-    torrent.on('torrent_finished_alert', () => {
+    torrent.on('finished', () => {
       torrent.handle.saveResume_data()
-    })
-
-    torrent.on('state_update_alert', (state, progress) => {
-      observableTorrent.onStateUpdated({state, progress})
-    })
-
-    // Happens when a torrent switches from being a downloader to a seed.
-    // It will only be generated once per torrent.
-    torrent.on('torrent_finished_alert', () => {
-      observableTorrent.onFinished()
     })
 
     return observableTorrent
