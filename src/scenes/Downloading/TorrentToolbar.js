@@ -1,17 +1,20 @@
+/**
+ * Created by bedeho on 05/05/17.
+ */
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import isRequiredIf from 'react-proptype-conditional-require'
+
 import Toolbar, {Separator, ButtonSection} from '../../components/Toolbar'
 
 const TorrentToolbar = (props) => {
-
     return (
         <Toolbar>
-            { props.canSpeedup ? <ButtonSection buttonClass="speedup" tooltip="Start paid speedup" onClick={props.onSpeedupClicked} /> : null }
-            <ButtonSection buttonClass="open-folder" tooltip="Open folder" onClick={props.onOpenFolderClicked} />
+            { props.canSpeedup ? <ButtonSection className="speedup" tooltip="Start paid speedup" onClick={props.onSpeedupClicked} /> : null }
+            <ButtonSection className="open-folder" tooltip="Open folder" onClick={props.onOpenFolderClicked} />
             <Separator />
-            <ButtonSection buttonClass="more" onClick={props.onMoreClicked} />
+            <ButtonSection className="more" onClick={(e) => {props.onMoreClicked(e)}} />
         </Toolbar>
     )
 }

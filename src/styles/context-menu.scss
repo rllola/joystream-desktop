@@ -58,6 +58,15 @@
     }
   }
 
+  .item-disabled {
+    cursor: default;
+    .body {
+      .label {
+        color: $menu-secondary-text-color;
+      }
+    }
+  }
+
   .full-separator {
     border-top: solid 1px #EDEDED;
     margin-top: 2px;

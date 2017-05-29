@@ -64,25 +64,37 @@
 }
 
 .speedup {
-  background-image: url('../assets/icon/speedup.svg');
+  .button {
+    background-image: url('../assets/icon/speedup.svg');
+  }
 }
 
 .speedup:hover {
-  background-image: url('../assets/icon/speedup-hover.svg');
+  .button {
+    background-image: url('../assets/icon/speedup-hover.svg');
+  }
 }
 
 .open-folder {
-  background-image: url('../assets/icon/open-folder.svg');
+  .button {
+    background-image: url('../assets/icon/open-folder.svg');
+  }
 }
 
 .open-folder:hover {
-  background-image: url('../assets/icon/open-folder-hover.svg');
+  .button {
+    background-image: url('../assets/icon/open-folder-hover.svg');
+  }
 }
 
 .more {
-  background-image: url('../assets/icon/more.svg');
+  .button {
+    background-image: url('../assets/icon/more.svg');
+  }
 }
 
 .more:hover {
-  background-image: url('../assets/icon/more-hover.svg');
+  .button {
+    background-image: url('../assets/icon/more-hover.svg');
+  }
 }

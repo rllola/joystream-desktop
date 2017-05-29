@@ -8,17 +8,14 @@ import PropTypes from 'prop-types'
 const Row = (props) => {
 
     return (
-        <div className="row"
-             onMouseEnter={props.onMouseEnter}
-             onMouseLeave={props.onMouseLeave}>
-        {props.children}
+        <div className={"row" + (props.className ? " " + props.className : "")}>
+            {props.children}
         </div>
     )
 }
 
 Row.propTypes = {
-    onMouseEnter : PropTypes.func,
-    onMouseLeave : PropTypes.func
+    className : PropTypes.string
 }
 
 export default Row

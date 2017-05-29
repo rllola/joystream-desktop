@@ -30,8 +30,9 @@ class ContextMenu extends Component {
         // If the click was outside of context menu, and
         // a handler for hiding the context menu was provided,
         // then we call it
-        if (!this.menu.contains(e.target) && this.props.onHide)
-            this.props.onHide()
+        if (!this.menu.contains(e.target) && this.props.onOutsideContextMenuClicked) {
+            this.props.onOutsideContextMenuClicked()
+        }
     }
 
     render() {
@@ -45,7 +46,7 @@ class ContextMenu extends Component {
 }
 
 ContextMenu.propTypes = {
-    onHide : PropTypes.func
+    onOutsideContextMenuClicked : PropTypes.func.isRequired
 }
 
 export default ContextMenu

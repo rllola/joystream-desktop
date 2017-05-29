@@ -1,22 +1,19 @@
 /**
- * Created by bedeho on 05/05/17.
+ * Created by bedeho on 23/05/17.
  */
 
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
-import Table from '../../components/Table'
 import {Field, Row} from  '../../components/Table'
-
 import TorrentToolbar from './TorrentToolbar'
-import TorrentContextMenu from '../../scenes/Downloading/TorrentContextMenu'
 
 import LinearProgress from 'material-ui/LinearProgress'
-import Chip from 'material-ui/Chip'
-
 import bytes from 'bytes'
 import humanizeDuration from 'humanize-duration'
+
+import AbsolutePositionChildren from '../../components/Utils/AbsolutePositionChildren'
 
 /**
  * Validates non-negative integers
@@ -110,53 +107,75 @@ ETAIndicator.propTypes = {
     bytes_per_second : PropTypes.number.isRequired
 }
 
-function StartDownloadingHint(props) {
+///
 
-    return (
-        <div className="row hint-row">
-            Drop a torrent file here to start download
-        </div>)
+function toolbarVisibilityState(visible) {
+    return {toolbarVisible : visible}
 }
 
-const ToolbarContainer = (props) => {
-    return (
-        <div style={{position: "relative"}}>
-            <span style={{ position : "absolute",  left: -132,  top: -20,}}>
-                <TorrentToolbar canSpeedup={true}
-                                onSpeedupClicked={() => {console.log("speedup clicked")}}
-                                onOpenFolderClicked={() => {console.log("open folder clicked")}}
-                                onMoreClicked={() => {console.log("more clicked")}}/>
-            </span>
-        </div>
-    )
+var ToolbarVisibilityType = {
+    OnHover : 0,
+    Hidden : 1,
+    Visible : 2
 }
 
-@observer
-class DownloadingTorrent extends Component {
+//@observer
+class TorrentRow extends Component {
+
+    /**
+     * Local UI state
+     * ==============
+     * toolbarVisible {bool} - whether the toolbar for this row is currently visible
+     */
 
     constructor(props) {
         super(props)
+
+        //this.state = toolbarVisibilityState(false)
     }
 
-    componentDidMount() {
-
-        // Start out with hidden toolbar
-        this.setShowToolbar(false)
+    /**
+    showToolbar() {
+        this.setState(toolbarVisibilityState(true))
     }
 
-    setShowToolbar(show) {
-        this.setState({ showToolbar : show })
+    hideToolbar() {
+        this.setState(toolbarVisibilityState(false))
     }
+
+    isToolbarVisible() {
+        return this.state.toolbarVisible
+    }
+
+    onMouseEnter(e) {
+
+        console.log("onMouseEnter")
+
+        if(this.props.canChangeToolbarVisibility) {
+
+            // assert that !this.isToolbarVisible()
+
+            this.showToolbar()
+        }
+    }
+
+    onMouseLeave(e) {
+
+        console.log("onMouseLeave")
+
+        if(this.props.canChangeToolbarVisibility) {
+
+            // assert that !this.isToolbarVisible()
+
+            this.hideToolbar()
+        }
+    }
+    */
 
     render(props) {
 
-        // TODO
-        // Remember to set all props on TorrentToolBar container to different functions or
-        // fields on props.torrent ???
-
         return (
-            <Row onMouseEnter={() => { this.setShowToolbar(true) }}
-                 onMouseLeave={() => { this.setShowToolbar(false) }}>
+            <Row className={this.props.toolbarVisibilityStatus == ToolbarVisibilityType.OnHover ? "row-managed-toolbar-visiblity" : ""}>
 
                 <Field>
                     {this.props.torrent.name}
@@ -174,42 +193,38 @@ class DownloadingTorrent extends Component {
                     {bytes(this.props.torrent.download_speed)}/s
                 </Field>
                 <Field>
-                    <ETAIndicator bytes_remaining={this.props.torrent.size - this.props.torrent.downloaded_quantity} bytes_per_second={this.props.torrent.download_speed} />
+                    <ETAIndicator bytes_remaining={this.props.torrent.size - this.props.torrent.downloaded_quantity}
+                                  bytes_per_second={this.props.torrent.download_speed} />
                 </Field>
                 <Field>
-                    <ModeIndicator paid={this.props.torrent.paid /** temporary **/} />
+                    <ModeIndicator paid={this.props.torrent.paid} />
                 </Field>
-                { ( this.state && this.state.showToolbar ? <ToolbarContainer /> : null) }
+
+                { this.getRenderedToolbar() }
             </Row>
         )
     }
+
+    getRenderedToolbar() {
+
+        return (
+            this.props.toolbarVisibilityStatus != ToolbarVisibilityType.Hidden
+            ?
+            <AbsolutePositionChildren left={-132} top={-20}>
+                <TorrentToolbar {...this.props.toolbarProps}/>
+            </AbsolutePositionChildren>
+            :
+            null
+        )
+
+    }
 }
 
-DownloadingTorrent.propTypes = {
-    //torrent : PropTypes.object should we here _require_ a TorrentStore?
+TorrentRow.propTypes = {
+    torrent: PropTypes.object.isRequired, // hould we here _require_ a TorrentStore?
+    toolbarVisibilityStatus : PropTypes.oneOf(Object.values(ToolbarVisibilityType)).isRequired,
+    toolbarProps : PropTypes.object, // later use shape?
 }
 
-const DownloadingTorrentsTable = function(props) {
-
-    return (
-        <Table column_titles={["", "State", "Size", "Progress", "Speed", "Arrival", "Mode"]}>
-            { to_torrent_elements(props.torrents) }
-        </Table>
-    )
-}
-
-DownloadingTorrentsTable.propTypes = {
-    torrents : PropTypes.array.isRequired
-}
-
-function to_torrent_elements(torrents) {
-
-    if(torrents.length == 0)
-        return <StartDownloadingHint key={0}/>
-    else
-        return torrents.map((t) => {
-            return <DownloadingTorrent torrent={t} key={t.info_hash}/>
-        })
-}
-
-export default DownloadingTorrentsTable
+export {ToolbarVisibilityType}
+export default TorrentRow

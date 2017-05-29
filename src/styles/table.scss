@@ -47,7 +47,7 @@ $content-padding: 10px;
       font-family: $major-font-family;
       font-size: 18px;
 
-      // border-bottom: 2px solid #cdcdcd; // temporry
+      // border-bottom: 2px solid #cdcdcd; // temporary
     }
 
     // Move this out, as its part of do
@@ -74,6 +74,22 @@ $content-padding: 10px;
     margin-left: 30px;
     width: 80px;
     text-align: center;
+
+    .label {
+
+      // thes emust be same
+      padding-left: 13px;
+      padding-right: 13px;
+
+      // these must be same
+      padding-top: 3px;
+      padding-bottom: 3px;
+
+      font-size: 16px;
+      border-radius: $max-border-radius;
+
+
+    }
   }
 
   /* First column, `name` column */
@@ -90,19 +106,5 @@ $content-padding: 10px;
     text-overflow: ellipsis;
   }
 
-  .label {
 
-    // thes emust be same
-    padding-left: 13px;
-    padding-right: 13px;
-
-    // these must be same
-    padding-top: 3px;
-    padding-bottom: 3px;
-
-    font-size: 16px;
-    border-radius: $max-border-radius;
-
-
-  }
 }

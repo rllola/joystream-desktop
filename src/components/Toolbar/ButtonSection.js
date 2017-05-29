@@ -11,18 +11,19 @@ import Section from './Section'
 const ButtonSection = (props) => {
 
     return (
-        <Section onClick={props.onClick}>
-            <div data-tip data-for={props.buttonClass} className={"button " + props.buttonClass}></div>
-            { props.tooltip ? <ReactTooltip id={props.buttonClass} position='top' effect='solid' className="button-section-tooltip"> {props.tooltip} </ReactTooltip> : null }
+        <Section onClick={props.onClick} className={props.className} tooltip={props.tooltip}>
+            <div className="button"></div>
         </Section>
     )
 
 }
 
+// { props.tooltip ? <ReactTooltip id={props.className} position='top' effect='solid' className="button-section-tooltip"> {props.tooltip} </ReactTooltip> : null }
+
 ButtonSection.propTypes = {
     onClick : PropTypes.func,
     tooltip : PropTypes.string,
-    buttonClass : PropTypes.string.isRequired
+    className : PropTypes.string.isRequired
 }
 
 export default ButtonSection

@@ -10,82 +10,94 @@ import SvgIcon from 'material-ui/SvgIcon'
 
 import ContextMenu, {Separator, Item, SwarmItem} from '../../components/ContextMenu'
 
-function getPauseStatusProps(props) {
+const PauseItem = (props) => {
+
+    var pauseStatusProps
 
     if(props.paused) {
 
-        return {
+        pauseStatusProps = {
             onClick : props.onChangePauseStatus,
             className : "continue-item",
             label : "Continue",
         }
 
     } else {
-        return {
+
+        pauseStatusProps = {
             onClick : props.onChangePauseStatus,
-            className : "pause-item",
+            className : "pause-item item-disabled",
             label : "Pause"
         }
     }
 
+    return (
+        <Item {...pauseStatusProps}/>
+    )
 }
 
-function getChangePriceProps(props) {
+const ChangePriceItem = (props) => {
+
+    var changePriceProps
 
     if(props.changePriceEnabled) {
 
-        return {
+        changePriceProps = {
             onClick : props.onChangePriceClicked,
             className : "change-price-item"
         }
 
     } else {
 
-        return {
+        changePriceProps = {
             onClick: null,
-            className: "change-price-disabled-item"
+            className: "change-price-disabled-item item-disabled"
         }
     }
+
+    return (
+        <Item {...changePriceProps}
+              label="Change price" />
+    ) // description="Only possible before paid download starts."
+
+}
+
+const RemoveItem = (props) => {
+    return (
+        <Item onClick={props.onRemoveClicked}
+              className="remove-item"
+              label="Remove" />
+    ) // description="Remove from application only."
+}
+
+const RemoveAndDeleteDataItem = (props) => {
+
+    return (
+        <Item onClick={props.onRemoveAndDeleteDataClicked}
+              className="remove-and-delete-data-item"
+              label="Remove & delete data" />
+    )
+    // description="Removes item from application, and all downloaded data is deleted."
 }
 
 const TorrentContextMenu = (props) => {
 
-    // Get props for changing pause status
-    var changePauseStatusProps = getPauseStatusProps(props)
-
-    // Get props for changing price item
-    var changePriceProps = getChangePriceProps(props)
-
     return (
-        <ContextMenu onHide={props.onHide}>
+        <ContextMenu onOutsideContextMenuClicked={props.onOutsideContextMenuClicked}>
 
-            <Item onClick={changePauseStatusProps.onClick}
-                  className={changePauseStatusProps.className}
-                  label={changePauseStatusProps.label}/>
+            <PauseItem {...props}/>
 
-            <Item onClick={changePriceProps.onClick}
-                  className={changePriceProps.className}
-                  label="Change price"
-                  description="Only possible before paid download starts." />
+            <ChangePriceItem {...props}/>
 
-            <Separator/>
+            <Separator full={true}/>
 
-            <Item onClick={props.onRemoveClicked}
-                  className="remove-item"
-                  label="Remove"
-                  description="Remove from application only." />
+            <RemoveItem {...props}/>
 
-            <Item onClick={props.onRemoveAndDeleteDataClicked}
-                  className="remove-and-delete-data-item"
-                  label="Remove & delete data"
-                  description="Removes item from application,  and all downloaded data is deleted."/>
+            <RemoveAndDeleteDataItem {...props}/>
 
-            <Separator/>
+            <Separator full={true}/>
 
-            <SwarmItem number_of_buyers={props.number_of_buyers}
-                       number_of_sellers={props.number_of_sellers}
-                       number_of_observers={props.number_of_observers}
-                       number_of_normal_peers={props.number_of_normal_peers}/>
+            <SwarmItem {...props}/>
 
         </ContextMenu>
     )
@@ -93,7 +105,8 @@ const TorrentContextMenu = (props) => {
 }
 
 TorrentContextMenu.propTypes = {
-    onHide : PropTypes.func,
+    onOutsideContextMenuClicked : PropTypes.func.isRequired, // whenver a click is made outside the context menu is made
+
     paused : PropTypes.bool.isRequired,
     onChangePauseStatus : PropTypes.func.isRequired, // whether paused or not
 

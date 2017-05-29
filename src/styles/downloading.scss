@@ -28,3 +28,19 @@
     background-color: #55C855
   }
 }
+
+.row-managed-toolbar-visiblity {
+  
+  .toolbar {
+    display: none;
+  }
+  
+}
+
+.row-managed-toolbar-visiblity:hover {
+  
+  .toolbar {
+    display: block;
+  }
+  
+}
