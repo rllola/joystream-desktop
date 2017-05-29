@@ -1,7 +1,9 @@
 {
   "name": "joystream",
+  "productName": "Joystream",
   "version": "0.0.1",
   "description": "A new BitTorrent client, with faster speeds, streaming and paid seeding.",
+  "homepage": "https://joystream.co",
   "main": "src/main.js",
   "scripts": {
     "start": "NODE_ENV=development electron-forge start",
@@ -11,9 +13,20 @@
   },
   "keywords": [
     "Joystream",
-    "demo"
+    "bitcoin",
+    "desktop",
+    "electron",
+    "torrent",
+    "torrent-client"
   ],
-  "author": "Me",
+  "author": {
+    "name": "JoyStream, AS",
+    "email": "bedeho@joystream.co",
+    "url": "https://joystream.co"
+  },
+  "bugs": {
+    "url": "https://github.com/JoyStream/joystream-electron/issues"
+  },
   "license": "MIT",
   "devDependencies": {
     "babel": "^6.23.0",
@@ -67,20 +80,30 @@
           "zip"
         ],
         "linux": [
-          "deb",
-          "rpm"
+          "deb"
         ]
       },
       "electronPackagerConfig": {
         "asar": true,
         "icon": "src/assets/icons",
-        "protocol": ["joystream:", "magnet:"],
+        "protocol": ["joystream", "magnet"],
+        "overwrite": true,
+        "appCategoryType": "public.app-category.utilities"
       },
       "electronWinstallerConfig": {
-        "name": "Joystream"
+        "name": "Joystream",
+        "setupIcon": "src/assets/icons/appicon_128x128.ico",
+        "loadingGif": "src/assets/img/loading.gif"
       },
-      "electronInstallerDebian": {},
-      "electronInstallerRedhat": {},
+      "electronInstallerDebian": {
+        "icon": "src/assets/icons/appicon_128x128.png",
+        "categories": [
+          "Utility"
+        ]
+      },
+      "electronInstallerDMG": {
+
+      },
       "github_repository": {
         "owner": "JoyStream",
         "name": "joystream-electron"
