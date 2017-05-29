@@ -1,7 +1,7 @@
 {
-  "name": "joystream-demo",
-  "version": "0.0.0",
-  "description": "A minimal Joystream application in electron",
+  "name": "joystream",
+  "version": "0.0.1",
+  "description": "A new BitTorrent client, with faster speeds, streaming and paid seeding.",
   "main": "src/main.js",
   "scripts": {
     "start": "NODE_ENV=development electron-forge start",
@@ -73,7 +73,8 @@
       },
       "electronPackagerConfig": {
         "asar": true,
-        "icon": "src/assets/icons"
+        "icon": "src/assets/icons",
+        "protocol": ["joystream:", "magnet:"],
       },
       "electronWinstallerConfig": {
         "name": "Joystream"
