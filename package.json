@@ -71,7 +71,10 @@
           "rpm"
         ]
       },
-      "electronPackagerConfig": {},
+      "electronPackagerConfig": {
+        "asar": true,
+        "icon": "src/assets/icons"
+      },
       "electronWinstallerConfig": {
         "name": "Joystream"
       },
