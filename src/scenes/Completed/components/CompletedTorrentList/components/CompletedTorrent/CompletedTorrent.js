@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import { StateT } from 'joystream-node'
 
 @observer
 class CompletedTorrent extends Component {
@@ -11,7 +10,7 @@ class CompletedTorrent extends Component {
         <td>{torrent.name}</td>
         <td>{torrent.sizeMB} Mb</td>
         <td>{torrent.progressPercent}%</td>
-        <td>{StateT.properties[torrent.libtorrentState].name}</td>
+        <td>{torrent.stateName}</td>
       </tr>
     )
   }

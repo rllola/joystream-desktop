@@ -1,5 +1,6 @@
 import { observable, action, computed } from 'mobx'
 import utils from '../utils'
+import { SessionMode, TorrentState } from 'joystream-node'
 
 class Torrent {
 
@@ -7,18 +8,13 @@ class Torrent {
   @observable progress = 0
   @observable size = 0
   @observable name = ''
-  /* Need to be @computed
-    @observable buyerPeers = []
-    @observable sellerPeers = []
-    @observable observerPeers = []
-    @observable normalPeers = []
-  */
+
   @observable mode
 
   constructor (torrent) {
     this.torrent = torrent
 
-    this.setMode(utils.TorrentMode.NOT_SET)
+    this.setMode(SessionMode.not_set)
 
     this.infoHash = torrent.infoHash
 
@@ -37,11 +33,15 @@ class Torrent {
     torrent.on('finished', this.onFinished.bind(this))
 
     torrent.on('sessionToSellMode', (alert) => {
-      this.setMode(utils.TorrentMode.SELL_MODE)
+      this.setMode(SessionMode.selling)
     })
 
     torrent.on('sessionToBuyMode', (alert) => {
-      this.setMode(utils.TorrentMode.BUY_MODE)
+      this.setMode(SessionMode.buying)
+    })
+
+    torrent.on('sessionToObserveMode', (alert) => {
+      this.setMode(SessionMode.observing)
     })
   }
 
@@ -93,6 +93,25 @@ class Torrent {
     this.libtorrentState = state
   }
 
+  @computed get stateName () {
+    switch (this.libtorrentState) {
+      case TorrentState.downloading:
+        return 'Downloading'
+      case TorrentState.downloading_metadata:
+        return 'Downloading Metadata'
+      case TorrentState.finished:
+        return 'Finished'
+      case TorrentState.seeding:
+        return 'Seeding'
+      case TorrentState.allocating:
+        return 'Allocating'
+      case TorrentState.checking_resume_data:
+        return 'Checking Resume Data'
+      default:
+        return ''
+    }
+  }
+
   @action.bound
   setProgress (progress) {
     this.progress = progress
@@ -110,7 +129,6 @@ class Torrent {
   @computed get progressPercent () {
     return Number(this.progress * 100).toFixed(0)
   }
-
 }
 
 export default Torrent
