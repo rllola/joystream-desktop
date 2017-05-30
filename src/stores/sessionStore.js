@@ -1,15 +1,14 @@
 import { observable, action, computed, runInAction } from 'mobx'
 import Torrent from './torrentStore'
-import { TorrentState, TorrentInfo } from 'joystream-node'
+import { TorrentState, TorrentInfo, SessionMode } from 'joystream-node'
 
 export default class Session {
   @observable torrents = []
   @observable loadingCount = 0
 
-  constructor ({session, savePath, db}) {
+  constructor ({session, savePath}) {
     this.session = session
     this.savePath = savePath
-    this.db = db
   }
 
   @computed get torrentsDownloading () {
@@ -44,7 +43,7 @@ export default class Session {
   removeTorrent (infoHash) {
     this.session.removeTorrent(infoHash, (err) => {
       if (err) return console.log(err)
-      this.db.removeTorrent(infoHash)
+
       runInAction(() => {
         this.torrents.replace(this.torrents.filter(function (torrent) {
           return torrent.infoHash !== infoHash
@@ -56,9 +55,6 @@ export default class Session {
   @action
   addTorrent (addTorrentParams) {
     return this.loadTorrent(addTorrentParams).then((observableTorrent) => {
-      if (observableTorrent) {
-        this.db.saveTorrent(observableTorrent.torrent)
-      }
       return observableTorrent
     })
   }
@@ -83,27 +79,9 @@ export default class Session {
 
   @action
   _insertTorrent (torrent) {
-    const infoHash = torrent.handle.infoHash()
     const observableTorrent = new Torrent(torrent)
 
     this.torrents.push(observableTorrent)
-
-    torrent.on('metadata', (torrentInfo) => {
-      this.db.saveTorrent(torrent)
-    })
-
-    torrent.on('resumedata', (buff) => {
-      this.db.saveTorrentResumeData(infoHash, buff)
-    })
-
-    // Save resume data when paused or finished
-    torrent.on('paused', () => {
-      torrent.handle.saveResume_data()
-    })
-
-    torrent.on('finished', () => {
-      torrent.handle.saveResume_data()
-    })
 
     return observableTorrent
   }

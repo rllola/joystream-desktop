@@ -2,6 +2,7 @@ import { observable, action, computed, runInAction } from 'mobx'
 import {EventEmitter} from 'events'
 import bcoin from 'bcoin'
 import assert from 'assert'
+import { SessionMode } from 'joystream-node'
 
 import constants from '../constants'
 
@@ -46,26 +47,8 @@ class Application extends EventEmitter {
 
     const torrent = this._session.torrents.get(infoHash)
 
-    torrent.toBuyMode(buyerTerms, (err, result) => {
-      if (!err) {
-        console.log('Ok')
-        // Temporary
-        torrent.on('readyToBuyTo', (seller) => {
-          let contractSk = this.walletStore.generatePrivateKey()
-          let finalPkHash = this.walletStore.address.hash
-          let value = 50000
-
-          const callback = (err, result) => {
-            if (!err) {
-              console.log('Buying to peer !')
-            } else {
-              console.error(err)
-            }
-          }
-
-          torrent.startBuying(seller.peerPlugin.status.connection, contractSk, finalPkHash, value, this.walletStore.createAndSend, callback)
-        })
-      } else {
+    torrent.toBuyMode(buyerTerms, (err) => {
+      if (err) {
         console.log(err)
       }
     })
@@ -81,23 +64,8 @@ class Application extends EventEmitter {
 
     const torrent = this._session.torrents.get(infoHash)
 
-    torrent.toSellMode(sellerTerms, (err, result) => {
-      if (!err) {
-        console.log('Looking for buyers')
-        // Temporary
-        torrent.on('readyToSellTo', (buyer) => {
-          let contractSk = this.walletStore.generatePrivateKey()
-          let finalPkHash = this.walletStore.address.hash
-
-          torrent.startSelling(buyer.peerPlugin.status.connection, contractSk, finalPkHash, (err, result) => {
-            if (!err) {
-              console.log('Selling to peer !')
-            } else {
-              console.error(err)
-            }
-          })
-        })
-      } else {
+    torrent.toSellMode(sellerTerms, (err) => {
+      if (err) {
         console.log(err)
       }
     })
@@ -140,6 +108,14 @@ class Application extends EventEmitter {
     }
 
     this.loadingTorrents = false
+
+    this._session.on('torrent_added', function (torrent) {
+      this._db.saveTorrent(torrent)
+    })
+
+    this._session.on('torrent_removed', function (infoHash){
+      this._db.removeTorrent(infoHash)
+    })
   }
 
   async _syncWallet () {
@@ -191,6 +167,71 @@ class Application extends EventEmitter {
     torrents = torrents.filter((torrent) => torrent !== null)
 
     console.log('Loaded ', torrents.length, ' torrents from db')
+
+    torrents.forEach(async (t) => {
+      this._monitorTorrent(t.torrent)
+
+      // Load torrent settings, set terms and target mode on torrent
+      // or goto mode immediately (buy mode and sell mode need torrent to be in downloading
+      // and seeding state respectively or will fail)
+      let settings = await this._db.getTorrentSettings(t.infoHash)
+
+      if(settings) {
+        if(settings.mode === SessionMode.buying) {
+          this.buyingTorrent(t.infoHash, settings.buyerTerms)
+        } else if (settings.mode === SessionMode.selling) {
+          this.sellingTorrent(t.infoHash, settings.sellerTerms)
+        } else if (settings.mode === SessionMode.observing) {
+          // ...
+        }
+      }
+    })
+  }
+
+  // Monitor a torrent over its lifetime and take necessary actions
+  // such as saving to database
+  _monitorTorrent (torrent) {
+    const infoHash = torrent.handle.infoHash()
+
+    torrent.on('metadata', (torrentInfo) => {
+      this._db.saveTorrent(torrent)
+    })
+
+    torrent.on('resumedata', (buff) => {
+      this._db.saveTorrentResumeData(infoHash, buff)
+    })
+
+    // Save resume data when paused or finished
+    torrent.on('paused', () => {
+      torrent.handle.saveResume_data()
+    })
+
+    torrent.on('finished', () => {
+      torrent.handle.saveResume_data()
+    })
+
+    torrent.on('sessionToSellMode', (alert) => {
+      this._db.saveTorrentSettings(infoHash, {
+        mode: SessionMode.selling,
+        sellerTerms: alert.terms,
+        //state: observableTorrent.state
+      })
+    })
+
+    torrent.on('sessionToBuyMode', (alert) => {
+      this._db.saveTorrentSettings(infoHash, {
+        mode: SessionMode.buying,
+        buyerTerms: alert.terms,
+        //state: observableTorrent.state
+      })
+    })
+
+    torrent.on('sessionToObserveMode', (alert) => {
+      this._db.saveTorrentSettings(infoHash, {
+        mode: SessionMode.observing,
+        //state: observableTorrent.state
+      })
+    })
   }
 }
 
