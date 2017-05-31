@@ -13,6 +13,7 @@ class SeedingTorrentList extends Component {
             <th>Size</th>
             <th>Progress</th>
             <th>Status</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>

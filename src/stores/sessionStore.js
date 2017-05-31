@@ -10,9 +10,6 @@ export default class Session {
     this.session = session
     this.savePath = savePath
     this.db = db
-
-    // for debugging from console
-    if (window) window.SessionStore = this
   }
 
   @computed get torrentsDownloading () {
@@ -58,10 +55,11 @@ export default class Session {
 
   @action
   addTorrent (addTorrentParams) {
-    return this.loadTorrent(addTorrentParams).then((torrent) => {
-      if (torrent) {
-        this.db.saveTorrent(torrent)
+    return this.loadTorrent(addTorrentParams).then((observableTorrent) => {
+      if (observableTorrent) {
+        this.db.saveTorrent(observableTorrent.torrent)
       }
+      return observableTorrent
     })
   }
 
@@ -73,9 +71,12 @@ export default class Session {
       this.loadingCount++
       this.session.addTorrent(addTorrentParams, (err, torrent) => {
         this.loadingCount--
-        if (err) return resolve(null)
-        this._insertTorrent(torrent)
-        resolve(torrent)
+        if (err) {
+          console.log(err)
+          return resolve(null)
+        }
+        let observableTorrent = this._insertTorrent(torrent)
+        resolve(observableTorrent)
       })
     })
   }
@@ -83,7 +84,9 @@ export default class Session {
   @action
   _insertTorrent (torrent) {
     const infoHash = torrent.handle.infoHash()
-    this.torrents.push(new Torrent(torrent))
+    const observableTorrent = new Torrent(torrent)
+
+    this.torrents.push(observableTorrent)
 
     torrent.on('metadata', (torrentInfo) => {
       this.db.saveTorrent(torrent)
@@ -94,13 +97,15 @@ export default class Session {
     })
 
     // Save resume data when paused or finished
-    torrent.on('torrent_paused_alert', () => {
+    torrent.on('paused', () => {
       torrent.handle.saveResume_data()
     })
 
-    torrent.on('torrent_finished_alert', () => {
+    torrent.on('finished', () => {
       torrent.handle.saveResume_data()
     })
+
+    return observableTorrent
   }
 
   @action

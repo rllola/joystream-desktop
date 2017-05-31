@@ -1,7 +1,4 @@
 import React, { Component } from 'react'
-//import { HashRouter, Route } from 'react-router-dom'
-//import { Provider } from 'mobx-react'
-import MobxReactDevTools from 'mobx-react-devtools'
 import { observer } from 'mobx-react'
 
 //import Header from '../Header'
@@ -17,6 +14,11 @@ import Seeding from '../Seeding'
 import Completed from '../Completed'
 //import Wallet from '../Wallet'
 
+let MobxReactDevTools
+if (process.env.NODE_ENV === 'development') {
+    MobxReactDevTools = require('mobx-react-devtools').default
+}
+
 class Application extends Component {
 
     constructor(props) {
@@ -31,8 +33,6 @@ class Application extends Component {
 
     render () {
 
-        console.log(this.state)
-
         return (
 
             <div className="app-container">
@@ -43,7 +43,7 @@ class Application extends Component {
 
                 {this.getRenderedScene()}
 
-                <div><MobxReactDevTools/></div>
+                {process.env.NODE_ENV === 'development' ? <div><MobxReactDevTools/></div> : null}
 
             </div>
         )
