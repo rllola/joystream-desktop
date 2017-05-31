@@ -1,37 +1,89 @@
 import React, { Component } from 'react'
-import { Link, BrowserRouter, Route} from 'react-router-dom'
+//import {Link} from 'react-router-dom'
+import PropTypes from 'prop-types'
 
-class Header extends Component {
+import {getCompactBitcoinUnitString, AbsolutePositionChildren} from '../../common'
 
-  constructor() {
-    super()
-    /** we need some state here to drive button and wallet stats **/
-  }
+const Button = (props) => {
 
-  // Consider factor out the individual buttons? the header will need onclick handlers anyway.
-  render () {
     return (
-      <header className="header">
-
-        <img className="logo" src="img/logo-contrast.svg"/>
-
-        <nav>
-            <Link to="/" > <div className="button">Downloading</div> </Link>
-            <Link to="/seeding" > <div className="button">Uploading</div> </Link>
-            <Link to="/completed" > <div className="button">Completed</div> </Link>
-            <div className="button" id="more-button"></div>
-        </nav>
-
-        <div className="flex-spacer"></div>
-
-        <div className="balance">
-          <span id="label">balance</span>
-          <span id="quantity">91234 mB</span>
+        <div className={"button" + (props.isActive ? " button-active" : "")} onClick={props.onClick}>
+            { props.label }
+            {
+                /**
+                props.counter
+                ?
+                    <AbsolutePositionChildren left={10} top={-30}>
+                        <div style={{
+                                        backgroundColor: props.counter.color,
+                                        color: 'white',
+                                        padding: 2,
+                                        fontSize: 15,
+                                        borderRadius: 5,
+                                        paddingLeft: 5,
+                                        paddingRight: 5
+                                    }}>
+                            {props.counter.count}
+                        </div>
+                    </AbsolutePositionChildren>
+                :
+                null
+                 **/
+            }
         </div>
-
-      </header>
     )
-  }
-};
+}
 
+Button.propTypes = {
+
+    // Button label
+    label : PropTypes.string.isRequired,
+
+    // Whether button is active or not
+    isActive: PropTypes.bool.isRequired,
+
+    // Called when button is clicked
+    onClick : PropTypes.func.isRequired
+
+    /**
+    // Counter
+    counter : PropTypes.shape({
+        count : PropTypes.number.isRequired,
+        color : PropTypes.string.isRequired
+    })
+     */
+}
+
+Button.defaultProps = {
+    //counter : null,
+    isActive : false
+}
+
+const Header = (props) => {
+
+    return (
+        <header className="header">
+
+            <img className="logo" src="assets/img/logo-contrast.svg"/>
+
+            <nav>
+                {props.children}
+            </nav>
+
+            <div className="flex-spacer"></div>
+
+            <div className="balance">
+                <span id="label">balance</span>
+                <span id="quantity"> {props.balance} B</span>
+            </div>
+
+        </header>
+    )
+}
+
+Header.propTypes = {
+    balance : PropTypes.number.isRequired
+}
+
+export {Button}
 export default Header

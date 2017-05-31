@@ -1,55 +1,65 @@
 import React, { Component } from 'react'
-import { HashRouter as Router, Route } from 'react-router-dom'
-import { Provider } from 'mobx-react'
+//import { HashRouter, Route } from 'react-router-dom'
+//import { Provider } from 'mobx-react'
 import MobxReactDevTools from 'mobx-react-devtools'
 import { observer } from 'mobx-react'
 
-
-import Header from '../Header'
+//import Header from '../Header'
+import ApplicationHeader from './ApplicationHeader'
+import Scene from './Scene'
 
 // Components
-import Sidebar from './components/Sidebar'
+//import Sidebar from './components/Sidebar'
 
 // Our scenes
 import Downloading from '../Downloading'
 import Seeding from '../Seeding'
 import Completed from '../Completed'
-import Wallet from '../Wallet'
+//import Wallet from '../Wallet'
 
-@observer
 class Application extends Component {
 
-  constructor(props) {
-    super(props)
-  }
+    constructor(props) {
+        super(props)
 
-  /* The merits of this providers seems dubious, reconsider later */
-  /* Provider needs a single child */
-  render () {
-    return (
-        <Router>
-          <Provider {...this.props.stores}>
+        this.setActiveScene(Header.Scene.Downloading)
+    }
+
+    setActiveScene(s) {
+        this.setState({activeScene : s})
+    }
+
+    render () {
+
+        return (
 
             <div className="app-container">
 
-                <Header>
-                </Header>
+                <ApplicationHeader balance={13333337}
+                                   activeButton={this.state.activeScene}
+                                   onSceneSelected={(s) => {this.setActiveScene(s)}}/>
 
-                <Route path="/" component={Downloading}/>
-                <Route exact path="/seeding" component={Seeding} />
-                <Route exact path="/completed" component={Completed} />
-                <Route exact path="/wallet" component={Wallet} />
+                {this.getRenderedScene()}
 
                 <div><MobxReactDevTools/></div>
 
             </div>
+        )
+    }
 
-          </Provider>
-        </Router>
-    )
-  }
+    getRenderedScene() {
+
+        if(this.state.activeScene == Scene.Downloading) {
+            return <Downloading torrents={null}
+                                revenue={123}
+                                downloadSpeed={77777}
+                                onStartDownloadClicked={() => { console.log(" start download clicked")}}/>
+        } else if(this.state.activeScene == Scene.Seeding) {
+            return null
+        } else {
+            return null
+        }
+    }
 }
-
-/** Downloading revenue={7893} down_speed={924} **/
 
 export default Application

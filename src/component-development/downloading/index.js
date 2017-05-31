@@ -3,12 +3,12 @@
  */
 
 import React from 'react'
+
+import {ScenarioContainer} from '../common'
+
 import TorrentTable from '../../scenes/Downloading/TorrentTable'
 import TorrentToolbar from '../../scenes/Downloading/TorrentToolbar'
 import TorrentContextMenu from '../../scenes/Downloading/TorrentContextMenu'
-
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
 
 class MockTorrent {
 
@@ -55,19 +55,7 @@ class MockTorrent {
     }
 }
 
-const ScenarioContainer = (props) => {
-
-    return (
-        <div style={{paddingBottom : 40}}>
-            <Card>
-                <CardTitle title={props.title} subtitle={props.subtitle} />
-                {props.children}
-            </Card>
-        </div>
-    )
-}
-
-const Downloading = () => {
+const DownloadingSceneScenarios = () => {
 
     var torrents = [
         new MockTorrent({ info_hash : "info_hash_1",
@@ -188,4 +176,4 @@ const Downloading = () => {
     )
 }
 
-export default Downloading
+export default DownloadingSceneScenarios

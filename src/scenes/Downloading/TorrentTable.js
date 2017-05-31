@@ -11,7 +11,7 @@ import TorrentRow, {ToolbarVisibilityType} from './TorrentRow'
 import TorrentToolbar from './TorrentToolbar'
 import TorrentContextMenu from './TorrentContextMenu'
 
-import AbsolutePositionChildren from '../../components/Utils/AbsolutePositionChildren'
+import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
 
 function StartDownloadingHint(props) {
 

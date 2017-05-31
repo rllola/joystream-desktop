@@ -2,58 +2,50 @@ import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
-import DownloadingTorrentsTable from './DownloadingTorrentsTable'
+import TorrentTable from './TorrentTable'
 
-@inject('sessionStore')
-@observer
-class Downloading extends Component {
+const Downloading = (props) => {
 
-    log_props() {
-        console.log(this.props)
-    }
+    return (
+        <div className="downloading-scene-container">
 
-    render() {
-        return (
-            <div className="downloading-scene-container">
+            <section className="middle-section">
 
-                <section className="middle-section">
+                <div className="indicators">
+                    <span className="flex-spacer"></span>
+                    <span className="label">Revenue</span>
+                    <span className="quantity">{props.revenue} B</span>
+                    <span className="vertical-bar"></span>
+                    <span className="label">Bandwidth</span>
+                    <span className="quantity">{props.downloadSpeed} Kb/s</span>
+                </div>
 
-                    <div className="indicators">
-                        <span className="flex-spacer"></span>
-                        <span className="label">Revenue</span>
-                        <span className="quantity">{this.props.revenue} mB</span>
-                        <span className="vertical-bar"></span>
-                        <span className="label">Bandwidth</span>
-                        <span className="quantity">{this.props.down_speed} Kb/s</span>
+                <div className="toolbar-section">
+
+                    <div className="heading">
+                        <h1>Downloading</h1>
+                        <h2> {props.torrents.length} downloads</h2>
+                    </div>
+                    <div className="vertical-bar"></div>
+                    <div className="button-section">
+                        <div className="button" onClick={props.onStartDownloadClicked}>Start Download</div>
                     </div>
 
-                    <div className="toolbar-section">
+                </div>
 
-                        <div className="heading">
-                            <h1>Downloading</h1>
-                            <h2> {this.props.sessionStore.torrentsDownloading.length} downloads</h2>
-                        </div>
-                        <div className="vertical-bar"></div>
-                        <div className="button-section">
-                            <div className="button">Start Download</div>
-                        </div>
+            </section>
 
-                    </div>
+            <TorrentTable torrents={this.props.sessionStore.torrentsDownloading} />
 
-                </section>
-
-                <DownloadingTorrentsTable torrents={this.props.sessionStore.torrentsDownloading} />
-
-            </div>
-        )
-    }
+        </div>
+    )
 }
 
 Downloading.propTypes = {
-    //torrents :
-    //revenue : PropTypes.number.isRequired,
-    //down_speed : PropTypes.number.isRequired,
-    //onStartDownload : PropTypes.func.isRequired
+    torrents : PropTypes.array.isRequired,
+    revenue : PropTypes.number.isRequired,
+    downloadSpeed : PropTypes.number.isRequired,
+    onStartDownloadClicked : PropTypes.func.isRequired
 }
 
 export default Downloading

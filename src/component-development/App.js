@@ -1,10 +1,11 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { HashRouter, Route } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import RaisedButton from 'material-ui/RaisedButton'
 
+import HeaderScenarios from './header'
 import Downloading from './downloading'
 
 const App = (props) => {
@@ -20,10 +21,12 @@ const App = (props) => {
 
                 <HashRouter>
                     <div>
+                        <Link to="header"> <RaisedButton label="Header" style={style} />  </Link>
                         <Link to="downloading"> <RaisedButton label="Downloading" style={style} />  </Link>
                         <Link to="completed"> <RaisedButton label="Completed" style={style} /> </Link>
                         <Link to="seeding"> <RaisedButton label="Seeding" style={style} /> </Link>
 
+                        <Route path="/header" component={HeaderScenarios} />
                         <Route path="/downloading" component={Downloading} />
                         <Route path="/completed" />
                         <Route path="/seeding" />

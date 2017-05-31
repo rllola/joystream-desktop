@@ -15,8 +15,6 @@ if (module.hot) {
 
 function render() {
 
-    console.log("Trying to render app again")
-
     // NB: We have to re-require Application every time, or else this won't work
     var ComponentDevelopmentApplication = require('./App').default
 

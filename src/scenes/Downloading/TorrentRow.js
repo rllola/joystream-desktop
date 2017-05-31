@@ -13,7 +13,7 @@ import LinearProgress from 'material-ui/LinearProgress'
 import bytes from 'bytes'
 import humanizeDuration from 'humanize-duration'
 
-import AbsolutePositionChildren from '../../components/Utils/AbsolutePositionChildren'
+import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
 
 /**
  * Validates non-negative integers
@@ -130,47 +130,7 @@ class TorrentRow extends Component {
 
     constructor(props) {
         super(props)
-
-        //this.state = toolbarVisibilityState(false)
     }
-
-    /**
-    showToolbar() {
-        this.setState(toolbarVisibilityState(true))
-    }
-
-    hideToolbar() {
-        this.setState(toolbarVisibilityState(false))
-    }
-
-    isToolbarVisible() {
-        return this.state.toolbarVisible
-    }
-
-    onMouseEnter(e) {
-
-        console.log("onMouseEnter")
-
-        if(this.props.canChangeToolbarVisibility) {
-
-            // assert that !this.isToolbarVisible()
-
-            this.showToolbar()
-        }
-    }
-
-    onMouseLeave(e) {
-
-        console.log("onMouseLeave")
-
-        if(this.props.canChangeToolbarVisibility) {
-
-            // assert that !this.isToolbarVisible()
-
-            this.hideToolbar()
-        }
-    }
-    */
 
     render(props) {
 

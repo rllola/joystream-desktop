@@ -2,6 +2,40 @@
  * Created by bedeho on 15/05/17.
  */
 
+
+const BitcoinUnit = {
+    BTC : 0,
+    mBTC : 1,
+    uBTC : 2,
+    Satoshi : 3
+}
+
+class BitcoinQuantity {
+
+    constructor(amount, unit) {
+
+        // Is non-negative integer
+        this.amount = amount
+
+        this.unit = unit
+
+    }
+
+    // quality operator
+
+    isEqualTo(quanitt) {
+
+    }
+
+    toUnit() {
+
+    }
+
+    toCompactUnit() {
+        // compact in what sense?
+    }
+}
+
 /**
  * Most compact Bitcoin unit string for given representation
  *
@@ -11,7 +45,14 @@
  * @param quantity
  * @param units
  */
-function compactBitcoinUnitString (quantity, units) {
+function getCompactBitcoinUnits (quantity, units) {
+
+    return {
+        quantity : quantity,
+        units : units
+    }
+
+    /**
 
     if(!(Number.isInteger(quantity) && quantity >= 0))
         throw Error('Quantity must be non-negative integer')
@@ -39,4 +80,16 @@ function compactBitcoinUnitString (quantity, units) {
     // throw
 
     return result
+     */
 }
+
+function getCompactBitcoinUnitString(quantity, units) {
+
+    // Find most compact representation
+    var result = compactBitcoinUnits(quantity, units)
+
+    // Convert to string and return
+    return result.quantity + " " + result.units
+}
+
+export {getCompactBitcoinUnits, getCompactBitcoinUnitString}
