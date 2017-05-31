@@ -29,8 +29,7 @@ class Application extends EventEmitter {
 
     this.sessionStore = new SessionStore({
       session: this._session,
-      savePath: this._savePath,
-      db: this._db
+      savePath: this._savePath
     })
 
     this.stores = {
@@ -38,6 +37,10 @@ class Application extends EventEmitter {
       sessionStore: this.sessionStore,
       walletStore: this.walletStore
     }
+
+    this._session.on('torrent_added', this._onTorrentAdded.bind(this))
+
+    this._session.on('torrent_removed', this._onTorrentRemoved.bind(this))
   }
 
   buyingTorrent (infoHash, buyerTerms) {
@@ -110,14 +113,6 @@ class Application extends EventEmitter {
     }
 
     this.loadingTorrents = false
-
-    this._session.on('torrent_added', function (torrent) {
-      this._db.saveTorrent(torrent)
-    })
-
-    this._session.on('torrent_removed', function (infoHash) {
-      this._db.removeTorrent(infoHash)
-    })
   }
 
   async _syncWallet () {
@@ -153,6 +148,16 @@ class Application extends EventEmitter {
     // is needed in index.js and call process.exit ?
   }
 
+  _onTorrentAdded (torrent) {
+    this._monitorTorrent(torrent)
+    if (this.loadingTorrents) return
+    this._db.saveTorrent(torrent)
+  }
+
+  _onTorrentRemoved (infoHash) {
+    this._db.removeTorrent(infoHash)
+  }
+
   async _loadTorrentsFromDb () {
     // Load persisted torrents from database into session store
     let infoHashes = await this._db.getInfoHashes()
@@ -171,8 +176,6 @@ class Application extends EventEmitter {
     console.log('Loaded ', torrents.length, ' torrents from db')
 
     torrents.forEach(async (t) => {
-      this._monitorTorrent(t.torrent)
-
       // Load torrent settings, set terms and target mode on torrent
       // or goto mode immediately (buy mode and sell mode need torrent to be in downloading
       // and seeding state respectively or will fail)
@@ -213,6 +216,8 @@ class Application extends EventEmitter {
     })
 
     torrent.on('sessionToSellMode', (alert) => {
+      if (this.loadingTorrents) return
+
       this._db.saveTorrentSettings(infoHash, {
         mode: SessionMode.selling,
         sellerTerms: alert.terms,
@@ -221,6 +226,8 @@ class Application extends EventEmitter {
     })
 
     torrent.on('sessionToBuyMode', (alert) => {
+      if (this.loadingTorrents) return
+
       this._db.saveTorrentSettings(infoHash, {
         mode: SessionMode.buying,
         buyerTerms: alert.terms,
@@ -229,6 +236,8 @@ class Application extends EventEmitter {
     })
 
     torrent.on('sessionToObserveMode', (alert) => {
+      if (this.loadingTorrents) return
+
       this._db.saveTorrentSettings(infoHash, {
         mode: SessionMode.observing,
         //state: observableTorrent.state
