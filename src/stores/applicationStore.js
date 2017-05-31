@@ -50,6 +50,8 @@ class Application extends EventEmitter {
     torrent.toBuyMode(buyerTerms, (err) => {
       if (err) {
         console.log(err)
+      } else {
+        torrent.startPlugin()
       }
     })
 
@@ -58,8 +60,6 @@ class Application extends EventEmitter {
   sellingTorrent (infoHash, sellerTerms) {
     // check wallet
 
-    console.log(infoHash)
-
     assert(this._session.torrents.has(infoHash))
 
     const torrent = this._session.torrents.get(infoHash)
@@ -67,6 +67,8 @@ class Application extends EventEmitter {
     torrent.toSellMode(sellerTerms, (err) => {
       if (err) {
         console.log(err)
+      } else {
+        torrent.startPlugin()
       }
     })
   }
@@ -113,7 +115,7 @@ class Application extends EventEmitter {
       this._db.saveTorrent(torrent)
     })
 
-    this._session.on('torrent_removed', function (infoHash){
+    this._session.on('torrent_removed', function (infoHash) {
       this._db.removeTorrent(infoHash)
     })
   }
