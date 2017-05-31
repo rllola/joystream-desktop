@@ -35,7 +35,7 @@ const Downloading = (props) => {
 
             </section>
 
-            <TorrentTable torrents={this.props.sessionStore.torrentsDownloading} />
+            <TorrentTable torrents={props.torrents} />
 
         </div>
     )
