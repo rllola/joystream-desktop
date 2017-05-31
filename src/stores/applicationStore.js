@@ -57,7 +57,6 @@ class Application extends EventEmitter {
         torrent.startPlugin()
       }
     })
-
   }
 
   _torrentToSellMode (infoHash, sellerTerms) {
@@ -79,7 +78,13 @@ class Application extends EventEmitter {
   _torrentToObserveMode (infoHash) {
     assert(this._session.torrents.has(infoHash))
     const torrent = this._session.torrents.get(infoHash)
-    torrent.toObserveMode()
+    torrent.toObserveMode((err) => {
+      if (err) {
+        console.log(err)
+      } else {
+        torrent.startPlugin()
+      }
+    })
   }
 
   async _initWallet () {
