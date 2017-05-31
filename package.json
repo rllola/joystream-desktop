@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "scripts": {
     "start": "NODE_ENV=development electron-forge start",
-    "component-development": "COMPONENT_DEVELOPMENT_MODE=True electron-forge start",
+    "component-development": "COMPONENT_DEVELOPMENT_MODE=True NODE_ENV=development electron-forge start",
     "test": "echo 'No test !' && exit 0",
     "package": "electron-forge package",
     "make": "NODE_ENV=production electron-forge make"
@@ -23,7 +23,6 @@
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-preset-env": "^1.4.0",
     "babel-preset-es2015": "^6.24.0",
-    "babel-preset-es2017-node7": "^0.5.2",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.22.0",
     "cmake-js": "^3.4.1",

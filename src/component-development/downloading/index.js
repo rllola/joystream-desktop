@@ -24,9 +24,9 @@ class MockTorrent {
         this.paid = fields.paid
         this.canStartBuying = fields.canStartBuying
         this.canChangePrice = fields.canChangePrice
-        this.numberOfBuyerPeers = fields.numberOfBuyerPeers
-        this.numberOfSellerPeers = fields.numberOfSellerPeers
-        this.numberOfObserverPeers = fields.numberOfObserverPeers
+        this.numberOfBuyers = fields.numberOfBuyers
+        this.numberOfSellers = fields.numberOfSellers
+        this.numberOfObservers = fields.numberOfObservers
         this.numberOfNormalPeers = fields.numberOfNormalPeers
     }
 
@@ -68,9 +68,9 @@ const DownloadingSceneScenarios = () => {
             paid : true,
             canStartBuying : false,
             canChangePrice : true,
-            numberOfBuyerPeers : 452,
-            numberOfSellerPeers : 12,
-            numberOfObserverPeers : 5,
+            numberOfBuyers : 452,
+            numberOfSellers : 12,
+            numberOfObservers : 5,
             numberOfNormalPeers : 1
         }),
         new MockTorrent({
@@ -84,9 +84,9 @@ const DownloadingSceneScenarios = () => {
             paid : true,
             canStartBuying : false,
             canChangePrice : false,
-            numberOfBuyerPeers : 428,
-            numberOfSellerPeers : 92,
-            numberOfObserverPeers : 521,
+            numberOfBuyers : 428,
+            numberOfSellers : 92,
+            numberOfObservers : 521,
             numberOfNormalPeers : 44
         }),
         new MockTorrent({
@@ -100,9 +100,9 @@ const DownloadingSceneScenarios = () => {
             paid : false,
             canStartBuying : true,
             canChangePrice : false,
-            numberOfBuyerPeers : 4812,
-            numberOfSellerPeers : 219,
-            numberOfObserverPeers : 115,
+            numberOfBuyers : 4812,
+            numberOfSellers : 219,
+            numberOfObservers : 115,
             numberOfNormalPeers : 324
         }),
         new MockTorrent({
@@ -116,9 +116,9 @@ const DownloadingSceneScenarios = () => {
             paid : false,
             canStartBuying : true,
             canChangePrice : false,
-            numberOfBuyerPeers : 481,
-            numberOfSellerPeers : 92,
-            numberOfObserverPeers : 15,
+            numberOfBuyers : 481,
+            numberOfSellers : 92,
+            numberOfObservers : 15,
             numberOfNormalPeers : 44
         }),
         new MockTorrent({
@@ -132,11 +132,11 @@ const DownloadingSceneScenarios = () => {
             paid : false,
             canStartBuying : true,
             canChangePrice : false,
-            numberOfBuyerPeers : 48,
-            numberOfSellerPeers : 9,
-            numberOfObserverPeers : 5,
+            numberOfBuyers : 48,
+            numberOfSellers : 9,
+            numberOfObservers : 5,
             numberOfNormalPeers : 4
-        }),
+        })
 
     ]
 
@@ -166,10 +166,10 @@ const DownloadingSceneScenarios = () => {
                                     onChangePriceClicked = {() => {console.log("Change price clicked")}}
                                     onRemoveClicked = {() => {console.log("Remove and click")}}
                                     onRemoveAndDeleteDataClicked = {() => {console.log("Remove and delete data clicked")}}
-                                    number_of_buyers = {1}
-                                    number_of_sellers = {263}
-                                    number_of_observers = {209}
-                                    number_of_normal_peers = {23}/>
+                                    numberOfBuyers = {1}
+                                    numberOfSellers = {263}
+                                    numberOfObservers = {209}
+                                    numberOfNormalPeers = {23}/>
             </ScenarioContainer>
 
         </div>

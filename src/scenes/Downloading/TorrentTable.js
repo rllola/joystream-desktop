@@ -143,7 +143,7 @@ class TorrentsTable extends Component {
     }
 
     getRenderedContextMenu() {
-
+        
         return (
             this.isContextMenuVisible()
             ?
@@ -157,10 +157,10 @@ class TorrentsTable extends Component {
                                     onChangePriceClicked = {() => {this.state.contextMenu.torrent.showChangePriceDialog(); this.hideContextMenu()}}
                                     onRemoveClicked = {() => {this.state.contextMenu.torrent.remove(); this.hideContextMenu()}}
                                     onRemoveAndDeleteDataClicked = {() => {this.state.contextMenu.torrent.removeAndDeleteData(); this.hideContextMenu()}}
-                                    number_of_buyers = {this.state.contextMenu.torrent.numberOfBuyerPeers}
-                                    number_of_sellers = {this.state.contextMenu.torrent.numberOfSellerPeers}
-                                    number_of_observers = {this.state.contextMenu.torrent.numberOfObserverPeers}
-                                    number_of_normal_peers = {this.state.contextMenu.torrent.numberOfNormalPeers}/>
+                                    numberOfBuyers = {this.state.contextMenu.torrent.numberOfBuyers}
+                                    numberOfSellers = {this.state.contextMenu.torrent.numberOfSellers}
+                                    numberOfObservers = {this.state.contextMenu.torrent.numberOfObservers}
+                                    numberOfNormalPeers = {this.state.contextMenu.torrent.numberOfNormalPeers}/>
             </AbsolutePositionChildren>
             :
             null
