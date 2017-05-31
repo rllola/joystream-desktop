@@ -43,7 +43,7 @@ class Application extends EventEmitter {
     this._session.on('torrent_removed', this._onTorrentRemoved.bind(this))
   }
 
-  buyingTorrent (infoHash, buyerTerms) {
+  _torrentToBuyMode (infoHash, buyerTerms) {
     // check wallet
 
     assert(this._session.torrents.has(infoHash))
@@ -60,7 +60,7 @@ class Application extends EventEmitter {
 
   }
 
-  sellingTorrent (infoHash, sellerTerms) {
+  _torrentToSellMode (infoHash, sellerTerms) {
     // check wallet
 
     assert(this._session.torrents.has(infoHash))
@@ -74,6 +74,12 @@ class Application extends EventEmitter {
         torrent.startPlugin()
       }
     })
+  }
+
+  _torrentToObserveMode (infoHash) {
+    assert(this._session.torrents.has(infoHash))
+    const torrent = this._session.torrents.get(infoHash)
+    torrent.toObserveMode()
   }
 
   async _initWallet () {
@@ -150,8 +156,12 @@ class Application extends EventEmitter {
 
   _onTorrentAdded (torrent) {
     this._monitorTorrent(torrent)
-    if (this.loadingTorrents) return
-    this._db.saveTorrent(torrent)
+
+    if (this.loadingTorrents) {
+      this._applyTorrentSettingsFromDb(torrent.infoHash)
+    } else {
+      this._db.saveTorrent(torrent)
+    }
   }
 
   _onTorrentRemoved (infoHash) {
@@ -174,23 +184,24 @@ class Application extends EventEmitter {
     torrents = torrents.filter((torrent) => torrent !== null)
 
     console.log('Loaded ', torrents.length, ' torrents from db')
+  }
 
-    torrents.forEach(async (t) => {
-      // Load torrent settings, set terms and target mode on torrent
-      // or goto mode immediately (buy mode and sell mode need torrent to be in downloading
-      // and seeding state respectively or will fail)
-      let settings = await this._db.getTorrentSettings(t.infoHash)
+  async _applyTorrentSettingsFromDb (infoHash) {
+      try {
+        var settings = await this._db.getTorrentSettings(infoHash)
+      } catch (e) {}
 
-      if(settings) {
-        if(settings.mode === SessionMode.buying) {
-          this.buyingTorrent(t.infoHash, settings.buyerTerms)
-        } else if (settings.mode === SessionMode.selling) {
-          this.sellingTorrent(t.infoHash, settings.sellerTerms)
-        } else if (settings.mode === SessionMode.observing) {
-          // ...
-        }
+      switch (settings.mode) {
+        case SessionMode.buying:
+          this._torrentToBuyMode(infoHash, settings.buyerTerms)
+          break
+        case SessionMode.selling:
+          this._torrentToSellMode(infoHash, settings.sellerTerms)
+          break
+        case SessionMode.observing:
+          this._torrentToObserveMode(infoHash)
+          break
       }
-    })
   }
 
   // Monitor a torrent over its lifetime and take necessary actions
