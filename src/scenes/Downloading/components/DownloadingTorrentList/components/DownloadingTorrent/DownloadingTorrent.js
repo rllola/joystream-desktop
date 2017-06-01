@@ -1,7 +1,6 @@
 import React from 'react'
 import { inject } from 'mobx-react'
-import { StateT } from 'joystream-node'
-import utils from '../../../../../../utils/'
+import { SessionMode } from 'joystream-node'
 
 //  100, 5, 1, 20000
 const buyerTerms = {
@@ -16,9 +15,7 @@ const DownloadingTorrent = inject('applicationStore')((props) => {
   const applicationStore = props.applicationStore
 
   function startBuying () {
-    let infoHash = torrent.handle.infoHash()
-
-    applicationStore.buyingTorrent(infoHash, buyerTerms)
+    applicationStore.buyingTorrent(torrent.infoHash, buyerTerms)
   }
 
   return (
@@ -26,9 +23,9 @@ const DownloadingTorrent = inject('applicationStore')((props) => {
       <td>{torrent.name}</td>
       <td>{torrent.sizeMB} Mb</td>
       <td>{torrent.progressPercent}%</td>
-      <td>{StateT.properties[torrent.libtorrentState].name}</td>
+      <td>{torrent.stateName}</td>
       {/* If we have a buyer show button startSelling or startSelling directly after finding it */}
-      <td>{torrent.mode === utils.TorrentMode.BUY_MODE ? <p>In Buy Mode</p> : <button className="btn btn-default" onClick={startBuying}>Start buying</button>}</td>
+      <td>{torrent.mode === SessionMode.buying ? <p>In Buy Mode</p> : <button className="btn btn-default" onClick={startBuying}>Start buying</button>}</td>
     </tr>
   )
 })

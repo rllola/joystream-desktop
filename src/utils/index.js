@@ -1,3 +1,3 @@
-import TorrentMode from './torrentModeEnum'
+export default {
 
-export default { TorrentMode }
+}

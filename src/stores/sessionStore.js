@@ -1,6 +1,6 @@
 import { observable, action, computed, runInAction } from 'mobx'
 import Torrent from './torrentStore'
-import { StateT, TorrentInfo } from 'joystream-node'
+import { TorrentState, TorrentInfo } from 'joystream-node'
 
 export default class Session {
   @observable torrents = []
@@ -14,29 +14,29 @@ export default class Session {
 
   @computed get torrentsDownloading () {
     return this.torrents.filter(function (torrent) {
-      return (torrent.libtorrentState === StateT.DOWNLOADING ||
-        torrent.libtorrentState === StateT.DOWNLOADING_METADATA ||
-        torrent.libtorrentState === StateT.ALLOCATING ||
-        torrent.libtorrentState === StateT.CHECKING_FILES ||
-        torrent.libtorrentState === StateT.CHECKING_RESUME_DATA)
+      return (torrent.libtorrentState === TorrentState.downloading ||
+        torrent.libtorrentState === TorrentState.downloading_metadata ||
+        torrent.libtorrentState === TorrentState.allocating ||
+        torrent.libtorrentState === TorrentState.checking_files ||
+        torrent.libtorrentState === TorrentState.checking_resume_data)
     })
   }
 
   @computed get torrentsSeeding () {
     return this.torrents.filter(function (torrent) {
-      return torrent.libtorrentState === StateT.SEEDING
+      return torrent.libtorrentState === TorrentState.seeding
     })
   }
 
   @computed get torrentsCompleted () {
     return this.torrents.filter(function (torrent) {
-      return torrent.libtorrentState === StateT.FINISHED || torrent.libtorrentState === StateT.SEEDING
+      return torrent.libtorrentState === TorrentState.finished || torrent.libtorrentState === TorrentState.seeding
     })
   }
 
   @computed get torrentsChecking () {
     return this.torrents.filter(function (torrent) {
-      return torrent.libtorrentState === StateT.CHECKING_FILES || torrent.libtorrentState === StateT.CHECKING_RESUME_DATA
+      return torrent.libtorrentState === TorrentState.checking_files || torrent.libtorrentState === TorrentState.checking_resume_data
     })
   }
 
