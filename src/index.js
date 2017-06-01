@@ -51,10 +51,10 @@ const spvnode = new bcoin.spvnode({
   plugins: ['walletdb'],
   loader: function (name) {
     if (name === 'walletdb') return bcoin.walletplugin
-  },
+  }/**,
   logger: new bcoin.logger({
     level: 'info'
-  })
+  })*/
 })
 
 // Create joystream libtorrent session

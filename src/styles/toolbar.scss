@@ -1,0 +1,100 @@
+@import '_constants';
+
+.toolbar {
+  display: flex;
+  flex-basis: auto;
+
+  .section-container {
+    display: flex;
+    border-radius: $max-border-radius;
+    border: 2px solid #B3B3B3;
+    background-color: white;
+
+    .section {
+      padding-top: 10px;
+      padding-bottom: 10px;
+
+      /** both have to be the same **/
+      padding-right: 8px;
+      padding-left: 8px;
+
+      cursor: pointer;
+    }
+
+    .section:first-of-type {
+      padding-left: 11px; /*16px; is 2x padding-right general case */
+    }
+
+    .section:last-of-type {
+      padding-right: 11px; /*16px; is 2x padding-right general case */
+    }
+
+    .button {
+      background-repeat: no-repeat;
+      background-position: center;
+      height: 30px;
+      width: 30px;
+    }
+
+    .separator {
+      width: 0px;
+      border-left: 2px solid #B3B3B3;
+      /**height: 30px;  same as .button **/
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  }
+}
+
+// Styling react-tooltip
+.button-section-tooltip {
+  font-size: 14px !important;
+  border-radius: 10000px;
+  //color: #ff6e00 !important;
+  //background-color: orange !important;
+  /**
+  &.place-top {
+    &:after {
+      border-top-color: orange !important;
+      border-top-style: solid !important;
+      border-top-width: 6px !important;
+    }
+  }
+  */
+}
+
+.speedup {
+  .button {
+    background-image: url('../assets/icon/speedup.svg');
+  }
+}
+
+.speedup:hover {
+  .button {
+    background-image: url('../assets/icon/speedup-hover.svg');
+  }
+}
+
+.open-folder {
+  .button {
+    background-image: url('../assets/icon/open-folder.svg');
+  }
+}
+
+.open-folder:hover {
+  .button {
+    background-image: url('../assets/icon/open-folder-hover.svg');
+  }
+}
+
+.more {
+  .button {
+    background-image: url('../assets/icon/more.svg');
+  }
+}
+
+.more:hover {
+  .button {
+    background-image: url('../assets/icon/more-hover.svg');
+  }
+}
