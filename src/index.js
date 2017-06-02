@@ -23,6 +23,7 @@ import Application from './core/Application'
 const application = new Application()
 
 function render (app) {
+
   // NB: We have to re-require Application every time, or else this won't work
   const ApplicationScene = require('./scenes/Application').default
 
