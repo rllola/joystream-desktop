@@ -10,12 +10,16 @@ import {ScenarioContainer} from '../common'
 import LoadingScene,{LoadingState} from '../../scenes/Application/LoadingScene'
 
 
+function getState(s) {
+    return { 'loadingState' : LoadingState.CreatingSPVNode }
+}
+
 class ControllableLoadingScene extends Component {
 
     constructor(props) {
         super(props)
 
-        this.state = { 'loadingState' : LoadingState.CreatingSPVNode }
+        this.state = getState(LoadingState.CreatingSPVNode)
     }
 
     goToNextState() {
@@ -23,15 +27,15 @@ class ControllableLoadingScene extends Component {
         if(this.state.loadingState == LoadingState.Finished)
             throw Error('Already at last state')
         else
-            this.setState(this.state.loadingState + 1) // a bit sloppy, but OK, later add more sophistication
+            this.setState(getState(this.state.loadingState + 1)) // a bit sloppy, but OK, later add more sophistication
     }
 
     goToPriorState() {
 
-        if(this.state.loadingState == LoadingState.Finished)
-            throw Error('Already at last state')
+        if(this.state.loadingState == LoadingState.CreatingSPVNode)
+            throw Error('Already at first state')
         else
-            this.setState(this.state.loadingState + 1) // a bit sloppy, but OK, later add more sophistication
+            this.setState(getState(this.state.loadingState - 1)) // a bit sloppy, but OK, later add more sophistication
     }
 
     render() {
@@ -41,7 +45,7 @@ class ControllableLoadingScene extends Component {
                 <LoadingScene state={this.state.loadingState}/>
                 <CardActions>
                     <FlatButton label="Next" onTouchTap={() => { this.goToNextState()}}/>
-                    <FlatButton label="Previous" onTouchTap={() => { this.goToNextState()}}/>
+                    <FlatButton label="Previous" onTouchTap={() => { this.goToPriorState()}}/>
                 </CardActions>
             </div>
         )
