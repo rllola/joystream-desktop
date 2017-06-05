@@ -32,6 +32,24 @@ class Application extends Component {
         if (this.props.app.activeScene === Scene.Loading) return <h1>Starting . . .</h1>
         if (this.props.app.activeScene === Scene.ShuttingDown) return <h1>Exiting . . .</h1>
 
+        return null
+
+            /**
+             this.props.applicationStore.loadingTorrents
+             ?
+             this.getRenderedLoadingScene()
+             :
+             this.getRenderedActiveScene()
+             **/
+    }
+
+    getRenderedLoadingScene() {
+
+        return null
+    }
+
+    getRenderedActiveScene() {
+
         return (
             <div className="app-container">
 
@@ -45,6 +63,7 @@ class Application extends Component {
 
             </div>
         )
+
     }
 
     getRenderedScene () {
