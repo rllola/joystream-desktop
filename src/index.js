@@ -12,6 +12,7 @@ import 'babel-polyfill'
 import os from 'os'
 import path from 'path'
 //import Config from 'electron-config'
+const isDev = require('electron-is-dev')
 
 // React
 import React from 'react'
@@ -25,7 +26,7 @@ function render (app) {
   // NB: We have to re-require Application every time, or else this won't work
   const ApplicationScene = require('./scenes/Application').default
 
-  if (process.env.NODE_ENV === 'development') {
+  if (isDev) {
     const AppContainer = require('react-hot-loader').AppContainer
 
     ReactDOM.render(
