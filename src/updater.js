@@ -1,7 +1,8 @@
 const electron = require('electron')
 const APP_VERSION = require('../package.json').version
+const AUTO_UPDATE_BASE_URL = require('./constants').AUTO_UPDATE_BASE_URL
 
-const AUTO_UPDATE_URL = 'https://joystream.lola.ninja/update/' + process.platform + '/' + APP_VERSION
+const AUTO_UPDATE_URL = AUTO_UPDATE_BASE_URL + process.platform + '/' + APP_VERSION
 
 function init () {
   if (process.platform === 'linux') {
