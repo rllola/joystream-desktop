@@ -192,21 +192,25 @@ class Application extends EventEmitter {
   }
 
   async _applyTorrentSettingsFromDb (infoHash) {
-      try {
-        var settings = await this._db.getTorrentSettings(infoHash)
-      } catch (e) {}
+    var settings = await this._db.getTorrentSettings(infoHash)
 
-      switch (settings.mode) {
-        case SessionMode.buying:
-          this._torrentToBuyMode(infoHash, settings.buyerTerms)
-          break
-        case SessionMode.selling:
-          this._torrentToSellMode(infoHash, settings.sellerTerms)
-          break
-        case SessionMode.observing:
-          this._torrentToObserveMode(infoHash)
-          break
-      }
+    // If a torrent never was set to a specific mode it will not have a record in the database
+    if (settings === null) return
+
+    switch (settings.mode) {
+      case SessionMode.buying:
+        this._torrentToBuyMode(infoHash, settings.buyerTerms)
+        break
+      case SessionMode.selling:
+        this._torrentToSellMode(infoHash, settings.sellerTerms)
+        break
+      case SessionMode.observing:
+        this._torrentToObserveMode(infoHash)
+        break
+      default:
+        // We do not save torrent settings "payment terms" if the mode is not set
+        assert(false)
+    }
   }
 
   // Monitor a torrent over its lifetime and take necessary actions
@@ -236,7 +240,7 @@ class Application extends EventEmitter {
 
       this._db.saveTorrentSettings(infoHash, {
         mode: SessionMode.selling,
-        sellerTerms: alert.terms,
+        sellerTerms: alert.terms
         //state: observableTorrent.state
       })
     })
@@ -246,7 +250,7 @@ class Application extends EventEmitter {
 
       this._db.saveTorrentSettings(infoHash, {
         mode: SessionMode.buying,
-        buyerTerms: alert.terms,
+        buyerTerms: alert.terms
         //state: observableTorrent.state
       })
     })
@@ -255,7 +259,7 @@ class Application extends EventEmitter {
       if (this.loadingTorrents) return
 
       this._db.saveTorrentSettings(infoHash, {
-        mode: SessionMode.observing,
+        mode: SessionMode.observing
         //state: observableTorrent.state
       })
     })
