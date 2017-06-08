@@ -10,6 +10,7 @@ import Downloading from './downloading'
 import LoadingSceneScenarios from './loading'
 import TerminatingSceneScenarios from './terminating'
 import StreamScenario from './stream'
+import Seeding from './seeding'
 
 const App = (props) => {
 
@@ -37,7 +38,7 @@ const App = (props) => {
                         <Route path="/header" component={HeaderScenarios} />
                         <Route path="/downloading" component={Downloading} />
                         <Route path="/completed" />
-                        <Route path="/seeding" />
+                        <Route path="/seeding" component={Seeding}/>
                         <Route path="/stream" component={StreamScenario} />
                     </div>
                 </HashRouter>

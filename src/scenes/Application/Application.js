@@ -72,7 +72,6 @@ class Application extends Component {
                         </NavigationFrame>
 
             case Scene.ShuttingDown:
-
                 return <Terminating terminatingState={applicationStateToTerminatingState(this.props.app.state)}
                                     terminatingTorrentsProgressValue={100*(this.props.app.torrentTerminatingProgress/this.props.app.torrentsToTerminate)} />
         }
