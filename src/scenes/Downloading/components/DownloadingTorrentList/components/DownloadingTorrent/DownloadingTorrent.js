@@ -1,5 +1,5 @@
 import React from 'react'
-import { inject } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import { SessionMode } from 'joystream-node'
 
 //  100, 5, 1, 20000
@@ -10,7 +10,7 @@ const buyerTerms = {
   maxContractFeePerKb: 20000
 }
 
-const DownloadingTorrent = inject('applicationStore')((props) => {
+const DownloadingTorrent = inject('applicationStore')(observer((props) => {
   const torrent = props.torrent
   const applicationStore = props.applicationStore
 
@@ -28,6 +28,6 @@ const DownloadingTorrent = inject('applicationStore')((props) => {
       <td>{torrent.mode === SessionMode.buying ? <p>In Buy Mode</p> : <button className="btn btn-default" onClick={startBuying}>Start buying</button>}</td>
     </tr>
   )
-})
+}))
 
 export default DownloadingTorrent

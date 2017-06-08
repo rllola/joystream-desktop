@@ -1,5 +1,5 @@
 import React from 'react'
-import { inject } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import { SessionMode } from 'joystream-node'
 
 //  50, 1, 10, 15000, 5000
@@ -12,7 +12,7 @@ const sellerTerms = {
   settlementFee: 5000
 }
 
-const SeedingTorrent = inject('applicationStore')((props) => {
+const SeedingTorrent = inject('applicationStore')(observer((props) => {
   const torrent = props.torrent
   const applicationStore = props.applicationStore
 
@@ -30,6 +30,6 @@ const SeedingTorrent = inject('applicationStore')((props) => {
       <td>{torrent.mode === SessionMode.selling ? <p>In Sell Mode</p> : <button className="btn btn-default" onClick={startSelling}>Start selling</button>}</td>
     </tr>
   )
-})
+}))
 
 export default SeedingTorrent
