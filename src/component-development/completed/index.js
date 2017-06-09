@@ -2,9 +2,9 @@ import React from 'react'
 
 import {ScenarioContainer} from '../common'
 
-import TorrentTable from '../../scenes/Seeding/TorrentTable'
-import TorrentToolbar from '../../scenes/Seeding/TorrentToolbar'
-import TorrentContextMenu from '../../scenes/Seeding/TorrentContextMenu'
+import TorrentTable from '../../scenes/Completed/TorrentTable'
+import TorrentToolbar from '../../scenes/Completed/TorrentToolbar'
+import TorrentContextMenu from '../../scenes/Completed/TorrentContextMenu'
 
 class MockTorrent {
 
@@ -12,10 +12,7 @@ class MockTorrent {
 
         this.info_hash = fields.info_hash
         this.name = fields.name
-        this.upload_speed = fields.upload_speed
-        this.paused = fields.paused
-        this.paid = fields.paid
-        this.canStartSelling = fields.canStartSelling
+        this.size = fields.size
         this.numberOfBuyers = fields.numberOfBuyers
         this.numberOfSellers = fields.numberOfSellers
         this.numberOfObservers = fields.numberOfObservers
@@ -52,11 +49,10 @@ const SeedingSceneScenarios = () => {
     var torrents = [
         new MockTorrent({ info_hash : "info_hash_1",
             name : "My fake torrent",
+            size : 1025,
             upload_speed : 32,
             paused : false,
             paid : true,
-            price : 500000,
-            revenue : 3000000,
             canStartSelling : false,
             canChangePrice : true,
             numberOfBuyers : 452,
@@ -67,12 +63,11 @@ const SeedingSceneScenarios = () => {
         new MockTorrent({
             info_hash : "info_hash_2",
             name : "My pretty content",
+            size : 1025223223,
             progress : 11,
             upload_speed : 3222323,
             paused : true,
             paid : true,
-            price : 500000,
-            revenue : 3000000,
             canStartSelling : false,
             canChangePrice : false,
             numberOfBuyers : 428,
@@ -83,11 +78,10 @@ const SeedingSceneScenarios = () => {
         new MockTorrent({
             info_hash : "info_hash_3",
             name : "Favourite data",
+            size : 65330252232,
             upload_speed : 12332223,
             paused : true,
             paid : false,
-            price : 500000,
-            revenue : 3000000,
             canStartSelling : true,
             canChangePrice : false,
             numberOfBuyers : 4812,
@@ -98,11 +92,10 @@ const SeedingSceneScenarios = () => {
         new MockTorrent({
             info_hash : "info_hash_4",
             name : "Hello my dear user 19821",
+            size : 3420252232,
             upload_speed : 23132223,
             paused : false,
             paid : false,
-            price : 500000,
-            revenue : 3000000,
             canStartSelling : true,
             canChangePrice : false,
             numberOfBuyers : 481,
@@ -113,11 +106,10 @@ const SeedingSceneScenarios = () => {
         new MockTorrent({
             info_hash : "info_hash_5",
             name : "Some other great file",
+            size : 10252232,
             upload_speed : 32223,
             paused : false,
             paid : false,
-            price : 500000,
-            revenue : 3000000,
             canStartSelling : true,
             canChangePrice : false,
             numberOfBuyers : 48,

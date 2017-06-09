@@ -144,13 +144,16 @@ class TorrentRow extends Component {
                     <StatusIndicator paused={this.props.torrent.paused} />
                 </Field>
                 <Field>
-                    {bytes(this.props.torrent.size)}
-                </Field>
-                <Field>
                     {bytes(this.props.torrent.upload_speed)}/s
                 </Field>
                 <Field>
                     <ModeIndicator paid={this.props.torrent.paid} />
+                </Field>
+                <Field>
+                  {this.props.torrent.price}
+                </Field>
+                <Field>
+                  {this.props.torrent.revenue}
                 </Field>
 
                 { this.getRenderedToolbar() }
