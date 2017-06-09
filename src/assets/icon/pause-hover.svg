@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="21px" height="21px" viewBox="0 0 21 21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 43.2 (39069) - http://www.bohemiancoding.com/sketch -->
+    <title>icon/pause-hover</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon/pause-hover" fill-rule="nonzero" fill="#FFFFFF">
+            <path d="M10.5,0 C4.710125,0 0,4.710125 0,10.5 C0,16.289875 4.710125,21 10.5,21 C16.289875,21 21,16.289875 21,10.5 C21,4.710125 16.289875,0 10.5,0 Z M8.75,14.875 L7,14.875 L7,6.125 L8.75,6.125 L8.75,14.875 Z M14,14.875 L12.25,14.875 L12.25,6.125 L14,6.125 L14,14.875 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>
