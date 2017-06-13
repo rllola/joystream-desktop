@@ -15,6 +15,8 @@ class MockTorrent {
         this.upload_speed = fields.upload_speed
         this.paused = fields.paused
         this.paid = fields.paid
+        this.price = fields.price,
+        this.revenue = fields.revenue,
         this.canStartSelling = fields.canStartSelling
         this.numberOfBuyers = fields.numberOfBuyers
         this.numberOfSellers = fields.numberOfSellers
@@ -55,8 +57,8 @@ const SeedingSceneScenarios = () => {
             upload_speed : 32,
             paused : false,
             paid : true,
-            price : 500000,
-            revenue : 3000000,
+            price : 500,
+            revenue : 30000000000,
             canStartSelling : false,
             canChangePrice : true,
             numberOfBuyers : 452,
@@ -71,8 +73,8 @@ const SeedingSceneScenarios = () => {
             upload_speed : 3222323,
             paused : true,
             paid : true,
-            price : 500000,
-            revenue : 3000000,
+            price : 12,
+            revenue : 8000,
             canStartSelling : false,
             canChangePrice : false,
             numberOfBuyers : 428,
@@ -86,8 +88,8 @@ const SeedingSceneScenarios = () => {
             upload_speed : 12332223,
             paused : true,
             paid : false,
-            price : 500000,
-            revenue : 3000000,
+            price : 1613156,
+            revenue : 2368316153,
             canStartSelling : true,
             canChangePrice : false,
             numberOfBuyers : 4812,
@@ -140,7 +142,7 @@ const SeedingSceneScenarios = () => {
             </ScenarioContainer>
 
             <ScenarioContainer title="Toolbar">
-                <TorrentToolbar canSpeedup = {true}
+                <TorrentToolbar canSpeedup = {false}
                                 onSpeedupClicked={() => {console.log("speedup clicked")}}
                                 onOpenFolderClicked={() => {console.log("open folder clicked")}}
                                 onMoreClicked={() => {console.log("more clicked")}}/>

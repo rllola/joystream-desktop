@@ -7,6 +7,7 @@ import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
 import {Field, Row} from  '../../components/Table'
+import BitcoinConvert from  '../../components/BitcoinConvert'
 import TorrentToolbar from './TorrentToolbar'
 
 import LinearProgress from 'material-ui/LinearProgress'
@@ -83,28 +84,11 @@ const StatusIndicator = (props) => {
     if(props.paused)
         return <span className="label paused-label">paused</span>
     else
-        return<span className="label inactive-label">started</span>
+        return<span className="label inactive-label">active</span>
 }
 
 StatusIndicator.propTypes = {
     paused : PropTypes.bool.isRequired
-}
-
-const ProgressIndicator = (props) => {
-    return <LinearProgress color="#55C855" style={{  height : 15, borderRadius: 10000}} mode="determinate" value={props.progress} min={0} max={100}/>
-}
-
-ProgressIndicator.propTypes = {
-    progress : PropTypes.number.isRequired
-}
-
-const ETAIndicator = (props) => {
-    return <span>{readableETAString(props.bytes_remaining, props.bytes_per_second)}</span>
-}
-
-ETAIndicator.propTypes = {
-    bytes_remaining: PropTypes.number.isRequired,
-    bytes_per_second : PropTypes.number.isRequired
 }
 
 ///
@@ -150,10 +134,10 @@ class TorrentRow extends Component {
                     <ModeIndicator paid={this.props.torrent.paid} />
                 </Field>
                 <Field>
-                  {this.props.torrent.price}
+                  <BitcoinConvert satoshis={this.props.torrent.price} />
                 </Field>
                 <Field>
-                  {this.props.torrent.revenue}
+                   <BitcoinConvert satoshis={this.props.torrent.revenue} />
                 </Field>
 
                 { this.getRenderedToolbar() }
