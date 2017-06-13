@@ -142,9 +142,7 @@ const SeedingSceneScenarios = () => {
             </ScenarioContainer>
 
             <ScenarioContainer title="Toolbar">
-                <TorrentToolbar canSpeedup = {false}
-                                onSpeedupClicked={() => {console.log("speedup clicked")}}
-                                onOpenFolderClicked={() => {console.log("open folder clicked")}}
+                <TorrentToolbar onOpenFolderClicked={() => {console.log("open folder clicked")}}
                                 onMoreClicked={() => {console.log("more clicked")}}/>
             </ScenarioContainer>
 
