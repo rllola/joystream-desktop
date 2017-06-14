@@ -9,36 +9,9 @@ import PropTypes from 'prop-types'
 import {Field, Row} from  '../../components/Table'
 import BitcoinConvert from  '../../components/BitcoinConvert'
 import TorrentToolbar from './TorrentToolbar'
-
-import LinearProgress from 'material-ui/LinearProgress'
 import bytes from 'bytes'
-import humanizeDuration from 'humanize-duration'
-
+import { StatusIndicator, ModeIndicator } from '../../components/RowFields'
 import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
-
-const ModeIndicator = (props) => {
-
-    if(props.paid)
-        return <span className="label paid-label">paid</span>
-    else
-        return<span className="label free-label">free</span>
-}
-
-ModeIndicator.propTypes = {
-    paid : PropTypes.bool.isRequired
-}
-
-const StatusIndicator = (props) => {
-
-    if(props.paused)
-        return <span className="label paused-label">paused</span>
-    else
-        return<span className="label inactive-label">active</span>
-}
-
-StatusIndicator.propTypes = {
-    paused : PropTypes.bool.isRequired
-}
 
 ///
 
