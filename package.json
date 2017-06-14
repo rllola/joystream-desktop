@@ -1,7 +1,9 @@
 {
-  "name": "joystream-demo",
-  "version": "0.0.0",
-  "description": "A minimal Joystream application in electron",
+  "name": "joystream",
+  "productName": "Joystream",
+  "version": "0.0.1",
+  "description": "A new BitTorrent client, with faster speeds, streaming and paid seeding.",
+  "homepage": "https://joystream.co",
   "main": "src/main.js",
   "scripts": {
     "start": "NODE_ENV=development electron-forge start",
@@ -12,9 +14,20 @@
   },
   "keywords": [
     "Joystream",
-    "demo"
+    "bitcoin",
+    "desktop",
+    "electron",
+    "torrent",
+    "torrent-client"
   ],
-  "author": "Me",
+  "author": {
+    "name": "JoyStream, AS",
+    "email": "bedeho@joystream.co",
+    "url": "https://joystream.co"
+  },
+  "bugs": {
+    "url": "https://github.com/JoyStream/joystream-electron/issues"
+  },
   "license": "MIT",
   "devDependencies": {
     "babel": "^6.23.0",
@@ -77,16 +90,35 @@
           "dmg"
         ],
         "linux": [
-          "deb",
-          "rpm"
+          "deb"
         ]
       },
-      "electronPackagerConfig": {},
-      "electronWinstallerConfig": {
-        "name": "Joystream"
+      "electronPackagerConfig": {
+        "asar": true,
+        "icon": "src/assets/icons/appicon_128x128",
+        "protocol": [
+          "joystream",
+          "magnet"
+        ],
+        "ignore": [".gitignore", ".travis", "appveyor.yml", "README.md"],
+        "overwrite": true,
+        "appCategoryType": "public.app-category.utilities",
+        "win32metadata": {
+          "CompanyName": "Joystream"
+        }
       },
-      "electronInstallerDebian": {},
-      "electronInstallerRedhat": {},
+      "electronWinstallerConfig": {
+        "name": "Joystream",
+        "setupIcon": "src/assets/icons/appicon_128x128.ico",
+        "loadingGif": "src/assets/img/main_logo.png"
+      },
+      "electronInstallerDebian": {
+        "icon": "src/assets/icons/appicon_128x128.png",
+        "categories": [
+          "Utility"
+        ]
+      },
+      "electronInstallerDMG": {},
       "github_repository": {
         "owner": "JoyStream",
         "name": "joystream-electron"
