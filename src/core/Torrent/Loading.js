@@ -22,96 +22,128 @@ var Loading = new machina.BehavioralFsm({
 
     states: {
 
+        failed : {
+          // pseudo state for when some step has failed.
+        },
+
         waiting_for_checking: {
 
             fullyDownloaded: function (client) {
 
-                if(client.startState() == StartState.UPLOADING) {
+                if(client.desiredStartState == StartState.PASSIVE || client.desiredStartState == StartState.DOWNLOADING) {
 
-                    emit uploadingStateIncompatibleWithPartialDownload()
+                    // When there is a full download, and the user doesnt want to upload, then
+                    // we just go to passive, even if the user really wanted to download.
 
-                    this.transition('NeedBuyerTerms')
+                    client.toObserveMode()
 
-                } else if(client.startState() == StartState.PASSIVE) {
+                    client.actualStartState = StartState.PASSIVE
 
-                    emit passiveStateIncompatibleWithPartialDownload()
+                } else { // UPLOADING
 
-                    this.transition('NeedBuyerTerms')
+                    // When there is a full download, and the user does want to upload, then
+                    // we do that
+                    client.toSellMode()
 
-                } else if(client.startState() == StartState.DOWNLOADING) {
-
-                    client.toBuyMode()
-
-                    this.transition('StartingAsDownloading')
+                    client.actualStartState = StartState.UPLOADING
                 }
 
+                this.transition('GoingToMode')
             },
 
             incompletelyDownloaded: function (client) {
 
-                if(client.startState() == StartState.UPLOADING) {
+                // We go to buy mode, regardless of what the user wanted (client.desiredStartState),
+                // user will need to supply terms on their own.
+                client.toBuyMode()
 
-                    emit uploadingStateIncompatibleWithPartialDownload()
+                client.actualStartState = StartState.DOWNLOADING
 
-                    this.transition('NeedBuyerTerms')
-
-                } else if(client.startState() == StartState.PASSIVE) {
-
-                    emit passiveStateIncompatibleWithPartialDownload()
-
-                    this.transition('NeedBuyerTerms')
-
-                } else if(client.startState() == StartState.DOWNLOADING) {
-
-                    client.toBuyMode()
-
-                    this.transition('StartingAsDownloading')
-
-                }
-
+                this.transition('GoingToMode')
             }
         },
 
-        NeedBuyerTerms : {
+        GoingToMode : {
 
-        },
+            wentToBuyMode : function (client) {
 
-        StartingAsDownloading : {
+                // Make sure we are supposed to go to downloading state
+                if(client.actualStartState != StartState.DOWNLOADING)
+                    return
 
-            EnteredBuyMode : function (client) {
-
-                client.start_extension(function (err, res) {
-
-                    if(err);
-
-                    this.handle(client, 'StartedExtension')
-
-                })
-
+                this.handle("_startExtension")
             },
 
-            StartedExtension : function (client) {
+            wentToSellMode : function (client) {
 
-                emit Loaded()
+                // Make sure we are supposed to go to uploading state
+                if(client.actualStartState != StartState.UPLOADING)
+                    return
 
-                if(client.paused) {
-                    this.transition('Active.Downloading.Unpaid.Started')
-                } else {
-                    this.transition('Active.Downloading.Unpaid.Stopped')
-                }
+                this.handle("_startExtension")
+            },
 
+            wentToObserveMode : function (client) {
+
+                // Make sure we are supposed to go to passive state
+                if(client.actualStartState != StartState.PASSIVE)
+                    return
+
+                this.handle("_startExtension")
+            },
+
+            // Do not call this directly, only used internally by events above
+            _startExtension : function(client) {
+
+                // Start extension after now entering correct (sell) mode
+                client.startExtension()
+
+                this.transition('StartingExtension')
             }
 
-
         },
 
-        StartingAsPassive : {
+        StartingExtension : {
 
-        },
+            started : function (client) {
 
-        StartingAsUploading : {
+                if(client.actualStartState == StartState.DOWNLOADING) {
 
+                    if(client.paused) {
+
+                        client.pause()
+                        this.transition('Active.Downloading.Unpaid.Stopped')
+                    } else {
+
+                        client.resume()
+                        this.transition('Active.Downloading.Unpaid.Started')
+                    }
+
+                } else if(client.actualStartState == StartState.UPLOADING) {
+
+                    if(client.paused) {
+
+                        client.pause()
+                        this.transition('Active.FinishedDownloading.Uploading.Stopped')
+                    } else {
+
+                        client.resume()
+                        this.transition('Active.FinishedDownloading.Uploading.Started')
+                    }
+
+                } else if(client.actualStartState == StartState.PASSIVE) {
+
+                    client.pause()
+                    this.transition('Active.FinishedDownloading.Passive')
+                }
+            },
         }
+    },
+
+    goToFailedState : function(client, err) {
+
+        this.failure_cause = err
+        this.transition('failed')
     }
 
 })
