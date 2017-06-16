@@ -8,7 +8,7 @@
   "scripts": {
     "start": "NODE_ENV=development electron-forge start",
     "component-development": "COMPONENT_DEVELOPMENT_MODE=True NODE_ENV=development electron-forge start",
-    "test": "electron-mocha --recursive",
+    "test": "xvfb-maybe electron-mocha renderer --recursive ./test",
     "package": "electron-forge package",
     "make": "NODE_ENV=production electron-forge make"
   },
@@ -44,7 +44,8 @@
     "electron-prebuilt-compile": "1.6.4",
     "mobx-react-devtools": "^4.2.11",
     "node-gyp": "^3.6.0",
-    "webpack": "^2.3.1"
+    "webpack": "^2.3.1",
+    "xvfb-maybe": "^0.2.1"
   },
   "dependencies": {
     "babel-polyfill": "^6.23.0",
