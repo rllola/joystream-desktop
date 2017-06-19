@@ -75,6 +75,20 @@
   }
 }
 
+.start-sell {
+  .button {
+    background-image: url('../assets/icon/dollar.svg');
+    background-size: 25px 25px;
+  }
+}
+
+.start-sell:hover {
+  .button {
+    background-image: url('../assets/icon/dollar-hover.svg');
+    background-size: 25px 25px;
+  }
+}
+
 .open-folder {
   .button {
     background-image: url('../assets/icon/open-folder.svg');

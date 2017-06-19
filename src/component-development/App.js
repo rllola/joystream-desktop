@@ -11,6 +11,7 @@ import LoadingSceneScenarios from './loading'
 import TerminatingSceneScenarios from './terminating'
 import StreamScenario from './stream'
 import Seeding from './seeding'
+import Completed from './completed'
 
 const App = (props) => {
 
@@ -37,7 +38,7 @@ const App = (props) => {
                         <Route path="/terminating" component={TerminatingSceneScenarios} />
                         <Route path="/header" component={HeaderScenarios} />
                         <Route path="/downloading" component={Downloading} />
-                        <Route path="/completed" />
+                        <Route path="/completed" component={Completed}/>
                         <Route path="/seeding" component={Seeding}/>
                         <Route path="/stream" component={StreamScenario} />
                     </div>

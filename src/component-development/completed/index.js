@@ -20,19 +20,11 @@ class MockTorrent {
     }
 
     startSelling() {
-        console.log("startBuying: " + this.name)
+        console.log("startSelling: " + this.name)
     }
 
     openFolder() {
         console.log("openFolder: " + this.name)
-    }
-
-    changePauseStatus() {
-        console.log("changePauseStatus: " + this.name)
-    }
-
-    showChangePriceDialog() {
-        console.log("showChangePriceDialog: " + this.name)
     }
 
     remove() {
@@ -44,17 +36,12 @@ class MockTorrent {
     }
 }
 
-const SeedingSceneScenarios = () => {
+const CompletedSceneScenarios = () => {
 
     var torrents = [
         new MockTorrent({ info_hash : "info_hash_1",
             name : "My fake torrent",
             size : 1025,
-            upload_speed : 32,
-            paused : false,
-            paid : true,
-            canStartSelling : false,
-            canChangePrice : true,
             numberOfBuyers : 452,
             numberOfSellers : 12,
             numberOfObservers : 5,
@@ -64,12 +51,6 @@ const SeedingSceneScenarios = () => {
             info_hash : "info_hash_2",
             name : "My pretty content",
             size : 1025223223,
-            progress : 11,
-            upload_speed : 3222323,
-            paused : true,
-            paid : true,
-            canStartSelling : false,
-            canChangePrice : false,
             numberOfBuyers : 428,
             numberOfSellers : 92,
             numberOfObservers : 521,
@@ -79,11 +60,6 @@ const SeedingSceneScenarios = () => {
             info_hash : "info_hash_3",
             name : "Favourite data",
             size : 65330252232,
-            upload_speed : 12332223,
-            paused : true,
-            paid : false,
-            canStartSelling : true,
-            canChangePrice : false,
             numberOfBuyers : 4812,
             numberOfSellers : 219,
             numberOfObservers : 115,
@@ -93,11 +69,6 @@ const SeedingSceneScenarios = () => {
             info_hash : "info_hash_4",
             name : "Hello my dear user 19821",
             size : 3420252232,
-            upload_speed : 23132223,
-            paused : false,
-            paid : false,
-            canStartSelling : true,
-            canChangePrice : false,
             numberOfBuyers : 481,
             numberOfSellers : 92,
             numberOfObservers : 15,
@@ -107,11 +78,6 @@ const SeedingSceneScenarios = () => {
             info_hash : "info_hash_5",
             name : "Some other great file",
             size : 10252232,
-            upload_speed : 32223,
-            paused : false,
-            paid : false,
-            canStartSelling : true,
-            canChangePrice : false,
             numberOfBuyers : 48,
             numberOfSellers : 9,
             numberOfObservers : 5,
@@ -122,28 +88,17 @@ const SeedingSceneScenarios = () => {
 
     return (
         <div>
-
-            <ScenarioContainer title="Empty table" subtitle="An empty table">
-                <TorrentTable torrents={[]}/>
-            </ScenarioContainer>
-
             <ScenarioContainer title="Non-empty table" subtitle="A non-empty table">
                 <TorrentTable torrents={torrents} />
             </ScenarioContainer>
 
             <ScenarioContainer title="Toolbar">
-                <TorrentToolbar canSpeedup = {true}
-                                onSpeedupClicked={() => {console.log("speedup clicked")}}
-                                onOpenFolderClicked={() => {console.log("open folder clicked")}}
+                <TorrentToolbar onOpenFolderClicked={() => {console.log("open folder clicked")}}
                                 onMoreClicked={() => {console.log("more clicked")}}/>
             </ScenarioContainer>
 
             <ScenarioContainer title="Context menu">
                 <TorrentContextMenu onOutsideContextMenuClicked = {() => {}}
-                                    paused = {false}
-                                    onChangePauseStatus = {() => {console.log("Changing pause status")}}
-                                    changePriceEnabled = {true}
-                                    onChangePriceClicked = {() => {console.log("Change price clicked")}}
                                     onRemoveClicked = {() => {console.log("Remove and click")}}
                                     onRemoveAndDeleteDataClicked = {() => {console.log("Remove and delete data clicked")}}
                                     numberOfBuyers = {1}
@@ -156,4 +111,4 @@ const SeedingSceneScenarios = () => {
     )
 }
 
-export default SeedingSceneScenarios
+export default CompletedSceneScenarios
