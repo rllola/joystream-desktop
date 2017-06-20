@@ -10,7 +10,7 @@ import {Field, Row} from  '../../components/Table'
 import BitcoinConvert from  '../../components/BitcoinConvert'
 import TorrentToolbar from './TorrentToolbar'
 import bytes from 'bytes'
-import { StatusIndicator, ModeIndicator } from '../../components/RowFields'
+import { StatusIndicator } from '../../components/RowFields'
 import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
 
 ///
@@ -51,9 +51,6 @@ class TorrentRow extends Component {
                 </Field>
                 <Field>
                     {bytes(this.props.torrent.upload_speed)}/s
-                </Field>
-                <Field>
-                    <ModeIndicator paid={this.props.torrent.paid} />
                 </Field>
                 <Field>
                   <BitcoinConvert satoshis={this.props.torrent.price} />
