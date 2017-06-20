@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import isRequiredIf from 'react-proptype-conditional-require'
 
-import Toolbar, {Separator, ButtonSection} from '../../components/Toolbar'
+import Toolbar, {Separator, ButtonSection} from '../../../components/Toolbar'
 
 const TorrentToolbar = (props) => {
     return (

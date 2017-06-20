@@ -2,14 +2,15 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
-import Table from '../../components/Table'
-import TorrentRow, {ToolbarVisibilityType} from './TorrentRow'
+import Table from '../../../components/Table'
+import TorrentRow from './TorrentRow'
 import TorrentToolbar from './TorrentToolbar'
 import TorrentContextMenu from './TorrentContextMenu'
+import ToolbarVisibilityType from '../../../utils/ToolbarVisibilityState'
 
-import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
+import AbsolutePositionChildren from '../../../common/AbsolutePositionChildren'
 
-import { contextMenuHiddenState, contextMenuVisibleState, contextMenuRect } from '../../utils/ContextMenuHelper'
+import { contextMenuHiddenState, contextMenuVisibleState, contextMenuRect } from '../../../utils/ContextMenuHelper'
 
 //@observer // this.props.torrents
 class TorrentsTable extends Component {

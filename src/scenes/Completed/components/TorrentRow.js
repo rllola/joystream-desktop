@@ -2,23 +2,13 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
-import { Field, Row } from  '../../components/Table'
+import { Field, Row } from  '../../../components/Table'
 import TorrentToolbar from './TorrentToolbar'
 import bytes from 'bytes'
 
-import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
+import AbsolutePositionChildren from '../../../common/AbsolutePositionChildren'
 
-///
-
-function toolbarVisibilityState(visible) {
-    return {toolbarVisible : visible}
-}
-
-var ToolbarVisibilityType = {
-    OnHover : 0,
-    Hidden : 1,
-    Visible : 2
-}
+import ToolbarVisibilityType from '../../../utils/ToolbarVisibilityState'
 
 //@observer
 class TorrentRow extends Component {
@@ -71,5 +61,4 @@ TorrentRow.propTypes = {
     toolbarProps : PropTypes.object, // later use shape?
 }
 
-export {ToolbarVisibilityType}
 export default TorrentRow

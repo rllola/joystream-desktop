@@ -7,10 +7,10 @@ import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
 import Table from '../../components/Table'
-import TorrentRow, {ToolbarVisibilityType} from './TorrentRow'
+import TorrentRow from './TorrentRow'
 import TorrentToolbar from './TorrentToolbar'
 import TorrentContextMenu from './TorrentContextMenu'
-
+import ToolbarVisibilityType from '../../utils/ToolbarVisibilityState'
 import StartSeedingHint from './components/StartSeedingHint'
 import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
 

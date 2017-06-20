@@ -4,7 +4,7 @@ import isRequiredIf from 'react-proptype-conditional-require'
 
 import SvgIcon from 'material-ui/SvgIcon'
 
-import ContextMenu, { Separator, RemoveItem, RemoveAndDeleteDataItem, SwarmItem} from '../../components/ContextMenu'
+import ContextMenu, { Separator, RemoveItem, RemoveAndDeleteDataItem, SwarmItem} from '../../../components/ContextMenu'
 
 
 const TorrentContextMenu = (props) => {

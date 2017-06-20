@@ -13,17 +13,8 @@ import bytes from 'bytes'
 
 import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
 
-///
+import ToolbarVisibilityType, { toolbarVisibilityState } from '../../utils/ToolbarVisibilityState'
 
-function toolbarVisibilityState(visible) {
-    return {toolbarVisible : visible}
-}
-
-var ToolbarVisibilityType = {
-    OnHover : 0,
-    Hidden : 1,
-    Visible : 2
-}
 
 //@observer
 class TorrentRow extends Component {
@@ -92,5 +83,4 @@ TorrentRow.propTypes = {
     toolbarProps : PropTypes.object, // later use shape?
 }
 
-export {ToolbarVisibilityType}
 export default TorrentRow
