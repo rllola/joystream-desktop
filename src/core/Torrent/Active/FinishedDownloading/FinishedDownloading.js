@@ -13,21 +13,37 @@ var Active = new machina.BehavioralFsm({
     initialize: function (options) {
 
         // Allocate sub machines
-        options.states.DownloadIncomplete._child = new Downloading({parent_machine : this})
-        options.states.FinishedDownloading._child = new FinishedDownloading({parent_machine : this})
+        options.states.Uploading._child =
     },
 
-    //initialState: "StoppingExtension",
+    initialState: "Uninitialized",
 
     states: {
 
-        GoingToPassive : {
+        Uninitialized : {},
 
-            Done : function (client) {
-                //
+        Passive : {
+            
+            StartPaidUploading : function (client, sellerTerms) {
+
+                client.goToSellMode(sellerTerms)
+                this.transition(client, 'GoingToSellMode')
             }
+            
+        },
 
+        GoingToSellMode : {
+            
+            StartedSellMode : function (client) {
+                this.transition(client, '')
+            }
+        },
+
+        Uploading : {
+            _child : null
         }
+
+
     },
 
     go : go
