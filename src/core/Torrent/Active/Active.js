@@ -49,6 +49,6 @@ var Active = new machina.BehavioralFsm({
     },
 
     go : go
-}
+})
 
 export default Active

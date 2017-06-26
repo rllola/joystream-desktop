@@ -5,15 +5,14 @@
 import machina from 'machina'
 import {go} from '../utils'
 
-import Downloading from './DownloadIncomplete'
-import FinishedDownloading from './FinishedDownloading'
+import Uploading from './Uploading'
 
 var Active = new machina.BehavioralFsm({
 
     initialize: function (options) {
 
         // Allocate sub machines
-        options.states.Uploading._child =
+        options.states.Uploading._child = new Uploading({parent_machine : this})
     },
 
     initialState: "Uninitialized",
@@ -35,7 +34,7 @@ var Active = new machina.BehavioralFsm({
         GoingToSellMode : {
             
             StartedSellMode : function (client) {
-                this.transition(client, '')
+                this.transition(client, 'Uploading')
             }
         },
 
@@ -47,6 +46,6 @@ var Active = new machina.BehavioralFsm({
     },
 
     go : go
-}
+})
 
 export default Active
