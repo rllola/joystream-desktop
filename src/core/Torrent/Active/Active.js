@@ -1,11 +1,11 @@
 /**
- * Created by bedeho on 13/06/17.
+ * Created by bedeho on 15/06/17.
  */
 
 import machina from 'machina'
 import {go} from '../utils'
 
-import Downloading from './DownloadIncomplete'
+import DownloadIncomplete from './DownloadIncomplete'
 import FinishedDownloading from './FinishedDownloading'
 
 var Active = new machina.BehavioralFsm({
@@ -21,12 +21,26 @@ var Active = new machina.BehavioralFsm({
 
     states: {
 
-        GoingToPassive : {
+        DownloadIncomplete : {
+            _child : null,
 
-            Done : function (client) {
-                //
+            DownloadFinished : function (client) {
+
+                client.stopLibtorrentTorrent()
+                this.transition(client, 'GoingToPassive')
             }
+        },
 
+        StoppingLibTorrentTorrent : {
+
+        },
+
+
+
+
+
+        FinishedDownloading : {
+            _child : null
         }
     },
 

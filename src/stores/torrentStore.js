@@ -98,7 +98,7 @@ class Torrent {
       case TorrentState.downloading:
         return 'Downloading'
       case TorrentState.downloading_metadata:
-        return 'Downloading Metadata'
+        return 'DownloadIncomplete Metadata'
       case TorrentState.finished:
         return 'Finished'
       case TorrentState.seeding:

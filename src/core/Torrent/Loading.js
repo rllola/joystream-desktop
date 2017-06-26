@@ -3,63 +3,114 @@
  */
 
 import machina from 'machina'
+import {go} from '../utils'
 
-const StartState = {
-    UPLOADING : 0,
-    PASSIVE : 1,
-    DOWNLOADING : 2
-}
+import DeepInitialState, {isUploading, isPassive, isDownloading, isStopped} from './DeepInitialState'
 
 var Loading = new machina.BehavioralFsm({
 
     initialize: function (options) {
-        // your setup code goes here...
     },
 
-    namespace: "Loading",
-
-    initialState: "waiting_for_checking",
+    initialState: "AddingToSession",
 
     states: {
 
-        failed : {
-          // pseudo state for when some step has failed.
-        },
+        AddingToSession : {
 
-        waiting_for_checking: {
+            added: function (client) {
 
-            fullyDownloaded: function (client) {
-
-                if(client.desiredStartState == StartState.PASSIVE || client.desiredStartState == StartState.DOWNLOADING) {
-
-                    // When there is a full download, and the user doesnt want to upload, then
-                    // we just go to passive, even if the user really wanted to download.
-
-                    client.toObserveMode()
-
-                    client.actualStartState = StartState.PASSIVE
-
-                } else { // UPLOADING
-
-                    // When there is a full download, and the user does want to upload, then
-                    // we do that
-                    client.toSellMode()
-
-                    client.actualStartState = StartState.UPLOADING
+                // If we don´t have metadata, wait for it
+                if(!client._metadata) {
+                    this.transition(client, 'WaitingForMetadata')
+                } else {
+                    this.transition(client, 'CheckingPartialDownload')
                 }
 
-                this.transition('GoingToMode')
             },
 
-            incompletelyDownloaded: function (client) {
+            failedAdding : function (client) {
+                this.transition(client, 'FailedAdding')
+            }
 
-                // We go to buy mode, regardless of what the user wanted (client.desiredStartState),
-                // user will need to supply terms on their own.
-                client.toBuyMode()
+        },
 
-                client.actualStartState = StartState.DOWNLOADING
+        FailedAdding : {
 
-                this.transition('GoingToMode')
+            // This handler is input sink, preventing any further processing by parent. In the future we may add some handling of secondary attempts
+            '*' : function(client) {
+                //
+            }
+        },
+
+        WaitingForMetadata : {
+
+            metadataReady : function (client, metadata) {
+
+                // Hold on to metadata, is required when shutting down
+                client._metadata = metadata
+
+                this.transition(client, 'CheckingPartialDownload')
+            }
+        },
+
+        CheckingPartialDownload: {
+
+            checkFinished: function (client, isFullyDownloaded) {
+
+                if(isFullyDownloaded) {
+
+                    if(isPassive(client._deepInitialState) || isDownloading(client._deepInitialState)) {
+
+                        // When there is a full download, and the user doesnt want to upload, then
+                        // we just go to passive, even if the user really wanted to download.
+                        client.goToObserveMode()
+
+                        client._deepInitialState = DeepInitialState.PASSIVE
+
+                    } else { // isUploading
+
+                        client.goToSellMode(client._sellerTerms)
+                    }
+
+                    this.transition(client, 'GoingToMode')
+
+                } else {
+
+                    // We go to buy mode, regardless of what the user wanted (DeepInitialState),
+                    // user will need to supply terms on their own.
+
+                    if(isDownloading(client._deepInitialState))  {
+
+                        client.goToBuyMode(client._buyerTerms)
+
+                        this.transition(client, 'GoingToMode')
+
+                    } else { // isPassive || isUploading
+
+                        // Overrule users wish, force (unpaid+started) downloading
+                        client._deepInitialState = DeepInitialState.DOWNLOADING.UNPAID.STARTED
+
+                        // Ask user to supply buyer terms
+                        client.provideBuyerTerms()
+
+                        this.transition(client, 'WaitingForNewBuyerTerms')
+                    }
+                }
+            }
+
+        },
+
+        WaitingForMissingBuyerTerms : {
+
+            termsReady : function(client, terms) {
+
+                // Hold on to terms
+                client._buyerTerms = terms
+
+                client.goToBuyMode(terms)
+
+                this.transition(client, 'GoingToMode')
             }
         },
 
@@ -68,37 +119,44 @@ var Loading = new machina.BehavioralFsm({
             wentToBuyMode : function (client) {
 
                 // Make sure we are supposed to go to downloading state
-                if(client.actualStartState != StartState.DOWNLOADING)
+                if(!isDownloading(client._deepInitialState))
                     return
 
-                this.handle("_startExtension")
+                // When not paused, then start extension,
+                // otherwise leave extension un-started
+                if(!isStopped(client._deepInitialState)) {
+
+                    client.startExtension()
+                    this.transition(client, 'StartingExtension')
+
+                } else {
+                    goToDeepInitialState(this, client)
+                }
             },
 
             wentToSellMode : function (client) {
 
                 // Make sure we are supposed to go to uploading state
-                if(client.actualStartState != StartState.UPLOADING)
+                if(!isUploading(client._deepInitialState))
                     return
 
-                this.handle("_startExtension")
+                if(!isStopped(client._deepInitialState)) {
+
+                    client.startExtension()
+                    this.transition(client, 'StartingExtension')
+                } else {
+                    goToDeepInitialState(this, client)
+                }
             },
 
             wentToObserveMode : function (client) {
 
                 // Make sure we are supposed to go to passive state
-                if(client.actualStartState != StartState.PASSIVE)
+                if(!isPassive(client._deepInitialState))
                     return
 
-                this.handle("_startExtension")
-            },
-
-            // Do not call this directly, only used internally by events above
-            _startExtension : function(client) {
-
-                // Start extension after now entering correct (sell) mode
                 client.startExtension()
-
-                this.transition('StartingExtension')
+                this.transition(client, "StartingExtension")
             }
 
         },
@@ -106,46 +164,53 @@ var Loading = new machina.BehavioralFsm({
         StartingExtension : {
 
             started : function (client) {
-
-                if(client.actualStartState == StartState.DOWNLOADING) {
-
-                    if(client.paused) {
-
-                        client.pause()
-                        this.transition('Active.Downloading.Unpaid.Stopped')
-                    } else {
-
-                        client.resume()
-                        this.transition('Active.Downloading.Unpaid.Started')
-                    }
-
-                } else if(client.actualStartState == StartState.UPLOADING) {
-
-                    if(client.paused) {
-
-                        client.pause()
-                        this.transition('Active.FinishedDownloading.Uploading.Stopped')
-                    } else {
-
-                        client.resume()
-                        this.transition('Active.FinishedDownloading.Uploading.Started')
-                    }
-
-                } else if(client.actualStartState == StartState.PASSIVE) {
-
-                    client.pause()
-                    this.transition('Active.FinishedDownloading.Passive')
-                }
-            },
+                goToDeepInitialState(this, client)
+            }
         }
     },
 
-    goToFailedState : function(client, err) {
+    go : go,
 
-        this.failure_cause = err
-        this.transition('failed')
+    getDeepInitialState: function (client) {
+
     }
 
 })
+
+function goToDeepInitialState(machine, client) {
+
+    // Path to active substate we need to transition to
+    var path = PathToDeepInitialState(client._deepInitialState)
+
+    // Transition to active state
+    machine.go(client, path)
+
+    // Notify user that we are done
+    client.loaded(client._deepInitialState)
+
+    // ...
+    delete client._deepInitialState
+}
+
+function PathToDeepInitialState(s) {
+
+    switch(s) {
+        case DeepInitialState.UPLOADING.STARTED:
+            return ['..', 'FinishedDownloading', 'Uploading', 'Started']
+        case DeepInitialState.UPLOADING.STOPPED:
+            return ['..', 'FinishedDownloading', 'Uploading', 'Stopped']
+        case DeepInitialState.PASSIVE:
+            return ['..', 'FinishedDownloading', 'Passive']
+        case DeepInitialState.DOWNLOADING.UNPAID.STARTED:
+            return ['..', 'Downloading', 'Unpaid', 'Started']
+        case DeepInitialState.DOWNLOADING.UNPAID.STOPPED:
+            return ['..', 'Downloading', 'Unpaid', 'Stopped']
+        case DeepInitialState.DOWNLOADING.PAID.STARTED:
+            return ['..', 'Downloading', 'Paid', 'Started']
+        case DeepInitialState.DOWNLOADING.PAID.STOPPED:
+            return ['..', 'Downloading', 'Paid', 'Stopped']
+    }
+
+}
 
 export default Loading
