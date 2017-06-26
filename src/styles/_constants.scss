@@ -1,5 +1,12 @@
+@font-face {
+  font-family: 'TrebuchetMS';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../assets/fonts/TrebuchetMS.ttf') format('ttf');
+}
+
 $max-border-radius: 10000px;
-$major-font-family: TrebuchetMS, verdana, sans-serif;
+$major-font-family: 'TrebuchetMS', verdana, sans-serif;
 
 $grey-background: #E8E8E8;
 $grey-accent: #E3E3E3;
