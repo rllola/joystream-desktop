@@ -55,6 +55,7 @@
     "bytes": "^2.5.0",
     "debug": "^2.6.0",
     "electron-compile": "^6.4.1",
+    "electron-config": "^1.0.0",
     "humanize-duration": "^3.10.0",
     "joystream-node": "git+ssh://git@github.com/JoyStream/joystream-node.git#development",
     "jquery": "^3.2.1",

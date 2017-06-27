@@ -13,7 +13,7 @@ class Application extends EventEmitter {
   @observable syncingWallet = false
   @observable loadingTorrents = false
 
-  constructor ({session, savePath, spvnode, db}) {
+  constructor ({session, savePath, spvnode, db, config}) {
     super()
 
     this._session = session
@@ -21,6 +21,7 @@ class Application extends EventEmitter {
     this._spvnode = spvnode
     this._wallet = null
     this._db = db
+    this._config = config
 
     // Request regular torrent state updates
     this._intervalTorrentUpdates = setInterval(() => this._session.postTorrentUpdates(), constants.POST_TORRENT_UPDATES_INTERVAL)
@@ -41,6 +42,10 @@ class Application extends EventEmitter {
     this._session.on('torrent_added', this._onTorrentAdded.bind(this))
 
     this._session.on('torrent_removed', this._onTorrentRemoved.bind(this))
+  }
+
+  getDefaultTorrentFileSourceLocation () {
+    return config.get('defaultTorrentFileSourceLocation', constants.DEFAULT_TORRENT_FILE_SOURCE_LOCATION)
   }
 
   _torrentToBuyMode (infoHash, buyerTerms) {
