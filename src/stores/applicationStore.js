@@ -13,11 +13,10 @@ class Application extends EventEmitter {
   @observable syncingWallet = false
   @observable loadingTorrents = false
 
-  constructor ({session, savePath, spvnode, db, config}) {
+  constructor ({session, spvnode, db, config}) {
     super()
 
     this._session = session
-    this._savePath = savePath
     this._spvnode = spvnode
     this._wallet = null
     this._db = db
@@ -45,11 +44,19 @@ class Application extends EventEmitter {
   }
 
   getDefaultTorrentFileSourceLocation () {
-    return this._config.get('defaultTorrentFileSourceLocation', constants.DEFAULT_TORRENT_FILE_SOURCE_LOCATION)
+    return this._config.get('torrentFileSourceLocation', constants.DEFAULT_TORRENT_FILE_SOURCE_LOCATION)
   }
 
   setDefaultTorrentFileSourceLocation (newValue) {
-    this._config.set('defaultTorrentFileSourceLocation', newValue)
+    this._config.set('torrentFileSourceLocation', newValue)
+  }
+
+  getSavePath () {
+    return process.env.SAVE_PATH ? process.env.SAVE_PATH : this._config.get('savePath', constants.DEFAULT_SAVE_PATH))
+  }
+
+  setSavePath (newValue) {
+    this._config.set('savePath', newValue)
   }
 
   _torrentToBuyMode (infoHash, buyerTerms) {
