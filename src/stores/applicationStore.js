@@ -45,7 +45,11 @@ class Application extends EventEmitter {
   }
 
   getDefaultTorrentFileSourceLocation () {
-    return config.get('defaultTorrentFileSourceLocation', constants.DEFAULT_TORRENT_FILE_SOURCE_LOCATION)
+    return this._config.get('defaultTorrentFileSourceLocation', constants.DEFAULT_TORRENT_FILE_SOURCE_LOCATION)
+  }
+
+  setDefaultTorrentFileSourceLocation (newValue) {
+    this._config.set('defaultTorrentFileSourceLocation', newValue)
   }
 
   _torrentToBuyMode (infoHash, buyerTerms) {
