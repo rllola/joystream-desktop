@@ -119,7 +119,8 @@ var Started = new machina.BehavioralFsm({
 
         CanStartPaidDownload : {
 
-            PaidDownloadNoLongerFeasible : function (client) {
+            PeerPluginsStatuses: function(client, statuses) {
+                // if its no longer possible
 
                 this.transition(client, 'CannotStartPaidDownload')
 
@@ -160,9 +161,12 @@ var Started = new machina.BehavioralFsm({
 
         CannotStartPaidDownload : {
 
-            PaidDownloadFeasible : function (client) {
+            PeerPluginsStatuses: function(client, statuses) {
+                // if it is now longer possible
+
                 this.transition(client, 'CanStartPaidDownload')
             }
+
         }
 
     }

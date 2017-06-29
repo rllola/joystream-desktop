@@ -2,9 +2,8 @@
  * Created by bedeho on 26/06/17.
  */
 
-
 import machina from 'machina'
-import {go} from '../utils'
+import {go, refreshPeers} from '../utils'
 
 var Uploading = new machina.BehavioralFsm({
 
@@ -34,28 +33,40 @@ var Uploading = new machina.BehavioralFsm({
 
             ProcessPeerPluginStatuses: function (client, statuses) {
 
+                // Normal peer list refresh
+                refreshPeers(client, statuses)
 
-                // Join contracts for all suitable peers, that is
 
-                for(var p in statuses) {
+                for(var i in statuses) {
 
-                    if(!client.peerExists(p.peerID)) {
-                        client.addPeer(p.status)
-                    } else {
-                        client.updatePeerStatus(p.peerID, p.status)
+                    var s = statuses[i]
 
-                        //
+                    // is s in the right state
+                    // does s have good enough terms
+                    // does it pass filtering routine??
+                    // if peer is not already on ignore list, => what if disconnect & connect?
+                    // then
 
-                    }
+                    //
+                    // then
+                    // *tell client to start uploading from it
+                    // *some how mark (LIST) that we are trying
+                    // - where to catch result of this? => do we even care?
+                    // * fail: remove from list
+                    // * secuess: keep on list
+                    // * dicsonnect:
 
 
                 }
 
-                // Drop peer with no uploads ?
+            },
 
-                    // add: for p in s: peers.add(new peer(s)) when i is not in peers
-                    // x: for p in peers: peers.remove(p) when  p.state != waiting_toStart_paid_upload && !p in s
-                    // x: for p in peers: p.startUploading() when p.state == waiting for start pad upload attempt && peerIsSuitable(peer_id, terms) ?
+            StartUploadingFailed : function (client, peerID) {
+                // remove from list (if its still on list)
+            },
+
+            PeerDisconnected : function(client, peerID) {
+                // remove from list if its there
             },
 
             GoToPassive : function(client) {

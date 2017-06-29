@@ -3,7 +3,7 @@
  */
 
 import machina from 'machina'
-import {go} from '../utils'
+import {go, refreshPeers} from '../utils'
 
 import Loading from './Loading'
 import Active from './Active'
@@ -68,7 +68,11 @@ var Torrent = machina.BehavioralFsm.extend({
 
         Active : {
             _child : null,
-            terminate: handleTermination
+            terminate: handleTermination,
+
+            ProcessPeerPluginStatuses: function (client, statuses) {
+                refreshPeers(client, statuses)
+            },
         },
 
         StoppingExtension : {
