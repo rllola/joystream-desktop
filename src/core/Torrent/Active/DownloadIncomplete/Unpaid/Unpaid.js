@@ -3,7 +3,9 @@
  */
 
 import machina from 'machina'
-import {go} from '../utils'
+import {go, refreshPeers} from '../../../../utils'
+
+import Started from './Started'
 
 var Unpaid = new machina.BehavioralFsm({
 
@@ -102,74 +104,6 @@ var Unpaid = new machina.BehavioralFsm({
     },
 
     go : go
-
-})
-
-
-var Started = new machina.BehavioralFsm({
-
-    initialize: function (options) {
-    },
-
-    initialState: "Uninitialized",
-
-    states: {
-
-        Uninitialized: {},
-
-        CanStartPaidDownload : {
-
-            PeerPluginsStatuses: function(client, statuses) {
-                // if its no longer possible
-
-                this.transition(client, 'CannotStartPaidDownload')
-
-            },
-
-            StartPaidDownload : function (client, params) {
-
-                // Notify user to attempts a paid download with given parameters
-                client.initiatePaidDownload(params)
-
-                this.transition(client, 'InitiatingPaidDownload')
-            }
-
-        },
-
-        InitiatingPaidDownload : {
-
-            PaidDownloadInitiationCompleted : function (client, res, err) {
-
-                if (err) {
-
-                    // Tell user about failure
-                    client.paidDownloadInitiationFailed()
-
-                    // Go back to initation state
-                    this.transition(client, 'CanStartPaidDownload')
-
-                } else {
-
-                    this.go(client, ['..', '..', 'Paid', 'Started'])
-
-                    // Go back to started
-                    this.transition(client, 'Started')
-                }
-
-            }
-        },
-
-        CannotStartPaidDownload : {
-
-            PeerPluginsStatuses: function(client, statuses) {
-                // if it is now longer possible
-
-                this.transition(client, 'CanStartPaidDownload')
-            }
-
-        }
-
-    }
 
 })
 

@@ -36,37 +36,32 @@ var Uploading = new machina.BehavioralFsm({
                 // Normal peer list refresh
                 refreshPeers(client, statuses)
 
+                // Try to start uploading on all peers
+                var peerIds = client.allPeerIds()
 
-                for(var i in statuses) {
+                for(var i in peerIds) {
 
-                    var s = statuses[i]
+                    var peerId = peerIds[i]
 
-                    // is s in the right state
-                    // does s have good enough terms
-                    // does it pass filtering routine??
-                    // if peer is not already on ignore list, => what if disconnect & connect?
-                    // then
-
-                    //
-                    // then
-                    // *tell client to start uploading from it
-                    // *some how mark (LIST) that we are trying
-                    // - where to catch result of this? => do we even care?
-                    // * fail: remove from list
-                    // * secuess: keep on list
-                    // * dicsonnect:
-
-
+                    client.startUploading(peerId, client._sellerTerms)
                 }
 
             },
 
-            StartUploadingFailed : function (client, peerID) {
-                // remove from list (if its still on list)
+            StartUploadingFailed : function (client, peerId, err) {
+
+                var peer = client.getPeer(peerId)
+
+                if(peer)
+                    peer.failedToStartUploading(err)
             },
 
-            PeerDisconnected : function(client, peerID) {
-                // remove from list if its there
+            StartedPaidUploading: function (client, peerId) {
+
+                var peer = client.getPeer(peerId)
+
+                if(peer)
+                    peer.startUploading()
             },
 
             GoToPassive : function(client) {

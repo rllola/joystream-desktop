@@ -6,7 +6,7 @@ import machina from 'machina'
 import {go} from '../utils'
 
 import Paid from './Paid'
-import Unpaid from './Unpaid'
+import Unpaid from './Unpaid/Unpaid'
 
 var Downloading = new machina.BehavioralFsm({
 

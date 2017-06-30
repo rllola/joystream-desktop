@@ -12,11 +12,11 @@ var Peer = new machina.BehavioralFsm({
 
     initialize: function (options) {},
 
-    initialState: "Uninitialized",
+    initialState: "ReadyForStartPaidUploadAttempt",
 
     states: {
 
-        Uninitialized: {},
+        //Uninitialized: {},
 
         ReadyForStartPaidUploadAttempt: {
 
@@ -24,6 +24,13 @@ var Peer = new machina.BehavioralFsm({
 
                 // Tell user to update status
                 client.setStatus(status)
+
+            },
+
+            StartPaidUploading : function (client, sellerTerms) {
+
+                // Get most recent status
+                var status = client.getStatus()
 
                 // Buyer must have invited us
                 if(!status.connection ||
@@ -33,16 +40,12 @@ var Peer = new machina.BehavioralFsm({
                 // Check if buyer terms are compatible
                 const buyerTerms = status.connection.announcedModeAndTermsFromPeer.buyer.terms
 
-                //// where to get OUR terms?
-
-                // <----
-
-                if (!areTermsMatching(buyerTerms, client._sellerTerms))
+                if (!areTermsMatching(buyerTerms, sellerTerms))
                     return
 
                 // Make request to start uploading
                 var infoHash = client.infoHash()
-                var peerId = connection.peerId()
+                var peerId = status.connection.peerId()
                 var contractSk = client.generatePrivateKey()
                 var finalPkHash = client.getPublicKeyHash()
 
@@ -64,6 +67,8 @@ var Peer = new machina.BehavioralFsm({
             },
 
             NewStatus : function (client, status) {
+
+                // Tell user to update status
                 client.setStatus(status)
             }
 
@@ -72,6 +77,9 @@ var Peer = new machina.BehavioralFsm({
         PaidUploadingStarted: {
 
             NewStatus : function (client, status) {
+
+                // Tell user to update status
+                client.setStatus(status)
 
                 // If there is a new state for the same peer which
                 // indicates we moved out of active selling _after_
