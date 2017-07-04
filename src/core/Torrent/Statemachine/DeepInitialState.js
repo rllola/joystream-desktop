@@ -21,7 +21,8 @@ const DeepInitialState = {
 }
 
 function isUploading(s) {
-    return s == DeepInitialState.UPLOADING.STARTED || s == DeepInitialState.UPLOADING.STOPPED
+    return s == DeepInitialState.UPLOADING.STARTED ||
+        s == DeepInitialState.UPLOADING.STOPPED
 
 }
 

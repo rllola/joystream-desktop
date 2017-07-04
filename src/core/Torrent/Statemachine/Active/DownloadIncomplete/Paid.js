@@ -5,7 +5,7 @@
 import machina from 'machina'
 import {go} from '../utils'
 
-var Paid = new machina.BehavioralFsm({
+var Paid = machina.BehavioralFsm({
 
     initialize: function (options) {
     },
@@ -16,11 +16,11 @@ var Paid = new machina.BehavioralFsm({
 
         Uninitialized : {
 
-            Start : function (client) {
+            start : function (client) {
 
             },
 
-            Stop : function (client) {
+            stop : function (client) {
 
             }
 
@@ -33,11 +33,11 @@ var Paid = new machina.BehavioralFsm({
             // we completed the download
             // NB: Doing anything here may require complementary
             // changes in protocol_session/extension.
-            LastSellerLeft : function(client) {
+            lastSellerLeft : function(client) {
                 // add later!!
             },
 
-            Stop: function(client) {
+            stop: function(client) {
                 client.stopExtension()
                 this.transition(client, 'StoppingExtension')
             }
@@ -46,7 +46,7 @@ var Paid = new machina.BehavioralFsm({
 
         StoppingExtension : {
 
-            StoppedExtension: function (client) {
+            stoppedExtension: function (client) {
                 client.stopLibtorrentTorrent()
                 this.transition(client, 'StoppingLibtorrentTorrent')
             }
@@ -55,7 +55,7 @@ var Paid = new machina.BehavioralFsm({
 
         StoppingLibtorrentTorrent : {
 
-            StoppedLibtorrentTorrent : function (client) {
+            stoppedLibtorrentTorrent : function (client) {
                 this.transition(client, 'Stopped')
             }
 
@@ -63,7 +63,7 @@ var Paid = new machina.BehavioralFsm({
 
         Stopped : {
 
-            Start : function (client) {
+            start : function (client) {
                 client.startLibtorrentTorrent()
                 this.transition(client, 'StartingLibtorrentTorrent')
             }
@@ -72,14 +72,14 @@ var Paid = new machina.BehavioralFsm({
 
         StartingLibtorrentTorrent : {
 
-            StartedLibtorrentTorrent: function (client) {
+            startedLibtorrentTorrent: function (client) {
                 client.startExtension()
                 this.transition(client, 'StartingExtension')
             }
         },
 
         StartingExtension : {
-            StartedExtension : function(client) {
+            startedExtension : function(client) {
                 this.transition(client, 'Started')
             }
         }

@@ -7,10 +7,9 @@ import {go, refreshPeers} from '../../../../utils'
 
 import Started from './Started'
 
-var Unpaid = new machina.BehavioralFsm({
+var Unpaid = machina.BehavioralFsm({
 
     initialize: function (options) {
-        options.states.Started._child = new Started({parent_machine : this})
     },
 
     initialState: "Uninitialized",
@@ -19,11 +18,11 @@ var Unpaid = new machina.BehavioralFsm({
 
         Uninitialized : {
 
-            GoToStarted : function (client) {
+            goToStarted : function (client) {
                 this.transition(client, 'Started')
             },
 
-            GoToStopped : function (client) {
+            goToStopped : function (client) {
                 this.transition(client, 'Stopped')
             }
 
@@ -31,14 +30,14 @@ var Unpaid = new machina.BehavioralFsm({
 
         Started : {
 
-            _child : null,
+            _child : Started(),
 
-            Stop : function(client) {
+            stop : function(client) {
                 client.stopExtension()
                 this.transition(client, 'StoppingExtension')
             },
             
-            ChangeBuyerTerms : function (client, buyerTerms) {
+            changeBuyerTerms : function (client, buyerTerms) {
 
                 // Store new buyer terms temporarily
                 client._newBuyerTerms = buyerTerms
@@ -48,7 +47,7 @@ var Unpaid = new machina.BehavioralFsm({
 
         StoppingExtension: {
 
-            StoppedExtension: function(client) {
+            stoppedExtension: function(client) {
                 client.stopLibTorrentTorrent()
                 this.transition(client, 'StoppingTorrent')
             }
@@ -56,7 +55,7 @@ var Unpaid = new machina.BehavioralFsm({
 
         StoppingLibtorrentTorrent: {
 
-            StoppedLibtorrentTorrent : function(client) {
+            stoppedLibtorrentTorrent : function(client) {
                 this.transition(client, 'Started')
             }
 
@@ -64,7 +63,7 @@ var Unpaid = new machina.BehavioralFsm({
 
         ChangingBuyerTerms : {
 
-            BuyerTermsChanged : function (client) {
+            buyerTermsChanged : function (client) {
 
                 // Hold on to new terms
                 client._buyerTerms = client._newBuyerTerms
@@ -79,7 +78,7 @@ var Unpaid = new machina.BehavioralFsm({
 
         Stopped : {
 
-            Start : function (client) {
+            start : function (client) {
                 client.startLibtorrentTorrent()
                 this.transition('StartingLibtorrentTorrent')
             }
@@ -88,7 +87,7 @@ var Unpaid = new machina.BehavioralFsm({
 
         StartingLibtorrentTorrent : {
 
-            Started : function (client) {
+            started : function (client) {
                 client.startExtension()
                 this.transition(client, 'StartingExtension')
             }
@@ -96,7 +95,7 @@ var Unpaid = new machina.BehavioralFsm({
 
         StartingExtension : {
 
-            Started : function (client) {
+            started : function (client) {
                 this.transition(client, 'Started')
             }
         }

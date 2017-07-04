@@ -5,7 +5,7 @@
 import machina from 'machina'
 import {go, refreshPeers} from '../utils'
 
-var Uploading = new machina.BehavioralFsm({
+var Uploading = machina.BehavioralFsm({
 
     initialState: "Uninitialized",
 
@@ -15,12 +15,12 @@ var Uploading = new machina.BehavioralFsm({
 
         Started: {
 
-            Stop : function (client) {
+            stop : function (client) {
                 client.stopExtension()
                 this.transition(client, 'StoppingExtension')
             },
 
-            ChangeSellerTerms : function(client, sellerTerms) {
+            changeSellerTerms : function(client, sellerTerms) {
 
                 // Hold on to these terms temporary
                 client._newSellerTerms = sellerTerms
@@ -31,7 +31,7 @@ var Uploading = new machina.BehavioralFsm({
                 this.transition(client, 'ChangingSellerTerms')
             },
 
-            ProcessPeerPluginStatuses: function (client, statuses) {
+            processPeerPluginStatuses: function (client, statuses) {
 
                 // Normal peer list refresh
                 refreshPeers(client, statuses)
@@ -48,7 +48,7 @@ var Uploading = new machina.BehavioralFsm({
 
             },
 
-            StartUploadingFailed : function (client, peerId, err) {
+            startUploadingFailed : function (client, peerId, err) {
 
                 var peer = client.getPeer(peerId)
 
@@ -56,7 +56,7 @@ var Uploading = new machina.BehavioralFsm({
                     peer.failedToStartUploading(err)
             },
 
-            StartedPaidUploading: function (client, peerId) {
+            startedPaidUploading: function (client, peerId) {
 
                 var peer = client.getPeer(peerId)
 
@@ -64,28 +64,28 @@ var Uploading = new machina.BehavioralFsm({
                     peer.startUploading()
             },
 
-            GoToPassive : function(client) {
+            goToPassive : function(client) {
                 client.goToObserveMode()
                 this.transition(client, 'GoingToObserveMode')
             }
         },
 
         StoppingExtension : {
-            StoppedExtension : function (client) {
+            stoppedExtension : function (client) {
                 client.stopLibtorrentTorrent()
                 this.transition(client, 'StoppingLibtorrentTorrent')
             }
         },
 
         StoppingLibtorrentTorrent: {
-            StoppedLibtorrentTorrent : function (client) {
+            stoppedLibtorrentTorrent : function (client) {
                 this.transition(client, 'Stopped')
             }
         },
 
         ChangingSellerTerms : {
 
-            ChangedSellerTerms: function (client) {
+            changedSellerTerms: function (client) {
 
                 // Keep new terms
                 client._sellerTerms = client._newSellerTerms
@@ -100,12 +100,12 @@ var Uploading = new machina.BehavioralFsm({
 
         Stopped: {
 
-            Start: function (client) {
+            start: function (client) {
                 client.startLibtorrentTorrent()
                 this.transition(client, 'StartingLibtorrentTorrent')
             },
 
-            GoToPassive: function (client) {
+            goToPassive: function (client) {
                 client.startExtension()
                 this.transition(client, 'StartingExtensionForPassiveMode')
             }
@@ -113,27 +113,27 @@ var Uploading = new machina.BehavioralFsm({
         },
 
         StartingExtensionForPassiveMode: {
-            StartedExtension: function (client) {
+            startedExtension: function (client) {
                 client.goToObserveMode()
                 this.transition(client, 'GoingToObserveMode')
             }
         },
 
         GoingToObserveMode : {
-            StartedObserveMode: function (client) {
+            startedObserveMode: function (client) {
                 this.transition(client, 'Passive')
             }
         },
 
         StartingLibtorrentTorrent: {
-            StartedLibtorrentTorrent: function (client) {
+            startedLibtorrentTorrent: function (client) {
                 client.startedExtension()
                 this.transition(client, 'StartingExtension')
             }
         },
 
         StartingExtension: {
-            StartedExtension: function (client) {
+            startedExtension: function (client) {
                 this.transition(client, 'Started')
             }
         }

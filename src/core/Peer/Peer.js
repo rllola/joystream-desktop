@@ -8,7 +8,7 @@ import {go} from '../utils'
 import InnerStateTypeInfo from 'joystream-node'
 import areTermsMatching from 'joystream-node/lib/utils'
 
-var Peer = new machina.BehavioralFsm({
+var Peer = machina.BehavioralFsm({
 
     initialize: function (options) {},
 
@@ -20,14 +20,14 @@ var Peer = new machina.BehavioralFsm({
 
         ReadyForStartPaidUploadAttempt: {
 
-            NewStatus: function (client, status) {
+            newStatus: function (client, status) {
 
                 // Tell user to update status
                 client.setStatus(status)
 
             },
 
-            StartPaidUploading : function (client, sellerTerms) {
+            startPaidUploading : function (client, sellerTerms) {
 
                 // Get most recent status
                 var status = client.getStatus()
@@ -58,15 +58,15 @@ var Peer = new machina.BehavioralFsm({
 
         StartingPaidUpload: {
 
-            FailedToStartPaidUploading : function (client) {
+            failedToStartPaidUploading : function (client) {
                 this.transition(client, 'ReadyForStartPaidUploadAttempt')
             },
 
-            StartedPaidUploading: function (client) {
+            startedPaidUploading: function (client) {
                 this.transition(client, 'PaidUploadingStarted')
             },
 
-            NewStatus : function (client, status) {
+            newStatus : function (client, status) {
 
                 // Tell user to update status
                 client.setStatus(status)
@@ -76,7 +76,7 @@ var Peer = new machina.BehavioralFsm({
 
         PaidUploadingStarted: {
 
-            NewStatus : function (client, status) {
+            newStatus : function (client, status) {
 
                 // Tell user to update status
                 client.setStatus(status)

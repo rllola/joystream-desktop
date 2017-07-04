@@ -8,13 +8,9 @@ import {go} from '../utils'
 import Paid from './Paid'
 import Unpaid from './Unpaid/Unpaid'
 
-var Downloading = new machina.BehavioralFsm({
+var Downloading = machina.BehavioralFsm({
 
     initialize: function (options) {
-
-        // Allocate sub machines
-        options.states.Paid._child = new Paid({parent_machine : this})
-        options.states.Unpaid._child = new Unpaid({parent_machine : this})
     },
 
     initialState: "Uninitialized",
@@ -23,22 +19,22 @@ var Downloading = new machina.BehavioralFsm({
 
         Uninitialized : {
             
-            GoToUnpaid : function (client) {
+            goToUnpaid : function (client) {
                 this.transition(client, 'Unpaid')
             },
             
-            GoToPaid : function (client) {
+            goToPaid : function (client) {
                 this.transition(client, 'Paid')
             }
             
         },
 
         Paid : {
-            _child : null
+            _child : Paid()
         },
 
         Unpaid : {
-            _child : null
+            _child : Unpaid()
         }
     }
 

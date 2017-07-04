@@ -3,11 +3,11 @@
  */
 
 import machina from 'machina'
-import {go} from '../utils'
+import {go} from '../../utils'
 
 import DeepInitialState, {isUploading, isPassive, isDownloading, isStopped} from './DeepInitialState'
 
-var Loading = new machina.BehavioralFsm({
+var Loading = machina.BehavioralFsm({
 
     initialize: function (options) {
     },
@@ -169,18 +169,14 @@ var Loading = new machina.BehavioralFsm({
         }
     },
 
-    go : go,
-
-    getDeepInitialState: function (client) {
-
-    }
+    go : go
 
 })
 
 function goToDeepInitialState(machine, client) {
 
     // Path to active substate we need to transition to
-    var path = PathToDeepInitialState(client._deepInitialState)
+    var path = relativePathFromDeepInitialState(client._deepInitialState)
 
     // Transition to active state
     machine.go(client, path)
@@ -188,27 +184,29 @@ function goToDeepInitialState(machine, client) {
     // Notify user that we are done
     client.loaded(client._deepInitialState)
 
-    // ...
+    // Drop temprorary storage of inital state we want to load to
     delete client._deepInitialState
 }
 
-function PathToDeepInitialState(s) {
+function relativePathFromDeepInitialState(s) {
 
     switch(s) {
-        case DeepInitialState.UPLOADING.STARTED:
-            return ['..', 'FinishedDownloading', 'Uploading', 'Started']
-        case DeepInitialState.UPLOADING.STOPPED:
-            return ['..', 'FinishedDownloading', 'Uploading', 'Stopped']
-        case DeepInitialState.PASSIVE:
-            return ['..', 'FinishedDownloading', 'Passive']
         case DeepInitialState.DOWNLOADING.UNPAID.STARTED:
-            return ['..', 'Downloading', 'Unpaid', 'Started']
+            return '../DownloadIncomplete/Unpaid/Started'
         case DeepInitialState.DOWNLOADING.UNPAID.STOPPED:
-            return ['..', 'Downloading', 'Unpaid', 'Stopped']
+            return '../DownloadIncomplete/Unpaid/Stopped'
         case DeepInitialState.DOWNLOADING.PAID.STARTED:
-            return ['..', 'Downloading', 'Paid', 'Started']
+            return '../DownloadIncomplete/Paid/Started'
         case DeepInitialState.DOWNLOADING.PAID.STOPPED:
-            return ['..', 'Downloading', 'Paid', 'Stopped']
+            return '../DownloadIncomplete/Paid/Stopped'
+        case DeepInitialState.PASSIVE:
+            return '../FinishedDownloading/Passive'
+        case DeepInitialState.UPLOADING.STARTED:
+            return '../FinishedDownloading/Uploading/Started'
+        case DeepInitialState.UPLOADING.STOPPED:
+            return '../FinishedDownloading/Uploading/Stopped'
+
+
     }
 
 }

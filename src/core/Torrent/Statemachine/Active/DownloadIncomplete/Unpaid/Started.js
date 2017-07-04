@@ -5,7 +5,7 @@
 import machina from 'machina'
 import {refreshPeers} from '../../../../utils'
 
-var Started = new machina.BehavioralFsm({
+var Started = machina.BehavioralFsm({
 
     initialize: function (options) {
     },
@@ -57,8 +57,10 @@ var Started = new machina.BehavioralFsm({
                     var sellerTerms = status.connection.announcedModeAndTermsFromPeer.seller.terms
 
                     // Pick how much to distribute among the sellers
-                    // pay for all pieces + fee to settle?
-                    var value = sellerTerms.minPrice * client._metadata.num_pieces()
+                    var minimumRevenue = sellerTerms.minPrice * client._metadata.num_pieces()
+
+                    // Set value to at least surpass dust
+                    var value = Math.max(minimumRevenue, 0)
 
                     // Update fee estimate
                     if(sellerTerms.minContractFeePerKb > contractFeeRate)
