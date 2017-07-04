@@ -1,7 +1,7 @@
-import { assert, expect } from 'chai'
-import sinon from 'sinon'
+var assert = require('chai').assert
+var sinon = require('sinon')
 
-import BaseMachine from '../../../src/core/BaseMachine'
+var BaseMachine = require('../../../src/core/BaseMachine')
 
 var machine = new BaseMachine({
   states: {

@@ -1,4 +1,4 @@
-import base from '../../../src/core/BaseMachine'
+var base = require('../../../src/core/BaseMachine')
 
 //     X       Y         [root]
 //    /|\     /|\
@@ -42,4 +42,4 @@ var root = new base({
   }
 })
 
-export default root
+module.exports = root

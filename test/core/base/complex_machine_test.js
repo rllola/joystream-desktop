@@ -1,6 +1,8 @@
-import { assert, expect } from 'chai'
+var assert = require('chai').assert
+var expect = require('chai').expect
+var sinon = require('sinon')
 
-import machine from './complex_machine'
+var machine = require('./complex_machine')
 
 function assertCompositeState (machine, client, state) {
   assert.equal(machine.compositeState(client), state)

@@ -1,6 +1,6 @@
-import base from '../../../src/core/BaseMachine'
+var base = require('../../../src/core/BaseMachine')
 
-let substate = new base({
+var substate = new base({
   initialState: 'waiting_for_payment',
   states: {
     waiting_for_payment: {
@@ -38,7 +38,7 @@ let substate = new base({
   }
 })
 
-let fsm = new base({
+var fsm = new base({
   initialState: 'off',
   namespace: 'vendingMachine',
   states: {
@@ -90,4 +90,4 @@ let fsm = new base({
   }
 })
 
-export default fsm
+module.exports = fsm

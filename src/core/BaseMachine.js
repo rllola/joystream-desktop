@@ -77,4 +77,4 @@ var BaseMachine = machina.BehavioralFsm.extend({
   }
 })
 
-export default BaseMachine
+module.exports = BaseMachine

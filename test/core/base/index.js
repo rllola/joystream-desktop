@@ -1,8 +1,9 @@
-import { assert, expect } from 'chai'
-import sinon from 'sinon'
-import _ from 'lodash'
+var assert = require('chai').assert
+var expect = require('chai').expect
+var sinon = require('sinon')
+var _ = require('lodash')
 
-import machine from './machine'
+var machine = require('./machine')
 
 describe('Base State Machine', function () {
 
