@@ -30,15 +30,21 @@ describe('Queued Handle Method', function(){
 
     machine.states['uninitialized'].spy = spy
 
-    var reentry = sinon.spy( function(client) {
+    var reentry = sinon.spy(function(client) {
+      // as we are currently handling an input, the next call should get queued
       this.queuedHandle(client, 'spy', 'arg1', 'arg2')
+      // if handler was successfully queued spy should not have been called yet
       assert(!spy.called)
     })
 
     machine.states['uninitialized'].reentry = reentry
 
     machine.queuedHandle(client, 'reentry')
+
+    // make sure that the last handler was called
     assert(reentry.called)
+
+    // ensure queued handler was dequed and called with correct arguments
     assert(spy.calledWith(client, 'arg1', 'arg2'))
   })
 })
