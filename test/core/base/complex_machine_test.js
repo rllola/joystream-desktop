@@ -1,6 +1,6 @@
 import { assert, expect } from 'chai'
 
-import Machine from './complex_machine'
+import machine from './complex_machine'
 
 function assertCompositeState (machine, client, state) {
   assert.equal(machine.compositeState(client), state)
@@ -26,7 +26,6 @@ function deepTransition (machine, client, path) {
 
 describe('Deep state tree transitions', function () {
   it('state transitions', function () {
-    let machine = new Machine()
     let client = {}
 
     const assertState = assertCompositeState.bind(null, machine, client)
@@ -37,24 +36,18 @@ describe('Deep state tree transitions', function () {
 
     transition(['..', 'b'])
 
-    assertState('X.b.A') // * see note below
+    assertState('X.b')
 
-    transition(['..', '..', 'Y'])
+    transition(['..', 'Y'])
 
-    assertState('Y.a.A')
+    assertState('Y')
 
-    transition(['..', '..'])
-
-    // *transitions do not transition child state machines to their initial states
-    // the last known state is preserved
-    assertState('X.b.A')
-
-    transition(['..', '..', 'X', 'a', 'A'])
+    transition(['X', 'a', 'A'])
 
     assertState('X.a.A')
 
-    transition('../b/B')
+    transition('../b')
 
-    assertState('X.b.B')
+    assertState('X.b')
   })
 })

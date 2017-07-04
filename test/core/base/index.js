@@ -2,25 +2,20 @@ import { assert, expect } from 'chai'
 import sinon from 'sinon'
 import _ from 'lodash'
 
-import Machine from './machine'
+import machine from './machine'
 
 describe('Base State Machine', function () {
-  let machine
-
-  beforeEach(function () {
-     machine = new Machine()
-  })
-
-  it('constructor', function () {
-    assert(machine)
-  })
 
   it('has a go method', function () {
     expect(machine.go).to.be.a('function')
   })
 
-  it('has a createSubMachine method', function () {
-    expect(machine.createSubMachine).to.be.a('function')
+  it('has a linkChildren method', function () {
+    expect(machine.linkChildren).to.be.a('function')
+  })
+
+  it('has a queuedHandle method', function () {
+    expect(machine.queuedHandle).to.be.a('function')
   })
 
   it('implements states', function () {

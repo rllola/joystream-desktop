@@ -6,28 +6,23 @@ import base from '../../../src/core/BaseMachine'
 //  /|\       /|\
 // A B C     A B C       [substate2]
 
-var root = base.extend({
-  initialState: 'X',
-  initialize: function (options) {
-    this.createSubMachine(options.states.X, substate1)
-    this.createSubMachine(options.states.Y, substate1)
-  },
+var substate2 = new base({
+  initialState: 'A',
   states: {
-    'X': {
+    A: {
     },
-    'Y': {
+    B: {
+    },
+    C: {
     }
   }
 })
 
-var substate1 = base.extend({
+var substate1 = new base({
   initialState: 'a',
-  initialize: function (options) {
-    this.createSubMachine(options.states.a, substate2)
-    this.createSubMachine(options.states.b, substate2)
-  },
   states: {
     a: {
+      _child: substate2
     },
     b: {
     },
@@ -36,14 +31,13 @@ var substate1 = base.extend({
   }
 })
 
-var substate2 = base.extend({
-  initialState: 'A',
+var root = new base({
+  initialState: 'X',
   states: {
-    A: {
+    'X': {
+      _child: substate1
     },
-    B: {
-    },
-    C: {
+    'Y': {
     }
   }
 })

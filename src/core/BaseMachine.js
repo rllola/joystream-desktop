@@ -1,28 +1,27 @@
 import machina from 'machina'
 
 var BaseMachine = machina.BehavioralFsm.extend({
+
+  initialize: function (options) {
+    if (typeof this.initializeMachine === 'function') {
+      this.initializeMachine(options)
+    }
+
+    this.linkChildren()
+  },
+
   linkChildren () {
-    console.log(this)
     // iterate over states, for each _child instance set its parent_machine to this machine
     for(var s in this.states) {
-      console.log(s)
       let state = this.states[s]
       if (state._child) {
-        console.log(state._child)
         if (typeof state._child === 'object' && state._child.factory != 'function') {
-          console.log('linking')
           state._child.parent_machine = this
         } else {
           throw new Error('BaseMachine only supports instances of child submachines')
         }
       }
     }
-  },
-
-  // Creates a new instance of a state machine ChildMachine, passing
-  // a refence to this machine as its parent
-  createSubMachine: function (state, ChildMachine) {
-    state._child = new ChildMachine({ parent_machine: this })
   },
 
   // Helper method to do a 'deep transition' across the state machines tree

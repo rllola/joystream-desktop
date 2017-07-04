@@ -1,10 +1,7 @@
 import base from '../../../src/core/BaseMachine'
 
-let substate = base.extend({
+let substate = new base({
   initialState: 'waiting_for_payment',
-  initialize: function (options) {
-
-  },
   states: {
     waiting_for_payment: {
       _onEnter: function (client) {
@@ -41,13 +38,9 @@ let substate = base.extend({
   }
 })
 
-let fsm = base.extend({
+let fsm = new base({
   initialState: 'off',
   namespace: 'vendingMachine',
-  initialize: function (options) {
-    this.createSubMachine(options.states.on, substate)
-  },
-
   states: {
     'off': {
       _onEnter: function (client) {
@@ -57,6 +50,7 @@ let fsm = base.extend({
     },
 
     'on' : {
+      _child: substate,
       _onEnter: function (client) {
         this.emit('started', client)
       },
