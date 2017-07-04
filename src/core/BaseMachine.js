@@ -1,4 +1,4 @@
-import machina from 'machina'
+var machina = require('machina')
 
 var BaseMachine = machina.BehavioralFsm.extend({
 
@@ -35,9 +35,9 @@ var BaseMachine = machina.BehavioralFsm.extend({
 
     relativePath = relativePath.slice()
 
-    const state = relativePath.shift()
+    var state = relativePath.shift()
 
-    let machine
+    var machine
 
     if (state === '..') {
       machine = this.parent_machine
@@ -58,18 +58,18 @@ var BaseMachine = machina.BehavioralFsm.extend({
     }
   },
 
-  queuedHandle: function (...args) {
+  queuedHandle: function () {
     this._handleQueue = this._handleQueue || []
 
     if (this._priorQueuedHandleCallActive) {
-      this._handleQueue.push(args)
+      this._handleQueue.push(arguments)
     } else {
       this._priorQueuedHandleCallActive = true
-      this.handle(...args)
+      this.handle.apply(this, arguments)
 
       while(this._handleQueue.length) {
-        args = this._handleQueue.shift()
-        this.handle(...args)
+        var args = this._handleQueue.shift()
+        this.handle.apply(this, args)
       }
 
       this._priorQueuedHandleCallActive = false
