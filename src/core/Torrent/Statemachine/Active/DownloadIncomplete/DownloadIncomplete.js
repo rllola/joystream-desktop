@@ -2,42 +2,27 @@
  * Created by bedeho on 13/06/17.
  */
 
-import machina from 'machina'
-import {go} from '../utils'
+var machina = require('machina')
 
-import Paid from './Paid'
-import Unpaid from './Unpaid/Unpaid'
+var Paid = require('./Paid')
+var Unpaid = require('./Unpaid/Unpaid')
 
-var Downloading = machina.BehavioralFsm({
-
-    initialize: function (options) {
-    },
+var Downloading = new machina.BehavioralFsm({
 
     initialState: "Uninitialized",
 
     states: {
 
-        Uninitialized : {
-            
-            goToUnpaid : function (client) {
-                this.transition(client, 'Unpaid')
-            },
-            
-            goToPaid : function (client) {
-                this.transition(client, 'Paid')
-            }
-            
-        },
-
+        Uninitialized : {},
         Paid : {
-            _child : Paid()
+            _child : Paid
         },
 
         Unpaid : {
-            _child : Unpaid()
+            _child : Unpaid
         }
     }
 
 })
 
-export default Downloading
+module.exports.Downloading = Downloading

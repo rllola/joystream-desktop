@@ -2,15 +2,15 @@
  * Created by bedeho on 13/06/17.
  */
 
-import machina from 'machina'
-import {go} from '../../utils'
+var machina = require('machina')
 
-import DeepInitialState, {isUploading, isPassive, isDownloading, isStopped} from './DeepInitialState'
+var DeepInitialState = require('./DeepInitialState')
+var isUploading = require('./DeepInitialState').isUploading
+var isPassive = require('./DeepInitialState').isPassive
+var isDownloading = require('./DeepInitialState').isDownloading
+var isStopped = require('./DeepInitialState').isStopped
 
-var Loading = machina.BehavioralFsm({
-
-    initialize: function (options) {
-    },
+var Loading = new machina.BehavioralFsm({
 
     initialState: "AddingToSession",
 
@@ -58,7 +58,32 @@ var Loading = machina.BehavioralFsm({
 
             checkFinished: function (client, isFullyDownloaded) {
 
-                if(isFullyDownloaded) {
+                // Remember this information for when we make transition to active state later
+                // because we first have to blck uploading.
+                client._isFullyDownloaded = isFullyDownloaded
+
+                // By default, extension torrent plugins are constructed with
+                // TorrentPlugin::LibtorrentInteraction::None:
+                // - No events interrupted, except on_extended events for this plugin.
+                // Since we _never_ want libtorrent to seed for us over vanilla BitTorrent
+                // protocol, even when we are uploading (we only allow
+                // paid seeding in app), we instead want
+                // TorrentPlugin::LibtorrentInteraction::BlockDownloading:
+                // - Preventing uploading to peers by
+                // -- sending (once) CHOCKED message in order to discourage inbound requests.
+                // -- cancel on_request() to make libtorrent blind to peer requests.
+                client.setLibtorrentInteractionToBlockedUploading()
+
+                this.transition(client, 'BlockingLibtorrentUploading')
+            }
+
+        },
+
+        BlockingLibtorrentUploading : {
+
+            blocked : function (client) {
+
+                if(client._isFullyDownloaded) {
 
                     if(isPassive(client._deepInitialState) || isDownloading(client._deepInitialState)) {
 
@@ -97,6 +122,9 @@ var Loading = machina.BehavioralFsm({
                         this.transition(client, 'WaitingForNewBuyerTerms')
                     }
                 }
+
+                // Drop temporary memory
+                delete client._isFullyDownloaded
             }
 
         },
@@ -113,6 +141,8 @@ var Loading = machina.BehavioralFsm({
                 this.transition(client, 'GoingToMode')
             }
         },
+
+
 
         GoingToMode : {
 
@@ -167,10 +197,7 @@ var Loading = machina.BehavioralFsm({
                 goToDeepInitialState(this, client)
             }
         }
-    },
-
-    go : go
-
+    }
 })
 
 function goToDeepInitialState(machine, client) {
@@ -211,4 +238,4 @@ function relativePathFromDeepInitialState(s) {
 
 }
 
-export default Loading
+module.exports.Loading = Loading

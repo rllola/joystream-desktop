@@ -2,14 +2,11 @@
  * Created by bedeho on 13/06/17.
  */
 
-import machina from 'machina'
-import {go} from '../utils'
+var machina = require('machina')
 
-import Uploading from './Uploading'
+var Uploading = require('./Uploading')
 
-var Active = machina.BehavioralFsm({
-
-    initialize: function (options) {},
+var FinishedDownloading = new machina.BehavioralFsm({
 
     initialState: "Uninitialized",
 
@@ -45,12 +42,10 @@ var Active = machina.BehavioralFsm({
         },
 
         Uploading : {
-            _child : Uploading()
+            _child : Uploading
         }
 
-    },
-
-    go : go
+    }
 })
 
-export default Active
+module.exports.FinishedDownloading = FinishedDownloading

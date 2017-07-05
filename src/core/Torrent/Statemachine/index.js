@@ -2,6 +2,6 @@
  * Created by bedeho on 13/06/17.
  */
 
-import Torrent from './Torrent'
+var Torrent = require('./Torrent')
 
-export default Torrent
+module.exports.Torrent = Torrent

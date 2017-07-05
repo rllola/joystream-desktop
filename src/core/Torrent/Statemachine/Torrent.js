@@ -2,16 +2,18 @@
  * Created by bedeho on 13/06/17.
  */
 
-import machina from 'machina'
-import {go, refreshPeers} from '../../utils'
+var machina = require('machina')
 
-import Loading from './Loading'
-import Active from './Active'
-import DeepInitialState from './DeepInitialState'
+var Loading = require('./Loading')
+var Active = require('./Active')
 
-var Torrent = machina.BehavioralFsm({
+var DeepInitialState = require('./DeepInitialState')
+var isUploading = DeepInitialState.isUploading
+//var isPassive = DeepInitialState.isPassive
+var isDownloading = DeepInitialState.isDownloading
+var isStopped = DeepInitialState.isStopped
 
-    initialize: function (options) {},
+var Torrent = new machina.BehavioralFsm({
 
     initialState: "WaitingToLoad",
 
@@ -46,11 +48,19 @@ var Torrent = machina.BehavioralFsm({
                 client._metadata = metadata
                 client._deepInitialState = deepInitialState
 
-                // Wheter torrent should be added in paused mode from the get go
-                var addAsPaused = isPaused(deepInitialState)
+                // Whether torrent should be added in (libtorrent) paused mode from the get go
+                var addAsPaused = isStopped(deepInitialState)
+
+                // Automanagement: We never want this, as our state machine should explicitly control
+                // pause/resume behaviour torrents for now.
+                //
+                // Wether libtorrent is responsible for determining whether it should be started or queued.
+                // Queuing is a mechanism to automatically pause and resume torrents based on certain criteria.
+                // The criteria depends on the overall state the torrent is in (checking, downloading or seeding).
+                var autoManaged = false
 
                 // Tell user to add torrent to session
-                client.addTorrent(infoHash, savePath, addAsPaused, metadata)
+                client.addTorrent(infoHash, savePath, addAsPaused, autoManaged, metadata)
 
                 // Go to loading state
                 this.transition(client, 'Loading')
@@ -58,7 +68,9 @@ var Torrent = machina.BehavioralFsm({
         },
 
         Loading : {
-            _child : Loading(),
+
+            _child : Loading,
+
             terminate : function(client, generateResumeData) {
 
                 // Make sure to remember that we may need to generate resume
@@ -74,7 +86,9 @@ var Torrent = machina.BehavioralFsm({
         },
 
         Active : {
-            _child : Active(),
+
+            _child : Active,
+
             terminate: function(client, generateResumeData) {
 
                 // Determine what state to start in when we start next time,
@@ -145,10 +159,7 @@ var Torrent = machina.BehavioralFsm({
 
         }
 
-    },
-
-    go: go,
-
+    }
 })
 
 function terminationState(client) {
@@ -229,4 +240,4 @@ function deepInitialStateFromActiveState(stateString) {
 
 }
 
-export default Torrent
+module.exports.Torrent = Torrent

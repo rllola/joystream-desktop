@@ -2,15 +2,12 @@
  * Created by bedeho on 15/06/17.
  */
 
-import machina from 'machina'
-import {go} from '../utils'
+var machina = require('machina')
 
-import DownloadIncomplete from './DownloadIncomplete'
-import FinishedDownloading from './FinishedDownloading'
+var DownloadIncomplete = require('./DownloadIncomplete')
+var FinishedDownloading = require('./FinishedDownloading')
 
-var Active = machina.BehavioralFsm({
-
-    initialize: function (options) {},
+var Active = new machina.BehavioralFsm({
 
     initialState: "Uninitialized",
 
@@ -19,7 +16,7 @@ var Active = machina.BehavioralFsm({
         Uninitialized : {},
 
         DownloadIncomplete : {
-            _child : DownloadIncomplete(),
+            _child : DownloadIncomplete,
 
             downloadFinished : function (client) {
 
@@ -30,11 +27,9 @@ var Active = machina.BehavioralFsm({
         },
 
         FinishedDownloading : {
-            _child : FinishedDownloading()
+            _child : FinishedDownloading
         }
-    },
-
-    go : go
+    }
 })
 
-export default Active
+module.exports.Active = Active

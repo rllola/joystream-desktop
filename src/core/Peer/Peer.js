@@ -2,13 +2,12 @@
  * Created by bedeho on 27/06/17.
  */
 
-import machina from 'machina'
-import {go} from '../utils'
+var machina = require('machina')
 
-import InnerStateTypeInfo from 'joystream-node'
-import areTermsMatching from 'joystream-node/lib/utils'
+var InnerStateTypeInfo = require('joystream-node')
+var areTermsMatching = require('joystream-node/lib/utils')
 
-var Peer = machina.BehavioralFsm({
+var Peer = new machina.BehavioralFsm({
 
     initialize: function (options) {},
 
@@ -102,4 +101,4 @@ var Peer = machina.BehavioralFsm({
 
 })
 
-export default Peer
+module.exports.Peer = Peer

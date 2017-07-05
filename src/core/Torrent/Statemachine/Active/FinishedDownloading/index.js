@@ -2,6 +2,6 @@
  * Created by bedeho on 13/06/17.
  */
 
-import FinishedDownloading from './FinishedDownloading'
+var FinishedDownloading = require('./FinishedDownloading')
 
-export default FinishedDownloading
+module.exports.FinishedDownloading = FinishedDownloading

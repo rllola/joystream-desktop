@@ -2,6 +2,6 @@
  * Created by bedeho on 27/06/17.
  */
 
-import Peer from './Peer'
+var Peer = require('./Peer')
 
-export default Peer
+module.exports.Peer = Peer

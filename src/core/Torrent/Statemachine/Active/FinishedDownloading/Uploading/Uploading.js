@@ -2,10 +2,11 @@
  * Created by bedeho on 26/06/17.
  */
 
-import machina from 'machina'
-import {go, refreshPeers} from '../utils'
+var machina = require('machina')
 
-var Uploading = machina.BehavioralFsm({
+var refreshPeers = require('../../../../../utils').refreshPeers
+
+var Uploading = new machina.BehavioralFsm({
 
     initialState: "Uninitialized",
 
@@ -141,4 +142,4 @@ var Uploading = machina.BehavioralFsm({
 
 })
 
-export default Uploading
+module.exports.Uploading = Uploading

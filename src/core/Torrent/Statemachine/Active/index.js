@@ -2,6 +2,6 @@
  * Created by bedeho on 13/06/17.
  */
 
-import Active from './Active'
+var Active = require('./Active')
 
-export default Active
+module.exports.Active = Active

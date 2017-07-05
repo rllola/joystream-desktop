@@ -2,13 +2,10 @@
  * Created by bedeho on 30/06/17.
  */
 
-import machina from 'machina'
-import {refreshPeers} from '../../../../utils'
+var machina = require('machina')
+var refreshPeers = require('../../../../../utils').refreshPeers
 
-var Started = machina.BehavioralFsm({
-
-    initialize: function (options) {
-    },
+var Started = new machina.BehavioralFsm({
 
     initialState: "Uninitialized",
 
@@ -197,3 +194,5 @@ function filterSuitableSellers(statuses, minimumNumber) {
         }
     }
 }
+
+module.exports.Started = Started

@@ -2,7 +2,7 @@
  * Created by bedeho on 23/06/17.
  */
 
-const DeepInitialState = {
+var DeepInitialState = {
     UPLOADING : {
         STARTED : 1,
         STOPPED : 2,
@@ -40,10 +40,12 @@ function isDownloading(s) {
 function isStopped(s) {
 
     return s == DeepInitialState.UPLOADING.STOPPED ||
-            //s == DeepInitialState.PASSIVE ||
             s == DeepInitialState.DOWNLOADING.UNPAID.STOPPED ||
             s == DeepInitialState.DOWNLOADING.PAID.STOPPED
 }
 
-export default DeepInitialState
-export {isUploading, isPassive, isDownloading, isStopped}
+module.exports.DeepInitialState = DeepInitialState
+module.exports.isUploading = isUploading
+module.exports.isPassive = isPassive
+module.exports.isDownloading = isDownloading
+module.exports.isStopped = isStopped

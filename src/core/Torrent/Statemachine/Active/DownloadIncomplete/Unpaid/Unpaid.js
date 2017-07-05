@@ -2,35 +2,20 @@
  * Created by bedeho on 13/06/17.
  */
 
-import machina from 'machina'
-import {go, refreshPeers} from '../../../../utils'
+var machina = require('machina')
+var Started = require('./Started')
 
-import Started from './Started'
-
-var Unpaid = machina.BehavioralFsm({
-
-    initialize: function (options) {
-    },
+var Unpaid = new machina.BehavioralFsm({
 
     initialState: "Uninitialized",
 
     states: {
 
-        Uninitialized : {
-
-            goToStarted : function (client) {
-                this.transition(client, 'Started')
-            },
-
-            goToStopped : function (client) {
-                this.transition(client, 'Stopped')
-            }
-
-        },
+        Uninitialized : {},
 
         Started : {
 
-            _child : Started(),
+            _child : Started,
 
             stop : function(client) {
                 client.stopExtension()
@@ -100,10 +85,7 @@ var Unpaid = machina.BehavioralFsm({
             }
         }
 
-    },
-
-    go : go
-
+    }
 })
 
-export default Unpaid
+module.exports.Unpaid = Unpaid

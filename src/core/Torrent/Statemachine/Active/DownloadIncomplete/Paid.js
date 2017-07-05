@@ -2,29 +2,15 @@
  * Created by bedeho on 13/06/17.
  */
 
-import machina from 'machina'
-import {go} from '../utils'
+var machina = require('machina')
 
-var Paid = machina.BehavioralFsm({
-
-    initialize: function (options) {
-    },
+var Paid = new machina.BehavioralFsm({
 
     initialState: "Uninitialized",
 
     states: {
 
-        Uninitialized : {
-
-            start : function (client) {
-
-            },
-
-            stop : function (client) {
-
-            }
-
-        },
+        Uninitialized : {},
 
         Started : {
 
@@ -84,10 +70,7 @@ var Paid = machina.BehavioralFsm({
             }
         }
 
-    },
-
-    go : go
-
+    }
 })
 
-export default Paid
+module.exports.Paid = Paid
