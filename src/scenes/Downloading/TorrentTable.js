@@ -13,6 +13,8 @@ import TorrentContextMenu from './TorrentContextMenu'
 
 import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
 
+import Dropzone from 'react-dropzone'
+
 function StartDownloadingHint(props) {
 
     return (
@@ -92,6 +94,10 @@ class TorrentsTable extends Component {
         this.state = contextMenuHiddenState()
     }
 
+    handleFileDrop (files) {
+      console.log(files)
+    }
+
     hideContextMenu() {
 
         // Schedule updating state to have: hidden context menu
@@ -135,15 +141,17 @@ class TorrentsTable extends Component {
     render() {
 
         return (
+          <Dropzone disableClick style={{width:'auto',height:'auto', borderStyle:'none'}} onDrop={this.handleFileDrop}>
             <Table column_titles={["", "State", "Size", "Progress", "Speed", "Arrival", "Mode"]}>
                 { this.getRenderedContextMenu() }
                 { this.getRenderedTorrentRows() }
             </Table>
+          </Dropzone>
         )
     }
 
     getRenderedContextMenu() {
-        
+
         return (
             this.isContextMenuVisible()
             ?
