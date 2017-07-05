@@ -52,7 +52,7 @@ class Application extends EventEmitter {
   }
 
   getSavePath () {
-    return process.env.SAVE_PATH ? process.env.SAVE_PATH : this._config.get('savePath', constants.DEFAULT_SAVE_PATH))
+    return process.env.SAVE_PATH ? process.env.SAVE_PATH : this._config.get('savePath', constants.DEFAULT_SAVE_PATH)
   }
 
   setSavePath (newValue) {
