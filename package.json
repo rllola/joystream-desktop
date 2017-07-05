@@ -1,20 +1,33 @@
 {
-  "name": "joystream-demo",
-  "version": "0.0.0",
-  "description": "A minimal Joystream application in electron",
+  "name": "joystream",
+  "productName": "Joystream",
+  "version": "0.0.1",
+  "description": "A new BitTorrent client, with faster speeds, streaming and paid seeding.",
+  "homepage": "https://joystream.co",
   "main": "src/main.js",
   "scripts": {
     "start": "NODE_ENV=development electron-forge start",
     "component-development": "COMPONENT_DEVELOPMENT_MODE=True NODE_ENV=development electron-forge start",
-    "test": "echo 'No test !' && exit 0",
+    "test": "xvfb-maybe electron-mocha renderer --recursive ./test",
     "package": "electron-forge package",
     "make": "NODE_ENV=production electron-forge make"
   },
   "keywords": [
     "Joystream",
-    "demo"
+    "bitcoin",
+    "desktop",
+    "electron",
+    "torrent",
+    "torrent-client"
   ],
-  "author": "Me",
+  "author": {
+    "name": "JoyStream, AS",
+    "email": "bedeho@joystream.co",
+    "url": "https://joystream.co"
+  },
+  "bugs": {
+    "url": "https://github.com/JoyStream/joystream-electron/issues"
+  },
   "license": "MIT",
   "devDependencies": {
     "babel": "^6.23.0",
@@ -25,11 +38,15 @@
     "babel-preset-es2015": "^6.24.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.22.0",
+    "chai": "^4.0.2",
     "cmake-js": "^3.4.1",
+    "electron-mocha": "^3.5.0",
     "electron-prebuilt-compile": "1.6.4",
     "mobx-react-devtools": "^4.2.11",
     "node-gyp": "^3.6.0",
-    "webpack": "^2.3.1"
+    "sinon": "^2.3.6",
+    "webpack": "^2.3.1",
+    "xvfb-maybe": "^0.2.1"
   },
   "dependencies": {
     "babel-polyfill": "^6.23.0",
@@ -39,6 +56,7 @@
     "bytes": "^2.5.0",
     "debug": "^2.6.0",
     "electron-compile": "^6.4.1",
+    "electron-config": "^1.0.0",
     "humanize-duration": "^3.10.0",
     "joystream-node": "git+ssh://git@github.com/JoyStream/joystream-node.git#development",
     "jquery": "^3.2.1",
@@ -56,6 +74,7 @@
     "qrcode-react": "^0.1.12",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
+    "react-dropzone": "^3.13.3",
     "react-hot-loader": "^3.0.0-beta.6",
     "react-proptype-conditional-require": "^1.0.4",
     "react-router": "^4.0.0",
@@ -74,19 +93,44 @@
           "squirrel"
         ],
         "darwin": [
-          "zip"
+          "zip",
+          "dmg"
         ],
         "linux": [
-          "deb",
-          "rpm"
+          "deb"
         ]
       },
-      "electronPackagerConfig": {},
-      "electronWinstallerConfig": {
-        "name": "Joystream"
+      "electronPackagerConfig": {
+        "asar": true,
+        "icon": "src/assets/icons/appicon_128x128",
+        "protocol": [
+          "joystream",
+          "magnet"
+        ],
+        "ignore": [
+          ".gitignore",
+          ".travis",
+          "appveyor.yml",
+          "README.md"
+        ],
+        "overwrite": true,
+        "appCategoryType": "public.app-category.utilities",
+        "win32metadata": {
+          "CompanyName": "Joystream"
+        }
       },
-      "electronInstallerDebian": {},
-      "electronInstallerRedhat": {},
+      "electronWinstallerConfig": {
+        "name": "Joystream",
+        "setupIcon": "src/assets/icons/appicon_128x128.ico",
+        "loadingGif": "src/assets/img/main_logo.png"
+      },
+      "electronInstallerDebian": {
+        "icon": "src/assets/icons/appicon_128x128.png",
+        "categories": [
+          "Utility"
+        ]
+      },
+      "electronInstallerDMG": {},
       "github_repository": {
         "owner": "JoyStream",
         "name": "joystream-electron"

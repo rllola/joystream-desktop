@@ -11,6 +11,7 @@ import mkdirp from 'mkdirp'
 import { Session } from 'joystream-node'
 import TorrentsStorage from './db'
 import bcoin from 'bcoin'
+import Config from 'electron-config'
 
 import ApplicationStore from './stores/applicationStore'
 
@@ -62,11 +63,10 @@ const session = new Session({
   port: process.env.LIBTORRENT_PORT
 })
 
-// Torrent content save path
-const savePath = process.env.SAVE_PATH || path.join(os.homedir(), 'joystream', 'download', path.sep)
+const config = new Config()
 
 // create ApplicationStore instance
-const applicationStore = new ApplicationStore({session, savePath, spvnode, db})
+const applicationStore = new ApplicationStore({session, spvnode, db, config})
 
 function render (stores) {
   // NB: We have to re-require Application every time, or else this won't work
