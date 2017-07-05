@@ -30,7 +30,7 @@ mkdirp.sync(path.join(os.homedir(), 'joystream'))
 // Application database path
 const dbPath = process.env.DATA_PATH || path.join(os.homedir(), 'joystream', 'data', path.sep)
 
-const db = TorrentsStorage.open(dbPath, {
+const db = TorrentsStorage.openImmediate(dbPath, {
   // 'table' names to use
   'torrents': 'torrents',
   'resume_data': 'resume_data',
