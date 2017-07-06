@@ -8,6 +8,8 @@ class Store extends EventEmitter {
   constructor (db, namespaces) {
     super()
 
+    this.close = db.close.bind(db)
+
     this.torrents = new LevelPromiseInterface(db.namespace(namespaces['torrents']))
     this.resume_data = new LevelPromiseInterface(db.namespace(namespaces['resume_data']))
     this.torrent_plugin_settings = new LevelPromiseInterface(db.namespace(namespaces['torrent_plugin_settings']))
