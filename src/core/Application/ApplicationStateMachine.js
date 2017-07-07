@@ -4,7 +4,7 @@
 import BaseMachine from '../BaseMachine'
 
 import Starting from './Starting/Starting'
-//import Started from './Started/Started'
+import Started from './Started/Started'
 import Stopping from './Stopping/Stopping'
 
 var ApplicationStateMachine = new BaseMachine({
@@ -17,11 +17,8 @@ var ApplicationStateMachine = new BaseMachine({
   states: {
     NotStarted: {
       start: function (client, config) {
-        // client._state = {}
-        // client.setConfig(config)
         this.deferUntilTransition(client)
         this.transition(client, 'Starting')
-        //this.handle - defer until transition - start
       }
     },
 
@@ -30,7 +27,7 @@ var ApplicationStateMachine = new BaseMachine({
     },
 
     Started: {
-      //_child: Started
+      _child: Started,
       stop: function (client) {
         this.deferUntilTransition(client)
         this.transition(client, 'Stopping')
