@@ -2,9 +2,9 @@
  * Created by bedeho on 13/06/17.
  */
 
-var machina = require('machina')
+var BaseMachine = require('../../../../BaseMachine')
 
-var Paid = new machina.BehavioralFsm({
+var Paid = new BaseMachine({
 
     initialState: "Uninitialized",
 
@@ -73,4 +73,4 @@ var Paid = new machina.BehavioralFsm({
     }
 })
 
-module.exports.Paid = Paid
+module.exports = Paid

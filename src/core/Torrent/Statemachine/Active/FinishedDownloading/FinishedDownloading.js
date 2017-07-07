@@ -2,11 +2,10 @@
  * Created by bedeho on 13/06/17.
  */
 
-var machina = require('machina')
-
+var BaseMachine = require('../../../../BaseMachine')
 var Uploading = require('./Uploading')
 
-var FinishedDownloading = new machina.BehavioralFsm({
+var FinishedDownloading = new BaseMachine({
 
     initialState: "Uninitialized",
 
@@ -48,4 +47,4 @@ var FinishedDownloading = new machina.BehavioralFsm({
     }
 })
 
-module.exports.FinishedDownloading = FinishedDownloading
+module.exports = FinishedDownloading

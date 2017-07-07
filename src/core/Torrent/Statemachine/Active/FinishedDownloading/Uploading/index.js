@@ -4,4 +4,4 @@
 
 var Uploading = require('./Uploading')
 
-module.exports.Uploading = Uploading
+module.exports = Uploading

@@ -4,4 +4,4 @@
 
 var Active = require('./Active')
 
-module.exports.Active = Active
+module.exports = Active

@@ -2,12 +2,11 @@
  * Created by bedeho on 15/06/17.
  */
 
-var machina = require('machina')
-
+var BaseMachine = require('../../../BaseMachine')
 var DownloadIncomplete = require('./DownloadIncomplete')
 var FinishedDownloading = require('./FinishedDownloading')
 
-var Active = new machina.BehavioralFsm({
+var Active = new BaseMachine({
 
     initialState: "Uninitialized",
 
@@ -32,4 +31,4 @@ var Active = new machina.BehavioralFsm({
     }
 })
 
-module.exports.Active = Active
+module.exports = Active

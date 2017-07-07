@@ -2,11 +2,10 @@
  * Created by bedeho on 26/06/17.
  */
 
-var machina = require('machina')
-
+var BaseMachine = require('../../../../../BaseMachine')
 var refreshPeers = require('../../../../../utils').refreshPeers
 
-var Uploading = new machina.BehavioralFsm({
+var Uploading = new BaseMachine({
 
     initialState: "Uninitialized",
 
@@ -142,4 +141,4 @@ var Uploading = new machina.BehavioralFsm({
 
 })
 
-module.exports.Uploading = Uploading
+module.exports = Uploading

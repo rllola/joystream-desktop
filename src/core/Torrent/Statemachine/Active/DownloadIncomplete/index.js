@@ -3,4 +3,4 @@
  */
 
 var DownloadIncomplete = require ('./DownloadIncomplete')
-module.exports.DownloadIncomplete = DownloadIncomplete
+module.exports = DownloadIncomplete

@@ -2,12 +2,11 @@
  * Created by bedeho on 13/06/17.
  */
 
-var machina = require('machina')
-
+var BaseMachine = require('../../../../BaseMachine')
 var Paid = require('./Paid')
 var Unpaid = require('./Unpaid/Unpaid')
 
-var Downloading = new machina.BehavioralFsm({
+var Downloading = new BaseMachine({
 
     initialState: "Uninitialized",
 
@@ -25,4 +24,4 @@ var Downloading = new machina.BehavioralFsm({
 
 })
 
-module.exports.Downloading = Downloading
+module.exports = Downloading

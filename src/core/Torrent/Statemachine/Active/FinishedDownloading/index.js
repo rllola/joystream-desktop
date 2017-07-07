@@ -4,4 +4,4 @@
 
 var FinishedDownloading = require('./FinishedDownloading')
 
-module.exports.FinishedDownloading = FinishedDownloading
+module.exports = FinishedDownloading

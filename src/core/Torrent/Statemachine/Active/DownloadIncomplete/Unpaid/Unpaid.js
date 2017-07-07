@@ -2,10 +2,10 @@
  * Created by bedeho on 13/06/17.
  */
 
-var machina = require('machina')
+var BaseMachine = require('../../../../../BaseMachine')
 var Started = require('./Started')
 
-var Unpaid = new machina.BehavioralFsm({
+var Unpaid = new BaseMachine({
 
     initialState: "Uninitialized",
 
@@ -65,14 +65,14 @@ var Unpaid = new machina.BehavioralFsm({
 
             start : function (client) {
                 client.startLibtorrentTorrent()
-                this.transition('StartingLibtorrentTorrent')
+                this.transition(client, 'StartingLibtorrentTorrent')
             }
 
         },
 
         StartingLibtorrentTorrent : {
 
-            started : function (client) {
+            startedLibtorrentTorrent : function (client) {
                 client.startExtension()
                 this.transition(client, 'StartingExtension')
             }
@@ -80,7 +80,7 @@ var Unpaid = new machina.BehavioralFsm({
 
         StartingExtension : {
 
-            started : function (client) {
+            startedExtension : function (client) {
                 this.transition(client, 'Started')
             }
         }
@@ -88,4 +88,4 @@ var Unpaid = new machina.BehavioralFsm({
     }
 })
 
-module.exports.Unpaid = Unpaid
+module.exports = Unpaid

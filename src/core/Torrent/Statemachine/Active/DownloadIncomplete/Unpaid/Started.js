@@ -2,10 +2,10 @@
  * Created by bedeho on 30/06/17.
  */
 
-var machina = require('machina')
+var BaseMachine = require('../../../../../BaseMachine')
 var refreshPeers = require('../../../../../utils').refreshPeers
 
-var Started = new machina.BehavioralFsm({
+var Started = new BaseMachine({
 
     initialState: "Uninitialized",
 
@@ -195,4 +195,4 @@ function filterSuitableSellers(statuses, minimumNumber) {
     }
 }
 
-module.exports.Started = Started
+module.exports = Started

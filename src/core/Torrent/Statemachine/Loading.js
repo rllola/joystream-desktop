@@ -2,15 +2,14 @@
  * Created by bedeho on 13/06/17.
  */
 
-var machina = require('machina')
-
-var DeepInitialState = require('./DeepInitialState')
+var BaseMachine = require('../../BaseMachine')
+var DeepInitialState = require('./DeepInitialState').DeepInitialState
 var isUploading = require('./DeepInitialState').isUploading
 var isPassive = require('./DeepInitialState').isPassive
 var isDownloading = require('./DeepInitialState').isDownloading
 var isStopped = require('./DeepInitialState').isStopped
 
-var Loading = new machina.BehavioralFsm({
+var Loading = new BaseMachine({
 
     initialState: "AddingToSession",
 
@@ -142,8 +141,6 @@ var Loading = new machina.BehavioralFsm({
             }
         },
 
-
-
         GoingToMode : {
 
             wentToBuyMode : function (client) {
@@ -219,23 +216,21 @@ function relativePathFromDeepInitialState(s) {
 
     switch(s) {
         case DeepInitialState.DOWNLOADING.UNPAID.STARTED:
-            return '../DownloadIncomplete/Unpaid/Started'
+            return '../Active/DownloadIncomplete/Unpaid/Started'
         case DeepInitialState.DOWNLOADING.UNPAID.STOPPED:
-            return '../DownloadIncomplete/Unpaid/Stopped'
+            return '../Active/DownloadIncomplete/Unpaid/Stopped'
         case DeepInitialState.DOWNLOADING.PAID.STARTED:
-            return '../DownloadIncomplete/Paid/Started'
+            return '../Active/DownloadIncomplete/Paid/Started'
         case DeepInitialState.DOWNLOADING.PAID.STOPPED:
-            return '../DownloadIncomplete/Paid/Stopped'
+            return '../Active/DownloadIncomplete/Paid/Stopped'
         case DeepInitialState.PASSIVE:
-            return '../FinishedDownloading/Passive'
+            return '../Active/FinishedDownloading/Passive'
         case DeepInitialState.UPLOADING.STARTED:
-            return '../FinishedDownloading/Uploading/Started'
+            return '../Active/FinishedDownloading/Uploading/Started'
         case DeepInitialState.UPLOADING.STOPPED:
-            return '../FinishedDownloading/Uploading/Stopped'
-
-
+            return '../Active/FinishedDownloading/Uploading/Stopped'
     }
 
 }
 
-module.exports.Loading = Loading
+module.exports = Loading

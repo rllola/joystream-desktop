@@ -2,18 +2,16 @@
  * Created by bedeho on 13/06/17.
  */
 
-var machina = require('machina')
-
+var BaseMachine = require('../../BaseMachine')
 var Loading = require('./Loading')
 var Active = require('./Active')
-
 var DeepInitialState = require('./DeepInitialState')
 var isUploading = DeepInitialState.isUploading
 //var isPassive = DeepInitialState.isPassive
 var isDownloading = DeepInitialState.isDownloading
 var isStopped = DeepInitialState.isStopped
 
-var Torrent = new machina.BehavioralFsm({
+var Torrent = new BaseMachine({
 
     initialState: "WaitingToLoad",
 
@@ -28,16 +26,16 @@ var Torrent = new machina.BehavioralFsm({
                 if(isDownloading(deepInitialState)) {
 
                     if(extensionSettings.buyerTerms)
-                        client._buyerTerms = buyerTerms
+                        client._buyerTerms = extensionSettings.buyerTerms
                     else
-                        throw Error('DownloadIncomplete state requires buyer terms')
+                        throw new Error('DownloadIncomplete state requires buyer terms')
 
                 } else if(isUploading(deepInitialState)) {
 
                     if(extensionSettings.sellerTerms)
-                        client._sellerTerms = sellerTerms
+                        client._sellerTerms = extensionSettings.sellerTerms
                     else
-                        throw Error('Uploading state requires seller terms')
+                        throw new Error('Uploading state requires seller terms')
 
                 }
 
@@ -54,7 +52,7 @@ var Torrent = new machina.BehavioralFsm({
                 // Automanagement: We never want this, as our state machine should explicitly control
                 // pause/resume behaviour torrents for now.
                 //
-                // Wether libtorrent is responsible for determining whether it should be started or queued.
+                // Whether libtorrent is responsible for determining whether it should be started or queued.
                 // Queuing is a mechanism to automatically pause and resume torrents based on certain criteria.
                 // The criteria depends on the overall state the torrent is in (checking, downloading or seeding).
                 var autoManaged = false
@@ -240,4 +238,4 @@ function deepInitialStateFromActiveState(stateString) {
 
 }
 
-module.exports.Torrent = Torrent
+module.exports = Torrent

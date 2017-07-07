@@ -2,6 +2,6 @@
  * Created by bedeho on 30/06/17.
  */
 
-import Unpaid from './Unpaid'
+var Unpaid = require('./Unpaid')
 
-export default Unpaid
+module.exports = Unpaid

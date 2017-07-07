@@ -4,4 +4,4 @@
 
 var Torrent = require('./Torrent')
 
-module.exports.Torrent = Torrent
+module.exports = Torrent
