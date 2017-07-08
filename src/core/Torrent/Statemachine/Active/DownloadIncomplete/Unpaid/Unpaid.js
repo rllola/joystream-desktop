@@ -81,7 +81,8 @@ var Unpaid = new BaseMachine({
         StartingExtension : {
 
             startedExtension : function (client) {
-                this.transition(client, 'Started')
+                this.go(client, 'Started/CannotStartPaidDownload')
+                //this.transition(client, 'Started')
             }
         }
 

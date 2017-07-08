@@ -5,6 +5,8 @@
 var BaseMachine = require('../../../../../BaseMachine')
 var refreshPeers = require('../../../../../utils').refreshPeers
 
+
+
 var Started = new BaseMachine({
 
     initialState: "Uninitialized",
@@ -140,7 +142,7 @@ var Started = new BaseMachine({
                     this.transition(client, 'CannotStartPaidDownload')
 
                 } else {
-                    this.go(client, ['..', '..', 'Paid', 'Started'])
+                    this.go(client, '../../Paid/Started')
                 }
 
             }
@@ -178,7 +180,7 @@ function filterSuitableSellers(statuses, minimumNumber) {
 
         // Check that connection with peer is in the right state,
         // which also implies that terms are compatible
-        if(s.connection && s.connection.innerState === InnerStateTypeInfo.PreparingContract)
+        if(s.connection && s.connection.innerState === 1) //FIX LATER InnerStateTypeInfo.PreparingContract)
             sellers.push(s)
     }
 

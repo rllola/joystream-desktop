@@ -7,7 +7,7 @@
 var refreshPeers = function(client, statuses) {
 
     // Peer Ids for peers we are getting status snapshot for
-    var peerIdExits
+    var peerIdExits = {}
 
     // Tell client to either add new peer
     // based on status, or tell about new status
@@ -17,9 +17,9 @@ var refreshPeers = function(client, statuses) {
         var s = statuses[i]
 
         if(client.peerExits(s.peerId)) {
-            client.newPeerPluginStatus(s.peerId, s)
+            client.updatePeerPluginStatus(s.peerId, s)
         } else {
-            client.newPeer(s.peerId, s)
+            client.addPeer(s.peerId, s)
         }
 
         // Mark as present
@@ -35,7 +35,7 @@ var refreshPeers = function(client, statuses) {
         var oldPeerId = oldPeerIds[i]
 
         if(!peerIdExits[oldPeerId])
-            client.peerGone(oldPeerId)
+            client.removePeer(oldPeerId)
     }
 }
 
