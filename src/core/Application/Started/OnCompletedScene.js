@@ -1,7 +1,7 @@
 /**
  * Created by bedeho on 12/06/17.
  */
-import BaseMachine from '../../BaseMachine'
+const BaseMachine = require('../../BaseMachine')
 
 var OnCompletedScene = new BaseMachine({
   states: {
@@ -26,4 +26,4 @@ var OnCompletedScene = new BaseMachine({
   }
 })
 
-export default OnCompletedScene
+module.exports = OnCompletedScene

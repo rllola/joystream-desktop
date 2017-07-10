@@ -1,8 +1,7 @@
 /**
  * Created by bedeho on 12/06/17.
  */
-
-import BaseMachine from '../../BaseMachine'
+const BaseMachine = require('../../BaseMachine')
 
 var OnUploadingScense = new BaseMachine({
   states: {
@@ -27,4 +26,4 @@ var OnUploadingScense = new BaseMachine({
   }
 })
 
-export default OnUploadingScense
+module.exports = OnUploadingScense

@@ -2,7 +2,7 @@
  * Created by bedeho on 12/06/17.
  */
 
-import BaseMachine from '../../BaseMachine'
+const BaseMachine = require('../../BaseMachine')
 
 var OnDownloadingScene = new BaseMachine({
   states: {
@@ -76,4 +76,4 @@ var OnDownloadingScene = new BaseMachine({
   }
 })
 
-export default OnDownloadingScene
+module.exports = OnDownloadingScene

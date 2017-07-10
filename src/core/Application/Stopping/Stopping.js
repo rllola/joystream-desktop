@@ -2,7 +2,7 @@
  * Created by bedeho on 12/06/17.
  */
 
- import BaseMachine from '../../BaseMachine'
+const BaseMachine = require('../../BaseMachine')
 
  var Stopping = new BaseMachine({
     namespace: "Stopping",
@@ -73,4 +73,4 @@
     }
 })
 
-export default Stopping
+module.exports = Stopping

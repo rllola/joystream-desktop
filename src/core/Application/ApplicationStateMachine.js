@@ -1,11 +1,11 @@
 /**
  * Created by bedeho on 11/06/17.
  */
-import BaseMachine from '../BaseMachine'
+const BaseMachine = require('../BaseMachine')
 
-import Starting from './Starting/Starting'
-import Started from './Started/Started'
-import Stopping from './Stopping/Stopping'
+const Starting = require('./Starting/Starting')
+const Started = require('./Started/Started')
+const Stopping = require('./Stopping/Stopping')
 
 var ApplicationStateMachine = new BaseMachine({
   namespace: 'Application',
@@ -40,4 +40,4 @@ var ApplicationStateMachine = new BaseMachine({
   }
 })
 
-export default ApplicationStateMachine
+module.exports = ApplicationStateMachine

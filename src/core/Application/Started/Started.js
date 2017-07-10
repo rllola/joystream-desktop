@@ -1,10 +1,10 @@
 /**
  * Created by bedeho on 12/06/17.
  */
-import BaseMachine from '../../BaseMachine'
-import OnCompletedScene from './OnCompletedScene'
-import OnDownloadingScene from './OnDownloadingScene'
-import OnUploadingScene from './OnUploadingScene'
+const BaseMachine = require('../../BaseMachine')
+const OnCompletedScene = require('./OnCompletedScene')
+const OnDownloadingScene = require('./OnDownloadingScene')
+const OnUploadingScene = require('./OnUploadingScene')
 
 var Started = new BaseMachine({
     namespace: "Started",
@@ -27,4 +27,4 @@ var Started = new BaseMachine({
     }
 })
 
-export default Started
+module.exports = Started

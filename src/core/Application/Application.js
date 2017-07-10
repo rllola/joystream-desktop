@@ -1,19 +1,20 @@
-import path from 'path'
-import os from 'os'
-import mkdirp from 'mkdirp'
-import { Session } from 'joystream-node'
-import TorrentsStorage from '../../db'
-import bcoin from 'bcoin'
+const path = require('path')
+const os = require('os')
+const mkdirp = require('mkdirp')
+const Session = require('joystream-node').Session
+const TorrentsStorage = require('../../db')
+const bcoin = require('bcoin')
 
-import { observable, action } from 'mobx'
+const observable = require('mobx').observable
+const action = require('mobx').action
 
 const constants = require('../../constants')
 
 // Disable workers which are not available in electron
 bcoin.set({ useWorkers: false })
 
-import StateMachine from './ApplicationStateMachine'
-import Client from './Client'
+const StateMachine = require('./ApplicationStateMachine')
+const Client = require('./Client')
 
 class Application {
   @observable torrents = []

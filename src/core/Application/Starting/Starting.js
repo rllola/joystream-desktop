@@ -2,7 +2,7 @@
  * Created by bedeho on 12/06/17.
  */
 
-import BaseMachine from '../../BaseMachine'
+const BaseMachine = require('../../BaseMachine')
 
 var Starting = new BaseMachine({
   namespace: 'Starting',
@@ -155,4 +155,4 @@ var Starting = new BaseMachine({
   }
 })
 
-export default Starting
+module.exports = Starting
