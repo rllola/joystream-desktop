@@ -12,7 +12,8 @@ const constants = require('../../constants')
 // Disable workers which are not available in electron
 bcoin.set({ useWorkers: false })
 
-import ApplicationStateMachine from './ApplicationStateMachine'
+import StateMachine from './StateMachine'
+import Client from './Client'
 
 class Application {
   @observable torrents = []
@@ -31,9 +32,9 @@ class Application {
   _db = null
 
   constructor (machine) {
-    this._machine = machine || ApplicationStateMachine
+    this._machine = machine || StateMachine
 
-    this._client = this._createClient()
+    this._client = Client.create(this)
 
     // send inputs to the state machine with application bound as the client
     this._callMachine = function (...args) {
@@ -45,47 +46,6 @@ class Application {
 
   getClient () {
     return this._client
-  }
-
-  _createClient () {
-    var bind = (func) => {
-      return func.bind(this)
-    }
-
-    var facade = {}
-
-    var methods = [
-      'reportError',
-      'setConfig',
-      'getConfig',
-      'initializeResources',
-      'initializeDatabase',
-      'initializeSpvNode',
-      'initializeWallet',
-      'connectToBitcoinNetwork',
-      'loadTorrentsFromDatabase',
-      'terminateTorrents',
-      'disconnectFromBitcoinNetwork',
-      'closeWallet',
-      'closeSpvNode',
-      'closeDatabase',
-      'clearResources',
-      'uiShowDownloadingScene',
-      'uiResetDownloadingNotificationCounter'
-    ]
-
-    methods.forEach((name) => {
-      var methodName = '_' + name
-      var func = this[methodName]
-
-      if (typeof func !== 'function') {
-        throw new Error('client interface missing ' + name + ' method implementation')
-      }
-
-      facade[name] = bind(func)
-    })
-
-    return facade
   }
 
   currentState () {
