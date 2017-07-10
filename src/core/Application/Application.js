@@ -17,6 +17,11 @@ import Client from './Client'
 
 class Application {
   @observable torrents = []
+  @observable downloadingNotificationCounter = 0
+  @observable uploadingNotificationCounter = 0
+  @observable completedNotificationCounter = 0
+
+  _torrents = new Map()
 
   _machine = null
   _client = null
@@ -44,12 +49,8 @@ class Application {
     this.on = this._machine.on.bind(this._machine)
   }
 
-  getClient () {
-    return this._client
-  }
-
   currentState () {
-    return this._machine.compositeState(this)
+    return this._machine.compositeState(this._client)
   }
 
   start (config) {
@@ -82,7 +83,7 @@ class Application {
 
   _reportError (err) {
     var error = {
-      state: this._machine.compositeState(this),
+      state: this._machine.compositeState(this._client),
       error: err
     }
 
@@ -112,11 +113,11 @@ class Application {
 
   async _closeSpvNode () {
     await this._spvnode.close()
+    this._spvnode = null
     this._callMachine('closed')
   }
 
   _closeWallet () {
-    //this._wallet.close()
     this._wallet = null
     this._callMachine('closed')
   }
@@ -284,12 +285,34 @@ class Application {
     this._callMachine('terminated')
   }
 
+  @action
   _uiShowDownloadingScene () {
 
   }
 
+  @action
   _uiResetDownloadingNotificationCounter () {
+    this.downloadingNotificationCounter = 0
+  }
 
+  @action
+  _uiShowCompletedScene () {
+
+  }
+
+  @action
+  _uiResetCompletedNotificationCounter () {
+    this.completedNotificationCounter
+  }
+
+  @action
+  _uiShowUploadingScene () {
+
+  }
+
+  @action
+  _uiResetUploadingNotificationCounter () {
+    this.uploadingNotificationCounter
   }
 }
 

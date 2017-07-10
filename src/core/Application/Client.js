@@ -17,7 +17,11 @@ const api = [
   'closeDatabase',
   'clearResources',
   'uiShowDownloadingScene',
-  'uiResetDownloadingNotificationCounter'
+  'uiResetDownloadingNotificationCounter',
+  'uiShowUploadingScene',
+  'uiResetUploadingNotificationCounter',
+  'uiShowCompletedScene',
+  'uiResetCompletedNotificationCounter'
 ]
 
 module.exports.create = function createClientFromObject (obj) {

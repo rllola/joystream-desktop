@@ -8,7 +8,7 @@ import OnUploadingScene from './OnUploadingScene'
 
 var Started = new BaseMachine({
     namespace: "Started",
-    initialState: "OnCompletedScene",
+    initialState: "OnDownloadingScene",
     initializeMachine: function (options) {
 
     },
