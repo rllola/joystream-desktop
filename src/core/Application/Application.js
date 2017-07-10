@@ -12,7 +12,7 @@ const constants = require('../../constants')
 // Disable workers which are not available in electron
 bcoin.set({ useWorkers: false })
 
-import StateMachine from './StateMachine'
+import StateMachine from './ApplicationStateMachine'
 import Client from './Client'
 
 class Application {
