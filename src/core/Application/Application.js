@@ -52,23 +52,40 @@ class Application {
       return func.bind(this)
     }
 
-    return {
-      reportError: bind(this._reportError),
-      setConfig: bind(this._setConfig),
-      getConfig: bind(this._getConfig),
-      initializeResources: bind(this._initializeResources),
-      initializeDatabase: bind(this._initializeDatabase),
-      initializeSpvNode: bind(this._initializeSpvNode),
-      initializeWallet: bind(this._initializeWallet),
-      connectToBitcoinNetwork: bind(this._connectToBitcoinNetwork),
-      loadTorrentsFromDatabase: bind(this._loadTorrentsFromDatabase),
-      terminateTorrents: bind(this._terminateTorrents),
-      disconnectFromBitcoinNetwork: bind(this._disconnectFromBitcoinNetwork),
-      closeWallet: bind(this._closeWallet),
-      closeSpvNode: bind(this._closeSpvNode),
-      closeDatabase: bind(this._closeDatabase),
-      clearResources: bind(this._clearResources)
-    }
+    var facade = {}
+
+    var methods = [
+      'reportError',
+      'setConfig',
+      'getConfig',
+      'initializeResources',
+      'initializeDatabase',
+      'initializeSpvNode',
+      'initializeWallet',
+      'connectToBitcoinNetwork',
+      'loadTorrentsFromDatabase',
+      'terminateTorrents',
+      'disconnectFromBitcoinNetwork',
+      'closeWallet',
+      'closeSpvNode',
+      'closeDatabase',
+      'clearResources',
+      'uiShowDownloadingScene',
+      'uiResetDownloadingNotificationCounter'
+    ]
+
+    methods.forEach((name) => {
+      var methodName = '_' + name
+      var func = this[methodName]
+
+      if (typeof func !== 'function') {
+        throw new Error('client interface missing ' + name + ' method implementation')
+      }
+
+      facade[name] = bind(func)
+    })
+
+    return facade
   }
 
   currentState () {
@@ -305,6 +322,14 @@ class Application {
 
   _terminateTorrents () {
     this._callMachine('terminated')
+  }
+
+  _uiShowDownloadingScene () {
+
+  }
+
+  _uiResetDownloadingNotificationCounter () {
+
   }
 }
 
