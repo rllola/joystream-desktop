@@ -5,8 +5,6 @@
 var BaseMachine = require('../../../../../BaseMachine')
 var refreshPeers = require('../../../../../utils').refreshPeers
 
-
-
 var Started = new BaseMachine({
 
     initialState: "Uninitialized",
@@ -103,7 +101,7 @@ var Started = new BaseMachine({
 
         SigningContract : {
 
-            // NB: We don't process peer plugin statuses
+            // NB: We don't handleSequence peer plugin statuses
 
             contractSigned : function (client, tx) {
 
@@ -127,7 +125,7 @@ var Started = new BaseMachine({
 
         InitiatingPaidDownload : {
 
-            // NB: We don't process peer plugin statuses
+            // NB: We don't handleSequence peer plugin statuses
 
             paidDownloadInitiationCompleted : function (client, res, err) {
 

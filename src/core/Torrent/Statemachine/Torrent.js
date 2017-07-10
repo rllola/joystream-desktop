@@ -111,7 +111,7 @@ var Torrent = new BaseMachine({
 
         StoppingExtension : {
 
-            stopped : function (client) {
+            stoppedExtension : function (client) {
 
                 if(client._generateResumeData) {
 
@@ -128,7 +128,7 @@ var Torrent = new BaseMachine({
             },
 
             // Since stopping the extension is blindly attempted,
-            // We may get an error
+            // we may get an error, but we just ignore it.
 
             alreadyStoppedError : function (client) {
                 this.handle(client, 'stopped')
@@ -137,7 +137,7 @@ var Torrent = new BaseMachine({
 
         GeneratingResumeData : {
 
-            generated : function (client, resumeData) {
+            generatedResumeData : function (client, resumeData) {
 
                 client._resumeData = resumeData
 
@@ -166,7 +166,7 @@ function terminationState(client) {
     // NB: This is a bit sloppy, as we are not handling special
     // states where terms are being changed for example, so we
     // are just picking whatever the old terms were effectively.
-    var extensionSettings
+    var extensionSettings = {}
 
     if(isDownloading(client._deepInitialState))
         extensionSettings.buyerTerms = client._buyerTerms

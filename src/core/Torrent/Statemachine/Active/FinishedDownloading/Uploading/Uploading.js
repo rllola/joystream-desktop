@@ -127,7 +127,7 @@ var Uploading = new BaseMachine({
 
         StartingLibtorrentTorrent: {
             startedLibtorrentTorrent: function (client) {
-                client.startedExtension()
+                client.startExtension()
                 this.transition(client, 'StartingExtension')
             }
         },

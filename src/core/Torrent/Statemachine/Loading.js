@@ -118,7 +118,7 @@ var Loading = new BaseMachine({
                         // Ask user to supply buyer terms
                         client.provideBuyerTerms()
 
-                        this.transition(client, 'WaitingForNewBuyerTerms')
+                        this.transition(client, 'WaitingForMissingBuyerTerms')
                     }
                 }
 
@@ -190,7 +190,7 @@ var Loading = new BaseMachine({
 
         StartingExtension : {
 
-            started : function (client) {
+            startedExtension : function (client) {
                 goToDeepInitialState(this, client)
             }
         }
@@ -216,7 +216,7 @@ function relativePathFromDeepInitialState(s) {
 
     switch(s) {
         case DeepInitialState.DOWNLOADING.UNPAID.STARTED:
-            return '../Active/DownloadIncomplete/Unpaid/Started'
+            return '../Active/DownloadIncomplete/Unpaid/Started/CannotStartPaidDownload'
         case DeepInitialState.DOWNLOADING.UNPAID.STOPPED:
             return '../Active/DownloadIncomplete/Unpaid/Stopped'
         case DeepInitialState.DOWNLOADING.PAID.STARTED:

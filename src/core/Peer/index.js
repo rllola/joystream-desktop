@@ -4,4 +4,4 @@
 
 var Peer = require('./Peer')
 
-module.exports.Peer = Peer
+module.exports = Peer

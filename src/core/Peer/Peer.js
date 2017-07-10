@@ -9,8 +9,6 @@ var areTermsMatching = require('joystream-node/lib/utils')
 
 var Peer = new machina.BehavioralFsm({
 
-    initialize: function (options) {},
-
     initialState: "ReadyForStartPaidUploadAttempt",
 
     states: {
@@ -101,4 +99,4 @@ var Peer = new machina.BehavioralFsm({
 
 })
 
-module.exports.Peer = Peer
+module.exports = Peer
