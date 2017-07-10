@@ -2,7 +2,7 @@ const path = require('path')
 const os = require('os')
 const mkdirp = require('mkdirp')
 const Session = require('joystream-node').Session
-const TorrentsStorage = require('../../db')
+const TorrentsStorage = require('../../db').default
 const bcoin = require('bcoin')
 
 const observable = require('mobx').observable

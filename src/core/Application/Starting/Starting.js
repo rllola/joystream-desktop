@@ -26,10 +26,7 @@ var Starting = new BaseMachine({
         this.transition(client, 'initializing_application_database')
       },
       failed: function (client, err) {
-        client.lastError = {
-          state: this.compositeState(client),
-          error: err
-        }
+        client.reportError(err)
         this.go(client, '../Stopping/clearing_resources')
       },
       _reset: 'uninitialized'
@@ -43,10 +40,7 @@ var Starting = new BaseMachine({
         this.transition(client, 'initializing_spv_node')
       },
       failed: function (client, err) {
-        client.lastError = {
-          state: this.compositeState(client),
-          error: err
-        }
+        client.reportError(err)
         this.go(client, '../Stopping/closing_application_database')
       },
       _reset: 'uninitialized'
@@ -60,10 +54,7 @@ var Starting = new BaseMachine({
         this.transition(client, 'opening_wallet')
       },
       failed: function (client, err) {
-        client.lastError = {
-          state: this.compositeState(client),
-          error: err
-        }
+        client.reportError(err)
         this.go(client, '../Stopping/stopping_spv_node')
       },
       _reset: 'uninitialized'
@@ -77,10 +68,7 @@ var Starting = new BaseMachine({
         this.transition(client, 'connecting_to_bitcoin_p2p_network')
       },
       failed: function (client, err) {
-        client.lastError = {
-          state: this.compositeState(client),
-          error: err
-        }
+        client.reportError(err)
         this.go(client, '../Stopping/closing_wallet')
       },
       _reset: 'uninitialized'
@@ -111,10 +99,7 @@ var Starting = new BaseMachine({
       // but what if user wants to start offline, perhaps a statemachine to mange connectivity and let application
       // continue to start?
       failed: function (client, err) {
-        client.lastError = {
-          state: this.compositeState(client),
-          error: err
-        }
+        client.reportError(err)
 
         // if we cancelled during connection attempt do not try to reconnect
         if (client._state.abortConnectToBitcoinNetworkTimeout || client._state.connectToBitcoinNetworkAttempts > 3) {
@@ -144,10 +129,7 @@ var Starting = new BaseMachine({
         this.go(client, '../Started')
       },
       failed: function (client, err) {
-        client.lastError = {
-          state: this.compositeState(client),
-          error: err
-        }
+        client.reportError(err)
         this.handle(client, 'finished_loading')
       },
       _reset: 'uninitialized'
