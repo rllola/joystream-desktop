@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { AppContainer } from 'react-hot-loader'
 
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
@@ -16,6 +15,7 @@ if (module.hot) {
 function render() {
 
     // NB: We have to re-require Application every time, or else this won't work
+    var AppContainer = require('react-hot-loader').AppContainer
     var ComponentDevelopmentApplication = require('./App').default
 
     ReactDOM.render(
