@@ -21,6 +21,7 @@ class Application {
   @observable downloadingNotificationCounter = 0
   @observable uploadingNotificationCounter = 0
   @observable completedNotificationCounter = 0
+  @observable numberOfTorrentsLoading = 0
 
   _torrents = new Map()
 
