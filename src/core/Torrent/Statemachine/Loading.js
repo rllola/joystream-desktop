@@ -17,21 +17,42 @@ var Loading = new BaseMachine({
 
         AddingToSession : {
 
-            added: function (client) {
+            addTorrentResult: function (client, err, torrent) {
 
-                // If we don´t have metadata, wait for it
-                if(!client._metadata) {
-                    this.transition(client, 'WaitingForMetadata')
+                if(err) {
+
+                    this.transition(client, 'FailedAdding')
+
                 } else {
-                    this.transition(client, 'CheckingPartialDownload')
+
+                    // Hold on to torrent
+                    client._torrent = torrent
+
+                    /**
+                     * NB: Lets use proper alerts for these, and lessen
+                     * reliance on stateful parts of joystream-node when possible.
+                    torrent.on('status_update', function(statusUpdate) {
+                        this.setStatus(statusUpdate)
+                    })
+
+                    torrent.on('metadata', function (torrentInfo) {
+                        this.setTorrentInfo(torrentInfo)
+                    })
+
+                    torrent.on('finished', function() {
+
+                    })
+                    */
+
+                    // If we don´t have metadata, wait for it
+                    if(!client._metadata) {
+                        this.transition(client, 'WaitingForMetadata')
+                    } else {
+                        this.transition(client, 'CheckingPartialDownload')
+                    }
                 }
 
-            },
-
-            failedAdding : function (client) {
-                this.transition(client, 'FailedAdding')
             }
-
         },
 
         FailedAdding : {
