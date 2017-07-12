@@ -27,7 +27,7 @@ application.start(config)
 
 //const config = new Config()
 
-function render (stores) {
+function render (app) {
   // NB: We have to re-require Application every time, or else this won't work
   const ApplicationScene = require('./scenes/Application').default
 
@@ -36,14 +36,14 @@ function render (stores) {
 
     ReactDOM.render(
       <AppContainer>
-        <ApplicationScene stores={stores} />
+        <ApplicationScene app={app} />
       </AppContainer>
       ,
       document.getElementById('root')
     )
   } else {
     ReactDOM.render(
-      <ApplicationScene stores={stores} />,
+      <ApplicationScene app={app} />,
       document.getElementById('root')
     )
   }

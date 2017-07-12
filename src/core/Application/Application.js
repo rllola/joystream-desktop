@@ -7,8 +7,11 @@ const bcoin = require('bcoin')
 
 const observable = require('mobx').observable
 const action = require('mobx').action
+const runInAction = require('mobx').runInAction
 
 const constants = require('../../constants')
+
+const Scene = require('../../scenes/Application').Scene
 
 // Disable workers which are not available in electron
 bcoin.set({ useWorkers: false })
@@ -22,7 +25,7 @@ class Application {
   @observable uploadingNotificationCounter = 0
   @observable completedNotificationCounter = 0
   @observable numberOfTorrentsLoading = 0
-  @observable activeScene = ''
+  @observable activeScene
 
   _torrents = new Map()
 
@@ -286,6 +289,22 @@ class Application {
 
   _terminateTorrents () {
     this._callMachine('terminated')
+  }
+
+  selectingScene (s) {
+    const event = (() => {
+      switch (s) {
+        case Scene.Downloading: return 'downloading_scene_selected'
+        case Scene.Seeding: return 'uploading_scene_selected'
+        case Scene.Completed: return 'completed_scene_selected'
+      }
+    })()
+
+    this._callMachine(event)
+  }
+
+  showingScene () {
+    this._callMachine('showing_scene')
   }
 
   @action

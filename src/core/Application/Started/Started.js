@@ -30,7 +30,7 @@ var Started = new BaseMachine({
       OnUploadingScene: {
         _child: OnUploadingScene,
         _onEnter: function (client) {
-          client.setActiveScene('Uploading')
+          client.setActiveScene('Seeding')
         }
       }
     }

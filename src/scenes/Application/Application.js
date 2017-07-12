@@ -19,27 +19,23 @@ if (process.env.NODE_ENV === 'development') {
     MobxReactDevTools = require('mobx-react-devtools').default
 }
 
+@observer
 class Application extends Component {
 
     constructor(props) {
         super(props)
-
-        this.state = {activeScene : Scene.Downloading}
-    }
-
-    setActiveScene(s) {
-        this.setState({activeScene : s})
     }
 
     render () {
+        // during loading there is no active scene yet
+        if (!this.props.app.activeScene) return null
 
         return (
-
             <div className="app-container">
 
                 <ApplicationHeader balance={13333337}
-                                   activeScene={this.state.activeScene}
-                                   onSceneSelected={(s) => {this.setActiveScene(s)}}/>
+                                   activeScene={Scene[this.props.app.activeScene]}
+                                   onSceneSelected={(s) => {this.props.app.selectingScene(s)}}/>
 
                 {this.getRenderedScene()}
 
@@ -49,14 +45,15 @@ class Application extends Component {
         )
     }
 
-    getRenderedScene() {
+    getRenderedScene () {
+        this.props.app.showingScene() // move this call into the ctor of the scene components?
 
-        if(this.state.activeScene == Scene.Downloading) {
+        if(Scene[this.props.app.activeScene] === Scene.Downloading) {
             return <Downloading torrents={[]}
                                 revenue={123}
                                 downloadSpeed={77777}
                                 onStartDownloadClicked={() => { console.log(" start download clicked")}}/>
-        } else if(this.state.activeScene == Scene.Seeding) {
+        } else if (Scene[this.props.app.activeScene] === Scene.Seeding) {
             return <h1>put new uploading scene component here</h1>
         } else {
             return <h1>put new completed scene component here</h1>
