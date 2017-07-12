@@ -3,22 +3,19 @@
  */
 const BaseMachine = require('../../BaseMachine')
 
-var OnUploadingScense = new BaseMachine({
+var OnUploadingScene = new BaseMachine({
   states: {
     uninitialized: {
-      _onEnter: function (client) {
-        client.uiShowUploadingScene()
-      },
       showing_scene: function (client) {
-        client.uiResetUploadingNotificationCounter()
+        client.resetUploadingNotificationCounter()
         this.transition(client, 'idle')
       }
     },
     idle: {
-      goto_downloading_scene: function (client) {
+      downloading_scene_selected: function (client) {
         this.go(client, '../OnDownloadingScene')
       },
-      goto_completed_scene: function (client) {
+      completed_scene_selected: function (client) {
         this.go(client, '../OnCompletedScene')
       },
       _reset: 'uninitialized'
@@ -26,4 +23,4 @@ var OnUploadingScense = new BaseMachine({
   }
 })
 
-module.exports = OnUploadingScense
+module.exports = OnUploadingScene

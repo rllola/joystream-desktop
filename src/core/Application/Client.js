@@ -16,12 +16,10 @@ const api = [
   'closeSpvNode',
   'closeDatabase',
   'clearResources',
-  'uiShowDownloadingScene',
-  'uiResetDownloadingNotificationCounter',
-  'uiShowUploadingScene',
-  'uiResetUploadingNotificationCounter',
-  'uiShowCompletedScene',
-  'uiResetCompletedNotificationCounter'
+  'setActiveScene',
+  'resetDownloadingNotificationCounter',
+  'resetUploadingNotificationCounter',
+  'resetCompletedNotificationCounter'
 ]
 
 module.exports.create = function createClientFromObject (obj) {

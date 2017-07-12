@@ -6,19 +6,16 @@ const BaseMachine = require('../../BaseMachine')
 var OnCompletedScene = new BaseMachine({
   states: {
     uninitialized: {
-      _onEnter: function (client) {
-        client.uiShowCompletedScene()
-      },
       showing_scene: function (client) {
-        client.uiResetCompletedNotificationCounter()
+        client.resetCompletedNotificationCounter()
         this.transition(client, 'idle')
       }
     },
     idle: {
-      goto_downloading_scene: function (client) {
+      downloading_scene_selected: function (client) {
         this.go(client, '../OnDownloadingScene')
       },
-      goto_uploading_scene: function (client) {
+      uploading_scene_selected: function (client) {
         this.go(client, '../OnUploadingScene')
       },
       _reset: 'uninitialized'

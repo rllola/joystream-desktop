@@ -22,6 +22,7 @@ class Application {
   @observable uploadingNotificationCounter = 0
   @observable completedNotificationCounter = 0
   @observable numberOfTorrentsLoading = 0
+  @observable activeScene = ''
 
   _torrents = new Map()
 
@@ -288,33 +289,23 @@ class Application {
   }
 
   @action
-  _uiShowDownloadingScene () {
-
+  _setActiveScene (scene) {
+    this.activeScene = scene
   }
 
   @action
-  _uiResetDownloadingNotificationCounter () {
+  _resetDownloadingNotificationCounter () {
     this.downloadingNotificationCounter = 0
   }
 
   @action
-  _uiShowCompletedScene () {
-
+  _resetCompletedNotificationCounter () {
+    this.completedNotificationCounter = 0
   }
 
   @action
-  _uiResetCompletedNotificationCounter () {
-    this.completedNotificationCounter
-  }
-
-  @action
-  _uiShowUploadingScene () {
-
-  }
-
-  @action
-  _uiResetUploadingNotificationCounter () {
-    this.uploadingNotificationCounter
+  _resetUploadingNotificationCounter () {
+    this.uploadingNotificationCounter = 0
   }
 }
 

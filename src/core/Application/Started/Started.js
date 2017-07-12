@@ -8,21 +8,30 @@ const OnUploadingScene = require('./OnUploadingScene')
 
 var Started = new BaseMachine({
     namespace: "Started",
-    initialState: "OnDownloadingScene",
+    initialState: 'OnDownloadingScene',
     initializeMachine: function (options) {
 
     },
     states: {
       OnCompletedScene: {
-        _child: OnCompletedScene
+        _child: OnCompletedScene,
+        _onEnter: function (client) {
+          client.setActiveScene('Completed')
+        }
       },
 
       OnDownloadingScene: {
-        _child: OnDownloadingScene
+        _child: OnDownloadingScene,
+        _onEnter: function (client) {
+          client.setActiveScene('Downloading')
+        }
       },
 
       OnUploadingScene: {
-        _child: OnUploadingScene
+        _child: OnUploadingScene,
+        _onEnter: function (client) {
+          client.setActiveScene('Uploading')
+        }
       }
     }
 })
