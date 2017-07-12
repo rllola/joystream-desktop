@@ -6,17 +6,13 @@ const BaseMachine = require('../../BaseMachine')
 
 var Starting = new BaseMachine({
   namespace: 'Starting',
-  initialState: 'uninitialized',
+  //initialState: 'uninitialized',
   initializeMachine : function (options) {
 
   },
   states: {
     uninitialized: {
-      start: function (client, config) {
-        client._state = {}
-        client.setConfig(config)
-        this.transition(client, 'initializing_resources')
-      }
+
     },
     initializing_resources: {
       _onEnter: function (client) {

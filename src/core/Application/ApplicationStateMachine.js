@@ -17,8 +17,9 @@ var ApplicationStateMachine = new BaseMachine({
   states: {
     NotStarted: {
       start: function (client, config) {
-        this.deferUntilTransition(client)
-        this.transition(client, 'Starting')
+        client._state = {}
+        client.setConfig(config)
+        this.go(client, 'Starting/initializing_resources')
       }
     },
 
@@ -29,8 +30,7 @@ var ApplicationStateMachine = new BaseMachine({
     Started: {
       _child: Started,
       stop: function (client) {
-        this.deferUntilTransition(client)
-        this.transition(client, 'Stopping')
+        this.go(client, 'Stopping/terminating_torrents')
       }
     },
 

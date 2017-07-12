@@ -6,15 +6,13 @@ const BaseMachine = require('../../BaseMachine')
 
  var Stopping = new BaseMachine({
     namespace: "Stopping",
-    initialState: "uninitialized",
+    //initialState: "uninitialized",
     initializeMachine: function (options) {
 
     },
     states: {
         uninitialized: {
-          stop: function (client) {
-            this.transition(client, 'terminating_torrents')
-          }
+
         },
         terminating_torrents: {
           _onEnter: function (client) {
