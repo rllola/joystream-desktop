@@ -22,6 +22,8 @@ const api = [
   'resetCompletedNotificationCounter'
 ]
 
+module.exports.API = api.slice()
+
 module.exports.create = function createClientFromObject (obj) {
   var facade = {}
 
