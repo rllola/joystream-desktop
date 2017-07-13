@@ -32,7 +32,7 @@ describe('application statemachine', function () {
 
   })
 
-  it('starting', function () {
+  it('starting up', function () {
     assertState('NotStarted')
 
     const config = {'port': 123}
@@ -57,6 +57,35 @@ describe('application statemachine', function () {
     handle('showing_scene')
 
     assertState('Started.OnDownloadingScene.idle')
+  })
+
+  it ('changing scenes', function () {
+    handle('completed_scene_selected')
+    handle('showing_scene')
+    assertState('Started.OnCompletedScene.idle')
+
+    handle('uploading_scene_selected')
+    handle('showing_scene')
+    assertState('Started.OnUploadingScene.idle')
+
+    handle('downloading_scene_selected')
+    handle('showing_scene')
+    assertState('Started.OnDownloadingScene.idle')
+  })
+
+  it('shutting down', function () {
+    handle('stop')
+
+    assertState('Stopping.terminating_torrents')
+
+    handle('terminated')
+    handle('disconnected')
+    handle('closed') //
+    handle('closed') // better to have unique names ?
+    handle('closed') //
+    handle('cleared')
+
+    assertState('NotStarted')
   })
 })
 
