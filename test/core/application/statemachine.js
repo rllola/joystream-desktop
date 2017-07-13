@@ -50,26 +50,18 @@ describe('application statemachine', function () {
     handle('connected')
     handle('finished_loading')
 
-    assertState('Started.OnDownloadingScene.uninitialized')
-
-    assert(client.setActiveScene.calledWith('Downloading'))
-
-    handle('showing_scene')
-
     assertState('Started.OnDownloadingScene.idle')
+    assert(client.setActiveScene.calledWith('Downloading'))
   })
 
   it ('changing scenes', function () {
     handle('completed_scene_selected')
-    handle('showing_scene')
     assertState('Started.OnCompletedScene.idle')
 
     handle('uploading_scene_selected')
-    handle('showing_scene')
     assertState('Started.OnUploadingScene.idle')
 
     handle('downloading_scene_selected')
-    handle('showing_scene')
     assertState('Started.OnDownloadingScene.idle')
   })
 

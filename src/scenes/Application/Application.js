@@ -46,8 +46,6 @@ class Application extends Component {
     }
 
     getRenderedScene () {
-        this.props.app.showingScene() // move this call into the ctor of the scene components?
-
         if(Scene[this.props.app.activeScene] === Scene.Downloading) {
             return <Downloading torrents={[]}
                                 revenue={123}

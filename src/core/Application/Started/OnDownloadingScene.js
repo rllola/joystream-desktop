@@ -5,13 +5,8 @@
 const BaseMachine = require('../../BaseMachine')
 
 var OnDownloadingScene = new BaseMachine({
+  initialState: 'idle',
   states: {
-    uninitialized: {
-      showing_scene: function (client) {
-        client.resetDownloadingNotificationCounter()
-        this.transition(client, 'idle')
-      }
-    },
     idle: {
       // use file picker to add a torrent and start downloading
       select_file: function (client) {

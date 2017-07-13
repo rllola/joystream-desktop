@@ -4,13 +4,8 @@
 const BaseMachine = require('../../BaseMachine')
 
 var OnCompletedScene = new BaseMachine({
+  initialState: 'idle',
   states: {
-    uninitialized: {
-      showing_scene: function (client) {
-        client.resetCompletedNotificationCounter()
-        this.transition(client, 'idle')
-      }
-    },
     idle: {
       downloading_scene_selected: function (client) {
         this.go(client, '../OnDownloadingScene')
