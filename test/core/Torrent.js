@@ -510,8 +510,8 @@ TorrentSpyClient.prototype.resetSpies = function() {
     // these are all stubs??
 }
 
-TorrentSpyClient.prototype.peerExits = function(peerId) {
-    return this.peers.peerId != undefined
+TorrentSpyClient.prototype.peerExits = function(pid) {
+    return this.peers[pid] != undefined
 }
 
 TorrentSpyClient.prototype.allPeerIds = function () {

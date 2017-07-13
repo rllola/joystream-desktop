@@ -16,17 +16,17 @@ var refreshPeers = function(client, statuses) {
 
         var s = statuses[i]
 
-        if(client.peerExits(s.peerId)) {
-            client.updatePeerPluginStatus(s.peerId, s)
+        if(client.peerExits(s.pid)) {
+            client.updatePeerPluginStatus(s.pid, s)
         } else {
-            client.addPeer(s.peerId, s)
+            client.addPeer(s.pid, s)
         }
 
         // Mark as present
-        peerIdExits[s.peerId] = true
+        peerIdExits[s.pid] = true
     }
 
-    // Iterate old peer Ids and drop the ones which
+    // Iterate old peer Ids and drop the ones whichpid
     // are not part of this new snapshot
     var oldPeerIds = client.allPeerIds()
 

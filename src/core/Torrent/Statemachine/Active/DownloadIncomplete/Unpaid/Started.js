@@ -68,7 +68,7 @@ var Started = new BaseMachine({
                     var buyerFinalPkHash = client.getPublicKeyHash()
 
                     // Add entry for seller in download information map
-                    downloadInfoMap.set(status.peerId, {
+                    downloadInfoMap.set(status.pid, {
                         index: index,
                         value: value,
                         sellerTerms: sellerTerms,
@@ -105,7 +105,7 @@ var Started = new BaseMachine({
 
             contractSigned : function (client, tx) {
 
-                client.startDownloading(client.infoHash(), tx, client._downloadInfoMap)
+                client.startDownloading(tx, client._downloadInfoMap)
 
                 this.transition(client, 'InitiatingPaidDownload')
             },

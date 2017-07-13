@@ -10,6 +10,7 @@ var isUploading = DeepInitialState.isUploading
 //var isPassive = DeepInitialState.isPassive
 var isDownloading = DeepInitialState.isDownloading
 var isStopped = DeepInitialState.isStopped
+var refreshPeers = require('../../utils').refreshPeers
 
 var Torrent = new BaseMachine({
 

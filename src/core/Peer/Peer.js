@@ -4,7 +4,7 @@
 
 var machina = require('machina')
 
-var InnerStateTypeInfo = require('joystream-node')
+var ConnectionInnerState = require('joystream-node')
 var areTermsMatching = require('joystream-node/lib/utils')
 
 var Peer = new machina.BehavioralFsm({
@@ -31,18 +31,12 @@ var Peer = new machina.BehavioralFsm({
 
                 // Buyer must have invited us
                 if(!status.connection ||
-                    status.connection.innerState !== InnerStateTypeInfo.Invited)
-                    return
-
-                // Check if buyer terms are compatible
-                const buyerTerms = status.connection.announcedModeAndTermsFromPeer.buyer.terms
-
-                if (!areTermsMatching(buyerTerms, sellerTerms))
+                    status.connection.innerState !== ConnectionInnerState.Invited)
                     return
 
                 // Make request to start uploading
                 var infoHash = client.infoHash()
-                var peerId = status.connection.peerId()
+                var peerId = status.connection.pid
                 var contractSk = client.generatePrivateKey()
                 var finalPkHash = client.getPublicKeyHash()
 
@@ -84,13 +78,13 @@ var Peer = new machina.BehavioralFsm({
                 // was reset some how, e.g. by terms being reset, or a reconnection.
 
                 if(!status.connection || (
-                    status.connection.innerState !== InnerStateTypeInfo.WaitingToStart
+                    status.connection.innerState !== ConnectionInnerState.WaitingToStart
                         &&
-                    status.connection.innerState !== InnerStateTypeInfo.ReadyForPieceRequest
+                    status.connection.innerState !== ConnectionInnerState.ReadyForPieceRequest
                         &&
-                    status.connection.innerState !== InnerStateTypeInfo.LoadingPiece
+                    status.connection.innerState !== ConnectionInnerState.LoadingPiece
                         &&
-                    status.connection.innerState !== InnerStateTypeInfo.WaitingForPayment))
+                    status.connection.innerState !== ConnectionInnerState.WaitingForPayment))
                     this.transition(client, 'ReadyForStartPaidUploadAttempt')
             }
 
