@@ -15,7 +15,7 @@ var FinishedDownloading = new BaseMachine({
 
         GoingToPassive : {
 
-            startedObserveMode : function(client) {
+            toObserveModeResult : function(client, err) {
 
                 this.transition(client, 'Passive')
             }
@@ -34,8 +34,8 @@ var FinishedDownloading = new BaseMachine({
         },
 
         GoingToSellMode : {
-            
-            startedSellMode : function (client) {
+
+            toSellModeResult : function (client) {
                 this.transition(client, 'Uploading')
             }
         },

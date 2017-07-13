@@ -10,7 +10,7 @@ var isUploading = DeepInitialState.isUploading
 //var isPassive = DeepInitialState.isPassive
 var isDownloading = DeepInitialState.isDownloading
 var isStopped = DeepInitialState.isStopped
-var refreshPeers = require('../../utils').refreshPeers
+var refreshPeers = require('utils').refreshPeers
 
 var Torrent = new BaseMachine({
 
@@ -20,7 +20,7 @@ var Torrent = new BaseMachine({
 
         WaitingToLoad :  {
 
-            startLoading : function (client, infoHash, savePath, resumeData, metadata, deepInitialState, extensionSettings) {
+            startLoading : function (client, infoHash, name, savePath, resumeData, metadata, deepInitialState, extensionSettings) {
 
                 // Check that compatibility in deepInitialState and {buyerTerms, sellerTerms},
                 // and store terms on client
@@ -42,6 +42,7 @@ var Torrent = new BaseMachine({
 
                 // Store state information about loadingg
                 client._infoHash = infoHash
+                client._name = name
                 client._savePath = savePath
                 client._resumeData = resumeData
                 client._metadata = metadata
@@ -59,7 +60,7 @@ var Torrent = new BaseMachine({
                 var autoManaged = false
 
                 // Tell user to add torrent to session
-                client.addTorrent(infoHash, savePath, addAsPaused, autoManaged, metadata)
+                client.addTorrent(infoHash, savePath, addAsPaused, autoManaged, metadata, resumeData)
 
                 // Go to loading state
                 this.transition(client, 'Loading')

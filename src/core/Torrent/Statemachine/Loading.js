@@ -8,6 +8,7 @@ var isUploading = require('./DeepInitialState').isUploading
 var isPassive = require('./DeepInitialState').isPassive
 var isDownloading = require('./DeepInitialState').isDownloading
 var isStopped = require('./DeepInitialState').isStopped
+var LibtorrentInteraction = require('joystream-node').LibtorrentInteraction
 
 var Loading = new BaseMachine({
 
@@ -92,7 +93,7 @@ var Loading = new BaseMachine({
                 // - Preventing uploading to peers by
                 // -- sending (once) CHOCKED message in order to discourage inbound requests.
                 // -- cancel on_request() to make libtorrent blind to peer requests.
-                client.setLibtorrentInteractionToBlockedUploading()
+                client.setLibtorrentInteraction(LibtorrentInteraction.BlockUploading)
 
                 this.transition(client, 'BlockingLibtorrentUploading')
             }
@@ -101,7 +102,7 @@ var Loading = new BaseMachine({
 
         BlockingLibtorrentUploading : {
 
-            blocked : function (client) {
+            setLibtorrentInteractionResult : function (client, err, res) {
 
                 if(client._isFullyDownloaded) {
 
@@ -136,9 +137,6 @@ var Loading = new BaseMachine({
                         // Overrule users wish, force (unpaid+started) downloading
                         client._deepInitialState = DeepInitialState.DOWNLOADING.UNPAID.STARTED
 
-                        // Ask user to supply buyer terms
-                        client.provideBuyerTerms()
-
                         this.transition(client, 'WaitingForMissingBuyerTerms')
                     }
                 }
@@ -164,7 +162,7 @@ var Loading = new BaseMachine({
 
         GoingToMode : {
 
-            wentToBuyMode : function (client) {
+            toBuyModeResult : function (client) {
 
                 // Make sure we are supposed to go to downloading state
                 if(!isDownloading(client._deepInitialState))
@@ -182,7 +180,7 @@ var Loading = new BaseMachine({
                 }
             },
 
-            wentToSellMode : function (client) {
+            toSellModeResult : function (client) {
 
                 // Make sure we are supposed to go to uploading state
                 if(!isUploading(client._deepInitialState))
@@ -197,7 +195,7 @@ var Loading = new BaseMachine({
                 }
             },
 
-            wentToObserveMode : function (client) {
+            toObserveModeResult : function (client) {
 
                 // Make sure we are supposed to go to passive state
                 if(!isPassive(client._deepInitialState))
@@ -211,7 +209,7 @@ var Loading = new BaseMachine({
 
         StartingExtension : {
 
-            startedExtension : function (client) {
+            startExtensionResult : function (client) {
                 goToDeepInitialState(this, client)
             }
         }

@@ -3,7 +3,7 @@
  */
 
 var BaseMachine = require('../../../../../BaseMachine')
-var refreshPeers = require('../../../../../utils').refreshPeers
+var refreshPeers = require('../../../utils').refreshPeers
 
 var Started = new BaseMachine({
 

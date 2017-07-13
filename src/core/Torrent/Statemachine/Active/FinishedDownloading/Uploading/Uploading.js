@@ -3,7 +3,7 @@
  */
 
 var BaseMachine = require('../../../../../BaseMachine')
-var refreshPeers = require('../../../../../utils').refreshPeers
+var refreshPeers = require('../../../utils').refreshPeers
 
 var Uploading = new BaseMachine({
 
@@ -16,17 +16,18 @@ var Uploading = new BaseMachine({
         Started: {
 
             stop : function (client) {
+
                 client.stopExtension()
                 this.transition(client, 'StoppingExtension')
             },
 
-            changeSellerTerms : function(client, sellerTerms) {
+            updateSellerTerms : function(client, sellerTerms) {
 
                 // Hold on to these terms temporary
                 client._newSellerTerms = sellerTerms
 
                 // Tell user to change seller terms
-                client.changeSellerTerms(sellerTerms)
+                client.updateSellerTerms(sellerTerms)
 
                 this.transition(client, 'ChangingSellerTerms')
             },
@@ -37,55 +38,49 @@ var Uploading = new BaseMachine({
                 refreshPeers(client, statuses)
 
                 // Try to start uploading on all peers
-                var peerIds = client.allPeerIds()
+                for(var pid in client.peers) {
 
-                for(var i in peerIds) {
-
-                    var peerId = peerIds[i]
-
-                    client.startUploading(peerId, client._sellerTerms)
+                    client.peers[pid].startUploading(client._sellerTerms)
                 }
 
             },
 
-            startUploadingFailed : function (client, peerId, err) {
+            startUploadingResult : function (client, pid, err) {
 
-                var peer = client.getPeer(peerId)
-
-                if(peer)
-                    peer.failedToStartUploading(err)
-            },
-
-            startedPaidUploading: function (client, peerId) {
-
-                var peer = client.getPeer(peerId)
+                var peer = client.peers[pid]
 
                 if(peer)
-                    peer.startUploading()
+                    peer.startedUploadingResult(err)
+
             },
 
             goToPassive : function(client) {
+
                 client.goToObserveMode()
                 this.transition(client, 'GoingToObserveMode')
             }
         },
 
         StoppingExtension : {
+
             stoppedExtension : function (client) {
+
                 client.stopLibtorrentTorrent()
                 this.transition(client, 'StoppingLibtorrentTorrent')
             }
         },
 
         StoppingLibtorrentTorrent: {
+
             stoppedLibtorrentTorrent : function (client) {
+
                 this.transition(client, 'Stopped')
             }
         },
 
         ChangingSellerTerms : {
 
-            changedSellerTerms: function (client) {
+            updateSellerTermsResult: function (client) {
 
                 // Keep new terms
                 client._sellerTerms = client._newSellerTerms
@@ -101,11 +96,13 @@ var Uploading = new BaseMachine({
         Stopped: {
 
             start: function (client) {
+
                 client.startLibtorrentTorrent()
                 this.transition(client, 'StartingLibtorrentTorrent')
             },
 
             goToPassive: function (client) {
+
                 client.startExtension()
                 this.transition(client, 'StartingExtensionForPassiveMode')
             }
@@ -113,19 +110,23 @@ var Uploading = new BaseMachine({
         },
 
         StartingExtensionForPassiveMode: {
-            startedExtension: function (client) {
+
+            startedExtensionResult: function (client, err) {
+
                 client.goToObserveMode()
                 this.transition(client, 'GoingToObserveMode')
             }
         },
 
         GoingToObserveMode : {
+
             startedObserveMode: function (client) {
                 this.transition(client, 'Passive')
             }
         },
 
         StartingLibtorrentTorrent: {
+
             startedLibtorrentTorrent: function (client) {
                 client.startExtension()
                 this.transition(client, 'StartingExtension')
@@ -133,7 +134,7 @@ var Uploading = new BaseMachine({
         },
 
         StartingExtension: {
-            startedExtension: function (client) {
+            startedExtensionResult: function (client) {
                 this.transition(client, 'Started')
             }
         }
