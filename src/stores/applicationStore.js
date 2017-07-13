@@ -172,7 +172,7 @@ class Application extends EventEmitter {
     this._spvnode.close()
 
     // emit event to indicate that we are done.. maybe some cleanup routine
-    // is needed in index.js and call process.exit ?
+    // is needed in index.js and call handleSequence.exit ?
   }
 
   _onTorrentAdded (torrent) {
