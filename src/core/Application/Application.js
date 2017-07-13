@@ -292,19 +292,16 @@ class Application {
   }
 
   selectingScene (s) {
+    console.log(s)
     const event = (() => {
       switch (s) {
         case Scene.Downloading: return 'downloading_scene_selected'
-        case Scene.Seeding: return 'uploading_scene_selected'
+        case Scene.Uploading: return 'uploading_scene_selected'
         case Scene.Completed: return 'completed_scene_selected'
       }
     })()
 
     this._callMachine(event)
-  }
-
-  showingScene () {
-    this._callMachine('showing_scene')
   }
 
   @action

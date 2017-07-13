@@ -4,9 +4,12 @@
 
 // Scene which may be active at any given time
 var Scene = {
-    Downloading : 0,
-    Uploading : 1,
-    Completed : 2
+  //None: 0, // before the core application has started
+  //Starting: 1,
+  //Stopping: 2,
+  Downloading : 3,
+  Uploading : 4,
+  Completed : 5
 }
 
 module.exports = Scene

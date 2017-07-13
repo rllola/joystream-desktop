@@ -22,8 +22,7 @@ var OnDownloadingScene = new BaseMachine({
       },
       uploading_scene_selected: function (client) {
         this.go(client, '../OnUploadingScene')
-      },
-      _reset: 'uninitialized'
+      }
     },
     selecting_file_dialog_modal: {
       file_selected: function (client, file) {
@@ -50,7 +49,7 @@ var OnDownloadingScene = new BaseMachine({
       torrent_loaded: function (client) {
         this.transition(client, 'idle')
       },
-      _reset: 'uninitialized'
+      _reset: 'idle'
     }
   }
 })

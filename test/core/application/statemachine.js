@@ -10,7 +10,7 @@ import ASM from '../../../src/core/Application/ApplicationStateMachine'
 import Client from '../../../src/core/Application/Client'
 import Scene from '../../../src/core/Application/Scene'
 
-describe('application statemachine', function () {
+xdescribe('application statemachine', function () {
   let client = MockedClient()
 
   function handle (...args) {

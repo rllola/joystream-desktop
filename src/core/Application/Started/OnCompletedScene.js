@@ -12,8 +12,7 @@ var OnCompletedScene = new BaseMachine({
       },
       uploading_scene_selected: function (client) {
         this.go(client, '../OnUploadingScene')
-      },
-      _reset: 'uninitialized'
+      }
     }
   }
 })
