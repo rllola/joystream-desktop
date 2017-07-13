@@ -3,7 +3,7 @@ import { observer } from 'mobx-react'
 
 //import Header from '../Header'
 import ApplicationHeader from './ApplicationHeader'
-import Scene from './Scene'
+import Scene from '../../core/Application/Scene'
 
 // Components
 //import Sidebar from './components/Sidebar'
@@ -28,13 +28,13 @@ class Application extends Component {
 
     render () {
         // during loading there is no active scene yet
-        if (!this.props.app.activeScene) return null
+        if (this.props.app.activeScene === null) return null
 
         return (
             <div className="app-container">
 
                 <ApplicationHeader balance={13333337}
-                                   activeScene={Scene[this.props.app.activeScene]}
+                                   activeScene={this.props.app.activeScene}
                                    onSceneSelected={(s) => {this.props.app.selectingScene(s)}}/>
 
                 {this.getRenderedScene()}
@@ -46,12 +46,12 @@ class Application extends Component {
     }
 
     getRenderedScene () {
-        if(Scene[this.props.app.activeScene] === Scene.Downloading) {
+        if(this.props.app.activeScene === Scene.Downloading) {
             return <Downloading torrents={[]}
                                 revenue={123}
                                 downloadSpeed={77777}
                                 onStartDownloadClicked={() => { console.log(" start download clicked")}}/>
-        } else if (Scene[this.props.app.activeScene] === Scene.Seeding) {
+        } else if (this.props.app.activeScene === Scene.Uploading) {
             return <h1>put new uploading scene component here</h1>
         } else {
             return <h1>put new completed scene component here</h1>

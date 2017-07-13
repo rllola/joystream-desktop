@@ -5,6 +5,7 @@ const BaseMachine = require('../../BaseMachine')
 const OnCompletedScene = require('./OnCompletedScene')
 const OnDownloadingScene = require('./OnDownloadingScene')
 const OnUploadingScene = require('./OnUploadingScene')
+const Scene = require('../Scene')
 
 var Started = new BaseMachine({
     namespace: "Started",
@@ -16,21 +17,21 @@ var Started = new BaseMachine({
       OnCompletedScene: {
         _child: OnCompletedScene,
         _onEnter: function (client) {
-          client.setActiveScene('Completed')
+          client.setActiveScene(Scene.Completed)
         }
       },
 
       OnDownloadingScene: {
         _child: OnDownloadingScene,
         _onEnter: function (client) {
-          client.setActiveScene('Downloading')
+          client.setActiveScene(Scene.Downloading)
         }
       },
 
       OnUploadingScene: {
         _child: OnUploadingScene,
         _onEnter: function (client) {
-          client.setActiveScene('Seeding')
+          client.setActiveScene(Scene.Uploading)
         }
       }
     }

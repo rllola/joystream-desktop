@@ -6,7 +6,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import Header, {Button} from '../Header/Header'
-import Scene from './Scene'
+import Scene from '../../core/Application/Scene'
 
 const ApplicationHeader = (props) => {
 

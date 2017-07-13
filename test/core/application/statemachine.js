@@ -8,6 +8,7 @@ import 'babel-polyfill'
 
 import ASM from '../../../src/core/Application/ApplicationStateMachine'
 import Client from '../../../src/core/Application/Client'
+import Scene from '../../../src/core/Application/Scene'
 
 describe('application statemachine', function () {
   let client = MockedClient()
@@ -51,7 +52,7 @@ describe('application statemachine', function () {
     handle('finished_loading')
 
     assertState('Started.OnDownloadingScene.idle')
-    assert(client.setActiveScene.calledWith('Downloading'))
+    assert(client.setActiveScene.calledWith(Scene.Downloading))
   })
 
   it ('changing scenes', function () {

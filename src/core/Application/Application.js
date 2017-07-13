@@ -11,7 +11,7 @@ const runInAction = require('mobx').runInAction
 
 const constants = require('../../constants')
 
-const Scene = require('../../scenes/Application').Scene
+const Scene = require('./Scene')
 
 // Disable workers which are not available in electron
 bcoin.set({ useWorkers: false })
@@ -25,7 +25,7 @@ class Application {
   @observable uploadingNotificationCounter = 0
   @observable completedNotificationCounter = 0
   @observable numberOfTorrentsLoading = 0
-  @observable activeScene
+  @observable activeScene = null
 
   _torrents = new Map()
 

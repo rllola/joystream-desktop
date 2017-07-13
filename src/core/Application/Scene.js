@@ -5,8 +5,8 @@
 // Scene which may be active at any given time
 var Scene = {
     Downloading : 0,
-    Seeding : 1,
+    Uploading : 1,
     Completed : 2
 }
 
-export default Scene
+module.exports = Scene
