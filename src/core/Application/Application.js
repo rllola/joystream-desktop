@@ -53,6 +53,7 @@ class Application {
     }.bind(this)
 
     this.on = this._machine.on.bind(this._machine)
+    this.off = this._machine.off.bind(this._machine)
   }
 
   currentState () {

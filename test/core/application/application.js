@@ -30,30 +30,44 @@ describe('application', function () {
     rimraf(TEMP_WORKING_DIR, done)
   })
 
-  it('starting/stopping', function (done) {
-    let app = new Application()
+  var listeners = []
 
-    app.on('transition', function (transition) {
-      console.log('transition from:', transition.fromState, 'to:', transition.toState)
+  it('starting/stopping subsystems', function (done) {
+    function completed () {
+      listeners.forEach(function (listener) {
+        listener.off()
+      })
+
+      listeners = []
+
+      assert(startedSuccessfully)
+
+      done()
+    }
+
+    let app = new Application()
+    var startedSuccessfully = false
+
+    listeners.push(app.on('transition', function (transition) {
+      //console.log('transition from:', transition.fromState, 'to:', transition.toState)
       //console.log('state:', app.currentState())
       if (transition.toState === 'Started' && transition.fromState === 'Starting') {
+        startedSuccessfully = true
         app.stop()
+      } else if (transition.toState === 'NotStarted' && transition.fromState === 'Stopping') {
+        completed()
       }
+    }))
 
-      if (transition.toState === 'NotStarted' && transition.fromState === 'Stopping') {
-        done()
-      }
-    })
-
-    app.on('nohandler', function (e) {
+    listeners.push(app.on('nohandler', function (e) {
       console.log('no handler event:', e.inputType)
-      assert(false)
-    })
+      completed()
+    }))
 
-    app.on('invalidstate', function (e) {
+    listeners.push(app.on('invalidstate', function (e) {
       console.log('invalid state:', e.state)
-      assert(false)
-    })
+      completed()
+    }))
 
     app.start({
       appDirectory: TEMP_WORKING_DIR,
