@@ -4,7 +4,7 @@
 
 var machina = require('machina')
 
-var ConnectionInnerState = require('joystream-node')
+var ConnectionInnerState = require('joystream-node').ConnectionInnerState
 var areTermsMatching = require('joystream-node/lib/utils')
 
 var Peer = new machina.BehavioralFsm({
