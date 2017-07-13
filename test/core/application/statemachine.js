@@ -80,6 +80,38 @@ describe('application statemachine', function () {
 
     assertState('NotStarted')
   })
+
+  it('multiple connection attempts bitcoin network', function () {
+    assertState('NotStarted')
+
+    const config = {'retryConnectingToBitcoinNetwork': 3}
+
+    handle('start', config)
+    assert.equal(client._state.connectToBitcoinNetworkAttemptsRemaining, 3)
+
+    handle('initialized_resources')
+    handle('initialized_database')
+    handle('initialized_spv_node')
+    handle('initialized_wallet')
+
+    // 1st connection attempt
+    assertState('Starting.connecting_to_bitcoin_p2p_network')
+    assert.equal(client._state.connectToBitcoinNetworkAttemptsRemaining, 2)
+    handle('failed')
+    assertState('Starting.waiting_to_reconnect_to_bitcoin_p2p_network')
+
+    // 2nd connection attempt (manually retry instead of waiting for timeout)
+    handle('force_retry')
+    assertState('Starting.connecting_to_bitcoin_p2p_network')
+
+    assert.equal(client._state.connectToBitcoinNetworkAttemptsRemaining, 1)
+    handle('failed')
+
+    // 3rd (and last) connection attempt
+    handle('force_retry')
+    handle('failed')
+    assertState('Stopping.disconnecting_from_bitcoin_p2p_network')
+  })
 })
 
 function MockedClient () {

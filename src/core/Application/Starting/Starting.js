@@ -12,7 +12,14 @@ var Starting = new BaseMachine({
   },
   states: {
     uninitialized: {
-
+      _onEnter: function (client) {
+        const retries = client.getConfig().retryConnectingToBitcoinNetwork
+        if (retries > 0) {
+          client._state.connectToBitcoinNetworkAttemptsRemaining = retries
+        } else {
+          client._state.connectToBitcoinNetworkAttemptsRemaining = 1
+        }
+      }
     },
     initializing_resources: {
       _onEnter: function (client) {
@@ -72,21 +79,25 @@ var Starting = new BaseMachine({
 
     connecting_to_bitcoin_p2p_network: {
       _onEnter: function (client) {
-        client.getConfig().connectToBitcoinNetworkRetryLimit = client.getConfig().connectToBitcoinNetworkRetryLimit || 3
+        if (client._state.connectToBitcoinNetworkAttemptsRemaining === 0) {
+          this.go(client, '../Stopping/disconnecting_from_bitcoin_p2p_network')
+          return
+        }
+
         client._state.abortConnectToBitcoinNetwork = false
-        client._state.connectToBitcoinNetworkAttempts = 1
+        client._state.connectToBitcoinNetworkAttemptsRemaining--
 
         // if options allows to start offline, don't connect
 
         client.connectToBitcoinNetwork()
       },
       connected: function (client) {
-        // if we cancelled during connection attempt do not try to reconnect
         if (client._state.abortConnectToBitcoinNetwork) {
           this.go(client, '../Stopping/disconnecting_from_bitcoin_p2p_network')
-        } else {
-          this.transition(client, 'loading_torrents')
+          return
         }
+
+        this.transition(client, 'loading_torrents')
       },
       cancel: function (client) {
         client._state.abortConnectToBitcoinNetwork = true
@@ -97,22 +108,31 @@ var Starting = new BaseMachine({
       failed: function (client, err) {
         client.reportError(err)
 
-        // if we cancelled during connection attempt do not try to reconnect
-        if (client._state.abortConnectToBitcoinNetworkTimeout || client._state.connectToBitcoinNetworkAttempts > 3) {
+        if (client._state.connectToBitcoinNetworkAttemptsRemaining === 0 || client._state.abortConnectToBitcoinNetwork) {
           this.go(client, '../Stopping/disconnecting_from_bitcoin_p2p_network')
           return
         }
 
-        // retry in 10s
-        setTimeout(() => {
-          // if we cancelled while waiting to reconnect, do not reconnect
-          if (client._state.abortConnectToBitcoinNetworkTimeout) {
-            this.go(client, '../Stopping/disconnecting_from_bitcoin_p2p_network')
-          } else {
-            client._state.connectToBitcoinNetworkAttempts++
-            client.connectToBitcoinNetwork()
-          }
-        }, client.getConfig().timeBetweenReconnectAttempts || 10000)
+        this.transition(client, 'waiting_to_reconnect_to_bitcoin_p2p_network')
+      },
+      _reset: 'uninitialized'
+    },
+
+    waiting_to_reconnect_to_bitcoin_p2p_network: {
+      _onEnter: function (client) {
+        // Automatically try after 15s
+        client._state.reconnectTimeout = setTimeout(function () {
+          this.transition(client, 'connecting_to_bitcoin_p2p_network')
+        }, 15000)
+      },
+      cancel: function (client) {
+        this.go(client, '../Stopping/disconnecting_from_bitcoin_p2p_network')
+      },
+      force_retry: function (client) {
+        this.transition(client, 'connecting_to_bitcoin_p2p_network')
+      },
+      _onExit: function (client) {
+        clearTimeout(client._state.reconnectTimeout)
       },
       _reset: 'uninitialized'
     },
