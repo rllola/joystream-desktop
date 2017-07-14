@@ -26,6 +26,7 @@ class Application {
   @observable completedNotificationCounter = 0
   @observable numberOfTorrentsLoading = 0
   @observable activeScene = null
+  @observable state = null
 
   _torrents = new Map()
 
@@ -54,10 +55,15 @@ class Application {
 
     this.on = this._machine.on.bind(this._machine)
     this.off = this._machine.off.bind(this._machine)
+
+    this.updateState()
+
+    this.on('transition', this.updateState)
   }
 
-  currentState () {
-    return this._machine.compositeState(this._client)
+  @action.bound
+  updateState () {
+    this.state = this._machine.compositeState(this._client)
   }
 
   start (config) {
@@ -83,7 +89,6 @@ class Application {
       this._createSession(this._config)
       this._callMachine('initialized_resources')
     } catch (err) {
-      console.log(err)
       this._callMachine('failed', err)
     }
   }
@@ -293,7 +298,6 @@ class Application {
   }
 
   selectingScene (s) {
-    console.log(s)
     const event = (() => {
       switch (s) {
         case Scene.Downloading: return 'downloading_scene_selected'
