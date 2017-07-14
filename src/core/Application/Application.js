@@ -232,7 +232,7 @@ class Application {
   async _connectToBitcoinNetwork () {
     try {
       await this._spvnode.connect()
-      this._startWalletSync()
+      this._spvnode.startSync()
       this._callMachine('connected')
     } catch (err) {
       this._callMachine('failed', err)
@@ -240,12 +240,9 @@ class Application {
   }
 
   async _disconnectFromBitcoinNetwork () {
+    this._spvnode.stopSync()
     await this._spvnode.disconnect()
     this._callMachine('disconnected')
-  }
-
-  _startWalletSync (spvnode) {
-    this._spvnode.startSync()
   }
 
   async _loadTorrentsFromDatabase () {

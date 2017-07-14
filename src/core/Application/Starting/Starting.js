@@ -102,9 +102,6 @@ var Starting = new BaseMachine({
       cancel: function (client) {
         client._state.abortConnectToBitcoinNetwork = true
       },
-      // We need to ensure we successfully connect at least once (bcoin will not attempt to reconnect by itself)
-      // but what if user wants to start offline, perhaps a statemachine to mange connectivity and let application
-      // continue to start?
       failed: function (client, err) {
         client.reportError(err)
 
