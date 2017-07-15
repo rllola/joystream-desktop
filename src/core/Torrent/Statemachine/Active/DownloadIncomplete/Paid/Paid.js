@@ -2,7 +2,7 @@
  * Created by bedeho on 13/06/17.
  */
 
-var BaseMachine = require('../../../../BaseMachine')
+var BaseMachine = require('../../../../../BaseMachine')
 
 var Paid = new BaseMachine({
 
@@ -14,7 +14,6 @@ var Paid = new BaseMachine({
 
         Started : {
 
-
             // Future hook for when all paid peers left _before_
             // we completed the download
             // NB: Doing anything here may require complementary
@@ -25,23 +24,7 @@ var Paid = new BaseMachine({
 
             stop: function(client) {
                 client.stopExtension()
-                this.transition(client, 'StoppingExtension')
-            }
-
-        },
-
-        StoppingExtension : {
-
-            stoppedExtension: function (client) {
                 client.stopLibtorrentTorrent()
-                this.transition(client, 'StoppingLibtorrentTorrent')
-            }
-
-        },
-
-        StoppingLibtorrentTorrent : {
-
-            stoppedLibtorrentTorrent : function (client) {
                 this.transition(client, 'Stopped')
             }
 
@@ -51,25 +34,11 @@ var Paid = new BaseMachine({
 
             start : function (client) {
                 client.startLibtorrentTorrent()
-                this.transition(client, 'StartingLibtorrentTorrent')
-            }
-
-        },
-
-        StartingLibtorrentTorrent : {
-
-            startedLibtorrentTorrent: function (client) {
                 client.startExtension()
-                this.transition(client, 'StartingExtension')
-            }
-        },
-
-        StartingExtension : {
-            startedExtension : function(client) {
                 this.transition(client, 'Started')
             }
-        }
 
+        }
     }
 })
 

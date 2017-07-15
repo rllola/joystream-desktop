@@ -3,7 +3,7 @@
  */
 
 var BaseMachine = require('../../../../../BaseMachine')
-var refreshPeers = require('../../../utils').refreshPeers
+var Common = require('../../../Common')
 
 var Started = new BaseMachine({
 
@@ -18,13 +18,13 @@ var Started = new BaseMachine({
             processPeerPluginsStatuses: function(client, statuses) {
 
                 // Update peer list
-                refreshPeers(client, statuses)
+                processPeerPluginStatuses(client, statuses)
 
                 // Figure out if there are suitable sellers in sufficient amount
-                client._suitableSellers = filterSuitableSellers(statuses, client._buyerTerms.minNumberOfSellers)
+                client.suitableSellers = filterSuitableSellers(statuses, client.buyerTerms.minNumberOfSellers)
 
                 // If the minimum number of suitable sellers are not present, then we switch state, otherwise, we stay
-                if(!client._suitableSellers) {
+                if(!client.suitableSellers) {
                     this.transition(client, 'CannotStartPaidDownload')
                 }
 
@@ -33,10 +33,10 @@ var Started = new BaseMachine({
             startPaidDownload : function (client, peerComparer) {
 
                 // Sort suitable sellers using `peerComparer` function
-                var sortedSellers = client._suitableSellers.sort(peerComparer)
+                var sortedSellers = client.suitableSellers.sort(peerComparer)
 
                 // Pick actual sellers to use
-                var pickedSellers = sortedSellers.slice(0, client._buyerTerms.minNumberOfSellers)
+                var pickedSellers = sortedSellers.slice(0, client.buyerTerms.minNumberOfSellers)
 
                 // Iterate sellers to
                 // 1) Allocate value
@@ -54,7 +54,7 @@ var Started = new BaseMachine({
                     var sellerTerms = status.connection.announcedModeAndTermsFromPeer.seller.terms
 
                     // Pick how much to distribute among the sellers
-                    var minimumRevenue = sellerTerms.minPrice * client._metadata.num_pieces()
+                    var minimumRevenue = sellerTerms.minPrice * client.metadata.num_pieces()
 
                     // Set value to at least surpass dust
                     var value = Math.max(minimumRevenue, 0)
@@ -89,7 +89,7 @@ var Started = new BaseMachine({
 
                 // Store download information for making actual start downloading
                 // request to client later after signing
-                client._downloadInfoMap = downloadInfoMap
+                client.downloadInfoMap = downloadInfoMap
 
                 // Request construction and financing of the contract transaction
                 client.makeSignedContract(contractOutputs, contractFeeRate)
@@ -103,22 +103,27 @@ var Started = new BaseMachine({
 
             // NB: We don't handleSequence peer plugin statuses
 
-            contractSigned : function (client, tx) {
+            makeSignedContractResult(client, err, tx) {
 
-                client.startDownloading(tx, client._downloadInfoMap)
+                if(err) {
 
-                this.transition(client, 'InitiatingPaidDownload')
-            },
+                    // Notify user about failure
+                    client.contractSigningFailed(err)
 
-            contractCouldNotBeSigned : function (client, err) {
+                    // Safe than sorry:
+                    // Go back to blocked state and wait for new snapshot to be sure
+                    // that we can still start paid download
+                    this.transition(client, 'CannotStartPaidDownload')
 
-                // Notify user about failure
-                client.contractSigningFailed(err)
+                } else {
 
-                // Safe than sorry:
-                // Go back to blocked state and wait for new snapshot to be sure
-                // that we can still start paid download
-                this.transition(client, 'CannotStartPaidDownload')
+
+                    client.startDownloading(tx, client.downloadInfoMap)
+
+                    this.transition(client, 'InitiatingPaidDownload')
+
+                }
+
             }
 
         },
@@ -127,7 +132,7 @@ var Started = new BaseMachine({
 
             // NB: We don't handleSequence peer plugin statuses
 
-            paidDownloadInitiationCompleted : function (client, res, err) {
+            paidDownloadInitiationCompleted : function (client, err, res) {
 
                 if (err) {
 
@@ -151,13 +156,13 @@ var Started = new BaseMachine({
             processPeerPluginsStatuses: function(client, statuses) {
 
                 // Update peer list
-                refreshPeers(client, statuses)
+                Common.processPeerPluginStatuses(client, statuses)
 
                 // Figure out if there are suitable sellers in sufficient amount
-                client._suitableSellers = filterSuitableSellers(statuses, client._buyerTerms.minNumberOfSellers)
+                client.suitableSellers = filterSuitableSellers(statuses, client.buyerTerms.minNumberOfSellers)
 
                 // If the minimum number of suitable sellers are present, then we switch state, otherwise, we stay
-                if(client._suitableSellers) {
+                if(client.suitableSellers) {
                     this.transition(client, 'CanStartPaidDownload')
                 }
             }

@@ -3,7 +3,6 @@
 import {observable, action, runInAction, computed} from 'mobx'
 
 import Scene from './Scene'
-import utils from '../utils'
 
 class ApplicationStore {
 
@@ -30,10 +29,6 @@ class ApplicationStore {
     // callbacks to make on user actions
     // (provided by the core application, which will submit them to statemachine as inputs)
     this._handlers = handlers
-
-    // expose the utility methods - is this the right place
-    // or should the react components get them directly ?
-    this.utils = utils
   }
 
   @action.bound
