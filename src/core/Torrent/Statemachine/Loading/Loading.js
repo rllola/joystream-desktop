@@ -30,14 +30,12 @@ var Loading = new BaseMachine({
                     // Hook into torrent events
 
                     torrent.on('metadata', (metadata) => {
-                        //this._db.saveTorrent(torrent)
-
                         Torrent.queuedHandle(client, 'metadataReady', metadata)
+
+                        client.store.setMetadata(metadata)
                     })
 
                     torrent.on('resumedata', (resumeData) => {
-                        //this._db.saveTorrentResumeData(infoHash, buff)
-
                         Torrent.queuedHandle(client, 'resumeDataGenerated', resumeData)
                     })
 
@@ -47,8 +45,8 @@ var Loading = new BaseMachine({
                             Torrent.queuedHandle(client, 'resumeDataGenerationFailed')
                     })
 
-                    torrent.on('status_update', function(statusUpdate) {
-                        //this.setStatus(statusUpdate)
+                    torrent.on('status_update', function(status) {
+                        client.store.setStatus(status)
                     })
 
                     torrent.on('finished', function() {
@@ -59,42 +57,13 @@ var Loading = new BaseMachine({
                         Torrent.queuedHandle(client, 'checkFinished')
                     })
 
-                    /**
-                    torrent.on('sessionToSellMode', (alert) => {
-                        if (this.loadingTorrents) return
-
-                        this._db.saveTorrentSettings(infoHash, {
-                            mode: SessionMode.selling,
-                            sellerTerms: alert.terms
-                            //state: observableTorrent.state
-                        })
-                    })
-
-                    torrent.on('sessionToBuyMode', (alert) => {
-                        if (this.loadingTorrents) return
-
-                        this._db.saveTorrentSettings(infoHash, {
-                            mode: SessionMode.buying,
-                            buyerTerms: alert.terms
-                            //state: observableTorrent.state
-                        })
-                    })
-
-                    torrent.on('sessionToObserveMode', (alert) => {
-                        if (this.loadingTorrents) return
-
-                        this._db.saveTorrentSettings(infoHash, {
-                            mode: SessionMode.observing
-                            //state: observableTorrent.state
-                        })
-                    })
-                     */
-
                     // If we don´t have metadata, wait for it
                     if(!client.metadata) {
                         this.transition(client, 'WaitingForMetadata')
                     } else {
                         this.transition(client, 'CheckingPartialDownload')
+
+                        client.store.setMetadata(metadata)
                     }
                 }
 

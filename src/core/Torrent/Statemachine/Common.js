@@ -44,6 +44,9 @@ function processPeerPluginStatuses(client, statuses) {
         if(client.peers[pid])
             delete client.peers[pid]
     }
+
+    // Update peer list
+    client.store.setPeers(client.peers)
 }
 
 var DeepInitialState = {

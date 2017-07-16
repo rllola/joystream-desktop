@@ -16,30 +16,32 @@ util.inherits(Torrent, EventEmitter)
  * @param session
  * @constructor
  */
-function Torrent(session) {
+function Torrent(store, session) {
 
     EventEmitter.call(this)
 
-    //this._store = new TorrentStore(this)
+    this._store = store
     this._client = new TorrentStatemachineClient(session, this._store)
 
-    // NB: WE HAVE TO TRACK ALL TRANSITION ON ALL MACHINES, BECAUSE MACHINA.JS IS SLOPPY.
     TorrentStatemachine.on('transition', function (data) {
 
-        // Detect functional events?
+        // Check that the transition is on this torrent
+        if(data.client != this._client)
+            return
 
-        // Loaded: Lots of destination events?
-
-        // 'Loading.WaitingForMissingBuyerTerms'
-
-        // Terminated: emit event with payload client.deepInitialState
-
-        // Update UI store
+        // Get current state
         let stateString = TorrentStatemachine.compositeState(this._client)
 
-        // We guard update to avoid costly mobx-write
-        if (this._store.getState() != stateString)
-            this._store.setState(stateString)
+        // Updat state in store
+        this._store.setState(stateString)
+
+        // Relay events for others to consume
+        this.emit('transition', data)
+
+        // Detect functional events?
+        //  - Loaded: Lots of destination events?
+        //  - 'Loading.WaitingForMissingBuyerTerms'
+        //  - Terminated: emit event with payload client.deepInitialState
 
     })
 
@@ -68,15 +70,12 @@ Torrent.prototype.terminate = function(generateResumeData) {
     TorrentStatemachine.queuedHandle(this._client, 'terminate', generateResumeData)
 }
 
-// add some getters for inspecting state and so on
-
-
 /// TorrentStateMachineClient
 /// Holds state and external messaging implementations for a (behavoural machinajs) Torrent state machine instance
 
-function TorrentStatemachineClient(session) {
-    this._session = session
-    //this._store = store
+function TorrentStatemachineClient(session, session) {
+    this.session = session
+    this.store = store
 }
 
 TorrentStatemachineClient.prototype.addTorrent = function(infoHash, name, savePath, addAsPaused, autoManaged, metadata, resumeData) {
@@ -98,7 +97,7 @@ TorrentStatemachineClient.prototype.addTorrent = function(infoHash, name, savePa
     if(metadata)
         addTorrentParams.ti = metadata
 
-    this._session.addTorrent(addTorrentParams, (err, torrent) => {
+    this.session.addTorrent(addTorrentParams, (err, torrent) => {
 
         LOG_ERROR(err)
 
@@ -108,7 +107,7 @@ TorrentStatemachineClient.prototype.addTorrent = function(infoHash, name, savePa
 
 TorrentStatemachineClient.prototype.stopExtension = function() {
 
-    this._torrent.stopPlugin(function (err, res) {
+    this.torrent.stopPlugin(function (err, res) {
 
         LOG_ERROR(err)
 
@@ -120,7 +119,7 @@ TorrentStatemachineClient.prototype.stopExtension = function() {
 
 TorrentStatemachineClient.prototype.startExtension = function() {
 
-    this._torrent.startPlugin(function(res, err) {
+    this.torrent.startPlugin(function(res, err) {
 
         LOG_ERROR(err)
 
@@ -131,30 +130,22 @@ TorrentStatemachineClient.prototype.startExtension = function() {
 
 TorrentStatemachineClient.prototype.startLibtorrentTorrent = function() {
 
-    this._torrent.handle.resume()
+    this.torrent.handle.resume()
 }
 
 TorrentStatemachineClient.prototype.stopLibtorrentTorrent = function() {
 
-    this._torrent.handle.pause()
+    this.torrent.handle.pause()
 }
 
 TorrentStatemachineClient.prototype.generateResumeData = function() {
 
-    this._torrent.handle.saveResume_data()
-}
-
-TorrentStatemachineClient.prototype.hasOutstandingResumeData = function() {
-
-    // See save_resume_data() under
-    // http://libtorrent.org/reference-Core.html#torrent-handle
-
-    return this._torrent.handle.isValid() && this._torrent.handle.needSaveResumeData()
+    this.torrent.handle.saveResume_data()
 }
 
 TorrentStatemachineClient.prototype.setLibtorrentInteraction = function(mode) {
 
-    this._torrent.setLibtorrentInteraction (mode, function() {
+    this.torrent.setLibtorrentInteraction (mode, function() {
 
         LOG_ERROR(err)
 
@@ -165,7 +156,7 @@ TorrentStatemachineClient.prototype.setLibtorrentInteraction = function(mode) {
 
 TorrentStatemachineClient.prototype.toObserveMode = function() {
 
-    this._torrent.toObserveMode(function(err, res) {
+    this.torrent.toObserveMode(function(err, res) {
 
         LOG_ERROR(err)
 
@@ -176,7 +167,7 @@ TorrentStatemachineClient.prototype.toObserveMode = function() {
 
 TorrentStatemachineClient.prototype.toSellMode = function(sellerTerms) {
 
-    this._torrent.toSellMode(sellerTerms, function(err, res) {
+    this.torrent.toSellMode(sellerTerms, function(err, res) {
 
         LOG_ERROR(err)
 
@@ -186,7 +177,7 @@ TorrentStatemachineClient.prototype.toSellMode = function(sellerTerms) {
 }
 
 TorrentStatemachineClient.prototype.toBuyMode = function(buyerTerms) {
-    this._torrent.toBuyMode(buyerTerms, function(err, res) {
+    this.torrent.toBuyMode(buyerTerms, function(err, res) {
 
         LOG_ERROR(err)
 
@@ -209,7 +200,7 @@ TorrentStatemachineClient.prototype.updateBuyerTerms = function() {
 
 TorrentStatemachineClient.prototype.startUploading = function(connectionId, buyerTerms, contractSk, finalPkHash) {
 
-    this._torrent.startUploading(connectionId, buyerTerms, contractSk, finalPkHash, function (err, res) {
+    this.torrent.startUploading(connectionId, buyerTerms, contractSk, finalPkHash, function (err, res) {
         TorrentStatemachine.queuedHandle(this, 'startUploadingResult', err, res)
     })
 }
@@ -222,7 +213,7 @@ TorrentStatemachineClient.prototype.makeSignedContract = function(contractOutput
 
 TorrentStatemachineClient.prototype.startDownloading = function(contract, downloadInfoMap) {
 
-    this._torrent.startDownloading(contract, downloadInfoMap, function(err, res) {
+    this.torrent.startDownloading(contract, downloadInfoMap, function(err, res) {
 
         TorrentStatemachine.queuedHandle(this, 'startDownloadingResult', err, res)
     })
