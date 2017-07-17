@@ -1,4 +1,5 @@
 import FileStream from './FileStream'
+import eos from 'end-of-stream'
 import { EventEmitter } from 'events'
 
 class File extends EventEmitter {
@@ -25,9 +26,6 @@ class File extends EventEmitter {
       this._startPiece = start / this.pieceLength | 0
       this._endPiece = end / this.pieceLength | 0
 
-      console.log(this._startPiece)
-      console.log(this._endPiece)
-
       /*if (this.size === 0) {
         this.done = true
         this.emit('done')
@@ -40,11 +38,18 @@ class File extends EventEmitter {
       console.log(opts)
 
       var fileStream = new FileStream(self, opts)
-      /*var havePiece = torrent.handle.havePiece(0)
-      if (havePiece) {
-        torrent.handle.readPiece(0)
-      }*/
+      eos(fileStream, function () {
+        if (self._destroyed) return
+        if (!self._torrent.destroyed) {
+          //self._torrent.deselect(fileStream._startPiece, fileStream._endPiece, true)
+        }
+      })
       return fileStream
+    }
+
+    _destroy () {
+      this._destroyed = true
+      this._torrent = null
     }
 }
 

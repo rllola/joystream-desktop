@@ -1,5 +1,8 @@
 import Readable from 'readable-stream'
 
+const HIGH_PRIORITY = 7
+const NORMAL_PRIORITY = 4
+
  class FileStream extends Readable {
    constructor (file, opts) {
      super(opts)
@@ -12,10 +15,16 @@ import Readable from 'readable-stream'
        ? opts.end
        : file.size
 
+    console.log('start : ', start)
+    console.log('end : ', end)
+
      var pieceLength = file.pieceLength
 
      this._startPiece = (start + file.offset) / pieceLength | 0
      this._endPiece = (end + file.offset) / pieceLength | 0
+
+     console.log('start piece :', this._startPiece)
+     console.log('end piece :', this._endPiece)
 
      this._piece = this._startPiece
      this._offset = (start + file.offset) - (this._startPiece * pieceLength)
@@ -31,8 +40,7 @@ import Readable from 'readable-stream'
 
     if (!self._reading || self._missing === 0) return
     if (!self._torrent.handle.havePiece(self._piece)) {
-      console.log('We dont have piece')
-      return
+      return self._torrent.handle.piecePriority(self._piece, HIGH_PRIORITY)
       //return self._torrent.critical(self._piece, self._piece + self._criticalLength)
     }
 
@@ -44,12 +52,11 @@ import Readable from 'readable-stream'
     self._torrent.handle.readPiece(p)
     self._torrent.on('readPiece', (piece, err) => {
       if (piece.index === p) {
-        console.log(piece)
 
         self._notifying = false
         if (self.destroyed) return
         if (err) return self._destroy(err)
-        console.log('read %s (length %s) (err %s)', p, piece.buffer.length)
+        console.log('read %s (length %s)', p, piece.buffer.length)
 
         if (self._offset) {
           piece.buffer = piece.buffer.slice(self._offset)
@@ -65,7 +72,9 @@ import Readable from 'readable-stream'
         self._reading = false
         self.push(piece.buffer)
 
-        if (self._missing === 0) self.push(null)
+        if (self._missing === 0) {
+          self.push(null)
+        }
       }
 
     })
@@ -80,6 +89,7 @@ import Readable from 'readable-stream'
   }
 
   _destroy (err, onclose) {
+
     if (this.destroyed) return
     this.destroyed = true
 
