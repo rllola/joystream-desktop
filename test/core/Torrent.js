@@ -396,6 +396,8 @@ function makePeerPluginStatus(id, innerState) {
 
 function TorrentClientSpy() {
 
+    this.store = new MockStore()
+
     this.addTorrent = sinon.spy()
     this.stopExtension = sinon.spy()
     this.startExtension = sinon.spy()
@@ -441,6 +443,13 @@ TorrentClientSpy.prototype.resetSpies = function() {
     //this.removePeer.reset()
 
     // these are all stubs??
+}
+
+///
+
+function MockStore() {
+    this.setMetadata = sinon.spy()
+    this.setPeers = sinon.spy()
 }
 
 /// MockTorrent

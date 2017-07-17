@@ -1,34 +1,50 @@
 import { observable, action, computed } from 'mobx'
 
-// View specific observables and actions
-
 class TorrentStore {
 
     @observable infoHash
     @observable state
-    @observable libtorrentState
     @observable progress
     @observable totalSize
     @observable name
-    @observable peers
     @observable numberOfBuyers
     @observable numberOfSellers
     @observable numberOfObservers
     @observable numberOfNormalPeers
 
-    constructor (infoHash, state, libtorrentState, progress, totalSize, name, peers, numberOfBuyers, numberOfSellers, numberOfObservers, numberOfNormalPeers) {
+    constructor (infoHash,
+                 state,
+                 progress,
+                 totalSize,
+                 name,
+                 numberOfBuyers,
+                 numberOfSellers,
+                 numberOfObservers,
+                 numberOfNormalPeers,
+                 startHandler,
+                 stopHandler,
+                 removeHandler,
+                 openFolderHandler,
+                 startPaidDownloadHandler,
+                 beginUploadHandler,
+                 endUploadHandler) {
 
         this.infoHash = infoHash
         this.state = state
-        this.libtorrentState = libtorrentState
         this.progress = progress
         this.totalSize = totalSize
         this.name = name
-        this.peers = peers
         this.numberOfBuyers = numberOfBuyers
         this.numberOfSellers = numberOfSellers
         this.numberOfObservers = numberOfObservers
         this.numberOfNormalPeers = numberOfNormalPeers
+        this.startHandler = startHandler
+        this.stopHandler = stopHandler
+        this.removeHandler = removeHandler
+        this.openFolderHandler = openFolderHandler
+        this.startPaidDownloadHandler = startPaidDownloadHandler
+        this.beginUploadHandler = beginUploadHandler
+        this.endUploadHandler = endUploadHandler
     }
 
     @action.bound
@@ -55,18 +71,13 @@ class TorrentStore {
         this.totalSize = totalSize
     }
 
-    @action.bound
-    setLibtorrentState (state) {
-        this.libtorrentState = state
-    }
 
     @action.bound
     setStatus (status) {
 
-        // status
+        // ignore other fields for now
 
-        //this.setLibtorrentState(state)
-        //this.setProgress(progress)
+        this.setProgress(status.progress)
     }
 
     @action.bound
@@ -74,114 +85,146 @@ class TorrentStore {
         this.progress = progress
     }
 
+    // The next seller effectively computes other observables,
+    // and the reason we are not using computables from mobx
+    // is because it would be wasteful
+
     @action.bound
     setPeers(peers) {
-        this.peers = peers
 
-        // Computables
-        /**
-        this.numberOfBuyers = numberOfBuyers
-        this.numberOfSellers = numberOfSellers
-        this.numberOfObservers = numberOfObservers
-        this.numberOfNormalPeers = numberOfNormalPeers
-         */
-    }
+        //this.peers = peers
 
-    /**
-    @computed get stateName () {
+        // Counters
+        let buyers = 0
+        let sellers = 0
+        let observers = 0
+        let normals = 0
 
-        switch (this.libtorrentState) {
-            case TorrentState.downloading:
-                return 'Downloading'
-            case TorrentState.downloading_metadata:
-                return 'DownloadIncomplete Metadata'
-            case TorrentState.finished:
-                return 'Finished'
-            case TorrentState.seeding:
-                return 'Seeding'
-            case TorrentState.allocating:
-                return 'Allocating'
-            case TorrentState.checking_resume_data:
-                return 'Checking Resume Data'
-            default:
-                return ''
+        // Iterate peers and determine type
+        for(var i in this.peers) {
+
+            // Get status
+            var s = statuses[i]
+            var endPoint = s.endPoint
+
+            if(s.peerBitSwaprBEPSupportStatus != BEPSupportStatus.supported) {
+                normals++
+            } else if(s.connection) {
+
+                var announced = s.connnection.announcedModeAndTermsFromPeer
+
+                if(announced.buyer)
+                    buyers++
+                else if(announced.seller)
+                    sellers++
+                else if(announced.observer)
+                    observers++
+            }
+
         }
-    }
-    */
 
-    /// User action guards
+        // Update observables
+        this.setNumberOfBuyers(buyers)
+        this.setNumberOfSellers(sellers)
+        this.setNumberOfObservers(observers)
+        this.setNumberOfNormalPeers(normals)
+    }
+
+    @action.bound
+    setNumberOfBuyers (numberOfBuyers) {
+        this.numberOfBuyers = numberOfBuyers
+    }
+
+    @action.bound
+    setNumberOfSellers (numberOfSellers) {
+        this.numberOfSellers = numberOfSellers
+    }
+
+    @action.bound
+    setNumberOfObservers (numberOfObservers) {
+        this.numberOfObservers = numberOfObservers
+    }
+
+    @action.bound
+    setNumberOfNormalPeers (numberOfNormalPeers) {
+        this.numberOfNormalPeers = numberOfNormalPeers
+    }
+
+    /// Scene selector
 
     @computed get isLoading() {
-
+        return this.state.startsWith("Loading")
     }
 
     @computed get showOnDownloadingScene () {
-
+        return this.state.startsWith("Active.DownloadingIncomplete")
     }
 
     @computed get showOnCompletedScene () {
-
+        return this.state.startsWith("Active.FinishedDownloading")
     }
 
     @computed get showOnUploadingScene () {
-
+        return this.state.startsWith("Active.FinishedDownloading.Uploading")
     }
 
-    @computed get canChangeBuyerTerms () {
+    /// User action guards
 
+    @computed get canChangeBuyerTerms () {
+        return this.state.startsWith("Active.DownloadIncomplete.Unpaid.Started")
     }
 
     @computed get canChangeSellerTerms () {
-
+        return this.state.startsWith("Active.FinishedDownloading.Uploading.Started")
     }
 
     @computed get canBeginUploading() {
-
+        return this.state.startsWith("Active.FinishedDownloading.Passive")
     }
 
     @computed get canEndUploading() {
-
+        return this.state.startsWith("Active.FinishedDownloading.Uploading.Started")
     }
 
     @computed get canStartPaidDownloading() {
-
+        return this.state.startsWith("Active.DownloadIncomplete.Unpaid.Started.CanStartPaidDownload")
     }
 
     /// User actions
 
     @action.bound
     start() {
-
+        this.startHandler()
     }
 
     @action.bound
     stop() {
-
+        this.stopHandler()
     }
 
     @action.bound
     remove(deleteData) {
-
+        this.removeHandler(deleteData)
     }
 
     @action.bound
     openFolder() {
-
+        this.openFolderHandler()
     }
 
     @action.bound
     startPaidDownload() {
-
+        this.startPaidDownloadHandler()
     }
 
     @action.bound
     beginUploading() {
-
+        this.beginUploadHandler()
     }
 
     @action.bound
     endUploading() {
-
+        this.endUploadHandler()
     }
 
 }

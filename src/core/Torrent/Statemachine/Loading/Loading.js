@@ -63,7 +63,7 @@ var Loading = new BaseMachine({
                     } else {
                         this.transition(client, 'CheckingPartialDownload')
 
-                        client.store.setMetadata(metadata)
+                        client.store.setMetadata(client.metadata)
                     }
                 }
 
