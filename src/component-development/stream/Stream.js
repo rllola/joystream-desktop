@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import render from 'render-media'
-import { Session, TorrentInfo } from 'joystream-node'
+import { Session, TorrentInfo, TorrentState } from 'joystream-node'
 import {ScenarioContainer} from '../common'
+import File from './File'
 import os from 'os'
 import path from 'path'
 
@@ -12,6 +13,13 @@ class Stream extends Component {
     // Start Joystream session
     this._session = new Session({port: 6881})
 
+  }
+
+  componentDidMount() {
+    this.addTorrent()
+  }
+
+  addTorrent () {
     // Prepared path to torrent file sintel : `$HOME/joystream/download/`
     const downloadPath = path.join(os.homedir(), 'joystream', 'download', path.sep)
     const torrentFilePath = path.join(downloadPath, 'sintel.torrent')
@@ -24,9 +32,23 @@ class Stream extends Component {
 
     this._session.addTorrent(addTorrentParams, (err, torrent) => {
       if (!err) {
-        console.log('Torrent Sintel Added')
-        console.log(torrent)
+        var startStreaming = false
 
+        torrent.on('state_changed', () => {
+          var status = torrent.status()
+          var torrentInfo = torrent.handle.torrentFile()
+
+          if (status.state === TorrentState.downloading || status.state === TorrentState.seeding ) {
+            if (!startStreaming) {
+              var file = new File(torrent, 0)
+              startStreaming = true
+              render.append(file, '#video-player-container', function (err, elem) {
+                if (err) return console.error(err.message)
+                console.log(elem) // this is the newly created element with the media in it
+              })
+            }
+          }
+        })
       } else {
         console.error(err)
       }
@@ -35,12 +57,11 @@ class Stream extends Component {
 
   render () {
     return (
-      <video width="640" height="420" controls>
-      </video>
+      <div id="video-player-container" >
+      </div>
     )
   }
 }
-
 
 const StreamScenario = () => {
 

@@ -60,7 +60,7 @@
     "electron-compile": "^6.4.1",
     "electron-config": "^1.0.0",
     "humanize-duration": "^3.10.0",
-    "joystream-node": "git+ssh://git@github.com/JoyStream/joystream-node.git#development",
+    "joystream-node": "git+ssh://git@github.com/rllola/joystream-node.git#read-piece-alert",
     "jquery": "^3.2.1",
     "level-namespace": "^0.1.0",
     "leveldown": "^1.6.0",
@@ -83,6 +83,7 @@
     "react-router-dom": "^4.0.0",
     "react-tap-event-plugin": "^2.0.1",
     "react-tooltip": "^3.3.0",
+    "readable-stream": "^2.3.3",
     "render-media": "^2.10.0",
     "tether": "^1.4.0"
   },
