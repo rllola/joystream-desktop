@@ -159,7 +159,7 @@ class Application {
       prefix: this._getWalletPath(config.appDirectory),
       db: config.spvNodeDb || 'leveldb',
       network: config.spvNodeNetwork || 'testnet',
-      port: config.spvNodePort || process.env.WALLET_PORT
+      requestMempool: true
     }
 
     // Add a logger if log level is specified
