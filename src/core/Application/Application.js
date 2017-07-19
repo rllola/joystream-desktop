@@ -1,3 +1,4 @@
+const assert = require('assert')
 const path = require('path')
 const os = require('os')
 const mkdirp = require('mkdirp')
@@ -124,8 +125,11 @@ class Application {
   }
 
   async _closeSpvNode () {
-    await this._spvnode.close()
-    this._spvnode = null
+    try {
+      if (this._spvnode) await this._spvnode.close()
+    } catch (e) {
+      console.log(e)
+    }
     this._callMachine('closed')
   }
 
@@ -208,12 +212,31 @@ class Application {
   }
 
   async _initializeSpvNode (spvnode) {
-    try {
-      await this._spvnode.open()
-      this._callMachine('initialized_spv_node')
-    } catch (err) {
+    /* code marked "temp" is workaround until http listen fix is merged into bcoin release */
+    // temp
+    const error = (err) => {
+      if (err.code !== 'EADDRINUSE') return
+      if (error.handled) return
+      error.handled = true
+      this._spvnode = null // to skip call to spvnode.close() in closeSpvNode() - because asyncobject might still be locked
       this._callMachine('failed', err)
     }
+
+    // temp
+    this._spvnode.on('error', error)
+
+    try {
+      await this._spvnode.open()
+    } catch (err) {
+      if (error.handled) return // temp
+      return this._callMachine('failed', err)
+    }
+
+    // before the fix .. if there is an error listening on the port code will never even reach here
+
+    assert(!error.handled) // temp - but should always hold
+
+    this._callMachine('initialized_spv_node')
   }
 
   async _initializeWallet () {
