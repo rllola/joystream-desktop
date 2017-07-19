@@ -2,7 +2,7 @@
  * Created by bedeho on 12/06/17.
  */
 
-const BaseMachine = require('../../BaseMachine')
+const BaseMachine = require('../../../BaseMachine')
 
 var Starting = new BaseMachine({
   namespace: 'Starting',

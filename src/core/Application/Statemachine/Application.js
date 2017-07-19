@@ -1,7 +1,7 @@
 /**
  * Created by bedeho on 11/06/17.
  */
-const BaseMachine = require('../BaseMachine')
+const BaseMachine = require('../../BaseMachine')
 
 const Starting = require('./Starting/Starting')
 const Started = require('./Started/Started')

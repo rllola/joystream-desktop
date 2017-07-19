@@ -1,11 +1,11 @@
 /**
  * Created by bedeho on 12/06/17.
  */
-const BaseMachine = require('../../BaseMachine')
+const BaseMachine = require('../../../BaseMachine')
 const OnCompletedScene = require('./OnCompletedScene')
 const OnDownloadingScene = require('./OnDownloadingScene')
 const OnUploadingScene = require('./OnUploadingScene')
-const Scene = require('../Scene')
+const Scene = require('../../Scene')
 
 var Started = new BaseMachine({
     namespace: "Started",
