@@ -178,6 +178,9 @@ class Application {
 
     // Attach the walletdb plugin
     this._spvnode.use(bcoin.walletplugin)
+
+    // Disable http/rpc - to avoid any port conflict issues. Also more secure option
+    this._spvnode.http = null
   }
 
   _getWalletPath (appDirectory) {
