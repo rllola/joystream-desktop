@@ -2,6 +2,10 @@
  * Created by bedeho on 20/06/17.
  */
 
+var TorrentInfo = require('joystream-node').TorrentInfo
+
+var utils = module.exports = {}
+
 // Poor way of doing peer list maintenance, but
 // this is all we have without proper/reliable peer level events.
 var refreshPeers = function(client, statuses) {
@@ -39,4 +43,10 @@ var refreshPeers = function(client, statuses) {
     }
 }
 
-module.exports.refreshPeers = refreshPeers
+utils.refreshPeers = refreshPeers
+
+utils.getTorrentInfoFromFile = function getTorrentInfoFromFile (path) {
+  if (typeof input !== 'string') throw new Error('input must be a string')
+
+  return new TorrentInfo(path)
+}
