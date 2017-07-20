@@ -22,12 +22,13 @@ class Stream extends Component {
   addTorrent () {
     // Prepared path to torrent file sintel : `$HOME/joystream/download/`
     const downloadPath = path.join(os.homedir(), 'joystream', 'download', path.sep)
+    console.log(downloadPath)
     const torrentFilePath = path.join(downloadPath, 'sintel.torrent')
 
     // Prepare addTorrentParams with TorrentInfo object so it can be added to session
     let addTorrentParams = {
       ti: new TorrentInfo(torrentFilePath),
-      path: downloadPath
+      savePath: downloadPath
     }
 
     this._session.addTorrent(addTorrentParams, (err, torrent) => {
@@ -40,11 +41,11 @@ class Stream extends Component {
 
           if (status.state === TorrentState.downloading || status.state === TorrentState.seeding ) {
             if (!startStreaming) {
+              console.log(torrent.handle.savePath())
               var file = new File(torrent, 0)
               startStreaming = true
               render.append(file, '#video-player-container', function (err, elem) {
                 if (err) return console.error(err.message)
-                console.log(elem) // this is the newly created element with the media in it
               })
             }
           }

@@ -2,6 +2,8 @@ import FileStream from './FileStream'
 import eos from 'end-of-stream'
 import { EventEmitter } from 'events'
 
+var counter = 0
+
 class File extends EventEmitter {
     constructor (torrent, fileIndex) {
       super()
@@ -18,6 +20,10 @@ class File extends EventEmitter {
       this.size = fileStorage.fileSize(fileIndex)
       this.offset = fileStorage.fileOffset(fileIndex)
 
+      console.log(this.path)
+      console.log(this.name)
+      console.log(torrentInfo)
+
       this.done = false
 
       var start = this.offset
@@ -26,10 +32,10 @@ class File extends EventEmitter {
       this._startPiece = start / this.pieceLength | 0
       this._endPiece = end / this.pieceLength | 0
 
-      /*if (this.size === 0) {
+      if (this.size === 0) {
         this.done = true
         this.emit('done')
-      }*/
+      }
     }
 
     createReadStream (opts) {
@@ -38,7 +44,11 @@ class File extends EventEmitter {
       console.log(opts)
 
       var fileStream = new FileStream(self, opts)
+      counter += 1
+      console.log('New fileStream ! Counter : ', counter)
       eos(fileStream, function () {
+        counter -= 1
+        console.log('Counter : ', counter)
         if (self._destroyed) return
         if (!self._torrent.destroyed) {
           //self._torrent.deselect(fileStream._startPiece, fileStream._endPiece, true)
