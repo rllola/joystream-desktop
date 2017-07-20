@@ -6,7 +6,6 @@ const BaseMachine = require('../../../BaseMachine')
 
  var Stopping = new BaseMachine({
     namespace: "Stopping",
-    //initialState: "uninitialized",
     initializeMachine: function (options) {
 
     },
@@ -14,56 +13,86 @@ const BaseMachine = require('../../../BaseMachine')
         uninitialized: {
 
         },
-        terminating_torrents: {
+        TerminatingTorrents: {
           _onEnter: function (client) {
-            client.terminateTorrents()
+            //TODO: async ... client.torrents.forEach terminate... wait for completion
+            this.handle(client, 'terminated')
           },
           terminated: function (client) {
-            this.transition(client, 'disconnecting_from_bitcoin_p2p_network')
+            this.transition(client, 'DisconnectingFromBitcoinNetwork')
           }
         },
 
-        disconnecting_from_bitcoin_p2p_network: {
-          _onEnter: function (client) {
-            client.disconnectFromBitcoinNetwork()
+        DisconnectingFromBitcoinNetwork: {
+          _onEnter: async function (client) {
+            client.services.spvnode.stopSync()
+            await client.services.spvnode.disconnect()
+            this.handle(client, 'disconnectedFromBitcoinNetwork')
           },
-          disconnected: function (client) {
-            this.transition(client, 'closing_wallet')
+          disconnectedFromBitcoinNetwork: function (client) {
+            this.transition(client, 'ClosingWallet')
           }
         },
 
-        closing_wallet: {
+        ClosingWallet: {
           _onEnter: function (client) {
-            client.closeWallet()
+            client.services.wallet = null
+            this.handle(client, 'closedWallet')
           },
-          closed: function (client) {
-            this.transition(client, 'stopping_spv_node')
+          closedWallet: function (client) {
+            this.transition(client, 'StoppingSpvNode')
           }
         },
 
-        stopping_spv_node: {
-          _onEnter: function (client) {
-            client.closeSpvNode()
+        StoppingSpvNode: {
+          _onEnter: async function (client) {
+            try {
+              if (client.services.spvnode) await client.services.close()
+            } catch (e) {}
+
+            this.handle(client, 'stoppedSpvNode')
           },
-          closed: function (client) {
-            this.transition(client, 'closing_application_database')
+          stoppedSpvNode: function (client) {
+            this.transition(client, 'ClosingApplicationDatabase')
           }
         },
 
-        closing_application_database: {
+        ClosingApplicationDatabase: {
           _onEnter: function (client) {
-            client.closeDatabase()
+            if (client.services.db) {
+              client.services.db.close((err) => {
+                client.services.db = null
+                this.handle(client, 'closedDatabase')
+              })
+            } else {
+              this.handle(client, 'closedDatabase')
+            }
           },
-          closed: function (client) {
-            this.transition(client, 'clearing_resources')
+          closedDatabase: function (client) {
+            this.transition(client, 'ClearingResources')
           }
         },
 
-        clearing_resources: {
+        ClearingResources: {
           _onEnter: function (client) {
-            client.clearResources()
+            client.services.spvnode = null
+
+            if (client.services.session) {
+              if (client.services.torrentUpdateInterval) {
+                clearInterval(client.services.torrentUpdateInterval)
+                client.services.torrentUpdateInterval = null
+              }
+
+              // TODO: update joystream-node session (to clearInterval)
+              client.services.session.pauseLibtorrent((err) => {
+                client.services.sesison = null
+                this.handle(client, 'clearedResources')
+              })
+            } else {
+              this.handle(client, 'clearedResources')
+            }
           },
-          cleared: function (client) {
+          clearedResources: function (client) {
             this.go(client, '../NotStarted')
           },
           _reset: 'uninitialized'
