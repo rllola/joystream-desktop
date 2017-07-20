@@ -170,13 +170,6 @@ class ApplicationStore {
     this.torrentLoadingProgress = progress
   }
 
-  // The UI should this method passing in a TorrentInfo object (after displaying info to user)
-  //, or string (magnetlink or infohash)
-  @action.bound
-  addTorrent (info, /* settings? */) {
-    this._handlers.addTorrent(info)
-  }
-
   @action.bound
   clearTorrentBeingAdded () {
     this.newTorrentBeingAdded = null
@@ -191,6 +184,16 @@ class ApplicationStore {
   moveToScene (destinationScene) {
     this._handlers.moveToScene(destinationScene)
   }
+
+  // The UI should this method passing in a TorrentInfo object (after displaying info to user)
+  //, or string (magnetlink or infohash)
+  addTorrent (info, /* settings? */) {
+    this._handlers.addTorrent(info)
+  }
+
+  removeTorrent (infoHash) {
+    this._handlers.removeTorrent(infoHash)
+  }
 }
 
 function isTorrentInScene (torrentStore, scene) {
@@ -199,15 +202,5 @@ function isTorrentInScene (torrentStore, scene) {
   if(torrentStore.showOnCompletedScene() && (scene == Scene.Completed)) return true
   return false
 }
-
-// function clearNotificationOnTorrents (torrents) {
-//   torrents.forEach((torrent) => torrent.clearNotification())
-// }
-//
-// function getNotificationCount (torrents) {
-//   return torrents.reduce((total, torrent) => {
-//     return total + (torrent.hasNotification() ? 1 : 0)
-//   }, 0)
-// }
 
 export default ApplicationStore

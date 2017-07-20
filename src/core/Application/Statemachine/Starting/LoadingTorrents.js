@@ -58,15 +58,16 @@ var LoadingTorrents = new BaseMachine({
             continue
           }
 
+          // create torrent stores and core Torrents
+          // client.store.torrentAdded(torrent)
+          // keep an array of the core torrents on the client and a Map infoHash=>torrentStore mapping
           torrents.push(torrent)
         }
 
         this.queuedHandle(client, 'torrentsAddedToSession', torrents)
       },
       torrentsAddedToSession: function (client, torrents) {
-        // create torrent stores and core Torrents
-        // client.store.torrentAdded(torrent)
-        // keep an array of the core torrents on the client
+        client.torrents = torrents
         this.transition(client, 'WaitingForTorrentsToFinishLoading')
       },
       _reset: 'uninitialized'
