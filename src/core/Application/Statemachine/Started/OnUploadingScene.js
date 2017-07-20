@@ -1,6 +1,7 @@
 /**
  * Created by bedeho on 12/06/17.
  */
+
 const BaseMachine = require('../../../BaseMachine')
 
 var OnUploadingScene = new BaseMachine({

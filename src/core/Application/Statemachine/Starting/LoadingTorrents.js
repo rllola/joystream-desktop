@@ -24,7 +24,7 @@ var LoadingTorrents = new BaseMachine({
           return this.queuedHandle(client, 'completedLoadingTorrents', err)
         }
 
-        this.queuedHandle(client, 'gotInfoHashes', client.torrentInfoHashesInDatabase)
+        this.queuedHandle(client, 'gotInfoHashes', client.torrentInfoHashesInDatabase.length)
       },
 
       gotInfoHashes: function (client, numberOfTorrentsToLoad) {

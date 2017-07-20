@@ -15,24 +15,15 @@ var Started = new BaseMachine({
     },
     states: {
       OnCompletedScene: {
-        _child: OnCompletedScene,
-        _onEnter: function (client) {
-          client.setActiveScene(Scene.Completed)
-        }
+        _child: OnCompletedScene
       },
 
       OnDownloadingScene: {
-        _child: OnDownloadingScene,
-        _onEnter: function (client) {
-          client.setActiveScene(Scene.Downloading)
-        }
+        _child: OnDownloadingScene
       },
 
       OnUploadingScene: {
-        _child: OnUploadingScene,
-        _onEnter: function (client) {
-          client.setActiveScene(Scene.Uploading)
-        }
+        _child: OnUploadingScene
       }
     }
 })
