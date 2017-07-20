@@ -28,7 +28,9 @@ class Application extends Component {
 
     render () {
         // during loading there is no active scene yet
-        if (this.props.app.activeScene === null) return <h1>Starting . . .</h1>
+        if (this.props.app.activeScene === Scene.NotStarted) return null
+        if (this.props.app.activeScene === Scene.Loading) return <h1>Starting . . .</h1>
+        if (this.props.app.activeScene === Scene.ShuttingDown) return <h1>Exiting . . .</h1>
 
         return (
             <div className="app-container">

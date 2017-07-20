@@ -18,8 +18,8 @@ class Directories {
   create () {
     const directories = [
       this.dir,
-      walletPath(),
-      databasePath()
+      this.walletPath(),
+      this.databasePath()
     ]
 
     directories.forEach((dir) => mkdirp.sync(dir))

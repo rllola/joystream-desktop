@@ -1,9 +1,10 @@
 const bcoin = require('bcoin')
+const assert = require('assert')
 
 class SPVNode {
 
-  constructor (network, logLevel, dirs) {
-    this.walletPrefix = dirs.walletPath()
+  constructor (network, logLevel, walletPrefix) {
+    this.walletPrefix = walletPrefix
     this.network = network
     this.logLevel = logLevel
 
@@ -68,12 +69,16 @@ class SPVNode {
     callback()
   }
 
-  close (callback) {
-
+  close () {
+    return this.node.close()
   }
 
-  getWallet (name = 'primary') {
-    return this.node.plugins.walletdb.get(name)
+  disconnect () {
+    this.node.stopSync()
+    return this.node.disconnect()
+  }
+  getWallet (id = 'primary') {
+    return this.node.plugins.walletdb.get(id)
   }
 
   async connect () {

@@ -18,7 +18,7 @@ var ApplicationStateMachine = new BaseMachine({
     NotStarted: {
       start: function (client, config) {
         client.config = config
-        clinet.services = {}
+        client.services = {}
         this.go(client, 'Starting/InitializingResources')
       }
     },

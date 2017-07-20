@@ -3,11 +3,11 @@
  */
 
 const BaseMachine = require('../../../BaseMachine')
-const Directories = require('./directories')
-const SPVNode = require('./spvnode')
-const constants = require('../../constants')
+const Directories = require('../directories')
+const SPVNode = require('../spvnode')
+const constants = require('../../../../constants')
 const Session = require('joystream-node').Session
-const TorrentsStorage = require('../../../db').default
+const TorrentsStorage = require('../../../../db').default
 const LoadingTorrents = require('./LoadingTorrents')
 
 var Starting = new BaseMachine({
@@ -29,19 +29,20 @@ var Starting = new BaseMachine({
           client.services.spvnode = new SPVNode(
             client.config.network,
             client.config.logLevel,
-            directories.walletPath())
+            client.directories.walletPath())
 
           client.services.session = new Session({
             port: client.config.bitTorrentPort || process.env.LIBTORRENT_PORT
           })
 
           client.services.torrentUpdateInterval = setInterval(() => {
-            client.session.postTorrentUpdates()
+            client.services.session.postTorrentUpdates()
           }, constants.POST_TORRENT_UPDATES_INTERVAL)
 
           this.transition(client, 'initializingApplicationDatabase')
 
         } catch (err) {
+          client.reportError(err)
           this.go(client, '../Stopping/ClearingResources')
         }
       },
@@ -59,17 +60,17 @@ var Starting = new BaseMachine({
               'resume_data': 'resume_data',
               'torrent_plugin_settings': 'torrent_plugin_settings'
             })
-
-            this.queuedHandle('databaseInitializationSuccess')
-
           } catch (err) {
-            this.queuedHandle('databaseInitializationFailure', err)
+            return this.queuedHandle(client, 'databaseInitializationFailure', err)
           }
+
+          this.queuedHandle(client, 'databaseInitializationSuccess')
       },
       databaseInitializationSuccess: function (client) {
         this.transition(client, 'InitialializingSpvNode')
       },
       databaseInitializationFailure: function (client, err) {
+        client.reportError(err)
         this.go(client, '../Stopping/ClosingApplicationDatabase')
       },
       _reset: 'uninitialized'
@@ -80,9 +81,9 @@ var Starting = new BaseMachine({
         // change to use async/await after http/net fix in bcoin
         client.services.spvnode.open((err) => {
           if (err) {
-            this.queuedHandle('initialializingSpvNodeFailure', err)
+            this.queuedHandle(client, 'initialializingSpvNodeFailure', err)
           } else {
-            this.queuedHandle('initialializingSpvNodeSuccess')
+            this.queuedHandle(client, 'initialializingSpvNodeSuccess')
           }
         })
       },
@@ -104,7 +105,7 @@ var Starting = new BaseMachine({
           return this.queuedHandle(client, 'openingWalletFailure', err)
         }
 
-        // Check if wallet is not found to we get null or rejected promise?
+        // Check if wallet is not found do we get null or rejected promise?
         if (client.services.wallet) {
           this.queuedHandle(client, 'openingWalletSuccess')
         } else {
@@ -141,10 +142,10 @@ var Starting = new BaseMachine({
       _reset: 'uninitialized'
     },
 
-    LoadingTorrens: {
+    LoadingTorrents: {
       _child: LoadingTorrents,
       _reset: 'uninitialized',
-      // When all torrent state machines have entered into its final loaded state (so they are renderable)
+      // When all torrent state machines have entered into final loaded state (so they are renderable)
       completedLoadingTorrents: function (client) {
         this.go(client, '../Started')
       }

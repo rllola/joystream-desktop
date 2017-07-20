@@ -42,20 +42,21 @@ class ApplicationStore {
   }
 
   @computed get activeScene () {
+    console.log(this.state)
     if (!this.state) return Scene.NotStarted
 
     if (this.state.startsWith('Started.OnCompletedScene')) {
-      this.notifications.completed.clear()
+      this._notifications.completed.clear()
       return Scene.Completed
     }
 
     if (this.state.startsWith('Started.OnDownloadingScene')) {
-      this.notifications.downloading.clear()
+      this._notifications.downloading.clear()
       return Scene.Downloading
     }
 
     if (this.state.startsWith('Started.OnUploadingScene')) {
-      this.notifications.uploading.clear()
+      this._notifications.uploading.clear()
       return Scene.Uploading
     }
 

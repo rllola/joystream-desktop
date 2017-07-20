@@ -7,8 +7,6 @@ const Session = require('joystream-node').Session
 const TorrentsStorage = require('../../db').default
 const bcoin = require('bcoin')
 
-
-
 const Scene = require('./Scene')
 
 // Disable workers which are not available in electron
@@ -16,7 +14,7 @@ bcoin.set({ useWorkers: false })
 
 const EventEmitter = require('events').EventEmitter
 const Statemachine = require('./Statemachine')
-const ApplicationStore = require('./ApplicationStore')
+const ApplicationStore = require('./ApplicationStore').default
 
 class Application extends EventEmitter {
 
@@ -32,17 +30,22 @@ class Application extends EventEmitter {
     var client = new ApplicationStatemachineClient(this.store)
 
     Statemachine.on('transition', (data) => {
-      if(data.client !== this._client)
+      if(data.client !== client)
         return
 
       this.store.setState(Statemachine.compositeState(client))
     })
 
     // trigger initial state of machine
-    Statemachine.compositeState(this._client)
+    Statemachine.compositeState(client)
 
     this._process = function (...args) {
-      Satemachine.queuedHandle(client, ...args)
+      Statemachine.queuedHandle(client, ...args)
+    }
+
+    // expose client in dev mode to help in debugging
+    if (process.env.NODE_ENV === 'development') {
+      this._client = client
     }
   }
 
@@ -81,12 +84,6 @@ class ApplicationStatemachineClient {
 
 
   reportError (err) {
-    var error = {
-      state: this._machine.compositeState(this._client),
-      error: err
-    }
-
-    this.lastError = error
     console.log(err.message)
   }
 

@@ -25,7 +25,6 @@ const BaseMachine = require('../../../BaseMachine')
 
         DisconnectingFromBitcoinNetwork: {
           _onEnter: async function (client) {
-            client.services.spvnode.stopSync()
             await client.services.spvnode.disconnect()
             this.handle(client, 'disconnectedFromBitcoinNetwork')
           },
@@ -47,7 +46,7 @@ const BaseMachine = require('../../../BaseMachine')
         StoppingSpvNode: {
           _onEnter: async function (client) {
             try {
-              if (client.services.spvnode) await client.services.close()
+              if (client.services.spvnode) await client.services.spvnode.close()
             } catch (e) {}
 
             this.handle(client, 'stoppedSpvNode')
