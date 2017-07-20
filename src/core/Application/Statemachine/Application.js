@@ -17,20 +17,23 @@ var ApplicationStateMachine = new BaseMachine({
   states: {
     NotStarted: {
       start: function (client, config) {
-        client._state = {}
-        client.setConfig(config)
-        this.go(client, 'Starting/initializing_resources')
+        client.config = config
+        clinet.services = {}
+        this.go(client, 'Starting/InitializingResources')
       }
     },
 
     Starting: {
-      _child: Starting
+      _child: Starting,
+      //stop: allow user to cancel startup process / client.abortStarting = true
+      //in each state of the starting machine before transitioning to next step it can
+      //check this bool
     },
 
     Started: {
       _child: Started,
       stop: function (client) {
-        this.go(client, 'Stopping/terminating_torrents')
+        this.go(client, 'Stopping/TerminatingTorrents')
       }
     },
 

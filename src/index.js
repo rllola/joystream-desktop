@@ -17,16 +17,6 @@ import Application from './core/Application'
 
 const application = new Application()
 
-var config = {
-  appDirectory: path.join(os.homedir(), 'joystream'),
-  spvNodeNetwork: 'testnet',
-  //spvNodeLogLevel: 'info'
-}
-
-application.start(config)
-
-//const config = new Config()
-
 function render (app) {
   // NB: We have to re-require Application every time, or else this won't work
   const ApplicationScene = require('./scenes/Application').default
@@ -50,7 +40,16 @@ function render (app) {
 }
 
 if (module.hot) {
-  module.hot.accept(render.bind(null, application))
+  module.hot.accept(render.bind(null, application.store))
 }
 
-render(application)
+render(application.store)
+
+//const config = new Config()
+var config = {
+  appDirectory: path.join(os.homedir(), 'joystream'),
+  network: 'testnet',
+  //logLevel: 'info'
+}
+
+application.start(config)

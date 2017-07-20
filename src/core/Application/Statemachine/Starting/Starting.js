@@ -3,149 +3,151 @@
  */
 
 const BaseMachine = require('../../../BaseMachine')
+const Directories = require('./directories')
+const SPVNode = require('./spvnode')
+const constants = require('../../constants')
+const Session = require('joystream-node').Session
+const TorrentsStorage = require('../../../db').default
+const LoadingTorrents = require('./LoadingTorrents')
 
 var Starting = new BaseMachine({
   namespace: 'Starting',
-  //initialState: 'uninitialized',
   initializeMachine : function (options) {
 
   },
   states: {
     uninitialized: {
+
+    },
+    InitializingResources: {
       _onEnter: function (client) {
-        const retries = client.getConfig().retryConnectingToBitcoinNetwork
-        if (retries > 0) {
-          client._state.connectToBitcoinNetworkAttemptsRemaining = retries
+        try {
+          client.directories = new Directories(client.config.appDirectory)
+
+          client.directories.create()
+
+          client.services.spvnode = new SPVNode(
+            client.config.network,
+            client.config.logLevel,
+            directories.walletPath())
+
+          client.services.session = new Session({
+            port: client.config.bitTorrentPort || process.env.LIBTORRENT_PORT
+          })
+
+          client.services.torrentUpdateInterval = setInterval(() => {
+            client.session.postTorrentUpdates()
+          }, constants.POST_TORRENT_UPDATES_INTERVAL)
+
+          this.transition(client, 'initializingApplicationDatabase')
+
+        } catch (err) {
+          this.go(client, '../Stopping/ClearingResources')
+        }
+      },
+      _reset: 'uninitialized'
+    },
+
+    initializingApplicationDatabase: {
+      _onEnter: async function (client) {
+          const dbPath = client.directories.databasePath()
+
+          try {
+            client.services.db = await TorrentsStorage.open(dbPath, {
+              // 'table' names to use
+              'torrents': 'torrents',
+              'resume_data': 'resume_data',
+              'torrent_plugin_settings': 'torrent_plugin_settings'
+            })
+
+            this.queuedHandle('databaseInitializationSuccess')
+
+          } catch (err) {
+            this.queuedHandle('databaseInitializationFailure', err)
+          }
+      },
+      databaseInitializationSuccess: function (client) {
+        this.transition(client, 'InitialializingSpvNode')
+      },
+      databaseInitializationFailure: function (client, err) {
+        this.go(client, '../Stopping/ClosingApplicationDatabase')
+      },
+      _reset: 'uninitialized'
+    },
+
+    InitialializingSpvNode: {
+      _onEnter: function (client) {
+        // change to use async/await after http/net fix in bcoin
+        client.services.spvnode.open((err) => {
+          if (err) {
+            this.queuedHandle('initialializingSpvNodeFailure', err)
+          } else {
+            this.queuedHandle('initialializingSpvNodeSuccess')
+          }
+        })
+      },
+      initialializingSpvNodeSuccess: function (client) {
+        this.transition(client, 'OpeningWallet')
+      },
+      initialializingSpvNodeFailure: function (client, err) {
+        client.reportError(err)
+        this.go(client, '../Stopping/StoppingSpvNode')
+      },
+      _reset: 'uninitialized'
+    },
+
+    OpeningWallet: {
+      _onEnter: async function (client) {
+        try {
+          client.services.wallet = await client.services.spvnode.getWallet()
+        } catch (err) {
+          return this.queuedHandle(client, 'openingWalletFailure', err)
+        }
+
+        // Check if wallet is not found to we get null or rejected promise?
+        if (client.services.wallet) {
+          this.queuedHandle(client, 'openingWalletSuccess')
         } else {
-          client._state.connectToBitcoinNetworkAttemptsRemaining = 1
+          this.queuedHandle(client, 'openingWalletFailure', new Error('primary wallet'))
         }
-      }
-    },
-    initializing_resources: {
-      _onEnter: function (client) {
-        client.initializeResources()
       },
-      initialized_resources: function (client) {
-        this.transition(client, 'initializing_application_database')
+      openingWalletSuccess: function (client) {
+        this.transition(client, 'ConnectingToBitcoinP2PNetwork')
       },
-      failed: function (client, err) {
+      openingWalletFailure: function (client, err) {
         client.reportError(err)
-        this.go(client, '../Stopping/clearing_resources')
+        this.go(client, '../Stopping/ClosingWallet')
       },
       _reset: 'uninitialized'
     },
 
-    initializing_application_database: {
-      _onEnter: function (client) {
-        client.initializeDatabase()
-      },
-      initialized_database: function (client) {
-        this.transition(client, 'initializing_spv_node')
-      },
-      failed: function (client, err) {
-        client.reportError(err)
-        this.go(client, '../Stopping/closing_application_database')
-      },
-      _reset: 'uninitialized'
-    },
-
-    initializing_spv_node: {
-      _onEnter: function (client) {
-        client.initializeSpvNode()
-      },
-      initialized_spv_node: function (client) {
-        this.transition(client, 'opening_wallet')
-      },
-      failed: function (client, err) {
-        client.reportError(err)
-        this.go(client, '../Stopping/stopping_spv_node')
-      },
-      _reset: 'uninitialized'
-    },
-
-    opening_wallet: {
-      _onEnter: function (client) {
-        client.initializeWallet()
-      },
-      initialized_wallet: function (client) {
-        this.transition(client, 'connecting_to_bitcoin_p2p_network')
-      },
-      failed: function (client, err) {
-        client.reportError(err)
-        this.go(client, '../Stopping/closing_wallet')
-      },
-      _reset: 'uninitialized'
-    },
-
-    connecting_to_bitcoin_p2p_network: {
-      _onEnter: function (client) {
-        if (client._state.connectToBitcoinNetworkAttemptsRemaining === 0) {
-          this.go(client, '../Stopping/disconnecting_from_bitcoin_p2p_network')
-          return
+    ConnectingToBitcoinP2PNetwork: {
+      _onEnter: async function (client) {
+        try {
+          await client.services.spvnode.connect()
+        } catch (err) {
+          return this.queuedHandle(client, 'connectingToBitcoinP2PNetworkFailure', err)
         }
 
-        client._state.abortConnectToBitcoinNetwork = false
-        client._state.connectToBitcoinNetworkAttemptsRemaining--
-
-        // if options allows to start offline, don't connect
-
-        client.connectToBitcoinNetwork()
+        this.queuedHandle(client, 'connectingToBitcoinP2PNetworkSuccess')
       },
-      connected: function (client) {
-        if (client._state.abortConnectToBitcoinNetwork) {
-          this.go(client, '../Stopping/disconnecting_from_bitcoin_p2p_network')
-          return
-        }
-
-        this.transition(client, 'loading_torrents')
+      connectingToBitcoinP2PNetworkSuccess: function (client) {
+        this.go(client, 'LoadingTorrents/GettingInfoHashes')
       },
-      cancel: function (client) {
-        client._state.abortConnectToBitcoinNetwork = true
-      },
-      failed: function (client, err) {
+      connectingToBitcoinP2PNetworkFailure: function (client, err) {
         client.reportError(err)
-
-        if (client._state.connectToBitcoinNetworkAttemptsRemaining === 0 || client._state.abortConnectToBitcoinNetwork) {
-          this.go(client, '../Stopping/disconnecting_from_bitcoin_p2p_network')
-          return
-        }
-
-        this.transition(client, 'waiting_to_reconnect_to_bitcoin_p2p_network')
+        this.go(client, '../Stopping/DisconnectingFromBitcoinP2PNetwork')
       },
       _reset: 'uninitialized'
     },
 
-    waiting_to_reconnect_to_bitcoin_p2p_network: {
-      _onEnter: function (client) {
-        // Automatically try after 15s
-        client._state.reconnectTimeout = setTimeout(function () {
-          this.transition(client, 'connecting_to_bitcoin_p2p_network')
-        }, 15000)
-      },
-      cancel: function (client) {
-        this.go(client, '../Stopping/disconnecting_from_bitcoin_p2p_network')
-      },
-      force_retry: function (client) {
-        this.transition(client, 'connecting_to_bitcoin_p2p_network')
-      },
-      _onExit: function (client) {
-        clearTimeout(client._state.reconnectTimeout)
-      },
-      _reset: 'uninitialized'
-    },
-
-    loading_torrents: {
-      _onEnter: function (client) {
-        client.loadTorrentsFromDatabase()
-      },
-      finished_loading: function (client) {
+    LoadingTorrens: {
+      _child: LoadingTorrents,
+      _reset: 'uninitialized',
+      // When all torrent state machines have entered into its final loaded state (so they are renderable)
+      completedLoadingTorrents: function (client) {
         this.go(client, '../Started')
-      },
-      failed: function (client, err) {
-        client.reportError(err)
-        this.handle(client, 'finished_loading')
-      },
-      _reset: 'uninitialized'
+      }
     }
   }
 })

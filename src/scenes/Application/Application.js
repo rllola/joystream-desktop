@@ -35,7 +35,7 @@ class Application extends Component {
 
                 <ApplicationHeader balance={13333337}
                                    activeScene={this.props.app.activeScene}
-                                   onSceneSelected={(s) => {this.props.app.selectingScene(s)}}/>
+                                   onSceneSelected={(s) => {this.props.app.moveToScene(s)}}/>
 
                 {this.getRenderedScene()}
 

@@ -187,7 +187,9 @@ class ApplicationStore {
   }
 
   //  Changing Scenes
-  //  Exit App
+  moveToScene (destinationScene) {
+    this._handlers.moveToScene(destinationScene)
+  }
 }
 
 function isTorrentInScene (torrentStore, scene) {
