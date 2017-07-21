@@ -188,11 +188,14 @@ class TorrentStore {
     }
 
     @computer get canStop() {
-        //return this.state.startsWith("Active.DownloadIncomplete.Unpaid.Started")
+        return this.state.startsWith("Active.DownloadIncomplete.Unpaid.Started.ReadyForStartPaidDownloadAttempt") ||
+            this.state.startsWith("Active.FinishedDownloading.Uploading.Started")
+
     }
 
     @compute get canStart() {
-      // 
+        return this.state.startsWith("Active.DownloadIncomplete.Unpaid.Stopped") ||
+            this.state.startsWith("Active.FinishedDownloading.Uploading.Stopped")
     }
 
     /// User actions
