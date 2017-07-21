@@ -28,7 +28,6 @@ const ALERT_WHEN_AVAILABLE = 1
      this._offset = (start + file.offset) - (this._startPiece * pieceLength)
 
      this._prioritizedPieces = []
-     this._pieces = []
 
      this._missing = end - start + 1
      this._reading = false
@@ -36,7 +35,10 @@ const ALERT_WHEN_AVAILABLE = 1
      this._criticalLength = Math.min((1024 * 1024 / pieceLength) | 0, 2) // Took from webtorrent
 
      this._onReadPiece = this._onReadPiece.bind(this)
+     this._onPieceFinished = this._onPieceFinished.bind(this)
+
      this._torrent.on('readPiece', this._onReadPiece)
+     this._torrent.on('pieceFinished', this._onPieceFinished)
    }
 
    _getCriticalPieces (index, criticalLength) {
@@ -44,32 +46,29 @@ const ALERT_WHEN_AVAILABLE = 1
        var nextCriticalPiece = index + i
        if (!this._torrent.handle.havePiece(nextCriticalPiece)) {
          this._torrent.handle.piecePriority(nextCriticalPiece, HIGH_PRIORITY)
+         this._prioritizedPieces.push(nextCriticalPiece)
        }
      }
    }
 
    _notify () {
-
     if (!this._reading || this._missing === 0) return
     if (!this._torrent.handle.havePiece(this._piece)) {
       console.log('Piece missing ! Need to download !')
-      for ( var i = 0; i < this._criticalLength; i++ ) {
-        var nextCriticalPiece = this._piece + i
-        if (!this._torrent.handle.havePiece(nextCriticalPiece)) {
-          this._torrent.handle.piecePriority(nextCriticalPiece, HIGH_PRIORITY)
-          this._prioritizedPieces.push(nextCriticalPiece)
-        }
-      }
-      //self._torrent.handle.prioritizePieces(this._prioritizedPieces)
-      //console.log(this._torrent.handle.piecePriorities())
-      //return self._torrent.handle.piecePriority(self._piece, HIGH_PRIORITY)
-      //return self._torrent.critical(self._piece, self._piece + self._criticalLength)
+      return this._getCriticalPieces(this._piece, this._criticalLength)
     }
 
     if (this._notifying) return
     this._notifying = true
 
-    self._torrent.handle.readPiece(this._piece)
+    this._torrent.handle.readPiece(this._piece)
+   }
+
+   _onPieceFinished (pieceIndex) {
+     console.log('New piece downloaded :', pieceIndex)
+     if (pieceIndex === this._piece) {
+       this._torrent.handle.readPiece(pieceIndex)
+     }
    }
 
    _onReadPiece (piece, err) {
@@ -115,6 +114,7 @@ const ALERT_WHEN_AVAILABLE = 1
     if (this.destroyed) return
     this.destroyed = true
     this._torrent.removeListener('readPiece', this._onReadPiece)
+    this._torrent.removeListener('pieceFinished', this._onPieceFinished)
 
     if (!this._torrent.destroyed) {
       //this._torrent.deselect(this._startPiece, this._endPiece, true)
