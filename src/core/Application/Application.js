@@ -36,10 +36,9 @@ class Application extends EventEmitter {
         return
 
       this.store.setState(Statemachine.compositeState(client))
-    })
 
-    // trigger initial state of machine
-    Statemachine.compositeState(client)
+      this.emit('transition', data)
+    })
 
     this._process = function (...args) {
       Statemachine.queuedHandle(client, ...args)
@@ -49,6 +48,13 @@ class Application extends EventEmitter {
     if (process.env.NODE_ENV === 'development') {
       this._client = client
     }
+
+    this.currentState = function () {
+      return Statemachine.compositeState(client)
+    }
+
+    // trigger initial state of machine
+    this.currentState()
   }
 
   addTorrent (info) {
@@ -100,6 +106,8 @@ class ApplicationStatemachineClient {
       db: function (...args) {
         return TorrentsStorage.open.bind(null, ...args)
       }
+
+      //torrent, torrentStore
     }
   }
 
