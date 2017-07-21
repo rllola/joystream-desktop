@@ -38,14 +38,15 @@ describe('Torrent state machine', function () {
         }
 
         let torrent = new MockTorrent(fixture)
+        let torrentInfo = new MockTorrentInfo(fixture)
 
         it('waits for buyer terms', function () {
 
             handleSequence(Torrent,
                             client,
-                            fixtureToStartLoadingInput(fixture),
+                            fixtureToStartLoadingInput(fixture, torrentInfo),
                             ['addTorrentResult', null, torrent],
-                            'metadataReady',
+                            ['metadataReady', torrentInfo],
                             fixtureToCheckFinishedInput(fixture),
                             'setLibtorrentInteractionResult')
 
@@ -61,7 +62,7 @@ describe('Torrent state machine', function () {
                             'toBuyModeResult',
                             'startExtensionResult')
 
-            assert.equal(Torrent.compositeState(client), 'Active.DownloadIncomplete.Unpaid.Started.CannotStartPaidDownload')
+            assert.equal(Torrent.compositeState(client), 'Active.DownloadIncomplete.Unpaid.Started.ReadyForStartPaidDownloadAttempt')
             
         })
 
@@ -86,13 +87,14 @@ describe('Torrent state machine', function () {
         }
 
         let torrent = new MockTorrent(fixture)
+        let torrentInfo = new MockTorrentInfo(fixture)
 
         it('terminates', function () {
 
             handleSequence(Torrent, client,
-                            fixtureToStartLoadingInput(fixture),
+                            fixtureToStartLoadingInput(fixture, torrentInfo),
                             ['addTorrentResult', null, torrent],
-                            'metadataReady',
+                            ['metadataReady', torrentInfo],
                             fixtureToCheckFinishedInput(fixture),
                             fixtureToTerminateInput(fixture))
 
@@ -120,12 +122,13 @@ describe('Torrent state machine', function () {
         }
 
         let torrent = new MockTorrent(fixture)
+        let torrentInfo = new MockTorrentInfo(fixture)
 
         it('adds torrent to session', function () {
 
             handleSequence(Torrent,
                             client,
-                            fixtureToStartLoadingInput(fixture))
+                            fixtureToStartLoadingInput(fixture, torrentInfo))
 
             assert.equal(client.addTorrent.callCount, 1)
             assert.equal(client.addTorrent.getCall(0).args[0], fixture.infoHash)
@@ -133,7 +136,7 @@ describe('Torrent state machine', function () {
             assert.equal(client.addTorrent.getCall(0).args[2], fixture.savePath)
             assert.equal(client.addTorrent.getCall(0).args[3], Common.isStopped(fixture.deepInitialState)) // addAsPaused,
             assert.equal(client.addTorrent.getCall(0).args[4], false) // addAsAutomanaged
-            assert.equal(client.addTorrent.getCall(0).args[5], fixture.metadata)
+            assert.equal(client.addTorrent.getCall(0).args[5], torrentInfo)
             assert.equal(client.addTorrent.getCall(0).args[6], fixture.resumeData) // addAsAutomanaged
 
             assert.equal(Torrent.compositeState(client), 'Loading.AddingToSession')
@@ -165,7 +168,7 @@ describe('Torrent state machine', function () {
 
         })
 
-        it('start downloading', function () {
+        it('goes to unpaid started download', function () {
 
             client.startLibtorrentTorrent.reset()
             client.startExtension.reset()
@@ -174,7 +177,7 @@ describe('Torrent state machine', function () {
 
             assert.equal(client.startLibtorrentTorrent.callCount, 1)
             assert.equal(client.startExtension.callCount, 1)
-            assert.equal(Torrent.compositeState(client), 'Active.DownloadIncomplete.Unpaid.Started.CannotStartPaidDownload')
+            assert.equal(Torrent.compositeState(client), 'Active.DownloadIncomplete.Unpaid.Started.ReadyForStartPaidDownloadAttempt')
 
         })
 
@@ -191,7 +194,7 @@ describe('Torrent state machine', function () {
 
             //assert.isOk(client.addPeer.firstCall)
 
-            /// pump in peerplugins which brings back to 'CannotStartPaidDownload' again
+            /// pump in peerplugins which brings back to 'ReadyForStartPaidDownloadAttempt' again
 
             statuses = []
             statuses.push(makePeerPluginStatus('id-1' , 0))
@@ -250,13 +253,14 @@ describe('Torrent state machine', function () {
         }
 
         let torrent = new MockTorrent(fixture)
+        let torrentInfo = new MockTorrentInfo(fixture)
 
         it('gets to passive', function () {
 
             handleSequence(Torrent, client,
-                fixtureToStartLoadingInput(fixture),
+                fixtureToStartLoadingInput(fixture, torrentInfo),
                 ['addTorrentResult', null, torrent],
-                'metadataReady',
+                ['metadataReady', torrentInfo],
                 fixtureToCheckFinishedInput(fixture)
             )
 
@@ -309,13 +313,14 @@ describe('Torrent state machine', function () {
         }
 
         let torrent = new MockTorrent(fixture)
+        let torrentInfo = new MockTorrentInfo(fixture)
         
         it('gets to (stopped) uploading', function () {
 
             handleSequence(Torrent, client,
-                fixtureToStartLoadingInput(fixture),
+                fixtureToStartLoadingInput(fixture, torrentInfo),
                 ['addTorrentResult', null, torrent],
-                'metadataReady',
+                ['metadataReady', torrentInfo],
                 fixtureToCheckFinishedInput(fixture)
             )
 
@@ -450,6 +455,7 @@ TorrentClientSpy.prototype.resetSpies = function() {
 function MockStore() {
     this.setMetadata = sinon.spy()
     this.setPeers = sinon.spy()
+    this.setSuitableSellers = sinon.spy()
 }
 
 /// MockTorrent
@@ -493,8 +499,18 @@ MockTorrentStatus.prototype.is_finished = function() {
     return this._fixture.isFullyDownloaded
 }
 
+/// MockTorrentInfo
 
-function fixtureToStartLoadingInput(fix) {
+function MockTorrentInfo(fixture) {
+    this._fixture = fixture
+}
+
+MockTorrentInfo.prototype.is_valid = function() {
+    return this._fixture.metadata != null
+}
+
+
+function fixtureToStartLoadingInput(fix, torrentInfo) {
 
     return [
         'startLoading',
@@ -502,7 +518,7 @@ function fixtureToStartLoadingInput(fix) {
         fix.name,
         fix.savePath,
         fix.resumeData,
-        fix.metadata,
+        torrentInfo,
         fix.deepInitialState,
         fix.extensionSettings
     ]

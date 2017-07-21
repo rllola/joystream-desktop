@@ -59,11 +59,13 @@ var DeepInitialState = {
         UNPAID : {
             STARTED : 4,
             STOPPED : 5,
-        },
-        PAID : {
-            STARTED : 6,
-            STOPPED : 7,
         }
+        /**
+        PAID : {
+          STARTED : 6,
+          STOPPED : 7,
+        }
+        **/
     }
 }
 
@@ -79,16 +81,13 @@ function isPassive(s) {
 
 function isDownloading(s) {
     return s == DeepInitialState.DOWNLOADING.UNPAID.STARTED ||
-        s == DeepInitialState.DOWNLOADING.UNPAID.STOPPED ||
-        s == DeepInitialState.DOWNLOADING.PAID.STARTED ||
-        s == DeepInitialState.DOWNLOADING.PAID.STOPPED
+        s == DeepInitialState.DOWNLOADING.UNPAID.STOPPED
 }
 
 function isStopped(s) {
 
     return s == DeepInitialState.UPLOADING.STOPPED ||
-        s == DeepInitialState.DOWNLOADING.UNPAID.STOPPED ||
-        s == DeepInitialState.DOWNLOADING.PAID.STOPPED
+        s == DeepInitialState.DOWNLOADING.UNPAID.STOPPED
 }
 
 module.exports.processPeerPluginStatuses = processPeerPluginStatuses

@@ -4,6 +4,7 @@
 
 var BaseMachine = require('../../../../../BaseMachine')
 var Started = require('./Started')
+var Common = require('../../../Common')
 
 var Unpaid = new BaseMachine({
 
@@ -15,27 +16,16 @@ var Unpaid = new BaseMachine({
 
         Started : {
 
-            _child : Started,
-
-            stop : function(client) {
-                client.stopExtension()
-                client.stopLibTorrentTorrent()
-                this.transition(client, 'Stopped')
-            },
-            
-            changeBuyerTerms : function (client, buyerTerms) {
-
-                client.buyerTerms = buyerTerms
-                client.changeBuyerTerms(buyerTerms)
-            }
+            _child : Started
         },
 
         Stopped : {
 
             start : function (client) {
+              
                 client.startLibtorrentTorrent()
                 client.startExtension()
-                this.go(client, 'Started/CannotStartPaidDownload')
+                this.go(client, 'Started/ReadyForStartPaidDownloadAttempt')
             }
 
         }

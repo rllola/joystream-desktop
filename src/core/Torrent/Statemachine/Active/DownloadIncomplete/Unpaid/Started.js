@@ -4,6 +4,7 @@
 
 var BaseMachine = require('../../../../../BaseMachine')
 var Common = require('../../../Common')
+var ConnectionInnerState = require('joystream-node').ConnectionInnerState
 
 var Started = new BaseMachine({
 
@@ -13,24 +14,52 @@ var Started = new BaseMachine({
 
         Uninitialized: {},
 
-        CanStartPaidDownload : {
+        ReadyForStartPaidDownloadAttempt : {
+
+            _onEnter : function(client) {
+
+                // We reset suitable sellers set, since
+                // we have not been handling `processPeerPluginsStatuses`
+                // by calling filterSuitableSellers in an any other state.
+                client.store.setSuitableSellers(null)
+                client.suitableSellers = null
+
+            },
+
+            stop : function(client) {
+
+                client.stopExtension()
+                client.stopLibTorrentTorrent()
+
+                this.go(client, '../Stopped')
+            },
+
+            changeBuyerTerms : function (client, buyerTerms) {
+
+                client.buyerTerms = buyerTerms
+                client.changeBuyerTerms(buyerTerms)
+            },
 
             processPeerPluginsStatuses: function(client, statuses) {
 
                 // Update peer list
-                processPeerPluginStatuses(client, statuses)
+                Common.processPeerPluginStatuses(client, statuses)
 
                 // Figure out if there are suitable sellers in sufficient amount
-                client.suitableSellers = filterSuitableSellers(statuses, client.buyerTerms.minNumberOfSellers)
+                let suitableSellers = filterSuitableSellers(statuses, client.buyerTerms.minNumberOfSellers)
 
-                // If the minimum number of suitable sellers are not present, then we switch state, otherwise, we stay
-                if(!client.suitableSellers) {
-                    this.transition(client, 'CannotStartPaidDownload')
-                }
+                // Update store
+                client.store.setSuitableSellers(suitableSellers)
 
+                // and store on client
+                client.suitableSellers = suitableSellers
             },
 
             startPaidDownload : function (client, peerComparer) {
+
+                // Check that we can actually start
+                if(!client.suitableSellers)
+                    return
 
                 // Sort suitable sellers using `peerComparer` function
                 var sortedSellers = client.suitableSellers.sort(peerComparer)
@@ -101,7 +130,7 @@ var Started = new BaseMachine({
 
         SigningContract : {
 
-            // NB: We don't handleSequence peer plugin statuses
+            // NB: We don't handle input `processPeerPluginsStatuses`
 
             makeSignedContractResult(client, err, tx) {
 
@@ -110,13 +139,9 @@ var Started = new BaseMachine({
                     // Notify user about failure
                     client.contractSigningFailed(err)
 
-                    // Safe than sorry:
-                    // Go back to blocked state and wait for new snapshot to be sure
-                    // that we can still start paid download
-                    this.transition(client, 'CannotStartPaidDownload')
+                    this.transition(client, 'ReadyForStartPaidDownloadAttempt')
 
                 } else {
-
 
                     client.startDownloading(tx, client.downloadInfoMap)
 
@@ -139,34 +164,13 @@ var Started = new BaseMachine({
                     // Tell user about failure
                     client.paidDownloadInitiationFailed(err)
 
-                    // Safe than sorry:
-                    // Go back to blocked state and wait for new snapshot to be sure
-                    // that we can still start paid download
-                    this.transition(client, 'CannotStartPaidDownload')
+                    this.transition(client, 'ReadyForStartPaidDownloadAttempt')
 
                 } else {
                     this.go(client, '../../Paid/Started')
                 }
 
             }
-        },
-
-        CannotStartPaidDownload : {
-
-            processPeerPluginsStatuses: function(client, statuses) {
-
-                // Update peer list
-                Common.processPeerPluginStatuses(client, statuses)
-
-                // Figure out if there are suitable sellers in sufficient amount
-                client.suitableSellers = filterSuitableSellers(statuses, client.buyerTerms.minNumberOfSellers)
-
-                // If the minimum number of suitable sellers are present, then we switch state, otherwise, we stay
-                if(client.suitableSellers) {
-                    this.transition(client, 'CanStartPaidDownload')
-                }
-            }
-
         }
 
     }
@@ -183,7 +187,7 @@ function filterSuitableSellers(statuses, minimumNumber) {
 
         // Check that connection with peer is in the right state,
         // which also implies that terms are compatible
-        if(s.connection && s.connection.innerState === 1) //FIX LATER InnerStateTypeInfo.PreparingContract)
+        if(s.connection && s.connection.innerState === ConnectionInnerState.PreparingContract)
             sellers.push(s)
     }
 

@@ -22,14 +22,17 @@ var Paid = new BaseMachine({
                 // add later!!
             },
 
+            /**
             stop: function(client) {
                 client.stopExtension()
                 client.stopLibtorrentTorrent()
                 this.transition(client, 'Stopped')
             }
+            */
 
         },
 
+        /**
         Stopped : {
 
             start : function (client) {
@@ -39,6 +42,7 @@ var Paid = new BaseMachine({
             }
 
         }
+        */
     }
 })
 

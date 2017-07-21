@@ -31,8 +31,6 @@ var Loading = new BaseMachine({
 
                     torrent.on('metadata', (metadata) => {
                         Torrent.queuedHandle(client, 'metadataReady', metadata)
-
-                        client.store.setMetadata(metadata)
                     })
 
                     torrent.on('resumedata', (resumeData) => {
@@ -46,6 +44,9 @@ var Loading = new BaseMachine({
                     })
 
                     torrent.on('status_update', function(status) {
+
+                        // We directly update store, although we really should
+                        // create a fresh input for this
                         client.store.setStatus(status)
                     })
 
@@ -58,7 +59,7 @@ var Loading = new BaseMachine({
                     })
 
                     // If we don´t have metadata, wait for it
-                    if(!client.metadata) {
+                    if(!client.metadata.is_valid()) {
                         this.transition(client, 'WaitingForMetadata')
                     } else {
                         this.transition(client, 'CheckingPartialDownload')
@@ -84,6 +85,9 @@ var Loading = new BaseMachine({
 
                 // Hold on to metadata, is required when shutting down
                 client.metadata = metadata
+
+                // Update store
+                client.store.setMetadata(metadata)
 
                 this.transition(client, 'CheckingPartialDownload')
             }
@@ -194,13 +198,15 @@ function relativePathFromDeepInitialState(s) {
 
     switch (s) {
         case Common.DeepInitialState.DOWNLOADING.UNPAID.STARTED:
-            return '../Active/DownloadIncomplete/Unpaid/Started/CannotStartPaidDownload'
+            return '../Active/DownloadIncomplete/Unpaid/Started/ReadyForStartPaidDownloadAttempt'
         case Common.DeepInitialState.DOWNLOADING.UNPAID.STOPPED:
             return '../Active/DownloadIncomplete/Unpaid/Stopped'
+        /**
         case Common.DeepInitialState.DOWNLOADING.PAID.STARTED:
             return '../Active/DownloadIncomplete/Paid/Started'
         case Common.DeepInitialState.DOWNLOADING.PAID.STOPPED:
             return '../Active/DownloadIncomplete/Paid/Stopped'
+        */
         case Common.DeepInitialState.PASSIVE:
             return '../Active/FinishedDownloading/Passive'
         case Common.DeepInitialState.UPLOADING.STARTED:

@@ -2,7 +2,8 @@
  * Created by bedeho on 11/07/17.
  */
 
-var EventEmitter = require('events').EventEmitter;
+var EventEmitter = require('events').EventEmitter
+var util = require('util')
 
 var TorrentStatemachine = require('./Statemachine/Torrent')
 
@@ -20,10 +21,13 @@ function Torrent(store, session) {
 
     EventEmitter.call(this)
 
-    this._store = store
-    this._client = new TorrentStatemachineClient(session, this._store)
+    this._client = new TorrentStatemachineClient(session, store)
 
-    TorrentStatemachine.on('transition', function (data) {
+    // Set initial state of store
+    store.setState(TorrentStatemachine.compositeState(this._client))
+
+    // Hook into state transitions in the machine
+    TorrentStatemachine.on('transition', (data) => {
 
         // Check that the transition is on this torrent
         if(data.client != this._client)
@@ -33,10 +37,13 @@ function Torrent(store, session) {
         let stateString = TorrentStatemachine.compositeState(this._client)
 
         // Updat state in store
-        this._store.setState(stateString)
+        store.setState(stateString)
 
         // Relay events for others to consume
-        this.emit('transition', data)
+        this.emit('transition', {
+          transition : data,
+          state : stateString
+        })
 
         // Detect functional events?
         //  - Loaded: Lots of destination events?
@@ -200,8 +207,8 @@ TorrentStatemachineClient.prototype.updateBuyerTerms = function() {
 
 TorrentStatemachineClient.prototype.startUploading = function(connectionId, buyerTerms, contractSk, finalPkHash) {
 
-    this.torrent.startUploading(connectionId, buyerTerms, contractSk, finalPkHash, function (err, res) {
-        TorrentStatemachine.queuedHandle(this, 'startUploadingResult', err, res)
+    this.torrent.startUploading(connectionId, buyerTerms, contractSk, finalPkHash, (err, res) => {
+        TorrentStatemachine.queuedHandle(this._client, 'startUploadingResult', err, res)
     })
 }
 
@@ -213,9 +220,9 @@ TorrentStatemachineClient.prototype.makeSignedContract = function(contractOutput
 
 TorrentStatemachineClient.prototype.startDownloading = function(contract, downloadInfoMap) {
 
-    this.torrent.startDownloading(contract, downloadInfoMap, function(err, res) {
+    this.torrent.startDownloading(contract, downloadInfoMap, (err, res) => {
 
-        TorrentStatemachine.queuedHandle(this, 'startDownloadingResult', err, res)
+        TorrentStatemachine.queuedHandle(this._client, 'startDownloadingResult', err, res)
     })
 }
 
@@ -224,31 +231,5 @@ function LOG_ERROR(err) {
     if(err)
         console.log("Error found in callback:" + err)
 }
-
-/**
- function terminationState(client) {
-
-    // Get settings for extension.
-    // NB: This is a bit sloppy, as we are not handling special
-    // states where terms are being changed for example, so we
-    // are just picking whatever the old terms were effectively.
-    var extensionSettings = {}
-
-    if(isDownloading(client.deepInitialState))
-        extensionSettings.buyerTerms = client.buyerTerms
-    else if(isUploading(client.deepInitialState))
-        extensionSettings.sellerTerms = client.sellerTerms
-
-    return {
-        infoHash : client.infoHash,
-        savePath : client.savePath,
-        resumeData: client.resumeData,
-        metadata: client.metadata,
-        deepInitialState: client.deepInitialState,
-        extensionSettings: extensionSettings
-    }
-
-}
- */
 
 export default Torrent

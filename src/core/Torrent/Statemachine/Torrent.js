@@ -35,7 +35,7 @@ var Torrent = new BaseMachine({
 
                 }
 
-                // Store state information about loadingg
+                // Store state information about loading
                 client.infoHash = infoHash
                 client.name = name
                 client.savePath = savePath
@@ -159,7 +159,8 @@ function deepInitialStateFromActiveState(stateString) {
             else
                 assert(false, assertMsg)
 
-        } else if(states[2] == "Paid") {
+        } /**
+          else if(states[2] == "Paid") {
 
             if(states[3] == "Started")
                 return Common.DeepInitialState.DOWNLOADING.PAID.STARTED
@@ -168,7 +169,8 @@ function deepInitialStateFromActiveState(stateString) {
             else
                 assert(false, assertMsg)
 
-        } else
+        } */
+        else
             assert(false, assertMsg)
 
     } else if(states[1] == "FinishedDownloading") {

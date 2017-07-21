@@ -11,6 +11,7 @@ class TorrentStore {
     @observable numberOfSellers
     @observable numberOfObservers
     @observable numberOfNormalPeers
+    @observable suitableSellers
 
     constructor (infoHash,
                  state,
@@ -21,13 +22,8 @@ class TorrentStore {
                  numberOfSellers,
                  numberOfObservers,
                  numberOfNormalPeers,
-                 startHandler,
-                 stopHandler,
-                 removeHandler,
-                 openFolderHandler,
-                 startPaidDownloadHandler,
-                 beginUploadHandler,
-                 endUploadHandler) {
+                 suitableSellers,
+                 handlers) {
 
         this.infoHash = infoHash
         this.state = state
@@ -38,13 +34,8 @@ class TorrentStore {
         this.numberOfSellers = numberOfSellers
         this.numberOfObservers = numberOfObservers
         this.numberOfNormalPeers = numberOfNormalPeers
-        this.startHandler = startHandler
-        this.stopHandler = stopHandler
-        this.removeHandler = removeHandler
-        this.openFolderHandler = openFolderHandler
-        this.startPaidDownloadHandler = startPaidDownloadHandler
-        this.beginUploadHandler = beginUploadHandler
-        this.endUploadHandler = endUploadHandler
+        this.suitableSellers = suitableSellers
+        this._handlers = handlers
     }
 
     @action.bound
@@ -105,7 +96,6 @@ class TorrentStore {
 
             // Get status
             var s = statuses[i]
-            var endPoint = s.endPoint
 
             if(s.peerBitSwaprBEPSupportStatus != BEPSupportStatus.supported) {
                 normals++
@@ -150,6 +140,11 @@ class TorrentStore {
         this.numberOfNormalPeers = numberOfNormalPeers
     }
 
+    @action.bound
+    setSuitableSellers (suitableSellers) {
+        this.suitableSellers = suitableSellers
+    }
+
     /// Scene selector
 
     @computed get isLoading() {
@@ -187,44 +182,47 @@ class TorrentStore {
     }
 
     @computed get canStartPaidDownloading() {
-        return this.state.startsWith("Active.DownloadIncomplete.Unpaid.Started.CanStartPaidDownload")
+        return this.state.startsWith("Active.DownloadIncomplete.Unpaid.Started.ReadyForStartPaidDownloadAttempt") &&
+                this.suitableSellers != null
+
+    }
+
+    @computer get canStop() {
+        //return this.state.startsWith("Active.DownloadIncomplete.Unpaid.Started")
+    }
+
+    @compute get canStart() {
+      // 
     }
 
     /// User actions
 
-    @action.bound
     start() {
-        this.startHandler()
+        this._handlers.startHandler()
     }
 
-    @action.bound
     stop() {
-        this.stopHandler()
+        this._handlers.stopHandler()
     }
 
-    @action.bound
     remove(deleteData) {
-        this.removeHandler(deleteData)
+        this._handlers.removeHandler(deleteData)
     }
 
-    @action.bound
     openFolder() {
-        this.openFolderHandler()
+        this._handlers.openFolderHandler()
     }
 
-    @action.bound
     startPaidDownload() {
-        this.startPaidDownloadHandler()
+        this._handlers.startPaidDownloadHandler()
     }
 
-    @action.bound
     beginUploading() {
-        this.beginUploadHandler()
+        this._handlers.beginUploadHandler()
     }
 
-    @action.bound
     endUploading() {
-        this.endUploadHandler()
+        this._handlers.endUploadHandler()
     }
 
 }
