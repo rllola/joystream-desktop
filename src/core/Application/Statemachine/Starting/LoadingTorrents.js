@@ -55,6 +55,7 @@ var LoadingTorrents = new BaseMachine({
             if (!params) continue
             torrent = await addTorrentToSession(client.services.session, params)
           } catch (err) {
+            client.reportError(err)
             continue
           }
 

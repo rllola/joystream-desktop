@@ -10,7 +10,7 @@ import 'babel-polyfill'
 
 import ASM from '../../../src/core/Application/Statemachine'
 
-describe('application statemachine', function () {
+describe('Application Statemachine', function () {
   let client = NewMockedClient()
 
   function handle (...args) {
@@ -38,7 +38,7 @@ describe('application statemachine', function () {
 
     var transitionHandler = ASM.on('transition', function (data) {
       //console.log('transition from:', transition.fromState, 'to:', transition.toState)
-      //console.log('state:', machineState())
+      console.log('state:', machineState())
       if (data.toState === 'Started' && data.fromState === 'Starting') {
         completed(true)
       }
@@ -89,7 +89,7 @@ describe('application statemachine', function () {
 
     var transitionHandler = ASM.on('transition', function (data) {
       //console.log('transition from:', transition.fromState, 'to:', transition.toState)
-      //console.log('state:', machineState())
+      console.log('state:', machineState())
       if (data.toState === 'NotStarted' && data.fromState === 'Stopping') {
         completed(true)
       }
@@ -118,7 +118,14 @@ function NewMockedClient () {
   var services = client.services = {}
 
   var db = {
-    getInfoHashes: sinon.spy(function () { return [] }),
+    getInfoHashes: sinon.spy(function () {
+      return ['infohash-0']
+    }),
+
+    getTorrentAddParameters: sinon.spy(function (infoHash) {
+      return { infoHash }
+    }),
+
     close: sinon.spy(function (callback) {
       callback()
     })
@@ -128,6 +135,17 @@ function NewMockedClient () {
     return db
   })
 
+  var session = services.session = {}
+
+  session.addTorrent = sinon.spy(function (addParams, callback) {
+    callback(null, {
+      infoHash: addParams.infoHash
+    })
+  })
+
+  session.pauseLibtorrent = sinon.spy(function (callback) {
+    callback(null)
+  })
   var spvnode = services.spvnode = {}
 
   spvnode.open = sinon.spy(function (callback) {
@@ -150,15 +168,17 @@ function NewMockedClient () {
     return {}
   })
 
-  client.reportError = function (err) { console.log(err.message) }
+  client.reportError = function (err) {
+    console.log(err.message)
+  }
 
   var store = client.store = {}
 
-  store.setTorrentsToLoad = function () {
+  store.setTorrentsToLoad = function (num) {
 
   }
 
-  store.setTorrentLoadingProgress = function () {
+  store.setTorrentLoadingProgress = function (progress) {
 
   }
 
