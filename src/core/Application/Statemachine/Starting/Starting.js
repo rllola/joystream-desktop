@@ -3,12 +3,8 @@
  */
 
 const BaseMachine = require('../../../BaseMachine')
-const Directories = require('../directories')
-const SPVNode = require('../spvnode')
-const constants = require('../../../../constants')
-const Session = require('joystream-node').Session
-const TorrentsStorage = require('../../../../db').default
 const LoadingTorrents = require('./LoadingTorrents')
+const constants = require('../../../../constants')
 
 var Starting = new BaseMachine({
   namespace: 'Starting',
@@ -22,22 +18,32 @@ var Starting = new BaseMachine({
     InitializingResources: {
       _onEnter: function (client) {
         try {
-          client.directories = new Directories(client.config.appDirectory)
+          // Get directories service resource
+          client.directories = client.factories.directories(client.config.appDirectory)
 
+          // Ensure we have the directories we need
           client.directories.create()
 
-          client.services.spvnode = new SPVNode(
+          client.services.spvnode = client.factories.spvnode(
             client.config.network,
             client.config.logLevel,
             client.directories.walletPath())
 
-          client.services.session = new Session({
+          client.services.session = client.factories.session({
             port: client.config.bitTorrentPort || process.env.LIBTORRENT_PORT
           })
 
           client.services.torrentUpdateInterval = setInterval(() => {
             client.services.session.postTorrentUpdates()
           }, constants.POST_TORRENT_UPDATES_INTERVAL)
+
+          // Get a function to call for openning the database store
+          client.services.openDatabase = client.factories.db(client.directories.databasePath(), {
+            // 'table' names to use
+            'torrents': 'torrents',
+            'resume_data': 'resume_data',
+            'torrent_plugin_settings': 'torrent_plugin_settings'
+          })
 
           this.transition(client, 'initializingApplicationDatabase')
 
@@ -51,15 +57,8 @@ var Starting = new BaseMachine({
 
     initializingApplicationDatabase: {
       _onEnter: async function (client) {
-          const dbPath = client.directories.databasePath()
-
           try {
-            client.services.db = await TorrentsStorage.open(dbPath, {
-              // 'table' names to use
-              'torrents': 'torrents',
-              'resume_data': 'resume_data',
-              'torrent_plugin_settings': 'torrent_plugin_settings'
-            })
+            client.services.db = await client.services.openDatabase()
           } catch (err) {
             return this.queuedHandle(client, 'databaseInitializationFailure', err)
           }

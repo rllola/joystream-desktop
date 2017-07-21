@@ -190,10 +190,6 @@ class ApplicationStore {
   addTorrent (info, /* settings? */) {
     this._handlers.addTorrent(info)
   }
-
-  removeTorrent (infoHash) {
-    this._handlers.removeTorrent(infoHash)
-  }
 }
 
 function isTorrentInScene (torrentStore, scene) {

@@ -3,14 +3,16 @@ const assert = require('assert')
 const path = require('path')
 const os = require('os')
 const mkdirp = require('mkdirp')
-const Session = require('joystream-node').Session
-const TorrentsStorage = require('../../db').default
-const bcoin = require('bcoin')
-
-const Scene = require('./Scene')
 
 // Disable workers which are not available in electron
-bcoin.set({ useWorkers: false })
+require('bcoin').set({ useWorkers: false })
+
+const Directories = require('./directories')
+const SPVNode = require('./spvnode')
+const Session = require('joystream-node').Session
+const TorrentsStorage = require('../../db').default
+
+const Scene = require('./Scene')
 
 const EventEmitter = require('events').EventEmitter
 const Statemachine = require('./Statemachine')
@@ -76,16 +78,36 @@ class Application extends EventEmitter {
   }
 }
 
+// Create a maker function from a class or constructor function using 'new'
+function factory (Type) {
+  return function (...args) {
+    return new Type(...args)
+  }
+}
+
 class ApplicationStatemachineClient {
 
   constructor (applicationStore) {
     this.store = applicationStore
-  }
 
+    this.factories = {
+      spvnode: factory(SPVNode),
+
+      directories: factory(Directories),
+
+      session: factory(Session),
+
+      db: function (...args) {
+        return TorrentsStorage.open.bind(null, ...args)
+      }
+    }
+  }
 
   reportError (err) {
     console.log(err.message)
   }
+
+  // Service Factories - Used by statemachine to create the resources it requires
 
   // methods defined here should really only try to modify the sotre (avoid using state information
   // stored on the client - statemachine should pass them in as args instead)
