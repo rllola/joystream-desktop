@@ -1,20 +1,20 @@
+// Use of pure js bcoin library because electron doesn't compile with openssl
+// which is needed.
+process.env.BCOIN_NO_NATIVE = '1'
+
 import { assert } from 'chai'
 import sinon from 'sinon'
-import os from 'os'
-import path from 'path'
 
 // babel-polyfill for generator (async/await)
 import 'babel-polyfill'
 
-import ASM from '../../../src/core/Application/ApplicationStateMachine'
-import Client from '../../../src/core/Application/Client'
-import Scene from '../../../src/core/Application/Scene'
+import ASM from '../../../src/core/Application/Statemachine'
 
 describe('application statemachine', function () {
-  let client = MockedClient()
+  let client = NewMockedClient()
 
   function handle (...args) {
-    ASM.handle(client, ...args)
+    ASM.queuedHandle(client, ...args)
   }
 
   function machineState () {
@@ -25,37 +25,46 @@ describe('application statemachine', function () {
     assert.equal(machineState(), s)
   }
 
-  before(function () {
+  it('starting', function (done) {
 
-  })
+    function completed (startedSuccessfully) {
+      transitionHandler.off()
+      invalidstateHandler.off()
 
-  after(function () {
+      assert(startedSuccessfully)
 
-  })
+      done()
+    }
 
-  it('starting up', function () {
+    var transitionHandler = ASM.on('transition', function (data) {
+      //console.log('transition from:', transition.fromState, 'to:', transition.toState)
+      //console.log('state:', machineState())
+      if (data.toState === 'Started' && data.fromState === 'Starting') {
+        completed(true)
+      }
+    })
+
+    // This is not necessarily an error
+    // ASM.on('nohandler', function (data) {
+    //   if (data.client !== client) return
+    //   console.log('no handler event:', data.inputType)
+    //   completed()
+    // })
+
+    var invalidstateHandler = ASM.on('invalidstate', function (data) {
+      console.log('invalid state:', data.state)
+      completed()
+    })
+
     assertState('NotStarted')
 
-    const config = {'port': 123}
-
-    handle('start', config)
-
-    assert(client.setConfig.calledWith(config))
-
-    assertState('Starting.initializing_resources')
-
-    handle('initialized_resources')
-    handle('initialized_database')
-    handle('initialized_spv_node')
-    handle('initialized_wallet')
-    handle('connected')
-    handle('finished_loading')
-
-    assertState('Started.OnDownloadingScene.idle')
-    assert(client.setActiveScene.calledWith(Scene.Downloading))
+    // skipping resource initialization
+    ASM.go(client, 'Starting/initializingApplicationDatabase')
   })
 
   it ('changing scenes', function () {
+    assertState('Started.OnDownloadingScene.idle')
+
     handle('completed_scene_selected')
     assertState('Started.OnCompletedScene.idle')
 
@@ -66,71 +75,92 @@ describe('application statemachine', function () {
     assertState('Started.OnDownloadingScene.idle')
   })
 
-  it('shutting down', function () {
+  it('stopping', function (done) {
+    function completed (stoppedSuccefully) {
+      transitionHandler.off()
+      invalidstateHandler.off()
+
+      assert(stoppedSuccefully)
+
+      done()
+    }
+
+    assertState('Started.OnDownloadingScene.idle')
+
+    var transitionHandler = ASM.on('transition', function (data) {
+      //console.log('transition from:', transition.fromState, 'to:', transition.toState)
+      //console.log('state:', machineState())
+      if (data.toState === 'NotStarted' && data.fromState === 'Stopping') {
+        completed(true)
+      }
+    })
+
+    var invalidstateHandler = ASM.on('invalidstate', function (data) {
+      console.log('invalid state:', data.state)
+      completed()
+    })
+
     handle('stop')
-
-    assertState('Stopping.terminating_torrents')
-
-    handle('terminated')
-    handle('disconnected')
-    handle('closed') //
-    handle('closed') // better to have unique names ?
-    handle('closed') //
-    handle('cleared')
-
-    assertState('NotStarted')
-  })
-
-  it('multiple connection attempts bitcoin network', function () {
-    assertState('NotStarted')
-
-    const config = {'retryConnectingToBitcoinNetwork': 3}
-
-    handle('start', config)
-    assert.equal(client._state.connectToBitcoinNetworkAttemptsRemaining, 3)
-
-    handle('initialized_resources')
-    handle('initialized_database')
-    handle('initialized_spv_node')
-    handle('initialized_wallet')
-
-    // 1st connection attempt
-    assertState('Starting.connecting_to_bitcoin_p2p_network')
-    assert.equal(client._state.connectToBitcoinNetworkAttemptsRemaining, 2)
-    handle('failed')
-    assertState('Starting.waiting_to_reconnect_to_bitcoin_p2p_network')
-
-    // 2nd connection attempt (manually retry instead of waiting for timeout)
-    handle('force_retry')
-    assertState('Starting.connecting_to_bitcoin_p2p_network')
-
-    assert.equal(client._state.connectToBitcoinNetworkAttemptsRemaining, 1)
-    handle('failed')
-
-    // 3rd (and last) connection attempt
-    handle('force_retry')
-    handle('failed')
-    assertState('Stopping.disconnecting_from_bitcoin_p2p_network')
   })
 })
 
-function MockedClient () {
+function NewMockedClient () {
   let client = {}
-  let _config
 
-  Client.API.forEach(function (funcName) {
-    client[funcName] = sinon.spy()
+  client.factories = null
+
+  client.config = {
+    appDirectory: 'temp',
+    logLevel: 'error',
+    network: 'testnet'
+  }
+
+  var services = client.services = {}
+
+  var db = {
+    getInfoHashes: sinon.spy(function () { return [] }),
+    close: sinon.spy(function (callback) {
+      callback()
+    })
+  }
+
+  services.openDatabase = sinon.spy(function () {
+    return db
   })
 
-  // hmm perhaps the config should be stored in the state machine's internal state
-  // instead of by the core application which implements the client
-  client.setConfig = sinon.spy(function (config) {
-    _config = config
+  var spvnode = services.spvnode = {}
+
+  spvnode.open = sinon.spy(function (callback) {
+    callback()
   })
 
-  client.getConfig = sinon.spy(function () {
-    return _config
+  spvnode.close = sinon.spy(function () {
+
   })
+
+  spvnode.connect = sinon.spy(function () {
+
+  })
+
+  spvnode.disconnect = sinon.spy(function () {
+
+  })
+
+  spvnode.getWallet = sinon.spy(function () {
+    return {}
+  })
+
+  client.reportError = function (err) { console.log(err.message) }
+
+  var store = client.store = {}
+
+  store.setTorrentsToLoad = function () {
+
+  }
+
+  store.setTorrentLoadingProgress = function () {
+
+  }
 
   return client
 }
