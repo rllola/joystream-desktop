@@ -72,33 +72,33 @@ class ApplicationStore {
 
   @computed get
   isLoading () {
-    return this.activeScene() === Scene.Loading
+    return this.activeScene === Scene.Loading
   }
 
   @computed get _torrentsDownloading () {
     return this._torrents.filter(function (torrent) {
-      return torrent.showOnDownloadingScene()
+      return torrent.showOnDownloadingScene
     })
   }
 
   @computed get _torrentsCompleted () {
     return this._torrents.filter(function (torrent) {
-      return torrent.showOnCompletedScene()
+      return torrent.showOnCompletedScene
     })
   }
 
   @computed get _torrentsUploading () {
     return this._torrents.filter(function (torrent) {
-      return torrent.showOnUploadingScene()
+      return torrent.showOnUploadingScene
     })
   }
 
   // Torrents for the active scene
   @computed get torrents () {
-    switch (this.activeScene()) {
-      case Scene.Downloading: return this._torrentsDownloading()
-      case Scene.Uploading: return this._torrentsUploading()
-      case Scene.Completed: return this._torrentsCompleted()
+    switch (this.activeScene) {
+      case Scene.Downloading: return this._torrentsDownloading
+      case Scene.Uploading: return this._torrentsUploading
+      case Scene.Completed: return this._torrentsCompleted
       default: return []
     }
   }
@@ -124,24 +124,25 @@ class ApplicationStore {
     }
 
     // Only set notification if torrent not in current scene
-    var scene = this.activeScene()
+    var scene = this.activeScene
+
     if (!isTorrentInScene(torrentStore, scene)) {
       if (scene === Scene.Downloading) {
-        if (torrentStore.showOnUploadingScene()) {
+        if (torrentStore.showOnUploadingScene) {
           setNotification('uploading')
-        } else if (torrentStore.showOnCompletedScene()) {
+        } else if (torrentStore.showOnCompletedScene) {
           setNotification('completed')
         }
       } else if (scene === Scene.Uploading) {
-        if (torrentStore.showOnDownloadingScene()) {
+        if (torrentStore.showOnDownloadingScene) {
           setNotification('downloading')
-        } else if (torrentStore.showOnCompletedScene()) {
+        } else if (torrentStore.showOnCompletedScene) {
           setNotification('completed')
         }
       } else if (scene === Scene.Complated) {
-        if (torrentStore.showOnDownloadingScene()) {
+        if (torrentStore.showOnDownloadingScene) {
           setNotification('downloading')
-        } else if (torrentStore.showOnUploadingScene()) {
+        } else if (torrentStore.showOnUploadingScene) {
           setNotification('uploading')
         }
       }
@@ -177,7 +178,7 @@ class ApplicationStore {
 
   @action.bound
   setTorrentBeingAdded (torrentStore) {
-    if (this.isStarted()) this.newTorrentBeingAdded = torrentStore
+    if (this.isStarted) this.newTorrentBeingAdded = torrentStore
   }
 
   //  Changing Scenes
@@ -193,9 +194,9 @@ class ApplicationStore {
 }
 
 function isTorrentInScene (torrentStore, scene) {
-  if(torrentStore.showOnDownloadingScene() && (scene == Scene.Downloading)) return true
-  if(torrentStore.showOnUploadingScene() && (scene == Scene.Uploading)) return true
-  if(torrentStore.showOnCompletedScene() && (scene == Scene.Completed)) return true
+  if(torrentStore.showOnDownloadingScene && (scene == Scene.Downloading)) return true
+  if(torrentStore.showOnUploadingScene && (scene == Scene.Uploading)) return true
+  if(torrentStore.showOnCompletedScene && (scene == Scene.Completed)) return true
   return false
 }
 
