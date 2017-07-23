@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 
 import TorrentTable from './TorrentTable'
 
-constDownloading = (props) => {
+const Downloading = (props) => {
 
     return (
         <div className="downloading-scene-container">

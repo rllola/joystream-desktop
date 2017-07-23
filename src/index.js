@@ -5,106 +5,51 @@ process.env.BCOIN_NO_NATIVE = '1'
 // babel-polyfill for generator (async/await)
 import 'babel-polyfill'
 
-import path from 'path'
 import os from 'os'
-import mkdirp from 'mkdirp'
-import { Session } from 'joystream-node'
-import TorrentsStorage from './db'
-import bcoin from 'bcoin'
-import Config from 'electron-config'
-
-import ApplicationStore from './stores/applicationStore'
-
-const constants = require('./constants')
+import path from 'path'
+//import Config from 'electron-config'
 
 // React
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-// Disable workers which are not available in electron
-bcoin.set({ useWorkers: false })
+import Application from './core/Application'
 
-// Create default application data directory
-mkdirp.sync(path.join(os.homedir(), 'joystream'))
+const application = new Application()
 
-// Application database path
-const dbPath = process.env.DATA_PATH || path.join(os.homedir(), 'joystream', 'data', path.sep)
-
-const db = TorrentsStorage.open(dbPath, {
-  // 'table' names to use
-  'torrents': 'torrents',
-  'resume_data': 'resume_data',
-  'torrent_plugin_settings': 'torrent_plugin_settings'
-})
-
-// Path to bcoin databases (spvchain db and wallet db)
-const walletPrefix = process.env.WALLET_PATH || path.join(os.homedir(), 'joystream', 'wallet')
-
-// Create wallet directory
-mkdirp.sync(walletPrefix)
-
-// Create SPVNode
-const spvnode = new bcoin.spvnode({
-  prefix: walletPrefix,
-  db: 'leveldb',
-  network: 'testnet',
-  port: process.env.WALLET_PORT,
-  plugins: ['walletdb'],
-  loader: function (name) {
-    if (name === 'walletdb') return bcoin.walletplugin
-  }/**,
-  logger: new bcoin.logger({
-    level: 'info'
-  })*/
-})
-
-// Create joystream libtorrent session
-const session = new Session({
-  port: process.env.LIBTORRENT_PORT
-})
-
-const config = new Config()
-
-// create ApplicationStore instance
-const applicationStore = new ApplicationStore({session, spvnode, db, config})
-
-function render (stores) {
+function render (app) {
   // NB: We have to re-require Application every time, or else this won't work
-  const Application = require('./scenes/Application').default
+  const ApplicationScene = require('./scenes/Application').default
 
   if (process.env.NODE_ENV === 'development') {
-
     const AppContainer = require('react-hot-loader').AppContainer
 
     ReactDOM.render(
       <AppContainer>
-        <Application stores={stores} />
+        <ApplicationScene app={app} />
       </AppContainer>
       ,
       document.getElementById('root')
     )
   } else {
     ReactDOM.render(
-      <Application stores={stores} />,
+      <ApplicationScene app={app} />,
       document.getElementById('root')
     )
   }
 }
 
 if (module.hot) {
-  module.hot.accept(render.bind(null, applicationStore.stores))
+  module.hot.accept(render.bind(null, application.store))
 }
 
-render(applicationStore.stores)
+render(application.store)
 
-applicationStore.start()
-
-function logError (err) {
-  console.error(err.message)
+//const config = new Config()
+var config = {
+  appDirectory: path.join(os.homedir(), 'joystream'),
+  network: 'testnet',
+  //logLevel: 'info'
 }
 
-// Error logging
-db.on('error', logError)
-session.on('error', logError)
-spvnode.on('error', logError)
-applicationStore.on('error', logError)
+application.start(config)

@@ -6,7 +6,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import Header, {Button} from '../Header/Header'
-import Scene from './Scene'
+import Scene from '../../core/Application/Scene'
 
 const ApplicationHeader = (props) => {
 
@@ -18,8 +18,8 @@ const ApplicationHeader = (props) => {
                     label="Downloading"/>
 
             <Button isActive={props.activeScene == Scene.Seeding}
-                    onClick={() => { props.onSceneSelected(Scene.Seeding)}}
-                    label="Seeding"/>
+                    onClick={() => { props.onSceneSelected(Scene.Uploading)}}
+                    label="Uploading"/>
 
             <Button isActive={props.activeScene == Scene.Completed}
                     onClick={() => { props.onSceneSelected(Scene.Completed)}}
