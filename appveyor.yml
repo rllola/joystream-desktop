@@ -18,17 +18,23 @@ install:
   - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
   - npm install npm -g
   - npm install -g electron-forge
+  - npm install -g electron-prebuilt-compile@1.6.4
+  - npm install -g electron-rebuild
   - pip install conan
   - conan remote add joystream https://conan.joystream.co:9300 True
   - conan user travis -p trav444 -r=joystream
   - npm install
+  - electron-rebuild
 
 build_script:
   - mkdir C:\Users\appveyor\.electron-gyp
   - mklink /J C:\Users\appveyor\.electron-gyp\.conan C:\Users\appveyor\.conan
   - electron-forge publish
 
-test: off
+test: on
+
+test_script:
+  npm test
 
 branches:
     only:
