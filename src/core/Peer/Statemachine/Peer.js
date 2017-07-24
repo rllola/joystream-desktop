@@ -26,7 +26,7 @@ var Peer = new BaseMachine({
                     return
 
                 // Make request to start uploading
-                var buyerTerms = client.status.connection.announcedModeAndTermsFromPeer.buyer.terms
+                //var buyerTerms = client.status.connection.announcedModeAndTermsFromPeer.buyer.terms
                 var contractSk = client.generatePrivateKey()
                 var finalPkHash = client.generatePublicKeyHash()
 
@@ -34,15 +34,19 @@ var Peer = new BaseMachine({
                 client.contractSk = contractSk
                 client.finalPkHash = finalPkHash
 
-
-                client.startPaidUploading(buyerTerms, contractSk, finalPkHash)
+                // Try to start selling
+                client.torrent.startSelling(client.status.connection, contractSk, finalPkHash, function (err, res) {
+                    Peer.queuedHandle(client, 'startPaidUploadingResult', err, res)
+                })
 
                 this.transition(client, 'StartingPaidUploading')
             }
 
         },
 
-        StartingPaidUpload: {
+        StartingPaidUploading: {
+
+            // Ignoring newStatus input
 
             startPaidUploadingResult : function(client, err) {
 
@@ -51,13 +55,7 @@ var Peer = new BaseMachine({
                 else
                     this.transition(client, 'PaidUploadingStarted')
 
-            },
-
-            newStatus : function (client, status) {
-
-                client.status = status
             }
-
         },
 
         PaidUploadingStarted: {

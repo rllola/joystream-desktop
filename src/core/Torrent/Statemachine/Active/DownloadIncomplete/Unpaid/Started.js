@@ -34,10 +34,10 @@ var Started = new BaseMachine({
                 this.go(client, '../Stopped')
             },
 
-            changeBuyerTerms : function (client, buyerTerms) {
+            updateBuyerTerms : function (client, buyerTerms) {
 
                 client.buyerTerms = buyerTerms
-                client.changeBuyerTerms(buyerTerms)
+                client.updateBuyerTerms(buyerTerms)
             },
 
             processPeerPluginsStatuses: function(client, statuses) {

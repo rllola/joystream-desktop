@@ -13,10 +13,9 @@ var PeerStatemachine = require('./Statemachine')
  * @param status
  * @constructor
  */
-function Peer(pid, torrent, status) {
+function Peer(pid, torrent, status, privateKeyGenerator, pubKeyHashGenerator) {
 
-    this._client = new PeerStatemachineClient(pid, torrent)
-
+    this._client = new PeerStatemachineClient(pid, torrent, privateKeyGenerator, pubKeyHashGenerator)
     this.newStatus(status)
 }
 
@@ -24,26 +23,26 @@ Peer.prototype.newStatus = function(status) {
     PeerStatemachine.queuedHandle(this._client, 'newStatus', status)
 }
 
+Peer.prototype.compositeState = function() {
+    return PeerStatemachine.compositeState(this._client)
+}
+
 /// PeerStatemachineClient class
 
-function PeerStatemachineClient(pid, torrent) {
-    this._pid = pid
-    this._torrent = torrent
+function PeerStatemachineClient(pid, torrent, privateKeyGenerator, pubKeyHashGenerator) {
+
+    this.pid = pid
+    this.torrent = torrent
+    this._privateKeyGenerator = privateKeyGenerator
+    this._pubKeyHashGenerator = pubKeyHashGenerator
 }
 
 PeerStatemachineClient.prototype.generatePrivateKey = function() {
-    throw new Error('missing generatePrivateKey() implementation')
+    return this._privateKeyGenerator()
 }
 
 PeerStatemachineClient.prototype.generatePublicKeyHash = function() {
-    throw new Error('missing generatePublicKeyHash() implementation')
-}
-
-PeerStatemachineClient.prototype.startPaidUploading = function(buyerTerms, contractSk, finalPkHash) {
-
-    this._torrent.startUploading(this._pid, buyerTerms, contractSk, finalPkHash, function (err) {
-        PeerStatemachine.queuedHandle(this, 'startPaidUploadingResult', err)
-    })
+    return this._pubKeyHashGenerator()
 }
 
 module.exports = Peer
