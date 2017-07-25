@@ -33,12 +33,15 @@ install:
   - npm install -g electron-prebuilt-compile@1.6.4
   - npm install -g electron-rebuild
   - npm install
+  - mkdir ~/.electron-gyp
+  - ln -s $HOME/.conan $HOME/.electron-gyp/.conan
+  # rebuild native addons for electron - unit tests use electron-mocha
   - electron-rebuild
 script:
   - npm test
+
 before_deploy:
-  - mkdir ~/.electron-gyp
-  - ln -s $HOME/.conan $HOME/.electron-gyp/.conan
+
 deploy:
   provider: script
   skip_cleanup: true
