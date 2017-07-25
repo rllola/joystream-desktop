@@ -80,7 +80,7 @@ Torrent.prototype.terminate = function(generateResumeData) {
 /// TorrentStateMachineClient
 /// Holds state and external messaging implementations for a (behavoural machinajs) Torrent state machine instance
 
-function TorrentStatemachineClient(session, session) {
+function TorrentStatemachineClient(session, store) {
     this.session = session
     this.store = store
 }
