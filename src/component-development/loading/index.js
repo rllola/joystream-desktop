@@ -8,7 +8,7 @@ import FlatButton from 'material-ui/FlatButton'
 import Slider from 'material-ui/Slider'
 
 import {ScenarioContainer} from '../common'
-import LoadingScene,{LoadingState} from '../../scenes/Application/LoadingScene'
+import LoadingScene,{LoadingState} from '../../scenes/Loading/LoadingScene'
 
 
 function getState(s) {

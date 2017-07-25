@@ -11,6 +11,12 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+
+    .navigation-frame-container {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
   }
 
   // Fixes broken rendering of text,
