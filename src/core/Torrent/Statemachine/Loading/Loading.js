@@ -59,7 +59,7 @@ var Loading = new BaseMachine({
                     })
 
                     // If we don´t have metadata, wait for it
-                    if(!client.metadata.is_valid()) {
+                    if(!client.metadata.isValid()) {
                         this.transition(client, 'WaitingForMetadata')
                     } else {
                         this.transition(client, 'CheckingPartialDownload')
