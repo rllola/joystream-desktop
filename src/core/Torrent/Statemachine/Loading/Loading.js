@@ -18,12 +18,10 @@ var Loading = new BaseMachine({
 
             addTorrentResult: function (client, err, torrent) {
 
-                if(err) {
-
+                if (err) {
                     this.transition(client, 'FailedAdding')
 
                 } else {
-
                     // Hold on to torrent
                     client.torrent = torrent
 
@@ -59,12 +57,11 @@ var Loading = new BaseMachine({
                     })
 
                     // If we don´t have metadata, wait for it
-                    if(!client.metadata.isValid()) {
-                        this.transition(client, 'WaitingForMetadata')
-                    } else {
+                    if(client.metadata && client.metadata.isValid()) {
                         this.transition(client, 'CheckingPartialDownload')
-
                         client.store.setMetadata(client.metadata)
+                    } else {
+                        this.transition(client, 'WaitingForMetadata')
                     }
                 }
 

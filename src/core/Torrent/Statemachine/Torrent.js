@@ -43,20 +43,6 @@ var Torrent = new BaseMachine({
                 client.metadata = metadata
                 client.deepInitialState = deepInitialState
 
-                // Whether torrent should be added in (libtorrent) paused mode from the get go
-                var addAsPaused = Common.isStopped(deepInitialState)
-
-                // Automanagement: We never want this, as our state machine should explicitly control
-                // pause/resume behaviour torrents for now.
-                //
-                // Whether libtorrent is responsible for determining whether it should be started or queued.
-                // Queuing is a mechanism to automatically pause and resume torrents based on certain criteria.
-                // The criteria depends on the overall state the torrent is in (checking, downloading or seeding).
-                var autoManaged = false
-
-                // Tell user to add torrent to session
-                client.addTorrent(infoHash, name, savePath, addAsPaused, autoManaged, metadata, resumeData)
-
                 // Go to loading state
                 this.transition(client, 'Loading')
             }

@@ -17,11 +17,11 @@ util.inherits(Torrent, EventEmitter)
  * @param session
  * @constructor
  */
-function Torrent(store, session) {
+function Torrent(store) {
 
     EventEmitter.call(this)
 
-    this._client = new TorrentStatemachineClient(session, store)
+    this._client = new TorrentStatemachineClient(store)
 
     // Set initial state of store
     store.setState(TorrentStatemachine.compositeState(this._client))
@@ -68,6 +68,10 @@ Torrent.prototype.startLoading = function(infoHash, name, savePath, resumeData, 
     TorrentStatemachine.queuedHandle(this._client, 'startLoading', infoHash, name, savePath, resumeData, metadata, deepInitialState, extensionSettings)
 }
 
+Torrent.prototype.addTorrentResult = function(err, torrent) {
+    TorrentStatemachine.queuedHandle(this._client, 'addTorrentResult', err, torrent)
+}
+
 /**
  * Terminate torrent lifetime
  * @param generateResumeData whether generating resume data is wanted. Notice that even,
@@ -80,36 +84,8 @@ Torrent.prototype.terminate = function(generateResumeData) {
 /// TorrentStateMachineClient
 /// Holds state and external messaging implementations for a (behavoural machinajs) Torrent state machine instance
 
-function TorrentStatemachineClient(session, store) {
-    this.session = session
+function TorrentStatemachineClient(store) {
     this.store = store
-}
-
-TorrentStatemachineClient.prototype.addTorrent = function(infoHash, name, savePath, addAsPaused, autoManaged, metadata, resumeData) {
-
-    // Construct params for libtorrent
-    // NB 1: only reason we are doing this here, and not inside
-    // machine is because we dont want to break old interface just now, fix later
-    // NB 2: This needs to really be factored out
-    // NB 3: Ignoring `addAsPaused` and `autoManaged` until this is fixed https://github.com/JoyStream/libtorrent-node/issues/21
-    let addTorrentParams = {
-        infoHash : infoHash,
-        savePath : savePath,
-        resumeData : resumeData
-    }
-
-    if(name)
-        addTorrentParams.name = name
-
-    if(metadata)
-        addTorrentParams.ti = metadata
-
-    this.session.addTorrent(addTorrentParams, (err, torrent) => {
-
-        LOG_ERROR(err)
-
-        TorrentStatemachine.queuedHandle(this, 'addTorrentResult', err, torrent)
-    })
 }
 
 TorrentStatemachineClient.prototype.stopExtension = function() {

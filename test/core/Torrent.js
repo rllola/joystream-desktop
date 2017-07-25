@@ -64,7 +64,7 @@ describe('Torrent state machine', function () {
                             'startExtensionResult')
 
             assert.equal(Torrent.compositeState(client), 'Active.DownloadIncomplete.Unpaid.Started.ReadyForStartPaidDownloadAttempt')
-            
+
         })
 
     })
@@ -130,20 +130,20 @@ describe('Torrent state machine', function () {
         let torrent = new Mocks.MockTorrent(fixture)
         let torrentInfo = new Mocks.MockTorrentInfo(fixture)
 
-        it('adds torrent to session', function () {
+        it('waits to be added to session', function () {
 
             handleSequence(Torrent,
                             client,
                             fixtureToStartLoadingInput(fixture, torrentInfo))
 
-            assert.equal(client.addTorrent.callCount, 1)
-            assert.equal(client.addTorrent.getCall(0).args[0], fixture.infoHash)
-            assert.equal(client.addTorrent.getCall(0).args[1], fixture.name)
-            assert.equal(client.addTorrent.getCall(0).args[2], fixture.savePath)
-            assert.equal(client.addTorrent.getCall(0).args[3], Common.isStopped(fixture.deepInitialState)) // addAsPaused,
-            assert.equal(client.addTorrent.getCall(0).args[4], false) // addAsAutomanaged
-            assert.equal(client.addTorrent.getCall(0).args[5], torrentInfo)
-            assert.equal(client.addTorrent.getCall(0).args[6], fixture.resumeData) // addAsAutomanaged
+            // assert.equal(client.addTorrent.callCount, 1)
+            // assert.equal(client.addTorrent.getCall(0).args[0], fixture.infoHash)
+            // assert.equal(client.addTorrent.getCall(0).args[1], fixture.name)
+            // assert.equal(client.addTorrent.getCall(0).args[2], fixture.savePath)
+            // assert.equal(client.addTorrent.getCall(0).args[3], Common.isStopped(fixture.deepInitialState)) // addAsPaused,
+            // assert.equal(client.addTorrent.getCall(0).args[4], false) // addAsAutomanaged
+            // assert.equal(client.addTorrent.getCall(0).args[5], torrentInfo)
+            // assert.equal(client.addTorrent.getCall(0).args[6], fixture.resumeData) // addAsAutomanaged
 
             assert.equal(Torrent.compositeState(client), 'Loading.AddingToSession')
 
@@ -339,7 +339,7 @@ describe('Torrent state machine', function () {
 
         let torrent = new Mocks.MockTorrent(fixture)
         let torrentInfo = new Mocks.MockTorrentInfo(fixture)
-        
+
         it('gets to (stopped) uploading', function () {
 
             handleSequence(Torrent, client,
@@ -390,7 +390,7 @@ describe('Torrent state machine', function () {
 
 
         })
-        
+
         it('goes back to passive', function () {
 
             ///
@@ -408,7 +408,7 @@ describe('Torrent state machine', function () {
             ///
 
             //
-            
+
         })
 
     })
