@@ -1,10 +1,7 @@
-import {Readable} from 'stream'
+import { Readable } from 'stream'
 
 const HIGH_PRIORITY = 7
 const NORMAL_PRIORITY = 4
-const DEADLINE = 400 // 400 ms Random deadline
-const ALERT_WHEN_AVAILABLE = 1
-
 
  class FileStream extends Readable {
    constructor (file, opts) {
@@ -54,8 +51,8 @@ const ALERT_WHEN_AVAILABLE = 1
    _notify () {
     if (!this._reading || this._missing === 0) return
     if (!this._torrent.handle.havePiece(this._piece)) {
-      console.log('Piece missing ! Need to download !')
-      return this._getCriticalPieces(this._piece, this._criticalLength)
+      this._getCriticalPieces(this._piece, this._criticalLength)
+      return
     }
 
     if (this._notifying) return
@@ -65,20 +62,19 @@ const ALERT_WHEN_AVAILABLE = 1
    }
 
    _onPieceFinished (pieceIndex) {
-     console.log('New piece downloaded :', pieceIndex)
      if (pieceIndex === this._piece) {
        this._torrent.handle.readPiece(pieceIndex)
      }
    }
 
    _onReadPiece (piece, err) {
-     console.log('Piece sent :' + piece.index + ', Piece needed :' + this._piece)
      if (piece.index === this._piece) {
 
        this._notifying = false
        if (this.destroyed) return
-       if (err) return this._destroy(err)
-       console.log('read %s (length %s)', this._piece, piece.buffer.length)
+       if (err) {
+         return this._destroy(err)
+       }
 
        if (this._offset) {
          piece.buffer = piece.buffer.slice(this._offset)
@@ -90,7 +86,6 @@ const ALERT_WHEN_AVAILABLE = 1
        }
        this._missing -= piece.buffer.length
 
-       console.log('pushing buffer of length %s', piece.buffer.length)
        this._reading = false
        this._piece += 1
 
@@ -116,11 +111,14 @@ const ALERT_WHEN_AVAILABLE = 1
     this._torrent.removeListener('readPiece', this._onReadPiece)
     this._torrent.removeListener('pieceFinished', this._onPieceFinished)
 
-    if (!this._torrent.destroyed) {
-      //this._torrent.deselect(this._startPiece, this._endPiece, true)
+    for ( var i = 0; i < this._prioritizedPieces.length; i++ ) {
+      var piece = index + i
+      this._torrent.handle.piecePriority(piece, NORMAL_PRIORITY)
     }
 
-    if (err) this.emit('error', err)
+    if (err) {
+      this.emit('error', err)
+    }
     this.emit('close')
     if (onclose) onclose()
   }
