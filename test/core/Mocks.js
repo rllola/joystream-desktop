@@ -62,7 +62,7 @@ function MockTorrentInfo(fixture) {
     this._fixture = fixture
 }
 
-MockTorrentInfo.prototype.is_valid = function() {
+MockTorrentInfo.prototype.isValid = function() {
     return this._fixture.metadata != null
 }
 
@@ -118,7 +118,7 @@ var MakeAnnouncedModeAndTerms = {
                 index : index
             }
         }
-        
+
     },
     Buy : function (terms) {
 
@@ -127,7 +127,7 @@ var MakeAnnouncedModeAndTerms = {
                 terms : terms
             }
         }
-        
+
     }
 }
 
