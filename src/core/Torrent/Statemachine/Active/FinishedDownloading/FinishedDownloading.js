@@ -13,31 +13,17 @@ var FinishedDownloading = new BaseMachine({
 
         Uninitialized : {},
 
-        GoingToPassive : {
-
-            startedObserveMode : function(client) {
-
-                this.transition(client, 'Passive')
-            }
-
-        },
-
         Passive : {
             
-            startPaidUploading : function (client, sellerTerms) {
+            goToStartedUploading : function (client, sellerTerms) {
+
+                this.sellerTerms = sellerTerms
 
                 client.goToSellMode(sellerTerms)
 
-                this.transition(client, 'GoingToSellMode')
+                this.go(client, 'Uploading/Started')
             }
             
-        },
-
-        GoingToSellMode : {
-            
-            startedSellMode : function (client) {
-                this.transition(client, 'Uploading')
-            }
         },
 
         Uploading : {

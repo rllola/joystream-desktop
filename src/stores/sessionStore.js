@@ -1,5 +1,5 @@
 import { observable, action, computed, runInAction } from 'mobx'
-import Torrent from './torrentStore'
+import Torrent from '../core/Torrent/TorrentStore'
 import { TorrentState, TorrentInfo, SessionMode } from 'joystream-node'
 
 export default class Session {

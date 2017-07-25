@@ -1,96 +1,48 @@
 /**
- * Created by bedeho on 27/06/17.
+ * Created by bedeho on 13/07/17.
  */
 
-var machina = require('machina')
+var PeerStatemachine = require('./Statemachine')
 
-var ConnectionInnerState = require('joystream-node').ConnectionInnerState
-var areTermsMatching = require('joystream-node/lib/utils')
+/// Peer class
 
-var Peer = new machina.BehavioralFsm({
+/**
+ * Constructor
+ * @param pid
+ * @param torrent
+ * @param status
+ * @constructor
+ */
+function Peer(pid, torrent, status, privateKeyGenerator, pubKeyHashGenerator) {
 
-    initialState: "ReadyForStartPaidUploadAttempt",
+    this._client = new PeerStatemachineClient(pid, torrent, privateKeyGenerator, pubKeyHashGenerator)
+    this.newStatus(status)
+}
 
-    states: {
+Peer.prototype.newStatus = function(status) {
+    PeerStatemachine.queuedHandle(this._client, 'newStatus', status)
+}
 
-        //Uninitialized: {},
+Peer.prototype.compositeState = function() {
+    return PeerStatemachine.compositeState(this._client)
+}
 
-        ReadyForStartPaidUploadAttempt: {
+/// PeerStatemachineClient class
 
-            newStatus: function (client, status) {
+function PeerStatemachineClient(pid, torrent, privateKeyGenerator, pubKeyHashGenerator) {
 
-                // Tell user to update status
-                client.setStatus(status)
+    this.pid = pid
+    this.torrent = torrent
+    this._privateKeyGenerator = privateKeyGenerator
+    this._pubKeyHashGenerator = pubKeyHashGenerator
+}
 
-            },
+PeerStatemachineClient.prototype.generatePrivateKey = function() {
+    return this._privateKeyGenerator()
+}
 
-            startPaidUploading : function (client, sellerTerms) {
-
-                // Get most recent status
-                var status = client.getStatus()
-
-                // Buyer must have invited us
-                if(!status.connection ||
-                    status.connection.innerState !== ConnectionInnerState.Invited)
-                    return
-
-                // Make request to start uploading
-                var infoHash = client.infoHash()
-                var peerId = status.connection.pid
-                var contractSk = client.generatePrivateKey()
-                var finalPkHash = client.getPublicKeyHash()
-
-                client.startPaidUploading(infoHash, peerId, buyerTerms, contractSk, finalPkHash)
-
-                this.transition(client, 'StartingPaidUploading')
-            }
-
-        },
-
-        StartingPaidUpload: {
-
-            failedToStartPaidUploading : function (client) {
-                this.transition(client, 'ReadyForStartPaidUploadAttempt')
-            },
-
-            startedPaidUploading: function (client) {
-                this.transition(client, 'PaidUploadingStarted')
-            },
-
-            newStatus : function (client, status) {
-
-                // Tell user to update status
-                client.setStatus(status)
-            }
-
-        },
-
-        PaidUploadingStarted: {
-
-            newStatus : function (client, status) {
-
-                // Tell user to update status
-                client.setStatus(status)
-
-                // If there is a new state for the same peer which
-                // indicates we moved out of active selling _after_
-                // paid uploading was started, then we know the connection
-                // was reset some how, e.g. by terms being reset, or a reconnection.
-
-                if(!status.connection || (
-                    status.connection.innerState !== ConnectionInnerState.WaitingToStart
-                        &&
-                    status.connection.innerState !== ConnectionInnerState.ReadyForPieceRequest
-                        &&
-                    status.connection.innerState !== ConnectionInnerState.LoadingPiece
-                        &&
-                    status.connection.innerState !== ConnectionInnerState.WaitingForPayment))
-                    this.transition(client, 'ReadyForStartPaidUploadAttempt')
-            }
-
-        }
-    }
-
-})
+PeerStatemachineClient.prototype.generatePublicKeyHash = function() {
+    return this._pubKeyHashGenerator()
+}
 
 module.exports = Peer

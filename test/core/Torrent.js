@@ -4,8 +4,12 @@
 
 var assert = require('chai').assert
 var sinon = require('sinon')
+var EventEmitter = require('events').EventEmitter
+var util = require('util')
+var Mocks = require('./Mocks')
+
 var ConnectionInnerState = require('joystream-node').ConnectionInnerState
-var DeepInitialState = require('../../src/core/Torrent/Statemachine/DeepInitialState').DeepInitialState
+var Common = require('../../src/core/Torrent/Statemachine/Common')
 var Torrent = require('../../src/core/Torrent/Statemachine/Torrent')
 
 /**
@@ -17,33 +21,36 @@ var Torrent = require('../../src/core/Torrent/Statemachine/Torrent')
 
 describe('Torrent state machine', function () {
 
-    describe('Incomplete download with upload setings' , function () {
+    describe('recovers from incomplete download with upload settings' , function () {
 
-        let client = new TorrentSpyClient()
+        let client = new MockClient()
 
         let fixture = {
             infoHash: "my_info_hash",
+            name: "my_torrent_name",
             savePath: "save_path",
             resumeData: null,
             metadata: "my-metadata",
-            deepInitialState: DeepInitialState.UPLOADING.STOPPED,
+            deepInitialState: Common.DeepInitialState.UPLOADING.STOPPED,
             extensionSettings: {
                 sellerTerms : {}
             },
             isFullyDownloaded: false
         }
 
-        it('asks for buyer terms', function () {
+        let torrent = new Mocks.MockTorrent(fixture)
+        let torrentInfo = new Mocks.MockTorrentInfo(fixture)
+
+        it('waits for buyer terms', function () {
 
             handleSequence(Torrent,
                             client,
-                            fixtureToStartLoadingInput(fixture),
-                            'added',
-                            'metadataReady',
+                            fixtureToStartLoadingInput(fixture, torrentInfo),
+                            ['addTorrentResult', null, torrent],
+                            ['metadataReady', torrentInfo],
                             fixtureToCheckFinishedInput(fixture),
-                            'blocked')
+                            'setLibtorrentInteractionResult')
 
-            assert.isOk(client.provideBuyerTerms.calledOnce)
             assert.equal(Torrent.compositeState(client), 'Loading.WaitingForMissingBuyerTerms')
 
         })
@@ -53,25 +60,26 @@ describe('Torrent state machine', function () {
             handleSequence(Torrent,
                             client,
                             'termsReady',
-                            'wentToBuyMode',
-                            'startedExtension')
+                            'toBuyModeResult',
+                            'startExtensionResult')
 
-            assert.equal(Torrent.compositeState(client), 'Active.DownloadIncomplete.Unpaid.Started.CannotStartPaidDownload')
+            assert.equal(Torrent.compositeState(client), 'Active.DownloadIncomplete.Unpaid.Started.ReadyForStartPaidDownloadAttempt')
             
         })
 
     })
 
-    describe('Terminate while loading and generate resume data' , function () {
+    describe('terminate while loading' , function () {
 
-        let client = new TorrentSpyClient()
+        let client = new MockClient()
 
         let fixture = {
             infoHash: "my_info_hash",
+            name: "my_torrent_name",
             savePath: "save_path",
             resumeData: null,
             metadata: "my-metadata",
-            deepInitialState: DeepInitialState.UPLOADING.STOPPED,
+            deepInitialState: Common.DeepInitialState.UPLOADING.STOPPED,
             extensionSettings: {
                 sellerTerms : {}
             },
@@ -79,48 +87,17 @@ describe('Torrent state machine', function () {
             generateResumeData : true
         }
 
-        it('stops extension', function () {
+        let torrent = new Mocks.MockTorrent(fixture)
+        let torrentInfo = new Mocks.MockTorrentInfo(fixture)
 
-            handleSequence(Torrent,
-                            client,
-                            fixtureToStartLoadingInput(fixture),
-                            'added',
-                            'metadataReady',
-                            fixtureToCheckFinishedInput(fixture),
-                            fixtureToTerminateInput(fixture)
-            )
-
-            assert.isOk(client.stopExtension.calledOnce)
-            assert.equal(Torrent.compositeState(client), 'StoppingExtension')
-        })
-        
-        it('generates resume data', function () {
-
-            client.generateResumeData.reset()
-            Torrent.queuedHandle(client, 'stoppedExtension')
-
-            assert.isOk(client.generateResumeData.calledOnce)
-            assert.equal(Torrent.compositeState(client), 'GeneratingResumeData')
-
-        })
-        
         it('terminates', function () {
 
-            client.terminated.reset()
-
-            let myResumeData = 'jsafjadskljfkadlsøjf'
-
-            Torrent.queuedHandle(client, 'generatedResumeData', myResumeData)
-
-            assert.equal(client.terminated.callCount, 1)
-            assert.deepEqual(client.terminated.getCall(0).args[0], {
-                infoHash : fixture.infoHash,
-                savePath : fixture.savePath,
-                resumeData: myResumeData,
-                metadata: fixture.metadata,
-                deepInitialState: fixture.deepInitialState,
-                extensionSettings: fixture.extensionSettings
-            })
+            handleSequence(Torrent, client,
+                            fixtureToStartLoadingInput(fixture, torrentInfo),
+                            ['addTorrentResult', null, torrent],
+                            ['metadataReady', torrentInfo],
+                            fixtureToCheckFinishedInput(fixture),
+                            fixtureToTerminateInput(fixture))
 
             assert.equal(Torrent.compositeState(client), 'Terminated')
         })
@@ -129,134 +106,123 @@ describe('Torrent state machine', function () {
 
     describe('Full downloading->passive->uploading lifecycle', function() {
 
-        let client = new TorrentSpyClient()
+        let client = new MockClient()
 
         let fixture = {
             infoHash: "my_info_hash",
+            name: "my_torrent_name",
             savePath: "save_path",
             resumeData: "resume_data",
             metadata: null,
-            deepInitialState: DeepInitialState.DOWNLOADING.UNPAID.STOPPED,
+            deepInitialState: Common.DeepInitialState.DOWNLOADING.UNPAID.STOPPED,
             extensionSettings: {
                 buyerTerms : {
                     minNumberOfSellers : 1
                 }
+            },
+            updateBuyerTerms : {
+                x : 2,
+                rr: "hello"
             }
+
         }
 
-        it('starts loading', function () {
+        let torrent = new Mocks.MockTorrent(fixture)
+        let torrentInfo = new Mocks.MockTorrentInfo(fixture)
 
-            client.addTorrent.reset()
+        it('adds torrent to session', function () {
 
-            Torrent.queuedHandle(client, 'startLoading',
-                                    fixture.infoHash,
-                                    fixture.savePath,
-                                    fixture.resumeData,
-                                    fixture.metadata,
-                                    fixture.deepInitialState,
-                                    fixture.extensionSettings)
+            handleSequence(Torrent,
+                            client,
+                            fixtureToStartLoadingInput(fixture, torrentInfo))
 
-            assert.isOk(client.addTorrent.calledWith(fixture.infoHash,
-                                                        fixture.savePath,
-                                                        true, // addAsPaused,
-                                                        false, // addAsPaused
-                                                        fixture.metadata))
+            assert.equal(client.addTorrent.callCount, 1)
+            assert.equal(client.addTorrent.getCall(0).args[0], fixture.infoHash)
+            assert.equal(client.addTorrent.getCall(0).args[1], fixture.name)
+            assert.equal(client.addTorrent.getCall(0).args[2], fixture.savePath)
+            assert.equal(client.addTorrent.getCall(0).args[3], Common.isStopped(fixture.deepInitialState)) // addAsPaused,
+            assert.equal(client.addTorrent.getCall(0).args[4], false) // addAsAutomanaged
+            assert.equal(client.addTorrent.getCall(0).args[5], torrentInfo)
+            assert.equal(client.addTorrent.getCall(0).args[6], fixture.resumeData) // addAsAutomanaged
 
             assert.equal(Torrent.compositeState(client), 'Loading.AddingToSession')
 
         })
 
-        it('adding to session',  function() {
+        it('waits for metadata',  function() {
 
-            Torrent.queuedHandle(client, 'added')
+            Torrent.queuedHandle(client, 'addTorrentResult', null, torrent)
 
             assert.equal(Torrent.compositeState(client),'Loading.WaitingForMetadata')
         })
 
-        it('metadata ready', function() {
+        it('checks partial download', function() {
 
             Torrent.queuedHandle(client, 'metadataReady')
 
             assert.equal(Torrent.compositeState(client), 'Loading.CheckingPartialDownload')
         })
 
-        it('checking finished', function() {
-
-            client.setLibtorrentInteractionToBlockedUploading.reset()
+        it('goes to correct inital state: unpaid stopped downloading', function() {
 
             Torrent.queuedHandle(client, 'checkFinished', false) // isFullyDownloaded == false
 
-            assert.isOk(client.setLibtorrentInteractionToBlockedUploading.calledOnce)
-            assert.equal(Torrent.compositeState(client), 'Loading.BlockingLibtorrentUploading')
-        })
-
-        it('libtorrent uploading blocked', function () {
-
-            client.goToBuyMode.reset()
-
-            Torrent.queuedHandle(client, 'blocked')
-
+            assert.equal(client.setLibtorrentInteraction.callCount, 1)
             assert.equal(client.goToBuyMode.callCount, 1)
             assert.deepEqual(client.goToBuyMode.getCall(0).args[0], fixture.extensionSettings.buyerTerms)
-            assert.equal(Torrent.compositeState(client), 'Loading.GoingToMode')
-
-        })
-
-        it('went to buy mode', function () {
-
-            client.loaded.reset()
-
-            Torrent.queuedHandle(client, 'wentToBuyMode')
-
-            assert.equal(client.loaded.callCount, 1)
-            assert.equal(client.loaded.getCall(0).args[0], fixture.deepInitialState)
             assert.equal(Torrent.compositeState(client), 'Active.DownloadIncomplete.Unpaid.Stopped')
 
         })
 
-        it('start', function () {
+        it('starts', function () {
 
             client.startLibtorrentTorrent.reset()
+            client.startExtension.reset()
 
             Torrent.queuedHandle(client, 'start')
 
-            assert.isOk(client.startLibtorrentTorrent.calledOnce)
-            assert.equal(Torrent.compositeState(client), 'Active.DownloadIncomplete.Unpaid.StartingLibtorrentTorrent')
+            assert.equal(client.startLibtorrentTorrent.callCount, 1)
+            assert.equal(client.startExtension.callCount, 1)
+            assert.equal(Torrent.compositeState(client), 'Active.DownloadIncomplete.Unpaid.Started.ReadyForStartPaidDownloadAttempt')
+        })
 
-            ///
+        it('update buyer terms', function () {
 
-            client.startExtension.reset()
+            Torrent.queuedHandle(client, 'updateBuyerTerms', fixture.updateBuyerTerms)
 
-            Torrent.queuedHandle(client, 'startedLibtorrentTorrent')
+            assert.equal(client.updateBuyerTerms.callCount, 1)
+            assert.deepEqual(client.updateBuyerTerms.getCall(0).args[0], fixture.updateBuyerTerms)
+            assert.equal(Torrent.compositeState(client), 'Active.DownloadIncomplete.Unpaid.Started.ReadyForStartPaidDownloadAttempt')
+        })
 
-            assert.isOk(client.startExtension.calledOnce)
-            assert.equal(Torrent.compositeState(client), 'Active.DownloadIncomplete.Unpaid.StartingExtension')
+        it('ignores premature start paid download attempts' , function () {
 
-            ///
+            var stupidComparer = function(peerA, peerB) {
+                return peerA > peerB
+            }
 
-            Torrent.queuedHandle(client, 'startedExtension')
-
-            assert.equal(Torrent.compositeState(client), 'Active.DownloadIncomplete.Unpaid.Started.CannotStartPaidDownload')
+            Torrent.queuedHandle(client, 'startPaidDownload', stupidComparer)
+            assert.equal(Torrent.compositeState(client), 'Active.DownloadIncomplete.Unpaid.Started.ReadyForStartPaidDownloadAttempt')
 
         })
 
-        it('handleSequence peer plugins for paid download', function () {
+        it('finds suitable sellers', function () {
 
             /// pump in peerpluigins which brings to 'CanStartPaidDownload'
 
             let statuses = []
-            statuses.push(makePeerPluginStatus('id-1'))
-            statuses.push(makePeerPluginStatus('id-2'))
-            statuses.push(makePeerPluginStatus('id-3'))
+            statuses.push(Mocks.MakePeerPluginStatus('id-1'))
+            statuses.push(Mocks.MakePeerPluginStatus('id-2'))
+            statuses.push(Mocks.MakePeerPluginStatus('id-3'))
 
             Torrent.queuedHandle(client, 'processPeerPluginsStatuses', statuses)
 
             //assert.isOk(client.addPeer.firstCall)
 
-            /// pump in peerplugins which brings back to 'CannotStartPaidDownload' again
+            /// pump in peerplugins which brings back to 'ReadyForStartPaidDownloadAttempt' again
 
             statuses = []
-            statuses.push(makePeerPluginStatus('id-1' , 0))
+            statuses.push(Mocks.MakePeerPluginStatus('id-1' , 0))
 
             Torrent.queuedHandle(client, 'processPeerPluginsStatuses', statuses)
 
@@ -264,7 +230,7 @@ describe('Torrent state machine', function () {
             // assert.isOk(client.)
         })
 
-        it('paid download', function () {
+        it('can start paid download', function () {
 
             ///
 
@@ -286,18 +252,11 @@ describe('Torrent state machine', function () {
 
         it('finish download' , function() {
 
-            ///
-
             client.goToObserveMode.reset()
 
             Torrent.queuedHandle(client, 'downloadFinished')
 
-            assert.isOk(client.goToObserveMode.calledOnce)
-            assert.equal(Torrent.compositeState(client), 'Active.FinishedDownloading.GoingToPassive')
-
-            ///
-
-            Torrent.queuedHandle(client, 'startedObserveMode')
+            assert.equal(client.goToObserveMode.callCount, 1)
             assert.equal(Torrent.compositeState(client), 'Active.FinishedDownloading.Passive')
         })
 
@@ -305,105 +264,109 @@ describe('Torrent state machine', function () {
 
     describe('Direct to passive flow', function() {
 
-        let client = new TorrentSpyClient()
+        let client = new MockClient()
+
+        let fixture = {
+            infoHash: "my_info_hash",
+            name: "my_torrent_name",
+            savePath: "save_path",
+            resumeData: "resume_data",
+            metadata: null,
+            deepInitialState: Common.DeepInitialState.PASSIVE,
+            extensionSettings: {},
+            isFullyDownloaded: true
+        }
+
+        let torrent = new Mocks.MockTorrent(fixture)
+        let torrentInfo = new Mocks.MockTorrentInfo(fixture)
 
         it('gets to passive', function () {
 
-            Torrent.queuedHandle(client, 'startLoading',
-                'info_hash',
-                'save-path',
-                null,
-                null,
-                DeepInitialState.PASSIVE,
-                {})
-
-            Torrent.queuedHandle(client, 'added')
-            Torrent.queuedHandle(client, 'metadataReady')
-            Torrent.queuedHandle(client, 'checkFinished', true) // isFullyDownloaded
-            Torrent.queuedHandle(client, 'blocked')
-            Torrent.queuedHandle(client, 'wentToObserveMode')
-
-            // Reset all client spies from the above events
-            client.resetSpies()
-
-            Torrent.queuedHandle(client, 'startedExtension')
+            handleSequence(Torrent, client,
+                fixtureToStartLoadingInput(fixture, torrentInfo),
+                ['addTorrentResult', null, torrent],
+                ['metadataReady', torrentInfo],
+                fixtureToCheckFinishedInput(fixture)
+            )
 
             assert.equal(Torrent.compositeState(client), 'Active.FinishedDownloading.Passive')
+        })
+
+        it('then to uploading', function() {
+
+            let sellerTerms = {
+                x : 123
+            }
+
+            Torrent.queuedHandle(client, 'goToStartedUploading', sellerTerms)
+
+            assert.equal(Torrent.compositeState(client), 'Active.FinishedDownloading.Uploading.Started')
+            assert.equal(client.goToSellMode.callCount, 1)
+            assert.deepEqual(client.goToSellMode.getCall(0).args[0], sellerTerms)
+        })
+
+        it('then back to passive', function() {
+
+            Torrent.queuedHandle(client, 'goToPassive')
+
+
+
         })
 
     })
 
     describe('Direct to uploading flow', function () {
 
-        let client = new TorrentSpyClient()
+        let client = new MockClient()
 
         let fixture = {
-            changeSellerTerms : {
+            infoHash: "my_info_hash",
+            name: "my_torrent_name",
+            savePath: "save_path",
+            resumeData: "resume_data",
+            metadata: null,
+            deepInitialState: Common.DeepInitialState.UPLOADING.STOPPED,
+            extensionSettings: {
+                sellerTerms : {}
+            },
+            updateSellerTerms : {
                 sellerTerms : {
-
+                    xxx : 1
                 }
-            }
+            },
+            isFullyDownloaded: true
         }
+
+        let torrent = new Mocks.MockTorrent(fixture)
+        let torrentInfo = new Mocks.MockTorrentInfo(fixture)
         
         it('gets to (stopped) uploading', function () {
 
-            Torrent.queuedHandle(client, 'startLoading',
-                'info_hash',
-                'save-path',
-                null,
-                null,
-                DeepInitialState.UPLOADING.STOPPED,
-                { sellerTerms : {}})
-
-            Torrent.queuedHandle(client, 'added')
-            Torrent.queuedHandle(client, 'metadataReady')
-            Torrent.queuedHandle(client, 'checkFinished', true) // isFullyDownloaded
-            Torrent.queuedHandle(client, 'blocked')
-            Torrent.queuedHandle(client, 'wentToSellMode')
-
-            // Reset all client spies from the above events
-            client.resetSpies()
-            Torrent.queuedHandle(client, 'startedExtension')
+            handleSequence(Torrent, client,
+                fixtureToStartLoadingInput(fixture, torrentInfo),
+                ['addTorrentResult', null, torrent],
+                ['metadataReady', torrentInfo],
+                fixtureToCheckFinishedInput(fixture)
+            )
 
             assert.equal(Torrent.compositeState(client), 'Active.FinishedDownloading.Uploading.Stopped')
         })
 
         it('starts', function () {
 
-            ///
-
             Torrent.queuedHandle(client, 'start')
 
-            assert.isOk(client.startLibtorrentTorrent.calledOnce)
-            assert.equal(Torrent.compositeState(client), 'Active.FinishedDownloading.Uploading.StartingLibtorrentTorrent')
-
-            ///
-
-            Torrent.queuedHandle(client, 'startedLibtorrentTorrent')
-
-            assert.isOk(client.startExtension.calledOnce)
-            assert.equal(Torrent.compositeState(client), 'Active.FinishedDownloading.Uploading.StartingExtension')
-
-            ///
-
-            Torrent.queuedHandle(client, 'startedExtension')
+            assert.equal(client.startLibtorrentTorrent.callCount, 1)
+            assert.isOk(client.startExtension.callCount, 1)
             assert.equal(Torrent.compositeState(client), 'Active.FinishedDownloading.Uploading.Started')
         })
 
         it('changes seller terms', function () {
 
-            ///
+            Torrent.queuedHandle(client, 'updateSellerTerms', fixture.updateSellerTerms.sellerTerms)
 
-            Torrent.queuedHandle(client, 'changeSellerTerms', fixture.changeSellerTerms.sellerTerms)
-
-            assert.equal(client.changeSellerTerms.callCount, 1)
-            assert.deepEqual(client.changeSellerTerms.getCall(0).args[0], fixture.changeSellerTerms.sellerTerms)
-            assert.equal(Torrent.compositeState(client), 'Active.FinishedDownloading.Uploading.ChangingSellerTerms')
-
-            ///
-
-            Torrent.queuedHandle(client, 'changedSellerTerms')
-
+            assert.equal(client.updateSellerTerms.callCount, 1)
+            assert.deepEqual(client.updateSellerTerms.getCall(0).args[0], fixture.updateSellerTerms.sellerTerms)
             assert.equal(Torrent.compositeState(client), 'Active.FinishedDownloading.Uploading.Started')
         })
 
@@ -434,9 +397,9 @@ describe('Torrent state machine', function () {
 
             Torrent.queuedHandle(client, 'goToPassive')
 
-            assert.equal(client.changeSellerTerms.callCount, 1)
-            assert.deepEqual(client.changeSellerTerms.getCall(0).args[0], fixture.changeSellerTerms.sellerTerms)
-            assert.equal(Torrent.compositeState(client), 'Active.FinishedDownloading.Uploading.GoingToObserveMode')
+            assert.equal(client.updateSellerTerms.callCount, 1)
+            assert.deepEqual(client.updateSellerTerms.getCall(0).args[0], fixture.updateSellerTerms.sellerTerms)
+            assert.equal(Torrent.compositeState(client), 'Active.FinishedDownloading.Passive')
 
             ///
 
@@ -452,118 +415,52 @@ describe('Torrent state machine', function () {
 
 })
 
-function makePeerPluginStatus(id, innerState) {
-    return {
-        peerId : id,
-        connection : {
-            innerState : innerState // || ConnectionInnerState.PreparingContract
-        }
-    }
-}
+function MockClient() {
 
-function TorrentSpyClient() {
+    this.store = new Mocks.MockTorrentStore()
 
-    this.peers = {}
     this.addTorrent = sinon.spy()
     this.stopExtension = sinon.spy()
     this.startExtension = sinon.spy()
     this.startLibtorrentTorrent = sinon.spy()
     this.generateResumeData = sinon.spy()
-    this.terminated = sinon.spy()
-    this.setLibtorrentInteractionToBlockedUploading = sinon.spy()
+    this.setLibtorrentInteraction = sinon.spy()
     this.goToObserveMode = sinon.spy()
     this.goToSellMode = sinon.spy()
     this.goToBuyMode = sinon.spy()
-    this.provideBuyerTerms = sinon.spy()
-    this.loaded = sinon.spy()
     this.startUploading = sinon.spy()
-    this.changeSellerTerms = sinon.spy()
-    //this.downloadFinished  = sinon.spy()
-    //this.getPeer: function(peerId) {},
+    this.updateSellerTerms = sinon.spy()
+    this.updateBuyerTerms = sinon.spy()
     this.updatePeerPluginStatus = sinon.spy()
-    this.addPeer = sinon.spy()
-    this.removePeer = sinon.spy()
 }
 
-TorrentSpyClient.prototype.resetSpies = function() {
+// Drop??
+MockClient.prototype.resetSpies = function() {
 
     this.addTorrent.reset()
     this.stopExtension.reset()
     this.startExtension.reset()
     this.startLibtorrentTorrent.reset()
     this.generateResumeData.reset()
-    this.terminated.reset()
-    this.setLibtorrentInteractionToBlockedUploading.reset()
+    this.setLibtorrentInteraction.reset()
     this.goToObserveMode.reset()
     this.goToSellMode.reset()
     this.goToBuyMode.reset()
-    this.provideBuyerTerms.reset()
-    this.loaded.reset()
-    //this.downloadFinished  = sinon.spy()
     this.startUploading.reset()
-    this.changeSellerTerms.reset()
-    //this.getPeer: function(peerId) {},
+    this.updateSellerTerms.reset()
+    this.updateBuyerTerms.reset()
     this.updatePeerPluginStatus.reset()
-    this.addPeer.reset()
-    this.removePeer.reset()
-
-    // these are all stubs??
 }
 
-TorrentSpyClient.prototype.peerExits = function(pid) {
-    return this.peers[pid] != undefined
-}
-
-TorrentSpyClient.prototype.allPeerIds = function () {
-
-    // iterate this.peers
-    
-}
-
-TorrentSpyClient.prototype.updatePeerPluginStatus = function (peerId, status) {
-    //
-}
-
-TorrentSpyClient.prototype.addPeer = function (peerId, status) {
-    
-}
-
-TorrentSpyClient.prototype.removePeer = function (peerId) {
-    
-}
-
-/**
-TorrentSpyClient.prototype.handleInputs = function(events, resetSpiesBeforeLast) {
-
-    if(resetSpiesBeforeLast === undefined)
-        resetSpiesBeforeLast = true
-
-    if(events.length == 0)
-        return
-
-    // Remove last event from sequence
-    let lastEvent = events.pop()
-
-    // Submit whatever remains of sequence
-    SubmitEventSequenceToBasemachine(Torrent, this, events)
-
-    // Reset all spies if told to
-    if(resetSpiesBeforeLast)
-        this.resetSpies()
-
-    SubmitEventToBasemachine(Torrent, this, lastEvent)
-
-}
- */
-
-function fixtureToStartLoadingInput(fix) {
+function fixtureToStartLoadingInput(fix, torrentInfo) {
 
     return [
         'startLoading',
         fix.infoHash,
+        fix.name,
         fix.savePath,
         fix.resumeData,
-        fix.metadata,
+        torrentInfo,
         fix.deepInitialState,
         fix.extensionSettings
     ]
