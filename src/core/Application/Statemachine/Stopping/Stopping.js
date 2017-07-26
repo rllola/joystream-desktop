@@ -76,6 +76,7 @@ const BaseMachine = require('../../../BaseMachine')
 
         ClearingResources: {
           _onEnter: function (client) {
+            client.torrents = []
             client.services.spvnode = null
 
             if (client.services.session) {
