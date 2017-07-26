@@ -182,5 +182,13 @@ function NewMockedClient () {
 
   }
 
+  store.setTorrentsToTerminate = function (num) {
+
+  }
+
+  store.setTorrentTerminatingProgress = function (progress) {
+
+  }
+
   return client
 }
