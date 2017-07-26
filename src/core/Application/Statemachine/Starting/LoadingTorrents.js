@@ -3,6 +3,9 @@ const BaseMachine = require('../../../BaseMachine')
 // Use service factories instead
 const TorrentStore = require('../../../Torrent/TorrentStore').default
 const Torrent = require('../../../Torrent/Torrent').default
+const Common = require('../../../Torrent/Statemachine/Common')
+
+const noop = () => {}
 
 var LoadingTorrents = new BaseMachine({
   namespace: 'LoadingTorrents',
@@ -20,22 +23,24 @@ var LoadingTorrents = new BaseMachine({
     GettingInfoHashes: {
 
       _onEnter: async function (client) {
-        // Get infohashes of all persisted torrents
-        client.torrentInfoHashesInDatabase = []
+        client.torrents = new Map()
+        client.infoHashesToLoad = []
 
         try {
-          client.torrentInfoHashesInDatabase = await client.services.db.getInfoHashes()
+          // Get infohashes of all persisted torrents
+          var infoHashes = await client.services.db.getInfoHashes()
         } catch (err) {
           return client.processStateMachineInput('completedLoadingTorrents', err)
         }
 
-        client.processStateMachineInput('gotInfoHashes', client.torrentInfoHashesInDatabase.length)
+        client.processStateMachineInput('gotInfoHashes', infoHashes)
       },
 
-      gotInfoHashes: function (client, numberOfTorrentsToLoad) {
-        client.store.setTorrentsToLoad(numberOfTorrentsToLoad)
+      gotInfoHashes: function (client, infoHashes) {
+        client.infoHashesToLoad = infoHashes
+        client.store.setTorrentsToLoad(infoHashes.length)
 
-        if (numberOfTorrentsToLoad > 0) {
+        if (infoHashes.length > 0) {
           this.transition(client, 'AddingTorrentsToSession')
         } else {
           client.processStateMachineInput('completedLoadingTorrents')
@@ -47,14 +52,15 @@ var LoadingTorrents = new BaseMachine({
 
     AddingTorrentsToSession: {
       _onEnter: async function (client) {
-        var torrentStores = []
+        while (client.infoHashesToLoad.length) {
+          const infoHash = client.infoHashesToLoad.shift()
 
-        while (client.torrentInfoHashesInDatabase.length) {
-          const infoHash = client.torrentInfoHashesInDatabase.shift()
+          // skip duplicate
+          if (client.torrents.has(infoHash)) continue
 
           let params
-          let deepInitialState = 3 // Passive
-          let extensionSettings = {} // no seller or buyer terms
+          const deepInitialState = 3 // Passive
+          const extensionSettings = {} // no seller or buyer terms
 
           try {
             params = await client.services.db.getTorrentAddParameters(infoHash)
@@ -68,16 +74,11 @@ var LoadingTorrents = new BaseMachine({
             continue
           }
 
-          let torrentStore
-          let coreTorrent
-
           //torrentStore = client.services.instantiateTorrentStore(params) // application should setup the handlers
-
-          const noop = () => {}
 
           // TODO: update torrent store ctor .. use default values instead of passing zeros here, and remaining
           // values are @computed from metadata
-          torrentStore = new TorrentStore(infoHash, '', 0, 0, infoHash, 0, 0, 0, 0, 0, {
+          let torrentStore = new TorrentStore(infoHash, '', 0, 0, infoHash, 0, 0, 0, 0, 0, {
             startHandler: noop,
             stopHandler: noop,
             removeHandler: noop,
@@ -87,16 +88,12 @@ var LoadingTorrents = new BaseMachine({
             endUploadHandler: noop
           })
 
-          torrentStores.push(torrentStore)
-
-          client.store.torrentAdded(torrentStore)
 
           //coreTorrent = client.services.instantiateTorrent(torrentStore)
-          coreTorrent = new Torrent(torrentStore)
+          let coreTorrent = new Torrent(torrentStore)
 
           coreTorrent.startLoading(infoHash, params.name, params.savePath, params.resumeData, params.ti, deepInitialState, extensionSettings)
 
-          /*
           // Whether torrent should be added in (libtorrent) paused mode from the get go
           var addAsPaused = Common.isStopped(deepInitialState)
 
@@ -107,12 +104,11 @@ var LoadingTorrents = new BaseMachine({
           // Queuing is a mechanism to automatically pause and resume torrents based on certain criteria.
           // The criteria depends on the overall state the torrent is in (checking, downloading or seeding).
           var autoManaged = false
-          */
 
           // set param flags - auto_managed/paused
           params.flags = {
-            paused: true,
-            auto_managed: false
+            paused: addAsPaused,
+            auto_managed: autoManaged
           }
 
           let torrent
@@ -122,34 +118,69 @@ var LoadingTorrents = new BaseMachine({
           } catch (err) {
             client.reportError(err)
             coreTorrent.addTorrentResult(err)
+            // Ignore adding failure. We currently don't have an appropriate scene to display this result
             continue
           }
+
+          client.store.torrentAdded(torrentStore)
 
           // Torrent added to session inform the torrent state machine
           coreTorrent.addTorrentResult(null, torrent)
 
-          // keep an array of the core torrents on the client and a Map infoHash=>torrentStore mapping?
-          // client.torrents.set(infoHash, torrentStore)
+          client.torrents.set(infoHash, {
+            torrent: torrent,   // "joystream-node" torrent
+            core: coreTorrent,  // Torrent
+            store: torrentStore // TorrentStore
+          })
         }
 
-        client.processStateMachineInput('torrentsAddedToSession', torrentStores)
+        client.processStateMachineInput('torrentsAddedToSession')
       },
 
-      torrentsAddedToSession: function (client, torrents) {
-        client.torrentsLoading = torrents
-
-        this.transition(client, 'WaitingForTorrentsToFinishLoading')
+      torrentsAddedToSession: function (client) {
+        if (client.torrents.size > 0) {
+          this.transition(client, 'WaitingForTorrentsToFinishLoading')
+        } else {
+          client.processStateMachineInput('completedLoadingTorrents') // on parent machine
+        }
       },
       _reset: 'uninitialized'
     },
 
     WaitingForTorrentsToFinishLoading: {
-      _onEnter: function (client) {
-        var totalTorrents = client.torrentsLoading.length
+      _onEnter: async function (client) {
+        var coreTorrents = []
 
-        // async .. wait for all torrent to complete loading
+        client.torrents.forEach(function (torrent) { coreTorrents.push(torrent.core) })
+
+        // For a more accurate progress indicator, listen to status updates on torrents
+        // and aggreate the % progress of each torrent weighted by the total size of each
+        // or use a timer and get status of all torrents (progress property when torrent is in checking_files represents
+        // progress of checking not downloading)
+        var torrentsLoaded = 0
+
+        function updateProgress () {
+          client.store.setTorrentLoadingProgress(torrentsLoaded / coreTorrents.length)
+        }
+
+        function torrentLoaded (torrent) {
+          torrentsLoaded++
+          updateProgress()
+          console.log('Total Torrents Loaded:', torrentsLoaded, 'Remaining:', coreTorrents.length - torrentsLoaded)
+        }
+
+        try {
+          await Promise.all(coreTorrents.map(function (torrent) {
+            return waitForTorrentToFinishLoading(torrent).then(torrentLoaded.bind(null, torrent))
+          }))
+        } catch (err) {
+          client.reportError(err)
+        }
 
         client.processStateMachineInput('completedLoadingTorrents') // on parent machine
+      },
+      _onExit: function (client) {
+        // clear timer
       },
       _reset: 'uninitialized'
     }
@@ -166,6 +197,34 @@ function addTorrentToSession (session, params) {
 
       resolve(torrent)
     })
+  })
+}
+
+// Returns a promise that resolves after a torrent has reached a state where we can render it
+// Either it leaves the Loading state, or is in "Loading:WaitingForMissingBuyerTerms" state
+function waitForTorrentToFinishLoading (torrent) {
+  function hasFinishedLoading (state) {
+    if (state.startsWith('Active')) return true
+    if (state.startsWith('Loading.WaitingForMissingBuyerTerms')) return true
+    return false
+  }
+
+  return new Promise(function (resolve, reject) {
+    const currentState = torrent.currentState()
+
+    if (hasFinishedLoading(currentState)) {
+      return resolve()
+    }
+
+    function onStateChange ({transition, state}) {
+      if (hasFinishedLoading(state)) {
+        torrent.removeListener('transition', onStateChange)
+        return resolve()
+      }
+    }
+
+    // wait for state changes and check again
+    torrent.on('transition', onStateChange)
   })
 }
 

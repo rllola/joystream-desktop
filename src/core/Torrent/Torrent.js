@@ -81,6 +81,10 @@ Torrent.prototype.terminate = function(generateResumeData) {
     this._client.processStateMachineInput('terminate', generateResumeData)
 }
 
+Torrent.prototype.currentState = function () {
+  return TorrentStatemachine.compositeState(this._client)
+}
+
 /// TorrentStateMachineClient
 /// Holds state and external messaging implementations for a (behavoural machinajs) Torrent state machine instance
 
