@@ -132,7 +132,7 @@ TorrentStatemachineClient.prototype.generateResumeData = function() {
 
 TorrentStatemachineClient.prototype.setLibtorrentInteraction = function(mode) {
 
-    this.torrent.setLibtorrentInteraction (mode, () => {
+    this.torrent.setLibtorrentInteraction (mode, (err) => {
 
         LOG_ERROR(err)
 

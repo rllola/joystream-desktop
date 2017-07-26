@@ -5,6 +5,8 @@
 var assert = require('assert')
 var BaseMachine = require('../../../BaseMachine')
 var LibtorrentInteraction = require('joystream-node').LibtorrentInteraction
+var TorrentState = require('joystream-node').TorrentState
+
 var Common = require('./../Common')
 
 var Loading = new BaseMachine({
@@ -55,7 +57,7 @@ var Loading = new BaseMachine({
 
                     // This alert is posted when a torrent completes checking. i.e. when it transitions out of
                     // the checking files state into a state where it is ready to start downloading
-                    torrent.on('checkFinished', function () {
+                    torrent.on('checked', function () {
                         client.processStateMachineInput('checkFinished')
                     })
 
@@ -94,13 +96,8 @@ var Loading = new BaseMachine({
         },
 
         CheckingPartialDownload: {
-            // Do we need to handle this event in this state?
-            // downloadFinished: function (client) {
-            //   client.processStateMachineInput('checkFinished')
-            // },
 
             checkFinished: function (client) {
-
                 // By default, extension torrent plugins are constructed with
                 // TorrentPlugin::LibtorrentInteraction::None:
                 // - No events interrupted, except on_extended events for this plugin.
@@ -117,7 +114,7 @@ var Loading = new BaseMachine({
 
                 var s = client.torrent.handle.status()
 
-                if (s.state === 'finished') {
+                if (s.state === TorrentState.seeding) {
 
                     if(Common.isPassive(client.deepInitialState) || Common.isDownloading(client.deepInitialState)) {
 

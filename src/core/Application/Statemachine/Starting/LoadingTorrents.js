@@ -110,6 +110,10 @@ var LoadingTorrents = new BaseMachine({
           */
 
           // set param flags - auto_managed/paused
+          params.flags = {
+            paused: true,
+            auto_managed: false
+          }
 
           let torrent
 
