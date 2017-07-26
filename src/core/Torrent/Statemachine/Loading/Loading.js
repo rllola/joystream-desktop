@@ -120,7 +120,7 @@ var Loading = new BaseMachine({
 
                         // When there is a full download, and the user doesn't want to upload, then
                         // we just go to passive, even if the user really wanted to download.
-                        client.goToObserveMode()
+                        client.toObserveMode()
 
                         client.deepInitialState = Common.DeepInitialState.PASSIVE
 
@@ -128,7 +128,7 @@ var Loading = new BaseMachine({
 
                     } else { // isUploading
 
-                        client.goToSellMode(client.sellerTerms)
+                        client.toSellMode(client.sellerTerms)
 
                         if(!Common.isStopped(client.deepInitialState))
                             client.startExtension()
@@ -143,7 +143,7 @@ var Loading = new BaseMachine({
 
                     if(Common.isDownloading(client.deepInitialState))  {
 
-                        client.goToBuyMode(client.buyerTerms)
+                        client.toBuyMode(client.buyerTerms)
 
                         // When not paused, then start extension, otherwise leave extension un-started
                         if(!Common.isStopped(client.deepInitialState))
@@ -171,7 +171,7 @@ var Loading = new BaseMachine({
                 // Hold on to terms
                 client.buyerTerms = terms
 
-                client.goToBuyMode(terms)
+                client.toBuyMode(terms)
 
                 // When not paused, then start extension, otherwise leave extension un-started
                 if(!Common.isStopped(client.deepInitialState))

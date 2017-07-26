@@ -96,7 +96,7 @@ TorrentStatemachineClient.prototype.stopExtension = function() {
 
     this.torrent.stopPlugin( (err, res) => {
 
-        LOG_ERROR(err)
+        LOG_ERROR("stopExtension", err)
 
         // Silent
         // this.processStateMachineInput('stopExtensionResult', err, res)
@@ -106,9 +106,9 @@ TorrentStatemachineClient.prototype.stopExtension = function() {
 
 TorrentStatemachineClient.prototype.startExtension = function() {
 
-    this.torrent.startPlugin((res, err) => {
+    this.torrent.startPlugin((err, resp) => {
 
-        LOG_ERROR(err)
+        LOG_ERROR("startExtension", err)
 
         // Silent
         // this.processStateMachineInput('startExtensionResult', err, res)
@@ -134,7 +134,7 @@ TorrentStatemachineClient.prototype.setLibtorrentInteraction = function(mode) {
 
     this.torrent.setLibtorrentInteraction (mode, (err) => {
 
-        LOG_ERROR(err)
+        LOG_ERROR("setLibtorrentInteraction", err)
 
         // Silent
         // this.processStateMachineInput('setLibtorrentInteractionResult', err, res) // 'blocked'
@@ -145,7 +145,7 @@ TorrentStatemachineClient.prototype.toObserveMode = function() {
 
     this.torrent.toObserveMode((err, res) => {
 
-        LOG_ERROR(err)
+        LOG_ERROR("toObserveMode", err)
 
         // Silent
         // this.processStateMachineInput('toObserveModeResult', err, res)
@@ -156,7 +156,7 @@ TorrentStatemachineClient.prototype.toSellMode = function(sellerTerms) {
 
     this.torrent.toSellMode(sellerTerms, (err, res) => {
 
-        LOG_ERROR(err)
+        LOG_ERROR("toSellMode", err)
 
         // Silent
         // this.processStateMachineInput('toSellModeResult', err, res)
@@ -166,7 +166,7 @@ TorrentStatemachineClient.prototype.toSellMode = function(sellerTerms) {
 TorrentStatemachineClient.prototype.toBuyMode = function(buyerTerms) {
     this.torrent.toBuyMode(buyerTerms, (err, res) => {
 
-        LOG_ERROR(err)
+        LOG_ERROR("toBuyMode", err)
 
         // Silent
         // this.processStateMachineInput('toBuyModeResult', err, res)
@@ -194,22 +194,21 @@ TorrentStatemachineClient.prototype.startUploading = function(connectionId, buye
 
 TorrentStatemachineClient.prototype.makeSignedContract = function(contractOutputs, contractFeeRate) {
 
-    console.log("not yet implemented")
+    console.log("makeSignedContract not yet implemented")
 
 }
 
 TorrentStatemachineClient.prototype.startDownloading = function(contract, downloadInfoMap) {
 
     this.torrent.startDownloading(contract, downloadInfoMap, (err, res) => {
-
         this.processStateMachineInput('startDownloadingResult', err, res)
     })
 }
 
-function LOG_ERROR(err) {
+function LOG_ERROR(source, err) {
 
     if(err)
-        console.log("Error found in callback:" + err)
+        console.log(source,": Error found in callback:", err)
 }
 
 export default Torrent
