@@ -25,6 +25,8 @@ var LoadingTorrents = new BaseMachine({
       _onEnter: async function (client) {
         client.torrents = new Map()
         client.infoHashesToLoad = []
+        client.store.setTorrentsToLoad(0)
+        client.store.setTorrentLoadingProgress(0)
 
         try {
           // Get infohashes of all persisted torrents
@@ -122,7 +124,7 @@ var LoadingTorrents = new BaseMachine({
             continue
           }
 
-          client.store.torrentAdded(torrentStore)
+          client.store.torrentAdded(torrentStore) // batch these at the end?
 
           // Torrent added to session inform the torrent state machine
           coreTorrent.addTorrentResult(null, torrent)
@@ -209,6 +211,11 @@ function waitForTorrentToFinishLoading (torrent) {
     return false
   }
 
+  function hasTerminated (state) {
+    if (state.startsWith('Terminated')) return true
+    return false
+  }
+
   return new Promise(function (resolve, reject) {
     const currentState = torrent.currentState()
 
@@ -216,10 +223,17 @@ function waitForTorrentToFinishLoading (torrent) {
       return resolve()
     }
 
+    if (hasTerminated(currentState)) {
+      return reject()
+    }
+
     function onStateChange ({transition, state}) {
       if (hasFinishedLoading(state)) {
         torrent.removeListener('transition', onStateChange)
         return resolve()
+      } else if (hasTerminated(state)){
+        torrent.removeListener('transition', onStateChange)
+        return reject()
       }
     }
 
