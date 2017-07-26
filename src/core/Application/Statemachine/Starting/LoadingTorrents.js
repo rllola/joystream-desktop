@@ -5,6 +5,8 @@ const TorrentStore = require('../../../Torrent/TorrentStore').default
 const Torrent = require('../../../Torrent/Torrent').default
 const Common = require('../../../Torrent/Statemachine/Common')
 
+const TorrentState = require('joystream-node').TorrentState
+
 const noop = () => {}
 
 var LoadingTorrents = new BaseMachine({
@@ -24,6 +26,7 @@ var LoadingTorrents = new BaseMachine({
 
       _onEnter: async function (client) {
         client.torrents = new Map()
+        client.torrentsLoading = new Map()
         client.infoHashesToLoad = []
         client.store.setTorrentsToLoad(0)
         client.store.setTorrentLoadingProgress(0)
@@ -58,7 +61,7 @@ var LoadingTorrents = new BaseMachine({
           const infoHash = client.infoHashesToLoad.shift()
 
           // skip duplicate
-          if (client.torrents.has(infoHash)) continue
+          if (client.torrentsLoading.has(infoHash)) continue
 
           let params
           const deepInitialState = 3 // Passive
@@ -129,7 +132,7 @@ var LoadingTorrents = new BaseMachine({
           // Torrent added to session inform the torrent state machine
           coreTorrent.addTorrentResult(null, torrent)
 
-          client.torrents.set(infoHash, {
+          client.torrentsLoading.set(infoHash, {
             torrent: torrent,   // "joystream-node" torrent
             core: coreTorrent,  // Torrent
             store: torrentStore // TorrentStore
@@ -140,7 +143,7 @@ var LoadingTorrents = new BaseMachine({
       },
 
       torrentsAddedToSession: function (client) {
-        if (client.torrents.size > 0) {
+        if (client.torrentsLoading.size > 0) {
           this.transition(client, 'WaitingForTorrentsToFinishLoading')
         } else {
           client.processStateMachineInput('completedLoadingTorrents') // on parent machine
@@ -150,39 +153,82 @@ var LoadingTorrents = new BaseMachine({
     },
 
     WaitingForTorrentsToFinishLoading: {
-      _onEnter: async function (client) {
-        var coreTorrents = []
+      _onEnter: function (client) {
+        client.torrentsLoading.forEach(function (torrent, infoHash) {
+          const currentState = torrent.core.currentState()
 
-        client.torrents.forEach(function (torrent) { coreTorrents.push(torrent.core) })
+          // check if already Loaded
+          if (torrentHasFinishedLoading(currentState)) {
+            return client.processStateMachineInput('torrentLoaded', infoHash)
+          }
 
-        // For a more accurate progress indicator, listen to status updates on torrents
-        // and aggreate the % progress of each torrent weighted by the total size of each
-        // or use a timer and get status of all torrents (progress property when torrent is in checking_files represents
-        // progress of checking not downloading)
-        var torrentsLoaded = 0
+          // listen for transition out of loading state
+          torrent.core.on('transition', function ({transition, state}) {
+            if (torrentHasFinishedLoading(state)) {
+              client.processStateMachineInput('torrentLoaded', infoHash)
+            }
+          })
+        })
 
-        function updateProgress () {
-          client.store.setTorrentLoadingProgress(torrentsLoaded / coreTorrents.length)
-        }
-
-        function torrentLoaded (torrent) {
-          torrentsLoaded++
-          updateProgress()
-          console.log('Total Torrents Loaded:', torrentsLoaded, 'Remaining:', coreTorrents.length - torrentsLoaded)
-        }
-
-        try {
-          await Promise.all(coreTorrents.map(function (torrent) {
-            return waitForTorrentToFinishLoading(torrent).then(torrentLoaded.bind(null, torrent))
-          }))
-        } catch (err) {
-          client.reportError(err)
-        }
-
-        client.processStateMachineInput('completedLoadingTorrents') // on parent machine
+        client.loadingProgressTimer = setInterval(function () {
+          client.processStateMachineInput('loadingProgressInterval')
+        }, 300)
       },
+
+      loadingProgressInterval: function (client) {
+         var totalSize = 0
+         var checkedSize = 0
+
+         client.torrents.forEach(function (torrent) {
+           let handle = torrent.torrent.handle
+           let size = handle.torrentFile().totalSize() // expensive to keep getting ti?
+           totalSize += size
+         })
+
+         // Progress of loaded torrents is 100%
+         checkedSize = totalSize
+
+         client.torrentsLoading.forEach(function (torrent) {
+           let handle = torrent.torrent.handle
+           let status = handle.status()
+           if (status.state === TorrentState.checking_files) {
+             let size = handle.torrentFile().totalSize()
+             totalSize += size
+             checkedSize += size * status.progress
+           }
+         })
+
+         if (totalSize > 0)
+          client.store.setTorrentLoadingProgress(checkedSize / totalSize)
+      },
+
+      torrentLoaded: function (client, infoHash) {
+        let torrent = client.torrentsLoading.get(infoHash)
+
+        // remove from map of loading torrents
+        client.torrentsLoading.delete(infoHash)
+
+        // add to map of loaded torrents
+        client.torrents.set(infoHash, torrent)
+
+        torrent.core.removeAllListeners('transition')
+
+        console.log('Total Torrents Loaded:', client.torrents.size, 'Remaining:', client.torrentsLoading.size)
+
+        if (client.torrentsLoading.size === 0) {
+          // done
+          client.processStateMachineInput('completedLoadingTorrents') // on parent machine
+        }
+      },
+
       _onExit: function (client) {
         // clear timer
+        clearInterval(client.loadingProgressTimer)
+
+        // remove listeners on any pending torrents not yet loaded
+        client.torrentsLoading.forEach(function (torrent) {
+          torrent.core.removeAllListeners('transition')
+        })
       },
       _reset: 'uninitialized'
     }
@@ -202,44 +248,11 @@ function addTorrentToSession (session, params) {
   })
 }
 
-// Returns a promise that resolves after a torrent has reached a state where we can render it
-// Either it leaves the Loading state, or is in "Loading:WaitingForMissingBuyerTerms" state
-function waitForTorrentToFinishLoading (torrent) {
-  function hasFinishedLoading (state) {
-    if (state.startsWith('Active')) return true
-    if (state.startsWith('Loading.WaitingForMissingBuyerTerms')) return true
-    return false
-  }
-
-  function hasTerminated (state) {
-    if (state.startsWith('Terminated')) return true
-    return false
-  }
-
-  return new Promise(function (resolve, reject) {
-    const currentState = torrent.currentState()
-
-    if (hasFinishedLoading(currentState)) {
-      return resolve()
-    }
-
-    if (hasTerminated(currentState)) {
-      return reject()
-    }
-
-    function onStateChange ({transition, state}) {
-      if (hasFinishedLoading(state)) {
-        torrent.removeListener('transition', onStateChange)
-        return resolve()
-      } else if (hasTerminated(state)){
-        torrent.removeListener('transition', onStateChange)
-        return reject()
-      }
-    }
-
-    // wait for state changes and check again
-    torrent.on('transition', onStateChange)
-  })
+function torrentHasFinishedLoading (state) {
+  if (state.startsWith('Active')) return true
+  if (state.startsWith('Loading.WaitingForMissingBuyerTerms')) return true
+  // What about torrents still trying to fetch metadata..?
+  return false
 }
 
 module.exports = LoadingTorrents
