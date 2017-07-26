@@ -17,10 +17,44 @@ const BaseMachine = require('../../../BaseMachine')
         },
         TerminatingTorrents: {
           _onEnter: function (client) {
-            //TODO: async ... client.torrents.forEach terminate... wait for completion
-            client.processStateMachineInput('terminatedTorrents')
+            if (client.torrents.size === 0) {
+              this.transition(client, 'DisconnectingFromBitcoinNetwork')
+            }
+
+            client.torrents.forEach(function (torrent, infoHash) {
+              client.store.torrentRemoved(torrent.store)
+              torrent.core.terminate()
+
+              const currentState = torrent.core.currentState()
+
+              // check if already Loaded
+              if (torrentHasTerminated(currentState)) {
+                return client.processStateMachineInput('torrentTerminated', infoHash)
+              }
+
+              // listen for transition to Terminated state
+              torrent.core.on('transition', function ({transition, state}) {
+                if (torrentHasTerminated(state)) {
+                  client.processStateMachineInput('torrentTerminated', infoHash)
+                }
+              })
+            })
           },
-          terminatedTorrents: function (client) {
+
+          torrentTerminated: function (client, infoHash) {
+            console.log('Terminated:', infoHash)
+            let torrent = client.torrents.get(infoHash)
+            client.torrents.delete(infoHash)
+
+            torrent.torrent.removeAllListeners()
+            torrent.core.removeAllListeners()
+
+            if (client.torrents.size === 0) {
+              client.processStateMachineInput('terminatedAllTorrents')
+            }
+          },
+
+          terminatedAllTorrents: function (client) {
             this.transition(client, 'DisconnectingFromBitcoinNetwork')
           }
         },
@@ -105,5 +139,9 @@ const BaseMachine = require('../../../BaseMachine')
         }
     }
 })
+
+function torrentHasTerminated (state) {
+  return state.startsWith('Terminated')
+}
 
 module.exports = Stopping
