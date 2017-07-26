@@ -38,7 +38,7 @@ describe('Application Statemachine', function () {
 
     var transitionHandler = ASM.on('transition', function (data) {
       //console.log('transition from:', transition.fromState, 'to:', transition.toState)
-      console.log('state:', machineState())
+      //console.log('state:', machineState())
       if (data.toState === 'Started' && data.fromState === 'Starting') {
         completed(true)
       }
@@ -89,7 +89,7 @@ describe('Application Statemachine', function () {
 
     var transitionHandler = ASM.on('transition', function (data) {
       //console.log('transition from:', transition.fromState, 'to:', transition.toState)
-      console.log('state:', machineState())
+      //console.log('state:', machineState())
       if (data.toState === 'NotStarted' && data.fromState === 'Stopping') {
         completed(true)
       }
@@ -139,7 +139,11 @@ function NewMockedClient () {
 
   session.addTorrent = sinon.spy(function (addParams, callback) {
     callback(null, {
-      infoHash: addParams.infoHash
+      infoHash: addParams.infoHash,
+      on : function() {},
+      handle: {
+        status: function () { return { infoHash: addParams.infoHash, state: 'finished'} }
+      }
     })
   })
 
@@ -187,6 +191,10 @@ function NewMockedClient () {
   }
 
   store.setTorrentTerminatingProgress = function (progress) {
+
+  }
+
+  store.torrentAdded = function (torrent) {
 
   }
 

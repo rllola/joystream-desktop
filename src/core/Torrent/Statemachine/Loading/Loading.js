@@ -48,10 +48,14 @@ var Loading = new BaseMachine({
                         client.store.setStatus(status)
                     })
 
+                    // This alert is generated when a torrent switches from being a downloader to a seed.
+                    // It will only be generated once per torrent.
                     torrent.on('finished', function() {
                         Torrent.queuedHandle(client, 'downloadFinished')
                     })
 
+                    // This alert is posted when a torrent completes checking. i.e. when it transitions out of
+                    // the checking files state into a state where it is ready to start downloading
                     torrent.on('checkFinished', function () {
                         Torrent.queuedHandle(client, 'checkFinished')
                     })
@@ -91,6 +95,10 @@ var Loading = new BaseMachine({
         },
 
         CheckingPartialDownload: {
+            // Do we need to handle this event in this state?
+            // downloadFinished: function (client) {
+            //   this.queuedHandle(client, 'checkFinished')
+            // },
 
             checkFinished: function (client) {
 
@@ -108,9 +116,9 @@ var Loading = new BaseMachine({
 
                 // Determine whether we have a full download
 
-                var s = client.torrent.handle().status()
+                var s = client.torrent.handle.status()
 
-                if(s.is_finished()) {
+                if (s.state === 'finished') {
 
                     if(Common.isPassive(client.deepInitialState) || Common.isDownloading(client.deepInitialState)) {
 
