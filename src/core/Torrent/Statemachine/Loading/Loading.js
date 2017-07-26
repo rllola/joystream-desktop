@@ -57,7 +57,7 @@ var Loading = new BaseMachine({
 
                     // This alert is posted when a torrent completes checking. i.e. when it transitions out of
                     // the checking files state into a state where it is ready to start downloading
-                    torrent.on('checked', function () {
+                    torrent.on('torrentChecked', function () {
                         client.processStateMachineInput('checkFinished')
                     })
 
