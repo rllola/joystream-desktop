@@ -419,6 +419,10 @@ function MockClient() {
 
     this.store = new Mocks.MockTorrentStore()
 
+    this.processStateMachineInput = function (...args) {
+      Torrent.queuedHandle(this, ...args)
+    }
+
     this.addTorrent = sinon.spy()
     this.stopExtension = sinon.spy()
     this.startExtension = sinon.spy()

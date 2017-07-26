@@ -107,6 +107,10 @@ describe('Application Statemachine', function () {
 function NewMockedClient () {
   let client = {}
 
+  client.processStateMachineInput = function (...args) {
+    ASM.queuedHandle(client, ...args)
+  }
+
   client.factories = null
 
   client.config = {

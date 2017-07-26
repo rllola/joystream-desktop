@@ -20,7 +20,7 @@ function Peer(pid, torrent, status, privateKeyGenerator, pubKeyHashGenerator) {
 }
 
 Peer.prototype.newStatus = function(status) {
-    PeerStatemachine.queuedHandle(this._client, 'newStatus', status)
+    this._client.processStateMachineInput('newStatus', status)
 }
 
 Peer.prototype.compositeState = function() {
@@ -35,6 +35,10 @@ function PeerStatemachineClient(pid, torrent, privateKeyGenerator, pubKeyHashGen
     this.torrent = torrent
     this._privateKeyGenerator = privateKeyGenerator
     this._pubKeyHashGenerator = pubKeyHashGenerator
+}
+
+PeerStatemachineClient.prototype.processStateMachineInput = function (...args) {
+  PeerStatemachine.queuedHandle(this, ...args)
 }
 
 PeerStatemachineClient.prototype.generatePrivateKey = function() {

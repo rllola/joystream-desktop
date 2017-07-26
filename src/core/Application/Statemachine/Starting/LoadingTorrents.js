@@ -26,10 +26,10 @@ var LoadingTorrents = new BaseMachine({
         try {
           client.torrentInfoHashesInDatabase = await client.services.db.getInfoHashes()
         } catch (err) {
-          return this.queuedHandle(client, 'completedLoadingTorrents', err)
+          return client.processStateMachineInput('completedLoadingTorrents', err)
         }
 
-        this.queuedHandle(client, 'gotInfoHashes', client.torrentInfoHashesInDatabase.length)
+        client.processStateMachineInput('gotInfoHashes', client.torrentInfoHashesInDatabase.length)
       },
 
       gotInfoHashes: function (client, numberOfTorrentsToLoad) {
@@ -38,7 +38,7 @@ var LoadingTorrents = new BaseMachine({
         if (numberOfTorrentsToLoad > 0) {
           this.transition(client, 'AddingTorrentsToSession')
         } else {
-          this.queuedHandle(client, 'completedLoadingTorrents')
+          client.processStateMachineInput('completedLoadingTorrents')
         }
       },
 
@@ -128,7 +128,7 @@ var LoadingTorrents = new BaseMachine({
           // client.torrents.set(infoHash, torrentStore)
         }
 
-        this.queuedHandle(client, 'torrentsAddedToSession', torrentStores)
+        client.processStateMachineInput('torrentsAddedToSession', torrentStores)
       },
 
       torrentsAddedToSession: function (client, torrents) {
@@ -145,7 +145,7 @@ var LoadingTorrents = new BaseMachine({
 
         // async .. wait for all torrent to complete loading
 
-        this.queuedHandle(client, 'completedLoadingTorrents') // on parent machine
+        client.processStateMachineInput('completedLoadingTorrents') // on parent machine
       },
       _reset: 'uninitialized'
     }

@@ -65,11 +65,11 @@ function Torrent(store) {
  * @param extensionSettings
  */
 Torrent.prototype.startLoading = function(infoHash, name, savePath, resumeData, metadata, deepInitialState, extensionSettings) {
-    TorrentStatemachine.queuedHandle(this._client, 'startLoading', infoHash, name, savePath, resumeData, metadata, deepInitialState, extensionSettings)
+    this._client.processStateMachineInput('startLoading', infoHash, name, savePath, resumeData, metadata, deepInitialState, extensionSettings)
 }
 
 Torrent.prototype.addTorrentResult = function(err, torrent) {
-    TorrentStatemachine.queuedHandle(this._client, 'addTorrentResult', err, torrent)
+    this._client.processStateMachineInput('addTorrentResult', err, torrent)
 }
 
 /**
@@ -78,7 +78,7 @@ Torrent.prototype.addTorrentResult = function(err, torrent) {
  * if this is true, resume data will not be generated.
  */
 Torrent.prototype.terminate = function(generateResumeData) {
-    TorrentStatemachine.queuedHandle(this._client, 'terminate', generateResumeData)
+    this._client.processStateMachineInput('terminate', generateResumeData)
 }
 
 /// TorrentStateMachineClient
@@ -88,26 +88,30 @@ function TorrentStatemachineClient(store) {
     this.store = store
 }
 
+TorrentStatemachineClient.prototype.processStateMachineInput = function (...args) {
+  TorrentStatemachine.queuedHandle(this, ...args)
+}
+
 TorrentStatemachineClient.prototype.stopExtension = function() {
 
-    this.torrent.stopPlugin(function (err, res) {
+    this.torrent.stopPlugin( (err, res) => {
 
         LOG_ERROR(err)
 
         // Silent
-        //TorrentStatemachine.queuedHandle(this, 'stopExtensionResult', err, res)
+        // this.processStateMachineInput('stopExtensionResult', err, res)
     })
 
 }
 
 TorrentStatemachineClient.prototype.startExtension = function() {
 
-    this.torrent.startPlugin(function(res, err) {
+    this.torrent.startPlugin((res, err) => {
 
         LOG_ERROR(err)
 
         // Silent
-        //TorrentStatemachine.queuedHandle(this, 'startExtensionResult', err, res)
+        // this.processStateMachineInput('startExtensionResult', err, res)
     })
 }
 
@@ -128,44 +132,44 @@ TorrentStatemachineClient.prototype.generateResumeData = function() {
 
 TorrentStatemachineClient.prototype.setLibtorrentInteraction = function(mode) {
 
-    this.torrent.setLibtorrentInteraction (mode, function() {
+    this.torrent.setLibtorrentInteraction (mode, () => {
 
         LOG_ERROR(err)
 
         // Silent
-        //TorrentStatemachine.queuedHandle(this, 'setLibtorrentInteractionResult', err, res) // 'blocked'
+        // this.processStateMachineInput('setLibtorrentInteractionResult', err, res) // 'blocked'
     })
 }
 
 TorrentStatemachineClient.prototype.toObserveMode = function() {
 
-    this.torrent.toObserveMode(function(err, res) {
+    this.torrent.toObserveMode((err, res) => {
 
         LOG_ERROR(err)
 
         // Silent
-        // TorrentStatemachine.queuedHandle(this, 'toObserveModeResult', err, res)
+        // this.processStateMachineInput('toObserveModeResult', err, res)
     })
 }
 
 TorrentStatemachineClient.prototype.toSellMode = function(sellerTerms) {
 
-    this.torrent.toSellMode(sellerTerms, function(err, res) {
+    this.torrent.toSellMode(sellerTerms, (err, res) => {
 
         LOG_ERROR(err)
 
         // Silent
-        //TorrentStatemachine.queuedHandle(this, 'toSellModeResult', err, res)
+        // this.processStateMachineInput('toSellModeResult', err, res)
     })
 }
 
 TorrentStatemachineClient.prototype.toBuyMode = function(buyerTerms) {
-    this.torrent.toBuyMode(buyerTerms, function(err, res) {
+    this.torrent.toBuyMode(buyerTerms, (err, res) => {
 
         LOG_ERROR(err)
 
         // Silent
-        // TorrentStatemachine.queuedHandle(this, 'toBuyModeResult', err, res)
+        // this.processStateMachineInput('toBuyModeResult', err, res)
     })
 }
 
@@ -184,7 +188,7 @@ TorrentStatemachineClient.prototype.updateBuyerTerms = function() {
 TorrentStatemachineClient.prototype.startUploading = function(connectionId, buyerTerms, contractSk, finalPkHash) {
 
     this.torrent.startUploading(connectionId, buyerTerms, contractSk, finalPkHash, (err, res) => {
-        TorrentStatemachine.queuedHandle(this._client, 'startUploadingResult', err, res)
+        this.processStateMachineInput('startUploadingResult', err, res)
     })
 }
 
@@ -198,7 +202,7 @@ TorrentStatemachineClient.prototype.startDownloading = function(contract, downlo
 
     this.torrent.startDownloading(contract, downloadInfoMap, (err, res) => {
 
-        TorrentStatemachine.queuedHandle(this._client, 'startDownloadingResult', err, res)
+        this.processStateMachineInput('startDownloadingResult', err, res)
     })
 }
 

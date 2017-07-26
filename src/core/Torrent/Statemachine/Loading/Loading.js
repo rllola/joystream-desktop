@@ -6,7 +6,6 @@ var assert = require('assert')
 var BaseMachine = require('../../../BaseMachine')
 var LibtorrentInteraction = require('joystream-node').LibtorrentInteraction
 var Common = require('./../Common')
-var Torrent = require('../Torrent')
 
 var Loading = new BaseMachine({
 
@@ -28,17 +27,17 @@ var Loading = new BaseMachine({
                     // Hook into torrent events
 
                     torrent.on('metadata', (metadata) => {
-                        Torrent.queuedHandle(client, 'metadataReady', metadata)
+                        client.processStateMachineInput('metadataReady', metadata)
                     })
 
                     torrent.on('resumedata', (resumeData) => {
-                        Torrent.queuedHandle(client, 'resumeDataGenerated', resumeData)
+                        client.processStateMachineInput('resumeDataGenerated', resumeData)
                     })
 
                     torrent.on('error', function(err) {
 
                         if(err.message == 'resume data generation failed')
-                            Torrent.queuedHandle(client, 'resumeDataGenerationFailed')
+                            client.processStateMachineInput('resumeDataGenerationFailed')
                     })
 
                     torrent.on('status_update', function(status) {
@@ -51,13 +50,13 @@ var Loading = new BaseMachine({
                     // This alert is generated when a torrent switches from being a downloader to a seed.
                     // It will only be generated once per torrent.
                     torrent.on('finished', function() {
-                        Torrent.queuedHandle(client, 'downloadFinished')
+                        client.processStateMachineInput('downloadFinished')
                     })
 
                     // This alert is posted when a torrent completes checking. i.e. when it transitions out of
                     // the checking files state into a state where it is ready to start downloading
                     torrent.on('checkFinished', function () {
-                        Torrent.queuedHandle(client, 'checkFinished')
+                        client.processStateMachineInput('checkFinished')
                     })
 
                     // If we don´t have metadata, wait for it
@@ -97,7 +96,7 @@ var Loading = new BaseMachine({
         CheckingPartialDownload: {
             // Do we need to handle this event in this state?
             // downloadFinished: function (client) {
-            //   this.queuedHandle(client, 'checkFinished')
+            //   client.processStateMachineInput('checkFinished')
             // },
 
             checkFinished: function (client) {

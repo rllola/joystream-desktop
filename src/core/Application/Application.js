@@ -123,6 +123,13 @@ class ApplicationStatemachineClient {
     }
   }
 
+  // Helper method used by all child state machines to send an input to the root of the statemachine tree
+  // We need this here, because of an issue with circual module dependency which would otherwise be
+  // introduced if the child statemachine tries to load the parent statemachine module
+  processStateMachineInput = function (...args) {
+    Statemachine.queuedHandle(this, ...args)
+  }
+
   reportError (err) {
     console.log(err.message)
   }
