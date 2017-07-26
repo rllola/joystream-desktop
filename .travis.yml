@@ -29,12 +29,19 @@ before_install:
   - conan user travis -p trav444 -r=joystream
 install:
   - npm install -g electron-forge
+  # make sure to install same version as electron in package.json to test version which will be published
+  - npm install -g electron-prebuilt-compile@1.6.4
+  - npm install -g electron-rebuild
   - npm install
-script:
-  - npm test
-before_deploy:
   - mkdir ~/.electron-gyp
   - ln -s $HOME/.conan $HOME/.electron-gyp/.conan
+  # rebuild native addons for electron - unit tests use electron-mocha
+  - electron-rebuild
+script:
+  - npm test
+
+before_deploy:
+
 deploy:
   provider: script
   skip_cleanup: true
