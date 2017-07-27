@@ -63,14 +63,14 @@ var ApplicationStateMachine = new BaseMachine({
       startTorrent: function (client, infoHash) {
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
-        //torrent.core.start()
+        torrent.core.start()
         console.log('application received startTorrent input', infoHash)
       },
 
       stopTorrent: function (client, infoHash) {
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
-        //torrent.core.stop()
+        torrent.core.stop()
         console.log('application received stopTorrent input', infoHash)
       },
 
@@ -91,31 +91,31 @@ var ApplicationStateMachine = new BaseMachine({
       updateBuyerTerms: function (client, infoHash, buyerTerms) {
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
-        //torrent.core.updateBuyerTerms(buyerTerms)
+        torrent.core.updateBuyerTerms(buyerTerms)
       },
 
       updateSellerTerms: function (client, infoHash, sellerTerms) {
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
-        //torrent.core.updateSellerTerms(sellerTerms)
+        torrent.core.updateSellerTerms(sellerTerms)
       },
 
       startPaidDownload: function (client, infoHash) {
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
-        //torrent.core.startPaidDownload()
+        torrent.core.startPaidDownload()
       },
 
       beingUpload: function (client, infoHash) {
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
-        //torrent.core.beginUpload()
+        torrent.core.beginUpload()
       },
 
       endUpload: function (client, infoHash) {
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
-        //torrent.core.endUpload()
+        torrent.core.endUpload()
       }
     },
 
