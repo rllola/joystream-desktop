@@ -75,7 +75,9 @@ var ApplicationStateMachine = new BaseMachine({
       removeTorrent: function (client, infoHash, deleteData) {
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
-        //torrent.core.remove(deleteData)
+        //torrent.core.terminate()
+        //if(deleteData) delete files
+        //remove from libtorrent session
       },
 
       openTorrentFolder: function (client, infoHash) {
@@ -84,16 +86,16 @@ var ApplicationStateMachine = new BaseMachine({
         //openFolder(torrent.torrent.handle.torrentFile().savePath)
       },
 
-      startPaidDownload: function (client, infoHash) {
+      startPaidDownload: function (client, infoHash, buyerTerms) {
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
-        //torrent.core.startPaidDownload()
+        //torrent.core.startPaidDownload(buyerTerms)
       },
 
-      beingUpload: function (client, infoHash) {
+      beingUpload: function (client, infoHash, sellerTerms) {
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
-        //torrent.core.beginUpload()
+        //torrent.core.beginUpload(sellerTerms)
       },
 
       endUpload: function (client, infoHash) {

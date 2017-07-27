@@ -85,6 +85,26 @@ Torrent.prototype.currentState = function () {
   return TorrentStatemachine.compositeState(this._client)
 }
 
+Torrent.prototype.start = function () {
+  this._client.processStateMachineInput('start')
+}
+
+Torrent.prototype.stop = function () {
+  this._client.processStateMachineInput('stop')
+}
+
+Torrent.prototype.startPaidDownload = function (buyerTerms) {
+  // TODO
+}
+
+Torrent.prototype.beginUpload = function (sellerTerms) {
+  // TODO
+}
+
+Torrent.prototype.endUpload = function () {
+  // TODO
+}
+
 /// TorrentStateMachineClient
 /// Holds state and external messaging implementations for a (behavoural machinajs) Torrent state machine instance
 
