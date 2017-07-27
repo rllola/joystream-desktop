@@ -125,7 +125,7 @@ var ApplicationStateMachine = new BaseMachine({
         torrent.core.endUpload()
       },
 
-      addNewTorrent: async function (client, torrentFilePath) {
+      addNewTorrent: async function (client, torrentFilePath, deepInitialState, extensionSettings) {
         client.store.setTorrentBeingAdded(torrentStore)
 
         // Create a TorrentInfo from the file
@@ -143,9 +143,6 @@ var ApplicationStateMachine = new BaseMachine({
           // change scene to where the torrent is currently displayed?
           return
         }
-
-        const deepInitialState = 3 // Passive
-        const extensionSettings = {} // no seller or buyer terms
 
         let torrentStore = client.factories.torrentStore(infoHash)
         let coreTorrent = client.factories.torrent(torrentStore)

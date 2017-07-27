@@ -61,8 +61,30 @@ class Application extends EventEmitter {
     this.currentState()
   }
 
-  addNewTorrent (torrentFilePath) {
-    this._process('addNewTorrent', torrentFilePath)
+  addNewTorrent (torrentFilePath, mode = 'buy', terms) {
+    if (mode === 'buy') {
+
+      terms = terms || {
+        maxPrice: 5,
+        maxLock: 10,
+        minNumberOfSellers: 1,
+        maxContractFeePerKb: 2000
+      }
+
+      this._process('addNewTorrent', torrentFilePath, 4, {buyerTerms: terms})
+    } else if (mode === 'sell') {
+
+      terms = terms || {
+        minPrice: 5,
+        minLock: 5,
+        maxNumberOfSellers: 10,
+        minContractFeePerKb: 2000
+      }
+
+      this._process('addNewTorrent', torrentFilePath, 1, {sellerTerms: terms})
+    } else {
+      this._process('addNewTorrent', torrentFilePath, 3 /*Passive*/, {})
+    }
   }
 
   moveToScene (s) {
