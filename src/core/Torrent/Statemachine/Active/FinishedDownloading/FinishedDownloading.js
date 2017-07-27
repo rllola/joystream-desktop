@@ -14,16 +14,16 @@ var FinishedDownloading = new BaseMachine({
         Uninitialized : {},
 
         Passive : {
-            
+
             goToStartedUploading : function (client, sellerTerms) {
 
                 this.sellerTerms = sellerTerms
 
-                client.goToSellMode(sellerTerms)
+                client.toSellMode(sellerTerms)
 
                 this.go(client, 'Uploading/Started')
             }
-            
+
         },
 
         Uploading : {

@@ -19,7 +19,7 @@ var Active = new BaseMachine({
 
             downloadFinished : function (client) {
 
-                client.goToObserveMode()
+                client.toObserveMode()
 
                 this.go(client, 'FinishedDownloading/Passive')
             }
