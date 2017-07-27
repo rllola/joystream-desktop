@@ -16,6 +16,8 @@ const BaseMachine = require('../../../BaseMachine')
         TerminatingTorrents: {
           _onEnter: function (client) {
             //TODO: async ... client.torrents.forEach terminate... wait for completion
+            client.store.setTorrentsToTerminate(client.torrents.length)
+            client.store.setTorrentTerminatingProgress(1)
             this.handle(client, 'terminated')
           },
           terminated: function (client) {
@@ -74,6 +76,7 @@ const BaseMachine = require('../../../BaseMachine')
 
         ClearingResources: {
           _onEnter: function (client) {
+            client.torrents = []
             client.services.spvnode = null
 
             if (client.services.session) {
