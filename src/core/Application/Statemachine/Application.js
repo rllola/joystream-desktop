@@ -86,16 +86,28 @@ var ApplicationStateMachine = new BaseMachine({
         //openFolder(torrent.torrent.handle.torrentFile().savePath)
       },
 
-      startPaidDownload: function (client, infoHash, buyerTerms) {
+      updateBuyerTerms: function (client, infoHash, buyerTerms) {
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
-        //torrent.core.startPaidDownload(buyerTerms)
+        //torrent.core.updateBuyerTerms(buyerTerms)
       },
 
-      beingUpload: function (client, infoHash, sellerTerms) {
+      updateSellerTerms: function (client, infoHash, sellerTerms) {
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
-        //torrent.core.beginUpload(sellerTerms)
+        //torrent.core.updateSellerTerms(sellerTerms)
+      },
+
+      startPaidDownload: function (client, infoHash) {
+        var torrent = client.torrents.get(infoHash)
+        if (!torrent) return
+        //torrent.core.startPaidDownload()
+      },
+
+      beingUpload: function (client, infoHash) {
+        var torrent = client.torrents.get(infoHash)
+        if (!torrent) return
+        //torrent.core.beginUpload()
       },
 
       endUpload: function (client, infoHash) {

@@ -98,6 +98,12 @@ var LoadingTorrents = new BaseMachine({
             }.bind(this, infoHash),
             endUploadHandler: function (infoHash) {
               this.processStateMachineInput('endUpload', infoHash)
+            }.bind(this, infoHash),
+            updateBuyerTerms: function (infoHash) {
+              this.processStateMachineInput('updateBuyerTerms', infoHash)
+            }.bind(this, infoHash),
+            updateSellerTerms: function (infoHash) {
+              this.processStateMachineInput('updateSellerTerms', infoHash)
             }.bind(this, infoHash)
           })
 

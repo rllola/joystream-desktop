@@ -93,11 +93,19 @@ Torrent.prototype.stop = function () {
   this._client.processStateMachineInput('stop')
 }
 
-Torrent.prototype.startPaidDownload = function (buyerTerms) {
+Torrent.prototype.updateBuyerTerms = function (buyerTerms) {
   // TODO
 }
 
-Torrent.prototype.beginUpload = function (sellerTerms) {
+Torrent.prototype.updateSellerTerms = function (sellerTerms) {
+  // TODO
+}
+
+Torrent.prototype.startPaidDownload = function () {
+  // TODO
+}
+
+Torrent.prototype.beginUpload = function () {
   // TODO
 }
 
