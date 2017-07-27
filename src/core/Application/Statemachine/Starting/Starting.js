@@ -18,7 +18,11 @@ var Starting = new BaseMachine({
     InitializingResources: {
       _onEnter: function (client) {
         try {
-          client.torrents = []
+          client.torrents = new Map()
+          client.torrentsLoading = new Map()
+          client.infoHashesToLoad = []
+          client.store.setTorrentsToLoad(0)
+          client.store.setTorrentLoadingProgress(0)
 
           // Get directories service resource
           client.directories = client.factories.directories(client.config.appDirectory)

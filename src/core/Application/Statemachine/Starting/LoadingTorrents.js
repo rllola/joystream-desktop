@@ -25,12 +25,6 @@ var LoadingTorrents = new BaseMachine({
     GettingInfoHashes: {
 
       _onEnter: async function (client) {
-        client.torrents = new Map()
-        client.torrentsLoading = new Map()
-        client.infoHashesToLoad = []
-        client.store.setTorrentsToLoad(0)
-        client.store.setTorrentLoadingProgress(0)
-
         try {
           // Get infohashes of all persisted torrents
           var infoHashes = await client.services.db.getInfoHashes()

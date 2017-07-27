@@ -17,8 +17,12 @@ const BaseMachine = require('../../../BaseMachine')
         },
         TerminatingTorrents: {
           _onEnter: function (client) {
+            client.store.setTorrentsToTerminate(client.torrents.length)
+            client.store.setTorrentTerminatingProgress(0)
+
             if (client.torrents.size === 0) {
               this.transition(client, 'DisconnectingFromBitcoinNetwork')
+              return
             }
 
             client.torrents.forEach(function (torrent, infoHash) {
@@ -27,7 +31,7 @@ const BaseMachine = require('../../../BaseMachine')
 
               const currentState = torrent.core.currentState()
 
-              // check if already Loaded
+              // check if terminated
               if (torrentHasTerminated(currentState)) {
                 return client.processStateMachineInput('torrentTerminated', infoHash)
               }
