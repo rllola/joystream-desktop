@@ -105,7 +105,12 @@ var ApplicationStateMachine = new BaseMachine({
       startPaidDownload: function (client, infoHash) {
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
-        torrent.core.startPaidDownload()
+        // start downloading from cheapest sellers
+        torrent.core.startPaidDownload(function (sellerA, sellerB) {
+          const termsA = sellerA.connection.announcedModeAndTermsFromPeer.seller.terms
+          const termsB = sellerB.connection.announcedModeAndTermsFromPeer.seller.terms
+          return termsA.minPrice - termsB.minPrice
+        })
       },
 
       beingUpload: function (client, infoHash) {
