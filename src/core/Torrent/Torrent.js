@@ -94,23 +94,23 @@ Torrent.prototype.stop = function () {
 }
 
 Torrent.prototype.updateBuyerTerms = function (buyerTerms) {
-  // TODO
+  this._client.processStateMachineInput('updateBuyerTerms', buyerTerms)
 }
 
 Torrent.prototype.updateSellerTerms = function (sellerTerms) {
-  // TODO
+  this._client.processStateMachineInput('updateSellerTerms', sellerTerms)
 }
 
-Torrent.prototype.startPaidDownload = function () {
-  // TODO
+Torrent.prototype.startPaidDownload = function (peerSorter) {
+  this._client.processStateMachineInput('startPaidDownload', peerSorter)
 }
 
-Torrent.prototype.beginUpload = function () {
-  // TODO
+Torrent.prototype.beginUpload = function (sellerTerms) {
+  this._client.processStateMachineInput('goToStartedUploading', sellerTerms)
 }
 
 Torrent.prototype.endUpload = function () {
-  // TODO
+  this._client.processStateMachineInput('goToPassive')
 }
 
 /// TorrentStateMachineClient

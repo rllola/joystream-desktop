@@ -166,7 +166,7 @@ var Loading = new BaseMachine({
 
         WaitingForMissingBuyerTerms : {
 
-            termsReady : function(client, terms) {
+            updateBuyerTerms: function(client, terms) {
 
                 // Hold on to terms
                 client.buyerTerms = terms
