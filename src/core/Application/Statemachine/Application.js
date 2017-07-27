@@ -7,6 +7,8 @@ const Starting = require('./Starting/Starting')
 const Started = require('./Started/Started')
 const Stopping = require('./Stopping/Stopping')
 
+const TorrentInfo = require('joystream-node').TorrentInfo
+
 var ApplicationStateMachine = new BaseMachine({
   namespace: 'Application',
   initialState: 'NotStarted',
@@ -116,6 +118,71 @@ var ApplicationStateMachine = new BaseMachine({
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
         torrent.core.endUpload()
+      },
+
+      addNewTorrent: async function (client, torrentFilePath) {
+        client.store.setTorrentBeingAdded(torrentStore)
+
+        // Create a TorrentInfo from the file
+        try {
+          var ti = new TorrentInfo(torrentFilePath)
+        } catch (err) {
+          console.log(err)
+          return
+        }
+
+        const infoHash = ti.infoHash()
+
+        if (client.torrents.has(infoHash)) {
+          console.log('Torrent Already Exists')
+          // change scene to where the torrent is currently displayed?
+          return
+        }
+
+        const deepInitialState = 3 // Passive
+        const extensionSettings = {} // no seller or buyer terms
+
+        let torrentStore = client.factories.torrentStore(infoHash)
+        let coreTorrent = client.factories.torrent(torrentStore)
+
+        coreTorrent.startLoading(infoHash, ti.name() || infoHash, client.directories.defaultSavePath(), null, ti, deepInitialState, extensionSettings)
+
+        let addParams = {
+          ti: ti,
+          name: ti.name() || infoHash,
+          savePath: client.directories.defaultSavePath(),
+          flags: {
+            paused: true,
+            auto_managed: false
+          }
+        }
+
+        let torrent
+
+        try {
+          torrent = await addTorrentToSession(client.services.session, addParams)
+        } catch (err) {
+          client.reportError(err)
+          coreTorrent.addTorrentResult(err)
+          return
+        }
+
+        client.processStateMachineInput('newTorrentAdded', torrent, coreTorrent, torrentStore)
+      },
+
+      newTorrentAdded: function (client, torrent, coreTorrent, torrentStore) {
+        console.log('Added New Torrent:', torrent.infoHash)
+        client.store.setTorrentBeingAdded(torrentStore)
+
+        client.torrents.set(torrent.infoHash, {
+          torrent: torrent,   // "joystream-node" torrent
+          core: coreTorrent,  // Torrent
+          store: torrentStore // TorrentStore
+        })
+
+        coreTorrent.addTorrentResult(null, torrent)
+
+        client.store.torrentAdded(torrentStore)
       }
     },
 
@@ -131,5 +198,17 @@ var ApplicationStateMachine = new BaseMachine({
     }
   }
 })
+
+function addTorrentToSession (session, params) {
+  return new Promise(function (resolve, reject) {
+    session.addTorrent(params, (err, torrent) => {
+      if (err) {
+        return reject(err)
+      }
+
+      resolve(torrent)
+    })
+  })
+}
 
 module.exports = ApplicationStateMachine

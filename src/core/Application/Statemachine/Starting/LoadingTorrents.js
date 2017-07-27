@@ -179,6 +179,7 @@ var LoadingTorrents = new BaseMachine({
       },
 
       torrentLoaded: function (client, infoHash) {
+        console.log('Loaded', infoHash)
         let torrent = client.torrentsLoading.get(infoHash)
 
         // remove from map of loading torrents

@@ -27,7 +27,7 @@ class Application extends EventEmitter {
 
     this.store = new ApplicationStore({
       // handlers
-      addTorrent: this.addTorrent.bind(this),
+      addNewTorrent: this.addNewTorrent.bind(this),
       moveToScene: this.moveToScene.bind(this)
     })
 
@@ -61,8 +61,8 @@ class Application extends EventEmitter {
     this.currentState()
   }
 
-  addTorrent (info) {
-    this._process('addTorrent', info)
+  addNewTorrent (torrentFilePath) {
+    this._process('addNewTorrent', torrentFilePath)
   }
 
   moveToScene (s) {

@@ -15,6 +15,10 @@ class Directories {
     return path.join(this.dir, 'data')
   }
 
+  defaultSavePath () {
+    return path.join(this.dir, 'download')
+  }
+
   create () {
     const directories = [
       this.dir,
