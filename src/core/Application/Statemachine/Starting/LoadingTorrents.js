@@ -1,8 +1,5 @@
 const BaseMachine = require('../../../BaseMachine')
 
-// Use service factories instead
-const TorrentStore = require('../../../Torrent/TorrentStore').default
-const Torrent = require('../../../Torrent/Torrent').default
 const Common = require('../../../Torrent/Statemachine/Common')
 
 const TorrentState = require('joystream-node').TorrentState
@@ -73,43 +70,8 @@ var LoadingTorrents = new BaseMachine({
             continue
           }
 
-          //torrentStore = client.services.instantiateTorrentStore(params) // application should setup the handlers
-
-          // TODO: update torrent store ctor .. use default values instead of passing zeros here, and remaining
-          // values are @computed from metadata
-          let torrentStore = new TorrentStore(infoHash, '', 0, 0, infoHash, 0, 0, 0, 0, 0, {
-            startHandler: function (infoHash) {
-              this.processStateMachineInput('startTorrent', infoHash)
-            }.bind(this, infoHash),
-            stopHandler: function (infoHash) {
-              this.processStateMachineInput('stopTorrent', infoHash)
-            }.bind(this, infoHash),
-            removeHandler: function (infoHash) {
-              this.processStateMachineInput('removeTorrent', infoHash)
-            }.bind(this, infoHash),
-            openFolderHandler: function (infoHash) {
-              this.processStateMachineInput('openTorrentFolder', infoHash)
-            }.bind(this, infoHash),
-            startPaidDownloadHandler: function (infoHash) {
-              this.processStateMachineInput('startPaidDownload', infoHash)
-            }.bind(this, infoHash),
-            beginUploadHandler: function (infoHash) {
-              this.processStateMachineInput('beginUpload', infoHash)
-            }.bind(this, infoHash),
-            endUploadHandler: function (infoHash) {
-              this.processStateMachineInput('endUpload', infoHash)
-            }.bind(this, infoHash),
-            updateBuyerTerms: function (infoHash) {
-              this.processStateMachineInput('updateBuyerTerms', infoHash)
-            }.bind(this, infoHash),
-            updateSellerTerms: function (infoHash) {
-              this.processStateMachineInput('updateSellerTerms', infoHash)
-            }.bind(this, infoHash)
-          })
-
-
-          //coreTorrent = client.services.instantiateTorrent(torrentStore)
-          let coreTorrent = new Torrent(torrentStore)
+          let torrentStore = client.factories.torrentStore(infoHash)
+          let coreTorrent = client.factories.torrent(torrentStore)
 
           coreTorrent.startLoading(infoHash, params.name, params.savePath, params.resumeData, params.ti, deepInitialState, extensionSettings)
 

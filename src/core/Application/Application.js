@@ -11,6 +11,8 @@ const Directories = require('./directories')
 const SPVNode = require('./spvnode')
 const Session = require('joystream-node').Session
 const TorrentsStorage = require('../../db').default
+const Torrent = require('../Torrent/Torrent').default
+const TorrentStore = require('../Torrent/TorrentStore').default
 
 const Scene = require('./Scene')
 
@@ -117,9 +119,41 @@ class ApplicationStatemachineClient {
 
       db: function (...args) {
         return TorrentsStorage.open.bind(null, ...args)
-      }
+      },
 
-      //torrent, torrentStore
+      torrentStore: (infoHash) => {
+        return new TorrentStore(infoHash, '', 0, 0, infoHash, 0, 0, 0, 0, 0, {
+          startHandler: () => {
+            this.processStateMachineInput('startTorrent', infoHash)
+          },
+          stopHandler: () => {
+            this.processStateMachineInput('stopTorrent', infoHash)
+          },
+          removeHandler: (deleteData) => {
+            this.processStateMachineInput('removeTorrent', infoHash, deleteData)
+          },
+          openFolderHandler: () => {
+            this.processStateMachineInput('openTorrentFolder', infoHash)
+          },
+          startPaidDownloadHandler: () => {
+            this.processStateMachineInput('startPaidDownload', infoHash)
+          },
+          beginUploadHandler: () => {
+            this.processStateMachineInput('beginUpload', infoHash)
+          },
+          endUploadHandler: () => {
+            this.processStateMachineInput('endUpload', infoHash)
+          },
+          updateBuyerTerms: (buyerTerms) => {
+            this.processStateMachineInput('updateBuyerTerms', infoHash, buyerTerms)
+          },
+          updateSellerTerms: (sellerTerms) => {
+            this.processStateMachineInput('updateSellerTerms', infoHash, sellerTerms)
+          }
+        })
+      },
+
+      torrent: factory(Torrent)
     }
   }
 
@@ -133,11 +167,6 @@ class ApplicationStatemachineClient {
   reportError (err) {
     console.log(err.message)
   }
-
-  // Service Factories - Used by statemachine to create the resources it requires
-
-  // methods defined here should really only try to modify the sotre (avoid using state information
-  // stored on the client - statemachine should pass them in as args instead)
 
 }
 

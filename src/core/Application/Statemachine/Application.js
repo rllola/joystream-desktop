@@ -64,12 +64,14 @@ var ApplicationStateMachine = new BaseMachine({
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
         //torrent.core.start()
+        console.log('application received startTorrent input', infoHash)
       },
 
       stopTorrent: function (client, infoHash) {
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
         //torrent.core.stop()
+        console.log('application received stopTorrent input', infoHash)
       },
 
       removeTorrent: function (client, infoHash, deleteData) {
