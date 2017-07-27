@@ -78,13 +78,27 @@ var LoadingTorrents = new BaseMachine({
           // TODO: update torrent store ctor .. use default values instead of passing zeros here, and remaining
           // values are @computed from metadata
           let torrentStore = new TorrentStore(infoHash, '', 0, 0, infoHash, 0, 0, 0, 0, 0, {
-            startHandler: noop,
-            stopHandler: noop,
-            removeHandler: noop,
-            openFolderHandler: noop,
-            startPaidDownloadHandler: noop,
-            beginUploadHandler: noop,
-            endUploadHandler: noop
+            startHandler: function (infoHash) {
+              this.processStateMachineInput('startTorrent', infoHash)
+            }.bind(this, infoHash),
+            stopHandler: function (infoHash) {
+              this.processStateMachineInput('stopTorrent', infoHash)
+            }.bind(this, infoHash),
+            removeHandler: function (infoHash) {
+              this.processStateMachineInput('removeTorrent', infoHash)
+            }.bind(this, infoHash),
+            openFolderHandler: function (infoHash) {
+              this.processStateMachineInput('openTorrentFolder', infoHash)
+            }.bind(this, infoHash),
+            startPaidDownloadHandler: function (infoHash) {
+              this.processStateMachineInput('startPaidDownload', infoHash)
+            }.bind(this, infoHash),
+            beginUploadHandler: function (infoHash) {
+              this.processStateMachineInput('beginUpload', infoHash)
+            }.bind(this, infoHash),
+            endUploadHandler: function (infoHash) {
+              this.processStateMachineInput('endUpload', infoHash)
+            }.bind(this, infoHash)
           })
 
 

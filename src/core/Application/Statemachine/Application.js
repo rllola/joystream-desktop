@@ -58,6 +58,48 @@ var ApplicationStateMachine = new BaseMachine({
 
           // Initiate stopping
           this.handle(client, 'stop')
+      },
+
+      startTorrent: function (client, infoHash) {
+        var torrent = client.torrents.get(infoHash)
+        if (!torrent) return
+        //torrent.core.start()
+      },
+
+      stopTorrent: function (client, infoHash) {
+        var torrent = client.torrents.get(infoHash)
+        if (!torrent) return
+        //torrent.core.stop()
+      },
+
+      removeTorrent: function (client, infoHash, deleteData) {
+        var torrent = client.torrents.get(infoHash)
+        if (!torrent) return
+        //torrent.core.remove(deleteData)
+      },
+
+      openTorrentFolder: function (client, infoHash) {
+        var torrent = client.torrents.get(infoHash)
+        if (!torrent) return
+        //openFolder(torrent.torrent.handle.torrentFile().savePath)
+      },
+
+      startPaidDownload: function (client, infoHash) {
+        var torrent = client.torrents.get(infoHash)
+        if (!torrent) return
+        //torrent.core.startPaidDownload()
+      },
+
+      beingUpload: function (client, infoHash) {
+        var torrent = client.torrents.get(infoHash)
+        if (!torrent) return
+        //torrent.core.beginUpload()
+      },
+
+      endUpload: function (client, infoHash) {
+        var torrent = client.torrents.get(infoHash)
+        if (!torrent) return
+        //torrent.core.endUpload()
       }
     },
 
