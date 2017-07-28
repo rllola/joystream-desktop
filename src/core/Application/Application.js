@@ -63,27 +63,17 @@ class Application extends EventEmitter {
 
   addNewTorrent (torrentFilePath, mode = 'buy', terms) {
     if (mode === 'buy') {
-
-      terms = terms || {
-        maxPrice: 5,
-        maxLock: 10,
-        minNumberOfSellers: 1,
-        maxContractFeePerKb: 2000
-      }
+      // apply standard buyer terms if not provided
+      terms = terms || standardBuyerTerms()
 
       this._process('addNewTorrent', torrentFilePath, 4, {buyerTerms: terms})
     } else if (mode === 'sell') {
-
-      terms = terms || {
-        minPrice: 5,
-        minLock: 5,
-        maxNumberOfSellers: 10,
-        minContractFeePerKb: 2000
-      }
+      // apply standard seller terms if not provided
+      terms = terms || standardSellerTerms()
 
       this._process('addNewTorrent', torrentFilePath, 1, {sellerTerms: terms})
     } else {
-      this._process('addNewTorrent', torrentFilePath, 3 /*Passive*/, {})
+      this._process('addNewTorrent', torrentFilePath, 3 /* Passive */, {})
     }
   }
 
@@ -160,8 +150,10 @@ class ApplicationStatemachineClient {
           startPaidDownloadHandler: () => {
             this.processStateMachineInput('startPaidDownload', infoHash)
           },
-          beginUploadHandler: () => {
-            this.processStateMachineInput('beginUpload', infoHash)
+          beginUploadHandler: (sellerTerms) => {
+            // apply standard seller terms if not provided
+            sellerTerms = sellerTerms || standardSellerTerms()
+            this.processStateMachineInput('beginUpload', infoHash, sellerTerms)
           },
           endUploadHandler: () => {
             this.processStateMachineInput('endUpload', infoHash)
@@ -190,6 +182,24 @@ class ApplicationStatemachineClient {
     console.log(err.message)
   }
 
+}
+
+function standardSellerTerms () {
+  return ({
+    minPrice: 1,
+    minLock: 5,
+    maxNumberOfSellers: 10,
+    minContractFeePerKb: 1000
+  })
+}
+
+function standardBuyerTerms () {
+  return ({
+    maxPrice: 1,
+    maxLock: 5,
+    minNumberOfSellers: 1,
+    maxContractFeePerKb: 2000
+  })
 }
 
 export default Application

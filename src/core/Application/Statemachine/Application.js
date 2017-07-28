@@ -113,10 +113,10 @@ var ApplicationStateMachine = new BaseMachine({
         })
       },
 
-      beingUpload: function (client, infoHash) {
+      beingUpload: function (client, infoHash, sellerTerms) {
         var torrent = client.torrents.get(infoHash)
         if (!torrent) return
-        torrent.core.beginUpload()
+        torrent.core.beginUpload(sellerTerms)
       },
 
       endUpload: function (client, infoHash) {
