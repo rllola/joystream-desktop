@@ -227,8 +227,12 @@ function addTorrentToSession (session, params) {
 
 function torrentHasFinishedLoading (state) {
   if (state.startsWith('Active')) return true
+
+  // We can show this torrent on the downloading scene - the UI component should
+  // reflect that we need to supply buyer terms
   if (state.startsWith('Loading.WaitingForMissingBuyerTerms')) return true
   // What about torrents still trying to fetch metadata..?
+  // If we don't persist torrents without metadata its not really a problem
   return false
 }
 
