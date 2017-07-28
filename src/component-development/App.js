@@ -7,7 +7,8 @@ import RaisedButton from 'material-ui/RaisedButton'
 
 import HeaderScenarios from './header'
 import Downloading from './downloading'
-import LoadingScene from './loading'
+import LoadingSceneScenarios from './loading'
+import TerminatingSceneScenarios from './terminating'
 
 const App = (props) => {
 
@@ -23,12 +24,14 @@ const App = (props) => {
                 <HashRouter>
                     <div>
                         <Link to="loading"> <RaisedButton label="Loading" style={style} /> </Link>
+                        <Link to="terminating"> <RaisedButton label="Terminating" style={style} /> </Link>
                         <Link to="header"> <RaisedButton label="Header" style={style} />  </Link>
                         <Link to="downloading"> <RaisedButton label="Downloading" style={style} />  </Link>
                         <Link to="completed"> <RaisedButton label="Completed" style={style} /> </Link>
                         <Link to="seeding"> <RaisedButton label="Seeding" style={style} /> </Link>
 
-                        <Route path="/loading" component={LoadingScene} />
+                        <Route path="/loading" component={LoadingSceneScenarios} />
+                        <Route path="/terminating" component={TerminatingSceneScenarios} />
                         <Route path="/header" component={HeaderScenarios} />
                         <Route path="/downloading" component={Downloading} />
                         <Route path="/completed" />

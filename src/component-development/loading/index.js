@@ -54,8 +54,6 @@ class ControllableLoadingScene extends Component {
 
     render() {
 
-      console.log(this.state)
-
         return (
             <div>
                 <div style={{ height : 600}}>
@@ -64,7 +62,7 @@ class ControllableLoadingScene extends Component {
                 <CardActions>
 
                     {
-                      this.state.loadingState != LoadingState.CreatingSPVNode
+                      this.state.loadingState != LoadingState.InitializingResources
                         ?
                       <FlatButton label="Previous" onTouchTap={() => { this.goToPriorState()}}/>
                         :
@@ -72,7 +70,7 @@ class ControllableLoadingScene extends Component {
                     }
 
                     {
-                      this.state.loadingState != LoadingState.Finished
+                      this.state.loadingState != LoadingState.LoadingTorrents
                         ?
                       <FlatButton label="Next" onTouchTap={() => { this.goToNextState()}}/>
                         :

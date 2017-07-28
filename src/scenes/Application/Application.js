@@ -12,6 +12,7 @@ import Scene from '../../core/Application/Scene'
 
 // Our scenes
 import Loading, {LoadingState} from '../Loading/LoadingScene'
+import Terminating, {TerminatingState} from '../Terminating'
 import Downloading from '../Downloading'
 import Seeding from '../Seeding'
 import Completed from '../Completed'
@@ -46,7 +47,7 @@ class Application extends Component {
         switch(this.props.app.activeScene) {
 
             case Scene.NotStarted:
-                return null
+                return <h1>NotStarted</h1>
 
             case Scene.Loading:
                 return <Loading loadingState={applicationStateToLoadingState(this.props.app.state)}
@@ -62,16 +63,18 @@ class Application extends Component {
 
             case Scene.Uploading:
                 return <NavigationFrame {...this.props}>
-                            <h1>put new uploading scene component here</h1>
+                            <h1>uploading</h1>
                         </NavigationFrame>
 
             case Scene.Completed:
                 return <NavigationFrame {...this.props}>
-                            <h1>put new completed scene component here</h1>
+                            <h1>completed</h1>
                         </NavigationFrame>
 
             case Scene.ShuttingDown:
-                return <h1>Shutting down . . .</h1>
+
+                return <Terminating terminatingState={applicationStateToTerminatingState(this.props.app.state)}
+                                    terminatingTorrentsProgressValue={100*(this.props.app.torrentTerminatingProgress/this.props.app.torrentsToTerminate)} />
         }
     }
 
@@ -109,6 +112,26 @@ function applicationStateToLoadingState(s) {
         loadingState = LoadingState.LoadingTorrents
 
     return loadingState
+}
+
+function applicationStateToTerminatingState(s) {
+
+    let terminatingState
+
+    if(s == "Stopping.TerminatingTorrents" || s == "Stopping.uninitialized")
+        terminatingState = TerminatingState.TerminatingTorrents
+    else if(s == "Stopping.DisconnectingFromBitcoinNetwork")
+        terminatingState = TerminatingState.DisconnectingFromBitcoinNetwork
+    else if(s == "Stopping.ClosingWallet")
+        terminatingState = TerminatingState.ClosingWallet
+    else if(s == "Stopping.StoppingSpvNode")
+        terminatingState = TerminatingState.StoppingSpvNode
+    else if(s == "Stopping.ClosingApplicationDatabase")
+        terminatingState = TerminatingState.ClosingApplicationDatabase
+    else if(s == "Stopping.ClearingResources")
+        terminatingState = TerminatingState.ClearingResources
+
+    return terminatingState
 }
 
 export default Application

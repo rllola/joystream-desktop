@@ -38,6 +38,8 @@ class Application extends EventEmitter {
       this.store.setState(Statemachine.compositeState(client))
 
       this.emit('transition', data)
+
+      this.emit('enter-' + data.toState, data)
     })
 
     this._process = function (...args) {
