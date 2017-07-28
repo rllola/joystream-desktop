@@ -3,103 +3,113 @@ var expect = require('chai').expect
 var sinon = require('sinon')
 var _ = require('lodash')
 
-var machine = require('./machine')
+var BaseMachine = require('../../../src/core/BaseMachine')
+
+var machine = require('./complex_machine')
 
 describe('Base State Machine', function () {
+  describe('supports deep tree transitions', function () {
+    var machine = require('./complex_machine')
 
-  it('has a go method', function () {
-    expect(machine.go).to.be.a('function')
-  })
+    it('has go method', function () {
+      expect(machine.go).to.be.a('function')
+    })
 
-  it('has a linkChildren method', function () {
-    expect(machine.linkChildren).to.be.a('function')
-  })
+    it('transitions', function () {
+      function assertCompositeState (machine, client, state) {
+        assert.equal(machine.compositeState(client), state)
+      }
 
-  it('has a queuedHandle method', function () {
-    expect(machine.queuedHandle).to.be.a('function')
-  })
+      // Get instance of state machine for active substate.
+      // compositeState separates states with a period (.)
+      // so this function will break if states have a period in their names
+      function getActiveStateMachine (machine, client) {
+        let compositeState = machine.compositeState(client).split('.')
 
-  it('implements states', function () {
-    const states = [
-      'off',
-      'on',
-      'error'
-    ]
+        compositeState.forEach(function (state) {
+          machine = machine.states[state]._child || machine
+          machine = machine.instance || machine
+        })
 
-    _.forEach(states, function (state) {
-      assert(_.has(machine.states, state))
+        return machine
+      }
+
+      function deepTransition (machine, client, path) {
+        getActiveStateMachine(machine, client).go(client, path)
+      }
+
+      let client = {}
+
+      const assertState = assertCompositeState.bind(null, machine, client)
+
+      const transition = deepTransition.bind(null, machine, client)
+
+      assertState('X.a.A')
+
+      transition(['..', 'b'])
+
+      assertState('X.b')
+
+      transition(['..', 'Y'])
+
+      assertState('Y')
+
+      transition(['X', 'a', 'A'])
+
+      assertState('X.a.A')
+
+      transition('../b')
+
+      assertState('X.b')
     })
   })
 
-  it('initial state is off', function () {
-    assert.equal(machine.initialState, 'off')
+  describe('queuedHandle', function () {
+    var machine = new BaseMachine({
+      states: {
+        uninitialized: {
+        }
+      }
+    })
 
-    // initialise a state object
-    let client = {}
-    let state = machine.compositeState(client)
+    it('has queuedHandle method', function () {
+      expect(machine.queuedHandle).to.be.a('function')
+    })
 
-    assert.equal(state, 'off')
-    assert.equal(client.__machina__.vendingMachine.state, 'off')
-  })
+    it('immediately handles input if no other handler executing', function () {
+      var client = {}
+      var spy = sinon.spy()
+      machine.states['uninitialized'].spy = spy
+      machine.queuedHandle(client, 'spy', 'arg1', 'arg2')
 
-  it('can be turned on', function () {
-    const machine_id = 'coke'
+      assert(Array.isArray(machine._handleQueue))
+      assert(spy.called)
+      assert(spy.calledWith(client, 'arg1', 'arg2'))
+    })
 
-    let cokeMachine = {'id': machine_id}
+    it('queues handlers', function(){
+      var client = {}
 
-    machine.power_on(cokeMachine)
+      var spy = sinon.spy()
 
-    let state = machine.compositeState(cokeMachine)
-    assert.equal(state, 'on.waiting_for_payment')
-  })
+      machine.states['uninitialized'].spy = spy
 
-  it('can accept deposit and dispense', function () {
-    const machine_id = 'coke'
+      var reentry = sinon.spy(function(client) {
+        // as we are currently handling an input, the next call should get queued
+        this.queuedHandle(client, 'spy', 'arg1', 'arg2')
+        // if handler was successfully queued spy should not have been called yet
+        assert(!spy.called)
+      })
 
-    let cokeMachine = {'id': machine_id}
+      machine.states['uninitialized'].reentry = reentry
 
-    machine.power_on(cokeMachine)
+      machine.queuedHandle(client, 'reentry')
 
-    let state = machine.compositeState(cokeMachine)
+      // make sure that the last handler was called
+      assert(reentry.called)
 
-    assert.equal(state, 'on.waiting_for_payment')
-
-    machine.deposit(cokeMachine, 10)
-
-    assert.equal(cokeMachine.deposited, 10)
-
-    state = machine.compositeState(cokeMachine)
-
-    assert.equal(state, 'on.waiting_for_selection')
-
-    let spy = sinon.spy()
-    machine.on('dispensed', spy)
-    machine.selectItem(cokeMachine, 100)
-
-    assert.equal(cokeMachine.selectedItem, 100)
-
-    assert(spy.called)
-    state = machine.compositeState(cokeMachine)
-    assert.equal(state, 'on.waiting_for_payment')
-  })
-
-  it('can break and be repaired', function () {
-    const machine_id = 'coke'
-
-    let cokeMachine = {'id': machine_id}
-
-    machine.power_on(cokeMachine)
-
-    machine.deposit(cokeMachine, -1)
-
-    let state = machine.compositeState(cokeMachine)
-
-    assert.equal(state, 'error')
-
-    machine.repair(cokeMachine)
-
-    state = machine.compositeState(cokeMachine)
-
-    assert.equal(state, 'on.waiting_for_payment')
+      // ensure queued handler was dequed and called with correct arguments
+      assert(spy.calledWith(client, 'arg1', 'arg2'))
+    })
   })
 })

@@ -1,10 +1,10 @@
 var base = require('../../../src/core/BaseMachine')
 
 //     X       Y         [root]
-//    /|\     /|\
-//   a b c   a b c       [substate1]
-//  /|\       /|\
-// A B C     A B C       [substate2]
+//    /|\
+//   a b c               [substate1]
+//  /|\
+// A B C                 [substate2]
 
 var substate2 = new base({
   initialState: 'A',
