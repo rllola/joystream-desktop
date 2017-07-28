@@ -5,6 +5,7 @@
 var sinon = require('sinon')
 var EventEmitter = require('events').EventEmitter
 var util = require('util')
+var TorrentState = require('joystream-node').TorrentState
 
 ///
 
@@ -19,25 +20,23 @@ function MockTorrentStore() {
 util.inherits(MockTorrent, EventEmitter)
 
 function MockTorrent(fixture) {
+    if (!fixture) {
+      throw new Error('MockTorrent with undefined fixture')
+    }
 
     EventEmitter.call(this);
 
     this._fixture = fixture
 
-    this._handle = new MockTorrentHandle(fixture)
+    this.handle = new MockTorrentHandle(fixture)
     this.startSelling = sinon.spy()
 
     // Setup spies?/ stubs?
 }
 
-MockTorrent.prototype.handle = function () {
-    return this._handle
-}
-
 /// HandleSpy
 
 function MockTorrentHandle(fixture) {
-
     this._fixture = fixture
     this._status = new MockTorrentStatus(fixture)
 }
@@ -50,10 +49,9 @@ MockTorrentHandle.prototype.status = function () {
 
 function MockTorrentStatus(fixture) {
     this._fixture = fixture
-}
-
-MockTorrentStatus.prototype.is_finished = function() {
-    return this._fixture.isFullyDownloaded
+    if (fixture) {
+      this.state = fixture.isFullyDownloaded ? TorrentState.seeding : TorrentState.downloading
+    }
 }
 
 /// MockTorrentInfo

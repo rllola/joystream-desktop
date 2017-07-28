@@ -14,7 +14,7 @@ describe('Peer state machine', function () {
     let endpoint = "my_endpoint"
     let peerBEP10SupportStatus = "peerBEP10SupportStatus"
     let peerBitSwaprBEPSupportStatus = "peerBitSwaprBEPSupportStatus"
-    let torrent = new Mocks.MockTorrent()
+    let torrent = new Mocks.MockTorrent({})
     let peer = null
 
     let privateKeyGenerator = sinon.stub()
@@ -46,7 +46,7 @@ describe('Peer state machine', function () {
     })
 
     let buyerTerms = { xxx : 222}
-    
+
     it('updates state: tries to start paid uploading', function () {
 
         let s = Mocks.MakePeerPluginStatus(pid, null, null, null,
@@ -62,7 +62,7 @@ describe('Peer state machine', function () {
         assert.equal(torrent.startSelling.getCall(0).args[1], contractSk)
         assert.equal(torrent.startSelling.getCall(0).args[2], finalPkHash)
     })
-    
+
     it('goes to paid upload start', function () {
 
         var startSellingCallback = torrent.startSelling.getCall(0).args[3]
