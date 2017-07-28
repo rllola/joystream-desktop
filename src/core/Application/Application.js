@@ -1,11 +1,4 @@
 // Application core
-const assert = require('assert')
-const path = require('path')
-const os = require('os')
-const mkdirp = require('mkdirp')
-
-// Disable workers which are not available in electron
-require('bcoin').set({ useWorkers: false })
 
 const Directories = require('./directories')
 const SPVNode = require('./spvnode')
@@ -78,17 +71,9 @@ class Application extends EventEmitter {
   }
 
   moveToScene (s) {
-    const event = (() => {
-      switch (s) {
-        case Scene.Downloading: return 'downloading_scene_selected'
-        case Scene.Uploading: return 'uploading_scene_selected'
-        case Scene.Completed: return 'completed_scene_selected'
-      }
-    })()
-
-    if (event) {
-      this._process(event)
-    }
+    if (s === Scene.Downloading) return this._process('downloading_scene_selected')
+    if (s === Scene.Uploading) return this._process('uploading_scene_selected')
+    if (s === Scene.Completed) return this._process('completed_scene_selected')
   }
 
   start (config) {
