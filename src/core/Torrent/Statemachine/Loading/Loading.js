@@ -42,11 +42,14 @@ var Loading = new BaseMachine({
                             client.processStateMachineInput('resumeDataGenerationFailed')
                     })
 
-                    torrent.on('status_update', function(status) {
-
+                    torrent.on('status_update', (status) => {
                         // We directly update store, although we really should
                         // create a fresh input for this
                         client.store.setStatus(status)
+
+                        // Used to monitor progress while loading
+                        client.lastStatus = status
+                        this.emit('status_update', client, status)
                     })
 
                     // This alert is generated when a torrent switches from being a downloader to a seed.

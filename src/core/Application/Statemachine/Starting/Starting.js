@@ -146,9 +146,6 @@ var Starting = new BaseMachine({
       _reset: 'uninitialized',
       // When all torrent state machines have entered into final loaded state (so they are renderable)
       completedLoadingTorrents: function (client) {
-        // clear timer - it would be better to call this in an _onExit but machina doesn't
-        // seem to call this handler when the parent machine is transitioning
-        if (client.loadingProgressTimer) clearInterval(client.loadingProgressTimer)
         this.go(client, '../Started')
       }
     }

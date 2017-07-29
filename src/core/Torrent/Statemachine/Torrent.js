@@ -113,7 +113,9 @@ var Torrent = new BaseMachine({
         },
 
         Terminated : {
-
+            _onEnter: function (client) {
+              client.torrent.removeAllListeners()
+            },
             // Event drain, to prevent any further processing of events
             '*' : function (client) {
                 console.log("Ignored event on state: Torrent.Terminated")

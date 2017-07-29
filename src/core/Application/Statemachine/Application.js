@@ -70,17 +70,17 @@ var ApplicationStateMachine = new BaseMachine({
 
       startTorrent: function (client, infoHash) {
         var torrent = client.torrents.get(infoHash)
-        torrent.core.start()
+        torrent.start()
       },
 
       stopTorrent: function (client, infoHash) {
         var torrent = client.torrents.get(infoHash)
-        torrent.core.stop()
+        torrent.stop()
       },
 
       removeTorrent: function (client, infoHash, deleteData) {
         var torrent = client.torrents.get(infoHash)
-        //torrent.core.terminate()
+        //torrent.terminate()
         //if(deleteData) delete files
         //remove from libtorrent session
       },
@@ -92,18 +92,18 @@ var ApplicationStateMachine = new BaseMachine({
 
       updateBuyerTerms: function (client, infoHash, buyerTerms) {
         var torrent = client.torrents.get(infoHash)
-        torrent.core.updateBuyerTerms(buyerTerms)
+        torrent.updateBuyerTerms(buyerTerms)
       },
 
       updateSellerTerms: function (client, infoHash, sellerTerms) {
         var torrent = client.torrents.get(infoHash)
-        torrent.core.updateSellerTerms(sellerTerms)
+        torrent.updateSellerTerms(sellerTerms)
       },
 
       startPaidDownload: function (client, infoHash) {
         var torrent = client.torrents.get(infoHash)
         // start downloading from cheapest sellers
-        torrent.core.startPaidDownload(function (sellerA, sellerB) {
+        torrent.startPaidDownload(function (sellerA, sellerB) {
           const termsA = sellerA.connection.announcedModeAndTermsFromPeer.seller.terms
           const termsB = sellerB.connection.announcedModeAndTermsFromPeer.seller.terms
           return termsA.minPrice - termsB.minPrice
@@ -112,12 +112,12 @@ var ApplicationStateMachine = new BaseMachine({
 
       beingUpload: function (client, infoHash, sellerTerms) {
         var torrent = client.torrents.get(infoHash)
-        torrent.core.beginUpload(sellerTerms)
+        torrent.beginUpload(sellerTerms)
       },
 
       endUpload: function (client, infoHash) {
         var torrent = client.torrents.get(infoHash)
-        torrent.core.endUpload()
+        torrent.endUpload()
       },
 
       addNewTorrent: function (client, torrentFilePath, deepInitialState, extensionSettings) {
@@ -165,16 +165,11 @@ var ApplicationStateMachine = new BaseMachine({
 
       newTorrentAdded: function (client, torrent, coreTorrent, torrentStore) {
         console.log('Added New Torrent:', torrent.infoHash)
-        client.store.setTorrentBeingAdded(torrentStore)
 
-        client.torrents.set(torrent.infoHash, {
-          torrent: torrent,   // "joystream-node" torrent
-          core: coreTorrent,  // Torrent
-          store: torrentStore // TorrentStore
-        })
-
+        client.torrents.set(torrent.infoHash, coreTorrent)
         coreTorrent.addTorrentResult(null, torrent)
 
+        client.store.setTorrentBeingAdded(torrentStore)
         client.store.torrentAdded(torrentStore)
       }
     },

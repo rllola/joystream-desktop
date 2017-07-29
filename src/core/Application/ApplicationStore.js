@@ -168,7 +168,6 @@ class ApplicationStore {
   @action.bound
   setTorrentLoadingProgress (progress) {
     this.torrentLoadingProgress = progress
-    console.log('Loading Progress:', ((progress * 100) | 0) + '%')
   }
 
   @action.bound

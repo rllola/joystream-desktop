@@ -26,32 +26,30 @@ const BaseMachine = require('../../../BaseMachine')
             }
 
             client.torrents.forEach(function (torrent, infoHash) {
-              client.store.torrentRemoved(torrent.store)
-              torrent.core.terminate()
+              client.store.torrentRemoved(infoHash)
+              torrent.terminate()
 
-              const currentState = torrent.core.currentState()
+              const currentState = torrent.currentState()
 
               // check if terminated
               if (torrentHasTerminated(currentState)) {
-                return client.processStateMachineInput('torrentTerminated', infoHash)
+                return client.processStateMachineInput('torrentTerminated', infoHash, torrent)
               }
 
               // listen for transition to Terminated state
-              torrent.core.on('transition', function ({transition, state}) {
+              torrent.on('transition', function ({transition, state}) {
                 if (torrentHasTerminated(state)) {
-                  client.processStateMachineInput('torrentTerminated', infoHash)
+                  client.processStateMachineInput('torrentTerminated', infoHash, torrent)
                 }
               })
             })
           },
 
-          torrentTerminated: function (client, infoHash) {
+          torrentTerminated: function (client, infoHash, torrent) {
             console.log('Terminated:', infoHash)
-            let torrent = client.torrents.get(infoHash)
             client.torrents.delete(infoHash)
 
-            torrent.torrent.removeAllListeners()
-            torrent.core.removeAllListeners()
+            torrent.removeAllListeners()
 
             if (client.torrents.size === 0) {
               client.processStateMachineInput('terminatedAllTorrents')

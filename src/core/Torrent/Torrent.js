@@ -52,6 +52,13 @@ function Torrent(store) {
 
     })
 
+    TorrentStatemachine.on('status_update', (client, status) => {
+      // Check that the transition is on this torrent
+      if(client != this._client)
+          return
+
+      this.emit('status_update', status)
+    })
 }
 
 /**

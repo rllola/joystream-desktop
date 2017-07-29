@@ -103,16 +103,12 @@ var LoadingTorrents = new BaseMachine({
             continue
           }
 
-          client.store.torrentAdded(torrentStore) // batch these at the end?
+          client.torrentsLoading.set(infoHash, coreTorrent)
 
           // Torrent added to session inform the torrent state machine
           coreTorrent.addTorrentResult(null, torrent)
 
-          client.torrentsLoading.set(infoHash, {
-            torrent: torrent,   // "joystream-node" torrent
-            core: coreTorrent,  // Torrent
-            store: torrentStore // TorrentStore
-          })
+          client.store.torrentAdded(torrentStore)
         }
 
         client.processStateMachineInput('torrentsAddedToSession')
@@ -131,62 +127,58 @@ var LoadingTorrents = new BaseMachine({
     WaitingForTorrentsToFinishLoading: {
       _onEnter: function (client) {
         client.torrentsLoading.forEach(function (torrent, infoHash) {
-          const currentState = torrent.core.currentState()
+          const currentState = torrent.currentState()
 
           // NOTE: Should we look here for 'Loading.WaitingForMissingBuyerTerms' state and
           // set the standard buyerTerms, instead of asking the user to update the terms in the UI?
 
           // check if already Loaded
           if (torrentHasFinishedLoading(currentState)) {
-            return client.processStateMachineInput('torrentLoaded', infoHash)
+            return client.processStateMachineInput('torrentLoaded', infoHash, torrent)
           }
 
           // listen for transition out of loading state
-          torrent.core.on('transition', function ({transition, state}) {
+          torrent.on('transition', function ({transition, state}) {
             if (torrentHasFinishedLoading(state)) {
-              client.processStateMachineInput('torrentLoaded', infoHash)
+              client.processStateMachineInput('torrentLoaded', infoHash, torrent)
             }
           })
-        })
 
-        client.loadingProgressTimer = setInterval(function () {
-          client.processStateMachineInput('loadingProgressInterval')
-        }, 300)
+          torrent.on('status_update', function () {
+            // throttle updates?
+            client.processStateMachineInput('loadingProgressUpdate')
+          })
+        })
       },
 
-      loadingProgressInterval: function (client) {
-         // NOTE: If we include the torrents being loaded in the application store
-         // The loading screen can do these calculations (the torrentStore has the totalSize and progress
-         // computed values updated on status updates)
-         var totalSize = 0
-         var checkedSize = 0
+      loadingProgressUpdate: function (client) {
+        // NOTE: If we include the torrents being loaded in the application store
+        // The loading screen can do these calculations (the torrentStore has the totalSize and progress
+        // computed values updated on status updates)
+        var totalSize = 0
+        var checkedSize = 0
 
-         client.torrents.forEach(function (torrent) {
-           let handle = torrent.torrent.handle
-           let size = handle.torrentFile().totalSize() // expensive to keep getting ti?
-           totalSize += size
-         })
+        client.torrents.forEach(function (torrent) {
+          let size = torrent._client.metadata.totalSize()
+          totalSize += size
+        })
 
-         // Progress of loaded torrents is 100%
-         checkedSize = totalSize
+        // Progress of loaded torrents is 100%
+        checkedSize = totalSize
 
-         client.torrentsLoading.forEach(function (torrent) {
-           let handle = torrent.torrent.handle
-           let status = handle.status()
-           if (status.state === TorrentState.checking_files) {
-             let size = handle.torrentFile().totalSize()
-             totalSize += size
-             checkedSize += size * status.progress
-           }
-         })
+        client.torrentsLoading.forEach(function (torrent) {
+          let size = torrent._client.metadata.totalSize()
+          totalSize += size
+          checkedSize += size * torrent._client.lastStatus.progress
+        })
 
-         if (totalSize > 0)
+
+        if (totalSize > 0)
           client.store.setTorrentLoadingProgress(checkedSize / totalSize)
       },
 
-      torrentLoaded: function (client, infoHash) {
+      torrentLoaded: function (client, infoHash, torrent) {
         console.log('Loaded', infoHash)
-        let torrent = client.torrentsLoading.get(infoHash)
 
         // remove from map of loading torrents
         client.torrentsLoading.delete(infoHash)
@@ -194,7 +186,7 @@ var LoadingTorrents = new BaseMachine({
         // add to map of loaded torrents
         client.torrents.set(infoHash, torrent)
 
-        torrent.core.removeAllListeners('transition')
+        torrent.removeAllListeners()
 
         console.log('Total Torrents Loaded:', client.torrents.size, 'Remaining:', client.torrentsLoading.size)
 
