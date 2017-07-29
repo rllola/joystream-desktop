@@ -168,6 +168,9 @@ class ApplicationStatemachineClient {
     console.log(err.message)
   }
 
+  getStandardBuyerTerms () {
+    return standardBuyerTerms()
+  }
 }
 
 function standardSellerTerms () {

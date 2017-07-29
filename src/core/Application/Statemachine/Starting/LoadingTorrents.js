@@ -125,22 +125,20 @@ var LoadingTorrents = new BaseMachine({
     },
 
     WaitingForTorrentsToFinishLoading: {
+      // TODO: How to handle torrents that might get stuck trying to fetch metadata
+      // If we don't persist torrents without metadata its not really a problem
       _onEnter: function (client) {
         client.torrentsLoading.forEach(function (torrent, infoHash) {
-          const currentState = torrent.currentState()
-
-          // NOTE: Should we look here for 'Loading.WaitingForMissingBuyerTerms' state and
-          // set the standard buyerTerms, instead of asking the user to update the terms in the UI?
-
-          // check if already Loaded
-          if (torrentHasFinishedLoading(currentState)) {
-            return client.processStateMachineInput('torrentLoaded', infoHash, torrent)
-          }
-
           // listen for transition out of loading state
           torrent.on('transition', function ({transition, state}) {
-            if (torrentHasFinishedLoading(state)) {
-              client.processStateMachineInput('torrentLoaded', infoHash, torrent)
+            // check if already Loaded
+            if (state.startsWith('Active')) {
+              return client.processStateMachineInput('torrentLoaded', infoHash, torrent)
+            }
+
+            // check if we need to set buyer terms
+            if (state.startsWith('Loading.WaitingForMissingBuyerTerms')) {
+              torrent.updateBuyerTerms(client.getStandardBuyerTerms())
             }
           })
 
@@ -148,6 +146,18 @@ var LoadingTorrents = new BaseMachine({
             // throttle updates?
             client.processStateMachineInput('loadingProgressUpdate')
           })
+
+          const state = torrent.currentState()
+
+          // check if already Loaded
+          if (state.startsWith('Active')) {
+            return client.processStateMachineInput('torrentLoaded', infoHash, torrent)
+          }
+
+          // check if we need to set buyer terms
+          if (state.startsWith('Loading.WaitingForMissingBuyerTerms')) {
+            torrent.updateBuyerTerms(client.getStandardBuyerTerms())
+          }
         })
       },
 
@@ -210,17 +220,6 @@ function addTorrentToSession (session, params) {
       resolve(torrent)
     })
   })
-}
-
-function torrentHasFinishedLoading (state) {
-  if (state.startsWith('Active')) return true
-
-  // We can show this torrent on the downloading scene - the UI component should
-  // reflect that we need to supply buyer terms
-  if (state.startsWith('Loading.WaitingForMissingBuyerTerms')) return true
-  // What about torrents still trying to fetch metadata..?
-  // If we don't persist torrents without metadata its not really a problem
-  return false
 }
 
 module.exports = LoadingTorrents
