@@ -51,7 +51,7 @@ class Application extends Component {
 
             case Scene.Loading:
                 return <Loading loadingState={applicationStateToLoadingState(this.props.app.state)}
-                                loadingTorrentsProgressValue={100*(this.props.app.torrentLoadingProgress/this.props.app.torrentsToLoad)}/>
+                                loadingTorrentsProgressValue={100*this.props.app.torrentLoadingProgress}/>
 
             case Scene.Downloading:
                 return <NavigationFrame {...this.props}>
