@@ -6,6 +6,7 @@ const Session = require('joystream-node').Session
 const TorrentsStorage = require('../../db').default
 const Torrent = require('../Torrent/Torrent').default
 const TorrentStore = require('../Torrent/TorrentStore').default
+const DeepInitialState = require('../Torrent/Statemachine/Common').DeepInitialState
 
 const Scene = require('./Scene')
 
@@ -59,14 +60,14 @@ class Application extends EventEmitter {
       // apply standard buyer terms if not provided
       terms = terms || standardBuyerTerms()
 
-      this._process('addNewTorrent', torrentFilePath, 4, {buyerTerms: terms})
+      this._process('addNewTorrent', torrentFilePath, DeepInitialState.DOWNLOADING.UNPAID.STARTED, {buyerTerms: terms})
     } else if (mode === 'sell') {
       // apply standard seller terms if not provided
       terms = terms || standardSellerTerms()
 
-      this._process('addNewTorrent', torrentFilePath, 1, {sellerTerms: terms})
+      this._process('addNewTorrent', torrentFilePath, DeepInitialState.UPLOADING.STARTED, {sellerTerms: terms})
     } else {
-      this._process('addNewTorrent', torrentFilePath, 3 /* Passive */, {})
+      this._process('addNewTorrent', torrentFilePath, DeepInitialState.PASSIVE, {})
     }
   }
 
