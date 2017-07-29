@@ -133,6 +133,9 @@ var LoadingTorrents = new BaseMachine({
         client.torrentsLoading.forEach(function (torrent, infoHash) {
           const currentState = torrent.core.currentState()
 
+          // NOTE: Should we look here for 'Loading.WaitingForMissingBuyerTerms' state and
+          // set the standard buyerTerms, instead of asking the user to update the terms in the UI?
+
           // check if already Loaded
           if (torrentHasFinishedLoading(currentState)) {
             return client.processStateMachineInput('torrentLoaded', infoHash)
@@ -152,6 +155,9 @@ var LoadingTorrents = new BaseMachine({
       },
 
       loadingProgressInterval: function (client) {
+         // NOTE: If we include the torrents being loaded in the application store
+         // The loading screen can do these calculations (the torrentStore has the totalSize and progress
+         // computed values updated on status updates)
          var totalSize = 0
          var checkedSize = 0
 
