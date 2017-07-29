@@ -7,7 +7,9 @@ import { HashRouter, Route } from 'react-router-dom'
 
 import {ScenarioContainer} from '../common'
 
-import {Scene, ApplicationHeader} from '../../scenes/Application'
+import {ApplicationHeader} from '../../scenes/Application'
+
+import Scene from '../../core/Application/Scene'
 
 // factor out logo image thing => // change actual image logo?
 
