@@ -44,6 +44,8 @@ ipcMain.on('main-window-channel', (event, arg) => {
 
     if(arg == 'user-closed-app') {
 
+        console.log('was told about user closeing app')
+
         // Exit application
         app.quit()
     }

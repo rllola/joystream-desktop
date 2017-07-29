@@ -2,6 +2,8 @@
  * Created by bedeho on 12/06/17.
  */
 
+var ipcRenderer = require('electron').ipcRenderer
+
 const BaseMachine = require('../../../BaseMachine')
 
  var Stopping = new BaseMachine({
@@ -95,7 +97,11 @@ const BaseMachine = require('../../../BaseMachine')
             }
           },
           clearedResources: function (client) {
-            this.go(client, '../NotStarted')
+
+              // Tell main process about the application being done
+              ipcRenderer.send('main-window-channel', 'user-closed-app')
+
+              this.go(client, '../NotStarted')
           },
           _reset: 'uninitialized'
         }

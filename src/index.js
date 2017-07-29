@@ -56,46 +56,19 @@ var config = {
 
 application.start(config)
 
-// Hook into close event for window
-
-/// NB: this seems like it perhaps needs to go inside
-/// the machine.
-
+// ** Hook into close event for window **
 // Unlike usual browsers that a message box will be prompted to users, returning
 // a non-void value will silently cancel the close.
 // It is recommended to use the dialog API to let the user confirm closing the
 // application.
-
 // NB: Be aware that when electron.app.quit is called, this callback will
 // be triggered yet another time
 window.onbeforeunload = function(e) {
 
-    let currentState = application.currentState()
+    console.log('onbeforeunload')
 
-    // If we have already stopped, we are done, and allow window to close.
-    if(currentState == "NotStarted")
-        return // Allow closing
-    else {
+    // Tell state machine
+    application.onBeforeUnloadMainWindow(e)
 
-        // Ignore close operation if we are already stopping
-        if (currentState.startsWith("Stopping")) {
-            console.log("Ignoring click, we are already stopped or in the process or stopping.")
-        } else {
-
-            // Start stopping the application
-            application.stop()
-
-            // Detect when finished
-            application.once('enter-NotStarted', (data) => {
-
-                // Tell main process about this
-                ipcRenderer.send('main-window-channel', 'user-closed-app')
-
-            })
-
-        }
-
-        e.returnValue = false // Block closing
-
-    }
+    return
 }

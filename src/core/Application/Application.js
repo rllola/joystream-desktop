@@ -84,6 +84,16 @@ class Application extends EventEmitter {
   stop () {
     this._process('stop')
   }
+
+  // NB: This event really should not be queued in practice,
+  // as the caller will be the `window.onbeforeunload` event, which
+  // requires setting the event.returnValue to learn statemachines
+  // needs for canceling the close request. Luckily, the event queue
+  // is _guaranteed_ to be empty every time a call is made from the node
+  // event loop, e.g. for this event.
+    onBeforeUnloadMainWindow(event) {
+    this._process('onBeforeUnloadMainWindow', event)
+  }
 }
 
 // Create a maker function from a class or constructor function using 'new'
