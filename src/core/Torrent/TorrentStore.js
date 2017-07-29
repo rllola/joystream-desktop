@@ -148,7 +148,7 @@ class TorrentStore {
     /// Scene selector
 
     @computed get isLoading() {
-        return this.state.startsWith("Loading")
+        return this.state.startsWith("Loading") // exception 'Loading.WaitingForMissingBuyerTerms'
     }
 
     @computed get showOnDownloadingScene () {
@@ -166,7 +166,9 @@ class TorrentStore {
     /// User action guards
 
     @computed get canChangeBuyerTerms () {
-        return this.state.startsWith("Active.DownloadIncomplete.Unpaid.Started")
+        if (this.state.startsWith("Active.DownloadIncomplete.Unpaid.Started")) return true
+        if (this.state.startsWith('Loading.WaitingForMissingBuyerTerms')) return true
+        return false
     }
 
     @computed get canChangeSellerTerms () {
@@ -187,13 +189,13 @@ class TorrentStore {
 
     }
 
-    @computer get canStop() {
+    @computed get canStop() {
         return this.state.startsWith("Active.DownloadIncomplete.Unpaid.Started.ReadyForStartPaidDownloadAttempt") ||
             this.state.startsWith("Active.FinishedDownloading.Uploading.Started")
 
     }
 
-    @compute get canStart() {
+    @computed get canStart() {
         return this.state.startsWith("Active.DownloadIncomplete.Unpaid.Stopped") ||
             this.state.startsWith("Active.FinishedDownloading.Uploading.Stopped")
     }
@@ -220,8 +222,8 @@ class TorrentStore {
         this._handlers.startPaidDownloadHandler()
     }
 
-    beginUploading() {
-        this._handlers.beginUploadHandler()
+    beginUploading(sellerTerms) {
+        this._handlers.beginUploadHandler(sellerTerms)
     }
 
     endUploading() {

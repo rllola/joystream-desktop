@@ -32,7 +32,7 @@ var Uploading = new BaseMachine({
 
             goToPassive: function(client) {
 
-                client.goToObserveMode()
+                client.toObserveMode()
 
                 this.go(client, '../Passive')
             }
@@ -52,7 +52,7 @@ var Uploading = new BaseMachine({
 
                 client.startLibtorrentTorrent()
                 client.startExtension()
-                client.goToObserveMode()
+                client.toObserveMode()
 
                 this.go(client, '../Passive')
             }

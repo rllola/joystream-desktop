@@ -7,6 +7,8 @@ const Starting = require('./Starting/Starting')
 const Started = require('./Started/Started')
 const Stopping = require('./Stopping/Stopping')
 
+const TorrentInfo = require('joystream-node').TorrentInfo
+
 var ApplicationStateMachine = new BaseMachine({
   namespace: 'Application',
   initialState: 'NotStarted',
@@ -19,6 +21,12 @@ var ApplicationStateMachine = new BaseMachine({
       start: function (client, config) {
         client.config = config
         client.services = {}
+        client.torrents = new Map()
+        client.torrentsLoading = new Map()
+        client.infoHashesToLoad = []
+        client.store.setTorrentsToLoad(0)
+        client.store.setTorrentLoadingProgress(0)
+
         this.go(client, 'Starting/InitializingResources')
       }
     },
@@ -58,6 +66,111 @@ var ApplicationStateMachine = new BaseMachine({
 
           // Initiate stopping
           this.handle(client, 'stop')
+      },
+
+      startTorrent: function (client, infoHash) {
+        var torrent = client.torrents.get(infoHash)
+        torrent.start()
+      },
+
+      stopTorrent: function (client, infoHash) {
+        var torrent = client.torrents.get(infoHash)
+        torrent.stop()
+      },
+
+      removeTorrent: function (client, infoHash, deleteData) {
+        var torrent = client.torrents.get(infoHash)
+        //torrent.terminate()
+        //if(deleteData) delete files
+        //remove from libtorrent session
+      },
+
+      openTorrentFolder: function (client, infoHash) {
+        var torrent = client.torrents.get(infoHash)
+        //openFolder(torrent.torrent.handle.torrentFile().savePath)
+      },
+
+      updateBuyerTerms: function (client, infoHash, buyerTerms) {
+        var torrent = client.torrents.get(infoHash)
+        torrent.updateBuyerTerms(buyerTerms)
+      },
+
+      updateSellerTerms: function (client, infoHash, sellerTerms) {
+        var torrent = client.torrents.get(infoHash)
+        torrent.updateSellerTerms(sellerTerms)
+      },
+
+      startPaidDownload: function (client, infoHash) {
+        var torrent = client.torrents.get(infoHash)
+        // start downloading from cheapest sellers
+        torrent.startPaidDownload(function (sellerA, sellerB) {
+          const termsA = sellerA.connection.announcedModeAndTermsFromPeer.seller.terms
+          const termsB = sellerB.connection.announcedModeAndTermsFromPeer.seller.terms
+          return termsA.minPrice - termsB.minPrice
+        })
+      },
+
+      beingUpload: function (client, infoHash, sellerTerms) {
+        var torrent = client.torrents.get(infoHash)
+        torrent.beginUpload(sellerTerms)
+      },
+
+      endUpload: function (client, infoHash) {
+        var torrent = client.torrents.get(infoHash)
+        torrent.endUpload()
+      },
+
+      addNewTorrent: function (client, torrentFilePath, deepInitialState, extensionSettings) {
+        // Create a TorrentInfo from the file
+        try {
+          var ti = new TorrentInfo(torrentFilePath)
+        } catch (err) {
+          console.log(err)
+          return
+        }
+
+        const infoHash = ti.infoHash()
+
+        if (client.torrents.has(infoHash)) {
+          console.log('Torrent Already Exists')
+          // change scene to where the torrent is currently displayed?
+          return
+        }
+
+        let torrentStore = client.factories.torrentStore(infoHash)
+        let coreTorrent = client.factories.torrent(torrentStore)
+
+        coreTorrent.startLoading(infoHash, ti.name() || infoHash, client.directories.defaultSavePath(), null, ti, deepInitialState, extensionSettings)
+
+        let addParams = {
+          ti: ti,
+          name: ti.name() || infoHash,
+          savePath: client.directories.defaultSavePath(),
+          flags: {
+            paused: true,
+            auto_managed: false
+          }
+        }
+
+        client.services.session.addTorrent(addParams, (err, torrent) => {
+          if (err) {
+            client.reportError(err)
+            coreTorrent.addTorrentResult(err)
+            return
+          }
+
+          client.processStateMachineInput('newTorrentAdded', torrent, coreTorrent, torrentStore)
+        })
+      },
+
+      newTorrentAdded: function (client, torrent, coreTorrent, torrentStore) {
+        console.log('Added New Torrent:', torrent.infoHash)
+
+        client.torrents.set(torrent.infoHash, coreTorrent)
+        coreTorrent.addTorrentResult(null, torrent)
+
+        client.store.setTorrentBeingAdded(torrentStore)
+        client.store.torrentAdded(torrentStore)
       }
     },
 
@@ -73,5 +186,11 @@ var ApplicationStateMachine = new BaseMachine({
     }
   }
 })
+
+function addTorrentToSession (session, params) {
+  return new Promise(function (resolve, reject) {
+
+  })
+}
 
 module.exports = ApplicationStateMachine

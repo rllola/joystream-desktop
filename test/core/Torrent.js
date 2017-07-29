@@ -59,12 +59,12 @@ describe('Torrent state machine', function () {
 
             handleSequence(Torrent,
                             client,
-                            'termsReady',
+                            'updateBuyerTerms',
                             'toBuyModeResult',
                             'startExtensionResult')
 
             assert.equal(Torrent.compositeState(client), 'Active.DownloadIncomplete.Unpaid.Started.ReadyForStartPaidDownloadAttempt')
-            
+
         })
 
     })
@@ -130,20 +130,11 @@ describe('Torrent state machine', function () {
         let torrent = new Mocks.MockTorrent(fixture)
         let torrentInfo = new Mocks.MockTorrentInfo(fixture)
 
-        it('adds torrent to session', function () {
+        it('waits to be added to session', function () {
 
             handleSequence(Torrent,
                             client,
                             fixtureToStartLoadingInput(fixture, torrentInfo))
-
-            assert.equal(client.addTorrent.callCount, 1)
-            assert.equal(client.addTorrent.getCall(0).args[0], fixture.infoHash)
-            assert.equal(client.addTorrent.getCall(0).args[1], fixture.name)
-            assert.equal(client.addTorrent.getCall(0).args[2], fixture.savePath)
-            assert.equal(client.addTorrent.getCall(0).args[3], Common.isStopped(fixture.deepInitialState)) // addAsPaused,
-            assert.equal(client.addTorrent.getCall(0).args[4], false) // addAsAutomanaged
-            assert.equal(client.addTorrent.getCall(0).args[5], torrentInfo)
-            assert.equal(client.addTorrent.getCall(0).args[6], fixture.resumeData) // addAsAutomanaged
 
             assert.equal(Torrent.compositeState(client), 'Loading.AddingToSession')
 
@@ -165,11 +156,11 @@ describe('Torrent state machine', function () {
 
         it('goes to correct inital state: unpaid stopped downloading', function() {
 
-            Torrent.queuedHandle(client, 'checkFinished', false) // isFullyDownloaded == false
+            Torrent.queuedHandle(client, 'checkFinished')
 
             assert.equal(client.setLibtorrentInteraction.callCount, 1)
-            assert.equal(client.goToBuyMode.callCount, 1)
-            assert.deepEqual(client.goToBuyMode.getCall(0).args[0], fixture.extensionSettings.buyerTerms)
+            assert.equal(client.toBuyMode.callCount, 1)
+            assert.deepEqual(client.toBuyMode.getCall(0).args[0], fixture.extensionSettings.buyerTerms)
             assert.equal(Torrent.compositeState(client), 'Active.DownloadIncomplete.Unpaid.Stopped')
 
         })
@@ -252,11 +243,11 @@ describe('Torrent state machine', function () {
 
         it('finish download' , function() {
 
-            client.goToObserveMode.reset()
+            client.toObserveMode.reset()
 
             Torrent.queuedHandle(client, 'downloadFinished')
 
-            assert.equal(client.goToObserveMode.callCount, 1)
+            assert.equal(client.toObserveMode.callCount, 1)
             assert.equal(Torrent.compositeState(client), 'Active.FinishedDownloading.Passive')
         })
 
@@ -301,8 +292,8 @@ describe('Torrent state machine', function () {
             Torrent.queuedHandle(client, 'goToStartedUploading', sellerTerms)
 
             assert.equal(Torrent.compositeState(client), 'Active.FinishedDownloading.Uploading.Started')
-            assert.equal(client.goToSellMode.callCount, 1)
-            assert.deepEqual(client.goToSellMode.getCall(0).args[0], sellerTerms)
+            assert.equal(client.toSellMode.callCount, 1)
+            assert.deepEqual(client.toSellMode.getCall(0).args[0], sellerTerms)
         })
 
         it('then back to passive', function() {
@@ -339,7 +330,7 @@ describe('Torrent state machine', function () {
 
         let torrent = new Mocks.MockTorrent(fixture)
         let torrentInfo = new Mocks.MockTorrentInfo(fixture)
-        
+
         it('gets to (stopped) uploading', function () {
 
             handleSequence(Torrent, client,
@@ -390,7 +381,7 @@ describe('Torrent state machine', function () {
 
 
         })
-        
+
         it('goes back to passive', function () {
 
             ///
@@ -408,7 +399,7 @@ describe('Torrent state machine', function () {
             ///
 
             //
-            
+
         })
 
     })
@@ -419,15 +410,19 @@ function MockClient() {
 
     this.store = new Mocks.MockTorrentStore()
 
+    this.processStateMachineInput = function (...args) {
+      Torrent.queuedHandle(this, ...args)
+    }
+
     this.addTorrent = sinon.spy()
     this.stopExtension = sinon.spy()
     this.startExtension = sinon.spy()
     this.startLibtorrentTorrent = sinon.spy()
     this.generateResumeData = sinon.spy()
     this.setLibtorrentInteraction = sinon.spy()
-    this.goToObserveMode = sinon.spy()
-    this.goToSellMode = sinon.spy()
-    this.goToBuyMode = sinon.spy()
+    this.toObserveMode = sinon.spy()
+    this.toSellMode = sinon.spy()
+    this.toBuyMode = sinon.spy()
     this.startUploading = sinon.spy()
     this.updateSellerTerms = sinon.spy()
     this.updateBuyerTerms = sinon.spy()
@@ -443,9 +438,9 @@ MockClient.prototype.resetSpies = function() {
     this.startLibtorrentTorrent.reset()
     this.generateResumeData.reset()
     this.setLibtorrentInteraction.reset()
-    this.goToObserveMode.reset()
-    this.goToSellMode.reset()
-    this.goToBuyMode.reset()
+    this.toObserveMode.reset()
+    this.toSellMode.reset()
+    this.toBuyMode.reset()
     this.startUploading.reset()
     this.updateSellerTerms.reset()
     this.updateBuyerTerms.reset()

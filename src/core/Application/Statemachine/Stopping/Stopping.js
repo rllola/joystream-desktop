@@ -17,12 +17,46 @@ const BaseMachine = require('../../../BaseMachine')
         },
         TerminatingTorrents: {
           _onEnter: function (client) {
-            //TODO: async ... client.torrents.forEach terminate... wait for completion
             client.store.setTorrentsToTerminate(client.torrents.length)
-            client.store.setTorrentTerminatingProgress(1)
-            this.handle(client, 'terminated')
+            client.store.setTorrentTerminatingProgress(0)
+
+            if (client.torrents.size === 0) {
+              this.transition(client, 'DisconnectingFromBitcoinNetwork')
+              return
+            }
+
+            client.torrents.forEach(function (torrent, infoHash) {
+              client.store.torrentRemoved(infoHash)
+              torrent.terminate()
+
+              const currentState = torrent.currentState()
+
+              // check if terminated
+              if (torrentHasTerminated(currentState)) {
+                return client.processStateMachineInput('torrentTerminated', infoHash, torrent)
+              }
+
+              // listen for transition to Terminated state
+              torrent.on('transition', function ({transition, state}) {
+                if (torrentHasTerminated(state)) {
+                  client.processStateMachineInput('torrentTerminated', infoHash, torrent)
+                }
+              })
+            })
           },
-          terminated: function (client) {
+
+          torrentTerminated: function (client, infoHash, torrent) {
+            console.log('Terminated:', infoHash)
+            client.torrents.delete(infoHash)
+
+            torrent.removeAllListeners()
+
+            if (client.torrents.size === 0) {
+              client.processStateMachineInput('terminatedAllTorrents')
+            }
+          },
+
+          terminatedAllTorrents: function (client) {
             this.transition(client, 'DisconnectingFromBitcoinNetwork')
           }
         },
@@ -30,7 +64,7 @@ const BaseMachine = require('../../../BaseMachine')
         DisconnectingFromBitcoinNetwork: {
           _onEnter: async function (client) {
             await client.services.spvnode.disconnect()
-            this.handle(client, 'disconnectedFromBitcoinNetwork')
+            client.processStateMachineInput('disconnectedFromBitcoinNetwork')
           },
           disconnectedFromBitcoinNetwork: function (client) {
             this.transition(client, 'ClosingWallet')
@@ -40,7 +74,7 @@ const BaseMachine = require('../../../BaseMachine')
         ClosingWallet: {
           _onEnter: function (client) {
             client.services.wallet = null
-            this.handle(client, 'closedWallet')
+            client.processStateMachineInput('closedWallet')
           },
           closedWallet: function (client) {
             this.transition(client, 'StoppingSpvNode')
@@ -53,7 +87,7 @@ const BaseMachine = require('../../../BaseMachine')
               if (client.services.spvnode) await client.services.spvnode.close()
             } catch (e) {}
 
-            this.handle(client, 'stoppedSpvNode')
+            client.processStateMachineInput('stoppedSpvNode')
           },
           stoppedSpvNode: function (client) {
             this.transition(client, 'ClosingApplicationDatabase')
@@ -65,10 +99,10 @@ const BaseMachine = require('../../../BaseMachine')
             if (client.services.db) {
               client.services.db.close((err) => {
                 client.services.db = null
-                this.handle(client, 'closedDatabase')
+                client.processStateMachineInput('closedDatabase')
               })
             } else {
-              this.handle(client, 'closedDatabase')
+              client.processStateMachineInput('closedDatabase')
             }
           },
           closedDatabase: function (client) {
@@ -78,7 +112,6 @@ const BaseMachine = require('../../../BaseMachine')
 
         ClearingResources: {
           _onEnter: function (client) {
-            client.torrents = []
             client.services.spvnode = null
 
             if (client.services.session) {
@@ -90,10 +123,10 @@ const BaseMachine = require('../../../BaseMachine')
               // TODO: update joystream-node session (to clearInterval)
               client.services.session.pauseLibtorrent((err) => {
                 client.services.sesison = null
-                this.handle(client, 'clearedResources')
+                client.processStateMachineInput('clearedResources')
               })
             } else {
-              this.handle(client, 'clearedResources')
+              client.processStateMachineInput('clearedResources')
             }
           },
           clearedResources: function (client) {
@@ -107,5 +140,9 @@ const BaseMachine = require('../../../BaseMachine')
         }
     }
 })
+
+function torrentHasTerminated (state) {
+  return state.startsWith('Terminated')
+}
 
 module.exports = Stopping

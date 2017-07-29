@@ -18,8 +18,6 @@ var Starting = new BaseMachine({
     InitializingResources: {
       _onEnter: function (client) {
         try {
-          client.torrents = []
-
           // Get directories service resource
           client.directories = client.factories.directories(client.config.appDirectory)
 
@@ -62,10 +60,10 @@ var Starting = new BaseMachine({
           try {
             client.services.db = await client.services.openDatabase()
           } catch (err) {
-            return this.queuedHandle(client, 'databaseInitializationFailure', err)
+            return client.processStateMachineInput('databaseInitializationFailure', err)
           }
 
-          this.queuedHandle(client, 'databaseInitializationSuccess')
+          client.processStateMachineInput('databaseInitializationSuccess')
       },
       databaseInitializationSuccess: function (client) {
         this.transition(client, 'InitialializingSpvNode')
@@ -82,9 +80,9 @@ var Starting = new BaseMachine({
         // change to use async/await after http/net fix in bcoin
         client.services.spvnode.open((err) => {
           if (err) {
-            this.queuedHandle(client, 'initialializingSpvNodeFailure', err)
+            client.processStateMachineInput('initialializingSpvNodeFailure', err)
           } else {
-            this.queuedHandle(client, 'initialializingSpvNodeSuccess')
+            client.processStateMachineInput('initialializingSpvNodeSuccess')
           }
         })
       },
@@ -103,14 +101,14 @@ var Starting = new BaseMachine({
         try {
           client.services.wallet = await client.services.spvnode.getWallet()
         } catch (err) {
-          return this.queuedHandle(client, 'openingWalletFailure', err)
+          return client.processStateMachineInput('openingWalletFailure', err)
         }
 
         // Check if wallet is not found do we get null or rejected promise?
         if (client.services.wallet) {
-          this.queuedHandle(client, 'openingWalletSuccess')
+          client.processStateMachineInput('openingWalletSuccess')
         } else {
-          this.queuedHandle(client, 'openingWalletFailure', new Error('primary wallet'))
+          client.processStateMachineInput('openingWalletFailure', new Error('primary wallet'))
         }
       },
       openingWalletSuccess: function (client) {
@@ -128,10 +126,10 @@ var Starting = new BaseMachine({
         try {
           await client.services.spvnode.connect()
         } catch (err) {
-          return this.queuedHandle(client, 'connectingToBitcoinP2PNetworkFailure', err)
+          return client.processStateMachineInput('connectingToBitcoinP2PNetworkFailure', err)
         }
 
-        this.queuedHandle(client, 'connectingToBitcoinP2PNetworkSuccess')
+        client.processStateMachineInput('connectingToBitcoinP2PNetworkSuccess')
       },
       connectingToBitcoinP2PNetworkSuccess: function (client) {
         this.go(client, 'LoadingTorrents/GettingInfoHashes')

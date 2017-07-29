@@ -5,6 +5,7 @@
 var BaseMachine = require('../../../../../BaseMachine')
 var Common = require('../../../Common')
 var ConnectionInnerState = require('joystream-node').ConnectionInnerState
+var commitmentToOutput = require('joystream-node').paymentChannel.commitmentToOutput
 
 var Started = new BaseMachine({
 

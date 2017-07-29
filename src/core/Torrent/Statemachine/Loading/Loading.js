@@ -5,8 +5,9 @@
 var assert = require('assert')
 var BaseMachine = require('../../../BaseMachine')
 var LibtorrentInteraction = require('joystream-node').LibtorrentInteraction
+var TorrentState = require('joystream-node').TorrentState
+
 var Common = require('./../Common')
-var Torrent = require('../Torrent')
 
 var Loading = new BaseMachine({
 
@@ -18,53 +19,57 @@ var Loading = new BaseMachine({
 
             addTorrentResult: function (client, err, torrent) {
 
-                if(err) {
-
+                if (err) {
                     this.transition(client, 'FailedAdding')
 
                 } else {
-
                     // Hold on to torrent
                     client.torrent = torrent
 
                     // Hook into torrent events
 
                     torrent.on('metadata', (metadata) => {
-                        Torrent.queuedHandle(client, 'metadataReady', metadata)
+                        client.processStateMachineInput('metadataReady', metadata)
                     })
 
                     torrent.on('resumedata', (resumeData) => {
-                        Torrent.queuedHandle(client, 'resumeDataGenerated', resumeData)
+                        client.processStateMachineInput('resumeDataGenerated', resumeData)
                     })
 
                     torrent.on('error', function(err) {
 
                         if(err.message == 'resume data generation failed')
-                            Torrent.queuedHandle(client, 'resumeDataGenerationFailed')
+                            client.processStateMachineInput('resumeDataGenerationFailed')
                     })
 
-                    torrent.on('status_update', function(status) {
-
+                    torrent.on('status_update', (status) => {
                         // We directly update store, although we really should
                         // create a fresh input for this
                         client.store.setStatus(status)
+
+                        // Used to monitor progress while loading
+                        client.lastStatus = status
+                        this.emit('status_update', client, status)
                     })
 
+                    // This alert is generated when a torrent switches from being a downloader to a seed.
+                    // It will only be generated once per torrent.
                     torrent.on('finished', function() {
-                        Torrent.queuedHandle(client, 'downloadFinished')
+                        client.processStateMachineInput('downloadFinished')
                     })
 
-                    torrent.on('checkFinished', function () {
-                        Torrent.queuedHandle(client, 'checkFinished')
+                    // This alert is posted when a torrent completes checking. i.e. when it transitions out of
+                    // the checking files state into a state where it is ready to start downloading
+                    torrent.on('torrentChecked', function () {
+                        client.processStateMachineInput('checkFinished')
                     })
 
                     // If we don´t have metadata, wait for it
-                    if(!client.metadata.isValid()) {
-                        this.transition(client, 'WaitingForMetadata')
-                    } else {
+                    if(client.metadata && client.metadata.isValid()) {
                         this.transition(client, 'CheckingPartialDownload')
-
                         client.store.setMetadata(client.metadata)
+                    } else {
+                        this.transition(client, 'WaitingForMetadata')
                     }
                 }
 
@@ -96,7 +101,6 @@ var Loading = new BaseMachine({
         CheckingPartialDownload: {
 
             checkFinished: function (client) {
-
                 // By default, extension torrent plugins are constructed with
                 // TorrentPlugin::LibtorrentInteraction::None:
                 // - No events interrupted, except on_extended events for this plugin.
@@ -111,15 +115,15 @@ var Loading = new BaseMachine({
 
                 // Determine whether we have a full download
 
-                var s = client.torrent.handle().status()
+                var s = client.torrent.handle.status()
 
-                if(s.is_finished()) {
+                if (s.state === TorrentState.seeding) {
 
                     if(Common.isPassive(client.deepInitialState) || Common.isDownloading(client.deepInitialState)) {
 
                         // When there is a full download, and the user doesn't want to upload, then
                         // we just go to passive, even if the user really wanted to download.
-                        client.goToObserveMode()
+                        client.toObserveMode()
 
                         client.deepInitialState = Common.DeepInitialState.PASSIVE
 
@@ -127,7 +131,7 @@ var Loading = new BaseMachine({
 
                     } else { // isUploading
 
-                        client.goToSellMode(client.sellerTerms)
+                        client.toSellMode(client.sellerTerms)
 
                         if(!Common.isStopped(client.deepInitialState))
                             client.startExtension()
@@ -142,7 +146,7 @@ var Loading = new BaseMachine({
 
                     if(Common.isDownloading(client.deepInitialState))  {
 
-                        client.goToBuyMode(client.buyerTerms)
+                        client.toBuyMode(client.buyerTerms)
 
                         // When not paused, then start extension, otherwise leave extension un-started
                         if(!Common.isStopped(client.deepInitialState))
@@ -165,12 +169,12 @@ var Loading = new BaseMachine({
 
         WaitingForMissingBuyerTerms : {
 
-            termsReady : function(client, terms) {
+            updateBuyerTerms: function(client, terms) {
 
                 // Hold on to terms
                 client.buyerTerms = terms
 
-                client.goToBuyMode(terms)
+                client.toBuyMode(terms)
 
                 // When not paused, then start extension, otherwise leave extension un-started
                 if(!Common.isStopped(client.deepInitialState))

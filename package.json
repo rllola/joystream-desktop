@@ -44,6 +44,7 @@
     "electron-prebuilt-compile": "1.6.4",
     "mobx-react-devtools": "^4.2.11",
     "node-gyp": "^3.6.0",
+    "promise-mock": "^1.1.1",
     "rimraf": "^2.6.1",
     "sinon": "^2.3.6",
     "webpack": "^2.3.1",

@@ -2,6 +2,8 @@
 // which is needed.
 process.env.BCOIN_NO_NATIVE = '1'
 
+// Disable workers which are not available in electron
+require('bcoin').set({ useWorkers: false })
 import {ipcRenderer} from 'electron'
 
 // babel-polyfill for generator (async/await)

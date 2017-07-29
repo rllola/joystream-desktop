@@ -17,11 +17,11 @@ util.inherits(Torrent, EventEmitter)
  * @param session
  * @constructor
  */
-function Torrent(store, session) {
+function Torrent(store) {
 
     EventEmitter.call(this)
 
-    this._client = new TorrentStatemachineClient(session, store)
+    this._client = new TorrentStatemachineClient(store)
 
     // Set initial state of store
     store.setState(TorrentStatemachine.compositeState(this._client))
@@ -52,6 +52,13 @@ function Torrent(store, session) {
 
     })
 
+    TorrentStatemachine.on('status_update', (client, status) => {
+      // Check that the transition is on this torrent
+      if(client != this._client)
+          return
+
+      this.emit('status_update', status)
+    })
 }
 
 /**
@@ -65,7 +72,11 @@ function Torrent(store, session) {
  * @param extensionSettings
  */
 Torrent.prototype.startLoading = function(infoHash, name, savePath, resumeData, metadata, deepInitialState, extensionSettings) {
-    TorrentStatemachine.queuedHandle(this._client, 'startLoading', infoHash, name, savePath, resumeData, metadata, deepInitialState, extensionSettings)
+    this._client.processStateMachineInput('startLoading', infoHash, name, savePath, resumeData, metadata, deepInitialState, extensionSettings)
+}
+
+Torrent.prototype.addTorrentResult = function(err, torrent) {
+    this._client.processStateMachineInput('addTorrentResult', err, torrent)
 }
 
 /**
@@ -74,64 +85,72 @@ Torrent.prototype.startLoading = function(infoHash, name, savePath, resumeData, 
  * if this is true, resume data will not be generated.
  */
 Torrent.prototype.terminate = function(generateResumeData) {
-    TorrentStatemachine.queuedHandle(this._client, 'terminate', generateResumeData)
+    this._client.processStateMachineInput('terminate', generateResumeData)
+}
+
+Torrent.prototype.currentState = function () {
+  return TorrentStatemachine.compositeState(this._client)
+}
+
+Torrent.prototype.start = function () {
+  this._client.processStateMachineInput('start')
+}
+
+Torrent.prototype.stop = function () {
+  this._client.processStateMachineInput('stop')
+}
+
+Torrent.prototype.updateBuyerTerms = function (buyerTerms) {
+  this._client.processStateMachineInput('updateBuyerTerms', buyerTerms)
+}
+
+Torrent.prototype.updateSellerTerms = function (sellerTerms) {
+  this._client.processStateMachineInput('updateSellerTerms', sellerTerms)
+}
+
+Torrent.prototype.startPaidDownload = function (peerSorter) {
+  this._client.processStateMachineInput('startPaidDownload', peerSorter)
+}
+
+Torrent.prototype.beginUpload = function (sellerTerms) {
+  this._client.processStateMachineInput('goToStartedUploading', sellerTerms)
+}
+
+Torrent.prototype.endUpload = function () {
+  this._client.processStateMachineInput('goToPassive')
 }
 
 /// TorrentStateMachineClient
 /// Holds state and external messaging implementations for a (behavoural machinajs) Torrent state machine instance
 
-function TorrentStatemachineClient(session, store) {
-    this.session = session
+function TorrentStatemachineClient(store) {
     this.store = store
 }
 
-TorrentStatemachineClient.prototype.addTorrent = function(infoHash, name, savePath, addAsPaused, autoManaged, metadata, resumeData) {
-
-    // Construct params for libtorrent
-    // NB 1: only reason we are doing this here, and not inside
-    // machine is because we dont want to break old interface just now, fix later
-    // NB 2: This needs to really be factored out
-    // NB 3: Ignoring `addAsPaused` and `autoManaged` until this is fixed https://github.com/JoyStream/libtorrent-node/issues/21
-    let addTorrentParams = {
-        infoHash : infoHash,
-        savePath : savePath,
-        resumeData : resumeData
-    }
-
-    if(name)
-        addTorrentParams.name = name
-
-    if(metadata)
-        addTorrentParams.ti = metadata
-
-    this.session.addTorrent(addTorrentParams, (err, torrent) => {
-
-        LOG_ERROR(err)
-
-        TorrentStatemachine.queuedHandle(this, 'addTorrentResult', err, torrent)
-    })
+TorrentStatemachineClient.prototype.processStateMachineInput = function (...args) {
+  TorrentStatemachine.queuedHandle(this, ...args)
 }
 
 TorrentStatemachineClient.prototype.stopExtension = function() {
 
-    this.torrent.stopPlugin(function (err, res) {
+    this.torrent.stopPlugin( (err, res) => {
 
-        LOG_ERROR(err)
+        LOG_ERROR("stopExtension", err)
 
         // Silent
-        //TorrentStatemachine.queuedHandle(this, 'stopExtensionResult', err, res)
+        // this.processStateMachineInput('stopExtensionResult', err, res)
     })
 
 }
 
 TorrentStatemachineClient.prototype.startExtension = function() {
 
-    this.torrent.startPlugin(function(res, err) {
+    this.torrent.startPlugin((err, resp) => {
 
-        LOG_ERROR(err)
+        LOG_ERROR("startExtension", err)
 
         // Silent
-        //TorrentStatemachine.queuedHandle(this, 'startExtensionResult', err, res)
+        // this.processStateMachineInput('startExtensionResult', err, res)
     })
 }
 
@@ -152,44 +171,44 @@ TorrentStatemachineClient.prototype.generateResumeData = function() {
 
 TorrentStatemachineClient.prototype.setLibtorrentInteraction = function(mode) {
 
-    this.torrent.setLibtorrentInteraction (mode, function() {
+    this.torrent.setLibtorrentInteraction (mode, (err) => {
 
-        LOG_ERROR(err)
+        LOG_ERROR("setLibtorrentInteraction", err)
 
         // Silent
-        //TorrentStatemachine.queuedHandle(this, 'setLibtorrentInteractionResult', err, res) // 'blocked'
+        // this.processStateMachineInput('setLibtorrentInteractionResult', err, res) // 'blocked'
     })
 }
 
 TorrentStatemachineClient.prototype.toObserveMode = function() {
 
-    this.torrent.toObserveMode(function(err, res) {
+    this.torrent.toObserveMode((err, res) => {
 
-        LOG_ERROR(err)
+        LOG_ERROR("toObserveMode", err)
 
         // Silent
-        // TorrentStatemachine.queuedHandle(this, 'toObserveModeResult', err, res)
+        // this.processStateMachineInput('toObserveModeResult', err, res)
     })
 }
 
 TorrentStatemachineClient.prototype.toSellMode = function(sellerTerms) {
 
-    this.torrent.toSellMode(sellerTerms, function(err, res) {
+    this.torrent.toSellMode(sellerTerms, (err, res) => {
 
-        LOG_ERROR(err)
+        LOG_ERROR("toSellMode", err)
 
         // Silent
-        //TorrentStatemachine.queuedHandle(this, 'toSellModeResult', err, res)
+        // this.processStateMachineInput('toSellModeResult', err, res)
     })
 }
 
 TorrentStatemachineClient.prototype.toBuyMode = function(buyerTerms) {
-    this.torrent.toBuyMode(buyerTerms, function(err, res) {
+    this.torrent.toBuyMode(buyerTerms, (err, res) => {
 
-        LOG_ERROR(err)
+        LOG_ERROR("toBuyMode", err)
 
         // Silent
-        // TorrentStatemachine.queuedHandle(this, 'toBuyModeResult', err, res)
+        // this.processStateMachineInput('toBuyModeResult', err, res)
     })
 }
 
@@ -208,28 +227,27 @@ TorrentStatemachineClient.prototype.updateBuyerTerms = function() {
 TorrentStatemachineClient.prototype.startUploading = function(connectionId, buyerTerms, contractSk, finalPkHash) {
 
     this.torrent.startUploading(connectionId, buyerTerms, contractSk, finalPkHash, (err, res) => {
-        TorrentStatemachine.queuedHandle(this._client, 'startUploadingResult', err, res)
+        this.processStateMachineInput('startUploadingResult', err, res)
     })
 }
 
 TorrentStatemachineClient.prototype.makeSignedContract = function(contractOutputs, contractFeeRate) {
 
-    console.log("not yet implemented")
+    console.log("makeSignedContract not yet implemented")
 
 }
 
 TorrentStatemachineClient.prototype.startDownloading = function(contract, downloadInfoMap) {
 
     this.torrent.startDownloading(contract, downloadInfoMap, (err, res) => {
-
-        TorrentStatemachine.queuedHandle(this._client, 'startDownloadingResult', err, res)
+        this.processStateMachineInput('startDownloadingResult', err, res)
     })
 }
 
-function LOG_ERROR(err) {
+function LOG_ERROR(source, err) {
 
     if(err)
-        console.log("Error found in callback:" + err)
+        console.log(source,": Error found in callback:", err)
 }
 
 export default Torrent
