@@ -3,11 +3,12 @@
 const Directories = require('./directories')
 const SPVNode = require('./spvnode')
 const Session = require('joystream-node').Session
+const faucet = require('./faucet')
+
 const TorrentsStorage = require('../../db').default
 const Torrent = require('../Torrent/Torrent').default
 const TorrentStore = require('../Torrent/TorrentStore').default
 const DeepInitialState = require('../Torrent/Statemachine/Common').DeepInitialState
-
 const Scene = require('./Scene')
 
 const EventEmitter = require('events').EventEmitter
@@ -164,7 +165,9 @@ class ApplicationStatemachineClient {
             this.privateKeyGenerator.bind(this),
             this.pubKeyHashGenerator.bind(this),
             this.contractGenerator.bind(this))
-      }
+      },
+
+      testnetFaucet: function () { return faucet }
     }
   }
 

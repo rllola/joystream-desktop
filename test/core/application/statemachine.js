@@ -63,7 +63,10 @@ describe('Application Statemachine', function () {
 
     let getWalletPromise = client.services.spvnode.getWallet.returnValues[0] // controlled promise
 
-    getWalletPromise.resolve({})
+    getWalletPromise.resolve({
+      on: sinon.spy(),
+      removeAllListeners: sinon.spy()
+    })
 
     Promise.run()
 
