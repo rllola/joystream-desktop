@@ -140,8 +140,15 @@ class TorrentsTable extends Component {
 
     render() {
 
+        var dropZoneStyle = {
+            display: 'flex',
+            flexDirection: 'column',
+            flexGrow: 1,
+            borderStyle:'none'
+        }
+
         return (
-          <Dropzone disableClick style={{width:'auto',height:'auto', borderStyle:'none'}} onDrop={this.handleFileDrop}>
+          <Dropzone disableClick style={dropZoneStyle} onDrop={this.handleFileDrop}>
             <Table column_titles={["", "State", "Size", "Progress", "Speed", "Arrival", "Mode"]}>
                 { this.getRenderedContextMenu() }
                 { this.getRenderedTorrentRows() }

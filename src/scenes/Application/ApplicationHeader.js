@@ -17,7 +17,7 @@ const ApplicationHeader = (props) => {
                     onClick={() => { props.onSceneSelected(Scene.Downloading)}}
                     label="Downloading"/>
 
-            <Button isActive={props.activeScene == Scene.Seeding}
+            <Button isActive={props.activeScene == Scene.Uploading}
                     onClick={() => { props.onSceneSelected(Scene.Uploading)}}
                     label="Uploading"/>
 

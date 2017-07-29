@@ -41,7 +41,7 @@ class ApplicationStore {
   }
 
   @computed get activeScene () {
-    console.log(this.state)
+
     if (!this.state) return Scene.NotStarted
 
     if (this.state.startsWith('Started.OnCompletedScene')) {
