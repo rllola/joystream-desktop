@@ -18,12 +18,6 @@ var Starting = new BaseMachine({
     InitializingResources: {
       _onEnter: function (client) {
         try {
-          client.torrents = new Map()
-          client.torrentsLoading = new Map()
-          client.infoHashesToLoad = []
-          client.store.setTorrentsToLoad(0)
-          client.store.setTorrentLoadingProgress(0)
-
           // Get directories service resource
           client.directories = client.factories.directories(client.config.appDirectory)
 
@@ -152,6 +146,9 @@ var Starting = new BaseMachine({
       _reset: 'uninitialized',
       // When all torrent state machines have entered into final loaded state (so they are renderable)
       completedLoadingTorrents: function (client) {
+        // clear timer - it would be better to call this in an _onExit but machina doesn't
+        // seem to call this handler when the parent machine is transitioning
+        if (client.loadingProgressTimer) clearInterval(client.loadingProgressTimer)
         this.go(client, '../Started')
       }
     }

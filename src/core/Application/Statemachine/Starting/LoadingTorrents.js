@@ -199,19 +199,8 @@ var LoadingTorrents = new BaseMachine({
         console.log('Total Torrents Loaded:', client.torrents.size, 'Remaining:', client.torrentsLoading.size)
 
         if (client.torrentsLoading.size === 0) {
-          // done
           client.processStateMachineInput('completedLoadingTorrents') // on parent machine
         }
-      },
-
-      _onExit: function (client) {
-        // clear timer
-        clearInterval(client.loadingProgressTimer)
-
-        // remove listeners on any pending torrents not yet loaded
-        client.torrentsLoading.forEach(function (torrent) {
-          torrent.core.removeAllListeners('transition')
-        })
       },
       _reset: 'uninitialized'
     }
