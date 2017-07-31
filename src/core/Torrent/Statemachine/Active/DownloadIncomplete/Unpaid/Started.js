@@ -41,8 +41,7 @@ var Started = new BaseMachine({
                 client.updateBuyerTerms(buyerTerms)
             },
 
-            processPeerPluginsStatuses: function(client, statuses) {
-
+            processPeerPluginStatuses: function(client, statuses) {
                 // Update peer list
                 Common.processPeerPluginStatuses(client, statuses)
 
@@ -63,7 +62,7 @@ var Started = new BaseMachine({
                     return
 
                 // Sort suitable sellers using `peerComparer` function
-                var sortedSellers = client.suitableSellers.sort(peerComparer)
+                var sortedSellers = client.suitableSellers.sellers.sort(peerComparer)
 
                 // Pick actual sellers to use
                 var pickedSellers = sortedSellers.slice(0, client.buyerTerms.minNumberOfSellers)
@@ -77,14 +76,14 @@ var Started = new BaseMachine({
                 var contractFeeRate = 0
                 var index = 0
 
-                for (var i in sortedSellers) {
+                for (var i in pickedSellers) {
 
-                    var status = sortedSellers[i]
+                    var status = pickedSellers[i]
 
                     var sellerTerms = status.connection.announcedModeAndTermsFromPeer.seller.terms
 
                     // Pick how much to distribute among the sellers
-                    var minimumRevenue = sellerTerms.minPrice * client.metadata.num_pieces()
+                    var minimumRevenue = sellerTerms.minPrice * client.metadata.numPieces()
 
                     // Set value to at least surpass dust
                     var value = Math.max(minimumRevenue, 0)
