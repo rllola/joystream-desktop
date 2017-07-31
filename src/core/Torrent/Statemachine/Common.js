@@ -20,8 +20,8 @@ function processPeerPluginStatuses(client, statuses) {
     // Tell client to either add new peer
     // based on status, or tell about new status
     // if it already exits
-    for(var s in statuses) {
-
+    for(var i in statuses) {
+        var s = statuses[i]
         var peer = client.peers[s.pid]
 
         if(peer) {
@@ -41,7 +41,7 @@ function processPeerPluginStatuses(client, statuses) {
 
     for(var pid in client.peers) {
 
-        if(client.peers[pid])
+        if(!peerIdExits[pid])
             delete client.peers[pid]
     }
 
