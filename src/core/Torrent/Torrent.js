@@ -17,11 +17,11 @@ util.inherits(Torrent, EventEmitter)
  * @param session
  * @constructor
  */
-function Torrent(store) {
+function Torrent(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator) {
 
     EventEmitter.call(this)
 
-    this._client = new TorrentStatemachineClient(store)
+    this._client = new TorrentStatemachineClient(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator)
 
     // Set initial state of store
     store.setState(TorrentStatemachine.compositeState(this._client))
@@ -123,8 +123,11 @@ Torrent.prototype.endUpload = function () {
 /// TorrentStateMachineClient
 /// Holds state and external messaging implementations for a (behavoural machinajs) Torrent state machine instance
 
-function TorrentStatemachineClient(store) {
+function TorrentStatemachineClient(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator) {
     this.store = store
+    this._privateKeyGenerator = privateKeyGenerator
+    this._publicKeyHashGenerator = publicKeyHashGenerator
+    this._contractGenerator = contractGenerator
 }
 
 TorrentStatemachineClient.prototype.processStateMachineInput = function (...args) {
@@ -233,8 +236,25 @@ TorrentStatemachineClient.prototype.startUploading = function(connectionId, buye
 
 TorrentStatemachineClient.prototype.makeSignedContract = function(contractOutputs, contractFeeRate) {
 
-    console.log("makeSignedContract not yet implemented")
+    var contract = this._contractGenerator(contractOutputs, contractFeeRate)
 
+    contract.then((tx) => {
+      this.processStateMachineInput('makeSignedContractResult', null, tx)
+    })
+
+    contract.catch((err) => {
+      this.processStateMachineInput('makeSignedContractResult', err)
+    })
+}
+
+TorrentStatemachineClient.prototype.generateContractPrivateKey = function() {
+
+    return this._privateKeyGenerator()
+}
+
+TorrentStatemachineClient.prototype.generatePublicKeyHash = function() {
+
+    return this._publicKeyHashGenerator()
 }
 
 TorrentStatemachineClient.prototype.startDownloading = function(contract, downloadInfoMap) {

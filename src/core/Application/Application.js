@@ -14,6 +14,11 @@ const EventEmitter = require('events').EventEmitter
 const Statemachine = require('./Statemachine')
 const ApplicationStore = require('./ApplicationStore').default
 
+const bcoin = require('bcoin')
+
+const assert = require('assert')
+
+
 class Application extends EventEmitter {
 
   constructor () {
@@ -153,7 +158,13 @@ class ApplicationStatemachineClient {
         })
       },
 
-      torrent: factory(Torrent)
+      // Return a Torrent with generators bound to application statemachine to access the wallet
+      torrent: (torrentStore) => {
+        return new Torrent(torrentStore,
+            this.privateKeyGenerator.bind(this),
+            this.pubKeyHashGenerator.bind(this),
+            this.contractGenerator.bind(this))
+      }
     }
   }
 
@@ -170,6 +181,35 @@ class ApplicationStatemachineClient {
 
   getStandardBuyerTerms () {
     return standardBuyerTerms()
+  }
+
+  privateKeyGenerator () {
+    return bcoin.ec.generatePrivateKey()
+  }
+
+  pubKeyHashGenerator () {
+    // get the next address from bcoin wallet
+    var addr = this.services.wallet.getAddress()
+
+    assert(addr.isPubkeyhash())
+
+    return addr.getHash()
+  }
+
+  contractGenerator (contractOutputs, contractFeeRate) {
+    let outputs = []
+
+    for (let i in contractOutputs) {
+      outputs.push(bcoin.output.fromRaw(contractOutputs[i]))
+    }
+
+    return this.services.wallet.send({
+      sort: false,
+      outputs: outputs,
+      rate: contractFeeRate
+    }).then((transaction) => {
+      return transaction.toRaw()
+    })
   }
 }
 

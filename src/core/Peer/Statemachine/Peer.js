@@ -27,7 +27,7 @@ var Peer = new BaseMachine({
 
                 // Make request to start uploading
                 var buyerTerms = client.status.connection.announcedModeAndTermsFromPeer.buyer.terms
-                var contractSk = client.generatePrivateKey()
+                var contractSk = client.generateContractPrivateKey()
                 var finalPkHash = client.generatePublicKeyHash()
 
                 // Store these here for closing out the payment channel
