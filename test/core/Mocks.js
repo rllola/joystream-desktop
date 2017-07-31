@@ -29,7 +29,7 @@ function MockTorrent(fixture) {
     this._fixture = fixture
 
     this.handle = new MockTorrentHandle(fixture)
-    this.startSelling = sinon.spy()
+    this.startUploading = sinon.spy()
 
     // Setup spies?/ stubs?
 }
