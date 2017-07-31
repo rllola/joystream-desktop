@@ -64,6 +64,10 @@ var Loading = new BaseMachine({
                         client.processStateMachineInput('checkFinished')
                     })
 
+                    torrent.on('peerPluginStatusUpdates', function (peerStatuses) {
+                      client.processStateMachineInput('processPeerPluginStatuses', peerStatuses)
+                    })
+
                     // If we don´t have metadata, wait for it
                     if(client.metadata && client.metadata.isValid()) {
                         this.transition(client, 'CheckingPartialDownload')

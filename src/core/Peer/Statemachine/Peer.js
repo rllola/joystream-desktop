@@ -26,7 +26,7 @@ var Peer = new BaseMachine({
                     return
 
                 // Make request to start uploading
-                //var buyerTerms = client.status.connection.announcedModeAndTermsFromPeer.buyer.terms
+                var buyerTerms = client.status.connection.announcedModeAndTermsFromPeer.buyer.terms
                 var contractSk = client.generatePrivateKey()
                 var finalPkHash = client.generatePublicKeyHash()
 
@@ -35,7 +35,7 @@ var Peer = new BaseMachine({
                 client.finalPkHash = finalPkHash
 
                 // Try to start selling
-                client.torrent.startSelling(client.status.connection, contractSk, finalPkHash, function (err, res) {
+                client.torrent.startUploading(client.status.connection.pid, buyerTerms, contractSk, finalPkHash, function (err, res) {
                     Peer.queuedHandle(client, 'startPaidUploadingResult', err, res)
                 })
 
