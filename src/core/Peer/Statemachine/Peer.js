@@ -75,8 +75,19 @@ var Peer = new BaseMachine({
                     status.connection.innerState !== ConnectionInnerState.LoadingPiece &&
                     status.connection.innerState !== ConnectionInnerState.WaitingForPayment))
                     this.transition(client, 'ReadyForStartPaidUploadAttempt')
-            }
 
+
+            },
+
+            anchorAnnounced: function (client, alert) {
+              // estimate time when payment channel will expire and buyer would be able to get a full refund
+              client.channelExpiresAt = client.sellerTerms.minLock * 512 * 1000 + Date.now()
+            },
+
+            uploadStarted: function (client, alert) {
+              // save the seller terms announced to the buyer
+              client.sellerTerms = alert.terms
+            }
         }
     }
 

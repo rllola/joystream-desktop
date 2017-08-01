@@ -14,6 +14,8 @@ function processPeerPluginStatuses(client, statuses) {
     if(!client.peers)
         client.peers = {}
 
+    var currentTime = Date.now()
+
     // Peer Ids for peers we are getting status snapshot for
     var peerIdExits = {}
 
@@ -27,6 +29,17 @@ function processPeerPluginStatuses(client, statuses) {
         if(peer) {
             // Update status
             peer.newStatus(s)
+
+            // If we are actively selling to this peer, check if we need to settle the payment channel.
+            // We want to end/close or reset the connection (protocol_session) to get lastPaymentReceived
+            // event so the application can do the settlement.
+
+            // settle 256 seconds before payment channel expires
+            if (peer.shouldClosePaymentChannel(currentTime, 256)) {
+              // TODO
+              //client.torrent.removeConnection(s.pid)
+            }
+
         } else {
             // Create client
             client.peers[s.pid] = new Peer(s.pid, client.torrent, s, client._privateKeyGenerator, client._publicKeyHashGenerator)

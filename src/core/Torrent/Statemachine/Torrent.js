@@ -75,22 +75,34 @@ var Torrent = new BaseMachine({
 
                 client.generateResumeDataOnTermination = generateResumeData
 
-                // We want the application to handle events that result from stopping extension
-                // such as claiming last payment so we wait for extension to stop
                 client.stopExtension()
                 client.stopLibtorrentTorrent()
 
+                // We want the application to handle events that result from stopping extension
+                // such as claiming last payment so we wait for extension to stop
                 this.transition(client, 'StoppingExtension')
             },
 
             processPeerPluginStatuses: function (client, statuses) {
                 Common.processPeerPluginStatuses(client, statuses)
+            },
+
+            uploadStarted: function (client, alert) {
+              var peer = client.peers[alert.pid]
+              peer.uploadStarted(alert)
+            },
+
+            anchorAnnounced: function (client, alert) {
+              var peer = client.peers[alert.pid]
+              peer.anchorAnnounced(alert)
             }
         },
 
         StoppingExtension: {
           stopExtensionResult: function (client) {
+
             client.stopLibtorrentTorrent()
+
             this.transition(client, 'GeneratingResumeData')
           }
         },
