@@ -247,10 +247,4 @@ var ApplicationStateMachine = new BaseMachine({
   }
 })
 
-function addTorrentToSession (session, params) {
-  return new Promise(function (resolve, reject) {
-
-  })
-}
-
 module.exports = ApplicationStateMachine
