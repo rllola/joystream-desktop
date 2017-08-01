@@ -58,6 +58,12 @@ const BaseMachine = require('../../../BaseMachine')
 
           terminatedAllTorrents: function (client) {
             this.transition(client, 'DisconnectingFromBitcoinNetwork')
+          },
+
+          lastPaymentReceived: function (client, alert) {
+            if (!alert.settlementTx) return
+
+            client.broadcastRawTransaction(alert.settlementTx)
           }
         },
 

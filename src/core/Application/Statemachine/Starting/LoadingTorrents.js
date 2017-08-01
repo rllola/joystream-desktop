@@ -116,6 +116,10 @@ var LoadingTorrents = new BaseMachine({
       torrentAdded: function (client, torrent, torrentStore, coreTorrent) {
         client.torrentsLoading.set(torrent.infoHash, coreTorrent)
 
+        torrent.on('lastPaymentReceived', function (alert) {
+          client.processStateMachineInput('lastPaymentReceived', alert)
+        })
+
         coreTorrent.addTorrentResult(null, torrent)
 
         client.store.torrentAdded(torrentStore)
