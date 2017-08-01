@@ -81,12 +81,7 @@ var Peer = new BaseMachine({
 
             anchorAnnounced: function (client, alert) {
               // estimate time when payment channel will expire and buyer would be able to get a full refund
-              client.channelExpiresAt = client.sellerTerms.minLock * 512 * 1000 + Date.now()
-            },
-
-            uploadStarted: function (client, alert) {
-              // save the seller terms announced to the buyer
-              client.sellerTerms = alert.terms
+              client.channelExpiresAt = client.status.connection.payee.refundLockTime * 512 * 1000 + Date.now()
             }
         }
     }
