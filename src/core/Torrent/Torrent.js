@@ -140,8 +140,7 @@ TorrentStatemachineClient.prototype.stopExtension = function() {
 
         LOG_ERROR("stopExtension", err)
 
-        // Silent
-        // this.processStateMachineInput('stopExtensionResult', err, res)
+        this.processStateMachineInput('stopExtensionResult', err, res)
     })
 
 }
@@ -165,6 +164,11 @@ TorrentStatemachineClient.prototype.startLibtorrentTorrent = function() {
 TorrentStatemachineClient.prototype.stopLibtorrentTorrent = function() {
 
     this.torrent.handle.pause()
+}
+
+TorrentStatemachineClient.prototype.hasOutstandingResumeData = function () {
+  // How do we determine if torrent has outstanding resume data?
+  return false
 }
 
 TorrentStatemachineClient.prototype.generateResumeData = function() {

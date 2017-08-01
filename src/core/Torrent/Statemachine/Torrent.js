@@ -73,29 +73,39 @@ var Torrent = new BaseMachine({
                 // and hold on to state to get back to when starting
                 client.deepInitialState = deepInitialStateFromActiveState(this.compositeState(client))
 
-                // Sloppy stops, may already be stopped, depending on the
-                // currently active substate, but we don't care.
+                client.generateResumeDataOnTermination = generateResumeData
+
+                // We want the application to handle events that result from stopping extension
+                // such as claiming last payment so we wait for extension to stop
                 client.stopExtension()
                 client.stopLibtorrentTorrent()
 
-                if(generateResumeData && client.hasOutstandingResumeData()) {
-
-                    client.generateResumeData()
-
-                    this.transition(client, 'GeneratingResumeData')
-
-                } else {
-
-                    this.transition(client, 'Terminated')
-                }
+                this.transition(client, 'StoppingExtension')
             },
 
             processPeerPluginStatuses: function (client, statuses) {
                 Common.processPeerPluginStatuses(client, statuses)
-            },
+            }
+        },
+
+        StoppingExtension: {
+          stopExtensionResult: function (client) {
+            client.stopLibtorrentTorrent()
+            this.transition(client, 'GeneratingResumeData')
+          }
         },
 
         GeneratingResumeData : {
+            _onEnter: function (client) {
+              if (client.generateResumeDataOnTermination && client.hasOutstandingResumeData()) {
+
+                  client.generateResumeData()
+
+              } else {
+
+                  this.transition(client, 'Terminated')
+              }
+            },
 
             resumeDataGenerated : function (client, resumeData) {
 
