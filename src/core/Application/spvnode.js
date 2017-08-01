@@ -85,6 +85,13 @@ class SPVNode {
     await this.node.connect()
     this.node.startSync()
   }
+
+  sendTx (tx) {
+    if (!(tx instanceof bcoin.primitives.TX)) {
+      tx = bcoin.primitives.TX.fromRaw(tx)
+    }
+    return this.node.broadcast(tx)
+  }
 }
 
 module.exports = SPVNode
