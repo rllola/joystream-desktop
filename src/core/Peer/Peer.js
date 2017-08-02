@@ -35,16 +35,6 @@ Peer.prototype.uploadStarted = function (alert) {
   this._client.processStateMachineInput('uploadStarted', alert)
 }
 
-Peer.prototype.shouldClosePaymentChannel = function (now, secondsBeforeExpiery) {
-  if (this.compositeState() === 'PaidUploadingStarted') {
-    var shouldSettleBefore = this._client.channelExpiresAt - (secondsBeforeExpiery * 1000)
-
-    if (now > shouldSettleBefore) return true
-  }
-
-  return false
-}
-
 /// PeerStatemachineClient class
 
 function PeerStatemachineClient(pid, torrent, privateKeyGenerator, publicKeyHashGenerator) {

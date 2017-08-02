@@ -25,6 +25,8 @@ var Peer = new BaseMachine({
                     client.status.connection.innerState !== ConnectionInnerState.Invited)
                     return
 
+                client.channelExpiresAt = null
+
                 // Make request to start uploading
                 var buyerTerms = client.status.connection.announcedModeAndTermsFromPeer.buyer.terms
                 var contractSk = client.generateContractPrivateKey()
@@ -73,16 +75,40 @@ var Peer = new BaseMachine({
                     status.connection.innerState !== ConnectionInnerState.WaitingToStart &&
                     status.connection.innerState !== ConnectionInnerState.ReadyForPieceRequest &&
                     status.connection.innerState !== ConnectionInnerState.LoadingPiece &&
-                    status.connection.innerState !== ConnectionInnerState.WaitingForPayment))
-                    this.transition(client, 'ReadyForStartPaidUploadAttempt')
+                    status.connection.innerState !== ConnectionInnerState.WaitingForPayment)) {
 
+                  return this.transition(client, 'ReadyForStartPaidUploadAttempt')
+                }
 
+                // If we are actively selling to this peer, check if we need to settle the payment channel.
+                // We want to end/close or reset the connection (protocol_session) to get lastPaymentReceived
+                // event so the application can do the settlement.
+
+                if (client.channelExpiresAt) {
+                  let currentTime = Date.now()
+
+                  // settle 256 seconds before payment channel expires
+                  let settleBefore = client.channelExpiresAt - (256 * 1000)
+
+                  if (currentTime > settleBefore) {
+                    //client.torrent.dropPeer(client.pid, function () {
+                    //  client.processStateMachineInput('droppedPeer')
+                    //})
+                    this.transition(client, 'DroppingPeer')
+                  }
+                }
             },
 
             anchorAnnounced: function (client, alert) {
               // estimate time when payment channel will expire and buyer would be able to get a full refund
               client.channelExpiresAt = client.status.connection.payee.refundLockTime * 512 * 1000 + Date.now()
             }
+        },
+
+        DroppingPeer: {
+          droppedPeer: function (client) {
+            this.transition(client, 'ReadyForStartPaidUploadAttempt')
+          }
         }
     }
 
