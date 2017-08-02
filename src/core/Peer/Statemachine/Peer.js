@@ -91,9 +91,9 @@ var Peer = new BaseMachine({
                   let settleBefore = client.channelExpiresAt - (256 * 1000)
 
                   if (currentTime > settleBefore) {
-                    //client.torrent.dropPeer(client.pid, function () {
-                    //  client.processStateMachineInput('droppedPeer')
-                    //})
+                    client.torrent.dropPeer(client.pid, function (err) {
+                      client.processStateMachineInput('dropPeerResult', err)
+                    })
                     this.transition(client, 'DroppingPeer')
                   }
                 }
@@ -106,7 +106,7 @@ var Peer = new BaseMachine({
         },
 
         DroppingPeer: {
-          droppedPeer: function (client) {
+          dropPeerResult: function (client, err) {
             this.transition(client, 'ReadyForStartPaidUploadAttempt')
           }
         }
