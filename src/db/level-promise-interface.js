@@ -15,9 +15,7 @@ class LevelPromiseInterface {
   remove (key) {
     return new Promise((resolve, reject) => {
       this.db.del(key, (err) => {
-        if (err) {
-          // silently ignore error when deleteing an entry
-        }
+        if (err) return reject(err)
         resolve()
       })
     })
@@ -38,14 +36,10 @@ class LevelPromiseInterface {
     })
   }
 
-  getAllStream () {
-    return this.db.valueStream()
-  }
-
   getOne (key) {
     return new Promise((resolve, reject) => {
       this.db.get(key, function (err, value) {
-        if (err) return resolve(null)
+        if (err) return reject(err)
         resolve(value)
       })
     })
