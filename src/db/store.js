@@ -1,13 +1,10 @@
-import EventEmitter from 'events'
-import util from './util'
+
 import LevelPromiseInterface from './level-promise-interface'
 
-class Store extends EventEmitter {
+class Store {
 
   // Expect a levelup namespaced instance
   constructor (db) {
-    super()
-
     this._db = db
 
     this._namespaces = {}
@@ -43,6 +40,10 @@ class Store extends EventEmitter {
 
   getAll (namespace) {
     return this.from(namespace).getAll()
+  }
+
+  batch (namespace, ...args) {
+    this.from(namespace).batch(...args)
   }
 }
 

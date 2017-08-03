@@ -59,6 +59,10 @@ class LevelPromiseInterface {
         })
     })
   }
+
+  batch (...args) {
+    this.db.batch(...args)
+  }
 }
 
 export default LevelPromiseInterface
