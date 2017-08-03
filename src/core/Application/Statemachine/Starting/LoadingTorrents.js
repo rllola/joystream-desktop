@@ -3,8 +3,7 @@ const BaseMachine = require('../../../BaseMachine')
 const Common = require('../../../Torrent/Statemachine/Common')
 
 const TorrentState = require('joystream-node').TorrentState
-
-const noop = () => {}
+const TorrentInfo = require('joystream-node').TorrentInfo
 
 var LoadingTorrents = new BaseMachine({
   namespace: 'LoadingTorrents',
@@ -24,7 +23,7 @@ var LoadingTorrents = new BaseMachine({
       _onEnter: async function (client) {
         try {
           // Get infohashes of all persisted torrents
-          var infoHashes = await client.services.db.getInfoHashes()
+          var infoHashes = await client.services.db.getAllKeys('torrents')
         } catch (err) {
           client.reportError(err)
         }
@@ -39,7 +38,7 @@ var LoadingTorrents = new BaseMachine({
             client.processStateMachineInput('completedLoadingTorrents')
           }
         } else {
-          client.processStateMachineInput('completedLoadingTorrents', err)
+          client.processStateMachineInput('completedLoadingTorrents')
         }
       },
 
@@ -62,29 +61,38 @@ var LoadingTorrents = new BaseMachine({
       },
 
       getTorrentAddParams: async function (client, infoHash) {
-          let params
 
           try {
-            params = await client.services.db.getTorrentAddParameters(infoHash)
+            var value = await client.services.db.getOne('torrents', infoHash)
           } catch (err) {
             client.reportError(err)
           }
 
-          if (!params) {
+          if (!value) {
             return client.processStateMachineInput('getNextTorrent')
           }
 
-          client.processStateMachineInput('addTorrentToSession', infoHash, params)
+          client.processStateMachineInput('addTorrentToSession', infoHash, value)
       },
 
-      addTorrentToSession: async function (client, infoHash, params) {
+      addTorrentToSession: async function (client, infoHash, value) {
         const deepInitialState = 3 // Passive
         const extensionSettings = {} // no seller or buyer terms
 
         let torrentStore = client.factories.torrentStore(infoHash)
         let coreTorrent = client.factories.torrent(torrentStore)
 
-        coreTorrent.startLoading(infoHash, params.name, params.savePath, params.resumeData, params.ti, deepInitialState, extensionSettings)
+        let params = {
+          name: value.name,
+          savePath: value.savePath,
+          ti: new TorrentInfo(Buffer.from(value.ti, 'base64')) // metadata
+        }
+
+        if (value.resumeData) {
+          params.resumeData = Buffer.from(value.resumeData, 'base64')
+        }
+
+        coreTorrent.startLoading(infoHash, value.name, value.savePath, params.resumeData, params.ti, deepInitialState, extensionSettings)
 
         // Whether torrent should be added in (libtorrent) paused mode from the get go
         var addAsPaused = Common.isStopped(deepInitialState)

@@ -38,12 +38,7 @@ var Starting = new BaseMachine({
           }, constants.POST_TORRENT_UPDATES_INTERVAL)
 
           // Get a function to call for openning the database store
-          client.services.openDatabase = client.factories.db(client.directories.databasePath(), {
-            // 'table' names to use
-            'torrents': 'torrents',
-            'resume_data': 'resume_data',
-            'torrent_plugin_settings': 'torrent_plugin_settings'
-          })
+          client.services.openDatabase = client.factories.db(client.directories.databasePath())
 
           client.services.testnetFaucet = client.factories.testnetFaucet()
 

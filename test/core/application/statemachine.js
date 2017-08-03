@@ -80,10 +80,10 @@ describe('Application Statemachine', function () {
 
     assertState('Starting.LoadingTorrents.GettingInfoHashes')
 
-    assert(client.services.db.getInfoHashes.called)
+    assert(client.services.db.getAllKeys.called)
 
     // no torrents in db return empty array
-    client.services.db.getInfoHashes.returnValues[0].resolve([])
+    client.services.db.getAllKeys.returnValues[0].resolve([])
 
     Promise.run()
 
@@ -151,11 +151,11 @@ function NewMockedClient () {
   var services = client.services = {}
 
   var db = {
-    getInfoHashes: sinon.spy(function () {
+    getAllKeys: sinon.spy(function () {
       return ControlledPromise()
     }),
 
-    getTorrentAddParameters: sinon.spy(function (infoHash) {
+    getOne: sinon.spy(function (infoHash) {
       return ControlledPromise()
     }),
 
