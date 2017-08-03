@@ -49,7 +49,6 @@ const BaseMachine = require('../../../BaseMachine')
           },
 
           torrentTerminated: function (client, infoHash, torrent) {
-            console.log('Terminated:', infoHash)
             torrent.removeAllListeners()
 
             client._torrentsTerminating--

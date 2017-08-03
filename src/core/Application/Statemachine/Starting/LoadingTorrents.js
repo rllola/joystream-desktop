@@ -76,9 +76,6 @@ var LoadingTorrents = new BaseMachine({
       },
 
       addTorrentToSession: async function (client, infoHash, value) {
-        const deepInitialState = 3 // Passive
-        const extensionSettings = {} // no seller or buyer terms
-
         let torrentStore = client.factories.torrentStore(infoHash)
         let coreTorrent = client.factories.torrent(torrentStore)
 
@@ -92,10 +89,10 @@ var LoadingTorrents = new BaseMachine({
           params.resumeData = Buffer.from(value.resumeData, 'base64')
         }
 
-        coreTorrent.startLoading(infoHash, value.name, value.savePath, params.resumeData, params.ti, deepInitialState, extensionSettings)
+        coreTorrent.startLoading(infoHash, value.name, value.savePath, params.resumeData, params.ti, value.deepInitialState, value.extensionSettings)
 
         // Whether torrent should be added in (libtorrent) paused mode from the get go
-        var addAsPaused = Common.isStopped(deepInitialState)
+        var addAsPaused = Common.isStopped(value.deepInitialState)
 
         // Automanagement: We never want this, as our state machine should explicitly control
         // pause/resume behaviour torrents for now.
