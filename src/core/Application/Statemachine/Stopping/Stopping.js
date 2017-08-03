@@ -15,12 +15,15 @@ const BaseMachine = require('../../../BaseMachine')
         uninitialized: {
 
         },
+
         TerminatingTorrents: {
           _onEnter: function (client) {
-            client.store.setTorrentsToTerminate(client.torrents.length)
+            client.store.setTorrentsToTerminate(client.torrents.size)
             client.store.setTorrentTerminatingProgress(0)
 
-            if (client.torrents.size === 0) {
+            client._torrentsTerminating = client.torrents.size
+
+            if (client._torrentsTerminating === 0) {
               this.transition(client, 'DisconnectingFromBitcoinNetwork')
               return
             }
@@ -47,17 +50,17 @@ const BaseMachine = require('../../../BaseMachine')
 
           torrentTerminated: function (client, infoHash, torrent) {
             console.log('Terminated:', infoHash)
-            client.torrents.delete(infoHash)
-
             torrent.removeAllListeners()
 
-            if (client.torrents.size === 0) {
+            client._torrentsTerminating--
+
+            if (client._torrentsTerminating === 0) {
               client.processStateMachineInput('terminatedAllTorrents')
             }
           },
 
           terminatedAllTorrents: function (client) {
-            this.transition(client, 'DisconnectingFromBitcoinNetwork')
+            this.transition(client, 'SavingTorrentsToDatabase')
           },
 
           lastPaymentReceived: function (client, alert) {
@@ -65,6 +68,62 @@ const BaseMachine = require('../../../BaseMachine')
 
             client.broadcastRawTransaction(alert.settlementTx)
           }
+        },
+
+        SavingTorrentsToDatabase: {
+            _onEnter: function (client) {
+              var operations = []
+
+              function addSaveOperation (torrent) {
+                var encoded = encodeTorrent(torrent._client)
+
+                if(!encoded) return
+
+                operations.push({
+                  type: 'put',
+                  key: encoded.infoHash,
+                  value: encoded
+                })
+              }
+
+              function encodeTorrent (torrentClient) {
+                // do not persist torrents which did not receive metadata
+                if (!torrentClient.metadata || !torrentClient.metadata.isValid()) return null
+
+                var encoded = {
+                  infoHash: torrentClient.infoHash,
+                  name: torrentClient.name,
+                  savePath: torrentClient.savePath,
+                  deepInitialState: torrentClient.deepInitialState,
+                  metadata: torrentClient.metadata.toBencodedEntry().toString('base64')
+                }
+
+                if (torrentClient.resumeData) {
+                  encoded.resumeData = torrentClient.resumeData.toString('base64')
+                }
+
+                encoded.extensionSettings = {
+                  buyerTerms: torrentClient.buyerTerms,
+                  sellerTerms: torrentClient.sellerTerms
+                }
+
+                return encoded
+              }
+
+              client.torrents.forEach(function (torrent, infoHash) {
+                addSaveOperation(torrent)
+                client.torrents.delete(infoHash)
+              })
+
+              client.services.db.batch('torrents', operations, (err) => {
+                client.processStateMachineInput('SavingTorrentsToDatabaseResult', err)
+              })
+            },
+
+            SavingTorrentsToDatabaseResult: function (client, err) {
+              if(err) client.reportError(err)
+              this.transition(client, 'DisconnectingFromBitcoinNetwork')
+            }
         },
 
         DisconnectingFromBitcoinNetwork: {

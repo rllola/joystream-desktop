@@ -85,7 +85,7 @@ var LoadingTorrents = new BaseMachine({
         let params = {
           name: value.name,
           savePath: value.savePath,
-          ti: new TorrentInfo(Buffer.from(value.ti, 'base64')) // metadata
+          ti: new TorrentInfo(Buffer.from(value.metadata, 'base64')) // metadata
         }
 
         if (value.resumeData) {
@@ -201,17 +201,15 @@ var LoadingTorrents = new BaseMachine({
         client.torrentsLoading.forEach(function (torrent) {
           let size = torrent._client.metadata.totalSize()
           totalSize += size
-          checkedSize += size * torrent._client.lastStatus.progress
+          if (torrent._client.lastStatus)
+            checkedSize += size * torrent._client.lastStatus.progress
         })
-
 
         if (totalSize > 0)
           client.store.setTorrentLoadingProgress(checkedSize / totalSize)
       },
 
       torrentLoaded: function (client, infoHash, torrent) {
-        console.log('Loaded', infoHash)
-
         // remove from map of loading torrents
         client.torrentsLoading.delete(infoHash)
 
@@ -219,8 +217,6 @@ var LoadingTorrents = new BaseMachine({
         client.torrents.set(infoHash, torrent)
 
         torrent.removeAllListeners()
-
-        console.log('Total Torrents Loaded:', client.torrents.size, 'Remaining:', client.torrentsLoading.size)
 
         if (client.torrentsLoading.size === 0) {
           client.processStateMachineInput('completedLoadingTorrents') // on parent machine
