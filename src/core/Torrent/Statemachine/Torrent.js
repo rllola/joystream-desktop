@@ -76,7 +76,6 @@ var Torrent = new BaseMachine({
                 client.generateResumeDataOnTermination = generateResumeData
 
                 client.stopExtension()
-                client.stopLibtorrentTorrent()
 
                 // We want the application to handle events that result from stopping extension
                 // such as claiming last payment so we wait for extension to stop
@@ -103,22 +102,20 @@ var Torrent = new BaseMachine({
 
             client.stopLibtorrentTorrent()
 
-            this.transition(client, 'GeneratingResumeData')
+            if (client.generateResumeDataOnTermination && client.hasOutstandingResumeData()) {
+
+                client.generateResumeData()
+
+                this.transition(client, 'GeneratingResumeData')
+
+            } else {
+
+                this.transition(client, 'Terminated')
+            }
           }
         },
 
         GeneratingResumeData : {
-            _onEnter: function (client) {
-              if (client.generateResumeDataOnTermination && client.hasOutstandingResumeData()) {
-
-                  client.generateResumeData()
-
-              } else {
-
-                  this.transition(client, 'Terminated')
-              }
-            },
-
             resumeDataGenerated : function (client, resumeData) {
 
                 client.resumeData = resumeData
