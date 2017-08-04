@@ -25,8 +25,6 @@ var Peer = new BaseMachine({
                     client.status.connection.innerState !== ConnectionInnerState.Invited)
                     return
 
-                client.channelExpiresAt = null
-
                 // Make request to start uploading
                 var buyerTerms = client.status.connection.announcedModeAndTermsFromPeer.buyer.terms
                 var contractSk = client.generateContractPrivateKey()
@@ -80,36 +78,13 @@ var Peer = new BaseMachine({
                   return this.transition(client, 'ReadyForStartPaidUploadAttempt')
                 }
 
-                // If we are actively selling to this peer, check if we need to settle the payment channel.
-                // We want to end/close or reset the connection (protocol_session) to get lastPaymentReceived
-                // event so the application can do the settlement.
-
-                if (client.channelExpiresAt) {
-                  let currentTime = Date.now()
-
-                  // settle 256 seconds before payment channel expires
-                  let settleBefore = client.channelExpiresAt - (256 * 1000)
-
-                  if (currentTime > settleBefore) {
-                    client.torrent.dropPeer(client.pid, function (err) {
-                      client.processStateMachineInput('dropPeerResult', err)
-                    })
-                    this.transition(client, 'DroppingPeer')
-                  }
-                }
             },
 
             anchorAnnounced: function (client, alert) {
-              // estimate time when payment channel will expire and buyer would be able to get a full refund
-              client.channelExpiresAt = client.status.connection.payee.refundLockTime * 512 * 1000 + Date.now()
-            }
-        },
 
-        DroppingPeer: {
-          dropPeerResult: function (client, err) {
-            this.transition(client, 'ReadyForStartPaidUploadAttempt')
-          }
+            }
         }
+
     }
 
 })
