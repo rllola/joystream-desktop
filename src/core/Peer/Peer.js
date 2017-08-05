@@ -13,9 +13,9 @@ var PeerStatemachine = require('./Statemachine')
  * @param status
  * @constructor
  */
-function Peer(pid, torrent, status, privateKeyGenerator, pubKeyHashGenerator) {
+function Peer(pid, torrent, status, privateKeyGenerator, publicKeyHashGenerator) {
 
-    this._client = new PeerStatemachineClient(pid, torrent, privateKeyGenerator, pubKeyHashGenerator)
+    this._client = new PeerStatemachineClient(pid, torrent, privateKeyGenerator, publicKeyHashGenerator)
     this.newStatus(status)
 }
 
@@ -29,24 +29,24 @@ Peer.prototype.compositeState = function() {
 
 /// PeerStatemachineClient class
 
-function PeerStatemachineClient(pid, torrent, privateKeyGenerator, pubKeyHashGenerator) {
+function PeerStatemachineClient(pid, torrent, privateKeyGenerator, publicKeyHashGenerator) {
 
     this.pid = pid
     this.torrent = torrent
     this._privateKeyGenerator = privateKeyGenerator
-    this._pubKeyHashGenerator = pubKeyHashGenerator
+    this._publicKeyHashGenerator = publicKeyHashGenerator
 }
 
 PeerStatemachineClient.prototype.processStateMachineInput = function (...args) {
   PeerStatemachine.queuedHandle(this, ...args)
 }
 
-PeerStatemachineClient.prototype.generatePrivateKey = function() {
+PeerStatemachineClient.prototype.generateContractPrivateKey = function() {
     return this._privateKeyGenerator()
 }
 
 PeerStatemachineClient.prototype.generatePublicKeyHash = function() {
-    return this._pubKeyHashGenerator()
+    return this._publicKeyHashGenerator()
 }
 
 module.exports = Peer

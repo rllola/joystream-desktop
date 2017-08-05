@@ -41,7 +41,7 @@ describe('Peer state machine', function () {
         peer.newStatus(s)
 
         assert.equal(peer.compositeState(), "ReadyForStartPaidUploadAttempt")
-        assert.equal(torrent.startSelling.callCount, 0)
+        assert.equal(torrent.startUploading.callCount, 0)
 
     })
 
@@ -57,18 +57,19 @@ describe('Peer state machine', function () {
         peer.newStatus(s)
 
         assert.equal(peer.compositeState(), "StartingPaidUploading")
-        assert.equal(torrent.startSelling.callCount, 1)
-        assert.deepEqual(torrent.startSelling.getCall(0).args[0], s.connection)
-        assert.equal(torrent.startSelling.getCall(0).args[1], contractSk)
-        assert.equal(torrent.startSelling.getCall(0).args[2], finalPkHash)
+        assert.equal(torrent.startUploading.callCount, 1)
+        assert.equal(torrent.startUploading.getCall(0).args[0], s.pid)
+        assert.deepEqual(torrent.startUploading.getCall(0).args[1], buyerTerms)
+        assert.equal(torrent.startUploading.getCall(0).args[2], contractSk)
+        assert.equal(torrent.startUploading.getCall(0).args[3], finalPkHash)
     })
 
     it('goes to paid upload start', function () {
 
-        var startSellingCallback = torrent.startSelling.getCall(0).args[3]
+        var startUploadingCallback = torrent.startUploading.getCall(0).args[4]
 
         // Make callback with successful start of selling
-        startSellingCallback(false)
+        startUploadingCallback(false)
 
         assert.equal(peer.compositeState(), "PaidUploadingStarted")
     })

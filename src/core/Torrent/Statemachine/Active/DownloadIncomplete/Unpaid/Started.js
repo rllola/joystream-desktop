@@ -93,8 +93,8 @@ var Started = new BaseMachine({
                         contractFeeRate = sellerTerms.minContractFeePerKb
 
                     // Generate keys for buyer side of contract
-                    var buyerContractSk = client.getContractPrivateKey()
-                    var buyerFinalPkHash = client.getPublicKeyHash()
+                    var buyerContractSk = client.generateContractPrivateKey()
+                    var buyerFinalPkHash = client.generatePublicKeyHash()
 
                     // Add entry for seller in download information map
                     downloadInfoMap.set(status.pid, {
