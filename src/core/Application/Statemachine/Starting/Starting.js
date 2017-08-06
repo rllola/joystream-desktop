@@ -45,6 +45,8 @@ var Starting = new BaseMachine({
             'torrent_plugin_settings': 'torrent_plugin_settings'
           })
 
+          client.services.testnetFaucet = client.factories.testnetFaucet()
+
           this.transition(client, 'initializingApplicationDatabase')
 
         } catch (err) {

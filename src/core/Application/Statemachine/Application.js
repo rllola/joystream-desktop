@@ -53,6 +53,15 @@ var ApplicationStateMachine = new BaseMachine({
     Started: {
       _child: Started,
 
+      _onEnter: function (client) {
+        // listen for changes in wallet balance
+        client.services.wallet.on('balance', (balance) => {
+          client.processStateMachineInput('walletBalanceChanged', balance)
+        })
+
+        client.processStateMachineInput('checkIfWalletNeedsRefill')
+      },
+
       stop: function (client) {
         this.go(client, 'Stopping/TerminatingTorrents')
       },
@@ -171,6 +180,47 @@ var ApplicationStateMachine = new BaseMachine({
 
         client.store.setTorrentBeingAdded(torrentStore)
         client.store.torrentAdded(torrentStore)
+      },
+
+      checkIfWalletNeedsRefill: async function (client, balance) {
+        if (client.services.spvnode.network !== 'testnet') return
+        if (!client.services.testnetFaucet) return
+
+        if (!balance) {
+          // Check balance on startup
+          try {
+            balance = await client.services.wallet.getBalance()
+          } catch (err) {
+            return
+          }
+        }
+
+        client.processStateMachineInput('topUpWalletFromFaucet', balance.unconfirmed)
+      },
+
+      topUpWalletFromFaucet: function (client, balance) {
+        if (!client.services.testnetFaucet) return
+
+        // Only top up if we are running low
+        if (balance > 25000) {
+          return
+        }
+
+        var address = client.services.wallet.getAddress()
+
+        console.log('Faucet: Requesting some testnet coins...')
+
+        client.services.testnetFaucet.getCoins(address.toString(), function (err) {
+          if (err) {
+            console.log('Faucet:', err)
+          } else {
+            console.log('Faucet: Received testnet coins')
+          }
+        })
+      },
+
+      walletBalanceChanged: function (client, balance) {
+        client.processStateMachineInput('checkIfWalletNeedsRefill', balance)
       }
     },
 

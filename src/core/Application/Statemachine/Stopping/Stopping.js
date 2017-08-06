@@ -73,6 +73,7 @@ const BaseMachine = require('../../../BaseMachine')
 
         ClosingWallet: {
           _onEnter: function (client) {
+            client.services.wallet.removeAllListeners()
             client.services.wallet = null
             client.processStateMachineInput('closedWallet')
           },
@@ -112,6 +113,7 @@ const BaseMachine = require('../../../BaseMachine')
 
         ClearingResources: {
           _onEnter: function (client) {
+            client.services.testnetFaucet = null
             client.services.spvnode = null
 
             if (client.services.session) {
