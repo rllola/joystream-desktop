@@ -6,14 +6,13 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
-import { Field, Row } from  '../../components/Table'
-import { StatusIndicator, ProgressIndicator, ETAIndicator, ModeIndicator } from '../../components/RowFields'
+import {Field, Row} from  '../../components/Table'
+import BitcoinConvert from  '../../components/BitcoinConvert'
 import TorrentToolbar from './TorrentToolbar'
 import bytes from 'bytes'
-
+import { StatusIndicator } from '../../components/RowFields'
 import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
-
-import ToolbarVisibilityType, { toolbarVisibilityState } from '../../utils/ToolbarVisibilityState'
+import ToolbarVisibilityType from '../../utils/ToolbarVisibilityState'
 
 
 //@observer
@@ -41,20 +40,13 @@ class TorrentRow extends Component {
                     <StatusIndicator paused={this.props.torrent.paused} />
                 </Field>
                 <Field>
-                    {bytes(this.props.torrent.size)}
+                    {bytes(this.props.torrent.upload_speed)}/s
                 </Field>
                 <Field>
-                    <ProgressIndicator progress={this.props.torrent.progress}/>
+                  <BitcoinConvert satoshis={this.props.torrent.price} />
                 </Field>
                 <Field>
-                    {bytes(this.props.torrent.download_speed)}/s
-                </Field>
-                <Field>
-                    <ETAIndicator bytes_remaining={this.props.torrent.size - this.props.torrent.downloaded_quantity}
-                                  bytes_per_second={this.props.torrent.download_speed} />
-                </Field>
-                <Field>
-                    <ModeIndicator paid={this.props.torrent.paid} />
+                   <BitcoinConvert satoshis={this.props.torrent.revenue} />
                 </Field>
 
                 { this.getRenderedToolbar() }

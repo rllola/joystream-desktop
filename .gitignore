@@ -9,3 +9,5 @@ NOTES.md
 build
 
 out/
+
+package-lock.json

@@ -1,24 +1,33 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
+import PropTypes from 'prop-types'
 
-import CompletedTorrentList from './components/CompletedTorrentList'
-import AddTorrentForm from '../../components/AddTorrentForm'
+import { TorrentTable } from './components'
 
-@inject('sessionStore')
-@observer
-class Completed extends Component {
-  render () {
+const Completed = (props) => {
+
     return (
-      <div style={{marginTop: '20px'}} className="col-10">
-        <h3>Completed</h3>
-        <br />
-        <AddTorrentForm onSubmit={this.props.sessionStore.handleAddTorrent} />
-        <br />
-        <br />
-        <CompletedTorrentList torrents={this.props.sessionStore.torrentsCompleted} />
-      </div>
+        <div className="downloading-scene-container">
+            <section className="middle-section">
+                <div className="toolbar-section">
+                    <div className="heading">
+                        <h1>Completed</h1>
+                        <h2> {props.torrents.length} completed torrent</h2>
+                    </div>
+                    <div className="vertical-bar"></div>
+
+                </div>
+
+            </section>
+
+            <TorrentTable torrents={props.torrents} />
+
+        </div>
     )
-  }
+}
+
+Completed.propTypes = {
+    torrents : PropTypes.array.isRequired
 }
 
 export default Completed

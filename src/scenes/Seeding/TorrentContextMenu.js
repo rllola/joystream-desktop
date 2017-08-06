@@ -10,7 +10,6 @@ import SvgIcon from 'material-ui/SvgIcon'
 
 import ContextMenu, {Separator, PauseItem, ChangePriceItem, RemoveItem, RemoveAndDeleteDataItem, SwarmItem} from '../../components/ContextMenu'
 
-
 const TorrentContextMenu = (props) => {
 
     return (

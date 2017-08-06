@@ -1,20 +1,14 @@
-/**
- * Created by bedeho on 23/05/17.
- */
-
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
-import { Field, Row } from  '../../components/Table'
-import { StatusIndicator, ProgressIndicator, ETAIndicator, ModeIndicator } from '../../components/RowFields'
+import { Field, Row } from  '../../../components/Table'
 import TorrentToolbar from './TorrentToolbar'
 import bytes from 'bytes'
 
-import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
+import AbsolutePositionChildren from '../../../common/AbsolutePositionChildren'
 
-import ToolbarVisibilityType, { toolbarVisibilityState } from '../../utils/ToolbarVisibilityState'
-
+import ToolbarVisibilityType from '../../../utils/ToolbarVisibilityState'
 
 //@observer
 class TorrentRow extends Component {
@@ -38,23 +32,7 @@ class TorrentRow extends Component {
                     {this.props.torrent.name}
                 </Field>
                 <Field>
-                    <StatusIndicator paused={this.props.torrent.paused} />
-                </Field>
-                <Field>
                     {bytes(this.props.torrent.size)}
-                </Field>
-                <Field>
-                    <ProgressIndicator progress={this.props.torrent.progress}/>
-                </Field>
-                <Field>
-                    {bytes(this.props.torrent.download_speed)}/s
-                </Field>
-                <Field>
-                    <ETAIndicator bytes_remaining={this.props.torrent.size - this.props.torrent.downloaded_quantity}
-                                  bytes_per_second={this.props.torrent.download_speed} />
-                </Field>
-                <Field>
-                    <ModeIndicator paid={this.props.torrent.paid} />
                 </Field>
 
                 { this.getRenderedToolbar() }

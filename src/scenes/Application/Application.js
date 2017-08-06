@@ -63,16 +63,18 @@ class Application extends Component {
 
             case Scene.Uploading:
                 return <NavigationFrame {...this.props}>
-                            <h1>uploading</h1>
+                          <Seeding torrents={this.props.app._torrentsSeeding}
+                                revenue={123}
+                                uploadSpeed={77777}
+                                onStartUploadCliked={() => {console.log(" start uploading clicked")}} />
                         </NavigationFrame>
 
             case Scene.Completed:
                 return <NavigationFrame {...this.props}>
-                            <h1>completed</h1>
+                            <Completed torrents={this.props.app._torrentsCompleted} />
                         </NavigationFrame>
 
             case Scene.ShuttingDown:
-
                 return <Terminating terminatingState={applicationStateToTerminatingState(this.props.app.state)}
                                     terminatingTorrentsProgressValue={100*(this.props.app.torrentTerminatingProgress/this.props.app.torrentsToTerminate)} />
         }

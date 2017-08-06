@@ -1,46 +1,25 @@
-/**
- * Created by bedeho on 05/05/17.
- */
-
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
-import Table from '../../components/Table'
+import Table from '../../../components/Table'
 import TorrentRow from './TorrentRow'
-import ToolbarVisibilityType from '../../utils/ToolbarVisibilityState'
 import TorrentToolbar from './TorrentToolbar'
 import TorrentContextMenu from './TorrentContextMenu'
+import ToolbarVisibilityType from '../../../utils/ToolbarVisibilityState'
 
-import Dropzone from 'react-dropzone'
+import AbsolutePositionChildren from '../../../common/AbsolutePositionChildren'
 
-import StartDownloadingHint from './components/StartDownloadingHint'
-
-import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
-
-import { contextMenuHiddenState, contextMenuVisibleState, contextMenuRect } from '../../utils/ContextMenuHelper'
+import { contextMenuHiddenState, contextMenuVisibleState, contextMenuRect } from '../../../utils/ContextMenuHelper'
 
 //@observer // this.props.torrents
 class TorrentsTable extends Component {
-
-    /**
-     * Local UI state
-     * ==============
-     * contextMenu {
-     *  top/left {Number} top location, w.r.t. its parent, for where context menu should be rendered
-     *  torrent {} torrent to which context menu corresponds
-     * }
-     */
 
     constructor(props) {
         super(props)
 
         // Start out with hidden context menu
         this.state = contextMenuHiddenState()
-    }
-
-    handleFileDrop (files) {
-      console.log(files)
     }
 
     hideContextMenu() {
@@ -85,20 +64,11 @@ class TorrentsTable extends Component {
 
     render() {
 
-        var dropZoneStyle = {
-            display: 'flex',
-            flexDirection: 'column',
-            flexGrow: 1,
-            borderStyle:'none'
-        }
-
         return (
-          <Dropzone disableClick style={dropZoneStyle} onDrop={this.handleFileDrop}>
-            <Table column_titles={["", "State", "Size", "Progress", "Speed", "Arrival", "Mode"]}>
+            <Table column_titles={["", "Size"]}>
                 { this.getRenderedContextMenu() }
                 { this.getRenderedTorrentRows() }
             </Table>
-          </Dropzone>
         )
     }
 
@@ -111,10 +81,6 @@ class TorrentsTable extends Component {
                                       top={this.state.contextMenu.top}
                                       zIndex={1}>
                 <TorrentContextMenu onOutsideContextMenuClicked = {() => { this.hideContextMenu()}}
-                                    paused = {this.state.contextMenu.torrent.paused}
-                                    onChangePauseStatus = {() => {this.state.contextMenu.torrent.changePauseStatus(); this.hideContextMenu()}}
-                                    changePriceEnabled = {this.state.contextMenu.torrent.canChangePrice}
-                                    onChangePriceClicked = {() => {this.state.contextMenu.torrent.showChangePriceDialog(); this.hideContextMenu()}}
                                     onRemoveClicked = {() => {this.state.contextMenu.torrent.remove(); this.hideContextMenu()}}
                                     onRemoveAndDeleteDataClicked = {() => {this.state.contextMenu.torrent.removeAndDeleteData(); this.hideContextMenu()}}
                                     numberOfBuyers = {this.state.contextMenu.torrent.numberOfBuyers}
@@ -129,20 +95,12 @@ class TorrentsTable extends Component {
 
     getRenderedTorrentRows() {
 
-        return (
-            this.props.torrents.length == 0
-            ?
-            <StartDownloadingHint key={0}/>
-            :
-            this.props.torrents.map((t) => { return this.getRenderedTorrentRow(t) })
-        )
+        return (this.props.torrents.map((t) => { return this.getRenderedTorrentRow(t) }))
     }
 
     getRenderedTorrentRow(t) {
 
         var toolbarProps = {
-            canSpeedup : t.canStartBuying,
-            onSpeedupClicked : () => { t.startBuying() },
             onOpenFolderClicked : () => { t.openFolder() },
             onMoreClicked : (e) => { this.toolbarMoreButtonClicked(e, t) }
         }

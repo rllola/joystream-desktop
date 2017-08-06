@@ -8,14 +8,10 @@ import PropTypes from 'prop-types'
 
 import Table from '../../components/Table'
 import TorrentRow from './TorrentRow'
-import ToolbarVisibilityType from '../../utils/ToolbarVisibilityState'
 import TorrentToolbar from './TorrentToolbar'
 import TorrentContextMenu from './TorrentContextMenu'
-
-import Dropzone from 'react-dropzone'
-
-import StartDownloadingHint from './components/StartDownloadingHint'
-
+import ToolbarVisibilityType from '../../utils/ToolbarVisibilityState'
+import StartSeedingHint from './components/StartSeedingHint'
 import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
 
 import { contextMenuHiddenState, contextMenuVisibleState, contextMenuRect } from '../../utils/ContextMenuHelper'
@@ -37,10 +33,6 @@ class TorrentsTable extends Component {
 
         // Start out with hidden context menu
         this.state = contextMenuHiddenState()
-    }
-
-    handleFileDrop (files) {
-      console.log(files)
     }
 
     hideContextMenu() {
@@ -85,20 +77,11 @@ class TorrentsTable extends Component {
 
     render() {
 
-        var dropZoneStyle = {
-            display: 'flex',
-            flexDirection: 'column',
-            flexGrow: 1,
-            borderStyle:'none'
-        }
-
         return (
-          <Dropzone disableClick style={dropZoneStyle} onDrop={this.handleFileDrop}>
-            <Table column_titles={["", "State", "Size", "Progress", "Speed", "Arrival", "Mode"]}>
+            <Table column_titles={["", "State", "Speed", "Price", "Revenue"]}>
                 { this.getRenderedContextMenu() }
                 { this.getRenderedTorrentRows() }
             </Table>
-          </Dropzone>
         )
     }
 
@@ -132,7 +115,7 @@ class TorrentsTable extends Component {
         return (
             this.props.torrents.length == 0
             ?
-            <StartDownloadingHint key={0}/>
+            <StartSeedingHint key={0}/>
             :
             this.props.torrents.map((t) => { return this.getRenderedTorrentRow(t) })
         )
@@ -141,8 +124,6 @@ class TorrentsTable extends Component {
     getRenderedTorrentRow(t) {
 
         var toolbarProps = {
-            canSpeedup : t.canStartBuying,
-            onSpeedupClicked : () => { t.startBuying() },
             onOpenFolderClicked : () => { t.openFolder() },
             onMoreClicked : (e) => { this.toolbarMoreButtonClicked(e, t) }
         }
