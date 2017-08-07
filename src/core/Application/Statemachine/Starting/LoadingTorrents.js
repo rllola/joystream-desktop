@@ -161,11 +161,6 @@ var LoadingTorrents = new BaseMachine({
             }
           })
 
-          torrent.on('status_update', function () {
-            // throttle updates?
-            client.processStateMachineInput('loadingProgressUpdate')
-          })
-
           const state = torrent.currentState()
 
           // check if already Loaded
@@ -178,32 +173,6 @@ var LoadingTorrents = new BaseMachine({
             torrent.updateBuyerTerms(client.getStandardBuyerTerms())
           }
         })
-      },
-
-      loadingProgressUpdate: function (client) {
-        // NOTE: If we include the torrents being loaded in the application store
-        // The loading screen can do these calculations (the torrentStore has the totalSize and progress
-        // computed values updated on status updates)
-        var totalSize = 0
-        var checkedSize = 0
-
-        client.torrents.forEach(function (torrent) {
-          let size = torrent._client.metadata.totalSize()
-          totalSize += size
-        })
-
-        // Progress of loaded torrents is 100%
-        checkedSize = totalSize
-
-        client.torrentsLoading.forEach(function (torrent) {
-          let size = torrent._client.metadata.totalSize()
-          totalSize += size
-          if (torrent._client.lastStatus)
-            checkedSize += size * torrent._client.lastStatus.progress
-        })
-
-        if (totalSize > 0)
-          client.store.setTorrentLoadingProgress(checkedSize / totalSize)
       },
 
       torrentLoaded: function (client, infoHash, torrent) {
