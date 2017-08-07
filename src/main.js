@@ -53,6 +53,10 @@ ipcMain.on('main-window-channel', (event, arg) => {
 })
 
 function createWindow () {
+  
+  // Create the browser window.
+  win = new BrowserWindow({width: 1024, height: 800})
+
   if (isDev) {
     // Enable live reloading
     // https://github.com/electron/electron-compile/blob/master/README.md
@@ -68,13 +72,12 @@ function createWindow () {
       process.exit(0)
     }
     // Check for updates
-    mainWindow.webContents.once("did-frame-finish-load", function (event) {
+    win.webContents.once("did-frame-finish-load", function (event) {
       updater.init()
     })
   }
 
-  // Create the browser window.
-  win = new BrowserWindow({width: 1024, height: 800})
+
 
   // Load file for the app
   var filename_to_load = process.env.COMPONENT_DEVELOPMENT_MODE ? 'component-development/index.html' : 'index.html'
