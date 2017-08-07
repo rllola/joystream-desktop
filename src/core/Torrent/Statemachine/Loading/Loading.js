@@ -52,7 +52,7 @@ var Loading = new BaseMachine({
 
                     // This alert is generated when a torrent switches from being a downloader to a seed.
                     // It will only be generated once per torrent.
-                    torrent.on('finished', function() {
+                    torrent.on('finished', function () {
                         client.processStateMachineInput('downloadFinished')
                     })
 
@@ -64,6 +64,14 @@ var Loading = new BaseMachine({
 
                     torrent.on('peerPluginStatusUpdates', function (peerStatuses) {
                       client.processStateMachineInput('processPeerPluginStatuses', peerStatuses)
+                    })
+
+                    torrent.on('uploadStarted', function (alert) {
+                      client.processStateMachineInput('uploadStarted', alert)
+                    })
+
+                    torrent.on('anchorAnnounced', function (alert) {
+                      client.processStateMachineInput('anchorAnnounced', alert)
                     })
 
                     // If we don´t have metadata, wait for it

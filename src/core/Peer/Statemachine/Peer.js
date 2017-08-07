@@ -73,11 +73,18 @@ var Peer = new BaseMachine({
                     status.connection.innerState !== ConnectionInnerState.WaitingToStart &&
                     status.connection.innerState !== ConnectionInnerState.ReadyForPieceRequest &&
                     status.connection.innerState !== ConnectionInnerState.LoadingPiece &&
-                    status.connection.innerState !== ConnectionInnerState.WaitingForPayment))
-                    this.transition(client, 'ReadyForStartPaidUploadAttempt')
-            }
+                    status.connection.innerState !== ConnectionInnerState.WaitingForPayment)) {
 
+                  return this.transition(client, 'ReadyForStartPaidUploadAttempt')
+                }
+
+            },
+
+            anchorAnnounced: function (client, alert) {
+
+            }
         }
+
     }
 
 })

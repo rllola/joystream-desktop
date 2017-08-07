@@ -214,6 +214,11 @@ class ApplicationStatemachineClient {
       return transaction.toRaw()
     })
   }
+
+  broadcastRawTransaction (tx) {
+    this.services.spvnode.sendTx(tx)
+  }
+
 }
 
 function standardSellerTerms () {

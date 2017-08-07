@@ -17,7 +17,7 @@ var FinishedDownloading = new BaseMachine({
 
             goToStartedUploading : function (client, sellerTerms) {
 
-                this.sellerTerms = sellerTerms
+                client.sellerTerms = sellerTerms
 
                 client.toSellMode(sellerTerms)
 

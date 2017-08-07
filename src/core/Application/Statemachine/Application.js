@@ -175,6 +175,10 @@ var ApplicationStateMachine = new BaseMachine({
       newTorrentAdded: function (client, torrent, coreTorrent, torrentStore) {
         console.log('Added New Torrent:', torrent.infoHash)
 
+        torrent.on('lastPaymentReceived', function (alert) {
+          client.processStateMachineInput('lastPaymentReceived', alert)
+        })
+
         client.torrents.set(torrent.infoHash, coreTorrent)
         coreTorrent.addTorrentResult(null, torrent)
 
@@ -221,6 +225,12 @@ var ApplicationStateMachine = new BaseMachine({
 
       walletBalanceChanged: function (client, balance) {
         client.processStateMachineInput('checkIfWalletNeedsRefill', balance)
+      },
+
+      lastPaymentReceived: function (client, alert) {
+        if (!alert.settlementTx) return
+
+        client.broadcastRawTransaction(alert.settlementTx)
       }
     },
 

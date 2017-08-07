@@ -73,30 +73,49 @@ var Torrent = new BaseMachine({
                 // and hold on to state to get back to when starting
                 client.deepInitialState = deepInitialStateFromActiveState(this.compositeState(client))
 
-                // Sloppy stops, may already be stopped, depending on the
-                // currently active substate, but we don't care.
+                client.generateResumeDataOnTermination = generateResumeData
+
                 client.stopExtension()
-                client.stopLibtorrentTorrent()
 
-                if(generateResumeData && client.hasOutstandingResumeData()) {
-
-                    client.generateResumeData()
-
-                    this.transition(client, 'GeneratingResumeData')
-
-                } else {
-
-                    this.transition(client, 'Terminated')
-                }
+                // We want the application to handle events that result from stopping extension
+                // such as claiming last payment so we wait for extension to stop
+                this.transition(client, 'StoppingExtension')
             },
 
             processPeerPluginStatuses: function (client, statuses) {
                 Common.processPeerPluginStatuses(client, statuses)
             },
+
+            uploadStarted: function (client, alert) {
+              var peer = client.peers[alert.pid]
+              peer.uploadStarted(alert)
+            },
+
+            anchorAnnounced: function (client, alert) {
+              var peer = client.peers[alert.pid]
+              peer.anchorAnnounced(alert)
+            }
+        },
+
+        StoppingExtension: {
+          stopExtensionResult: function (client) {
+
+            client.stopLibtorrentTorrent()
+
+            if (client.generateResumeDataOnTermination && client.hasOutstandingResumeData()) {
+
+                client.generateResumeData()
+
+                this.transition(client, 'GeneratingResumeData')
+
+            } else {
+
+                this.transition(client, 'Terminated')
+            }
+          }
         },
 
         GeneratingResumeData : {
-
             resumeDataGenerated : function (client, resumeData) {
 
                 client.resumeData = resumeData

@@ -27,6 +27,14 @@ Peer.prototype.compositeState = function() {
     return PeerStatemachine.compositeState(this._client)
 }
 
+Peer.prototype.anchorAnnounced = function (alert) {
+  this._client.processStateMachineInput('anchorAnnounced', alert)
+}
+
+Peer.prototype.uploadStarted = function (alert) {
+  this._client.processStateMachineInput('uploadStarted', alert)
+}
+
 /// PeerStatemachineClient class
 
 function PeerStatemachineClient(pid, torrent, privateKeyGenerator, publicKeyHashGenerator) {

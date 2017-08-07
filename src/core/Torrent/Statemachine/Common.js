@@ -27,6 +27,7 @@ function processPeerPluginStatuses(client, statuses) {
         if(peer) {
             // Update status
             peer.newStatus(s)
+
         } else {
             // Create client
             client.peers[s.pid] = new Peer(s.pid, client.torrent, s, client._privateKeyGenerator, client._publicKeyHashGenerator)
