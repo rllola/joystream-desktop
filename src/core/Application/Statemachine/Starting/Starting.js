@@ -129,7 +129,7 @@ var Starting = new BaseMachine({
         client.processStateMachineInput('connectingToBitcoinP2PNetworkSuccess')
       },
       connectingToBitcoinP2PNetworkSuccess: function (client) {
-        this.go(client, 'LoadingTorrents/GettingInfoHashes')
+        this.go(client, 'LoadingTorrents/AddingTorrents')
       },
       connectingToBitcoinP2PNetworkFailure: function (client, err) {
         client.reportError(err)

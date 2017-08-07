@@ -18,48 +18,34 @@ const BaseMachine = require('../../../BaseMachine')
 
         TerminatingTorrents: {
           _onEnter: function (client) {
-            client.store.setTorrentsToTerminate(client.torrents.size)
-            client.store.setTorrentTerminatingProgress(0)
-
-            client._torrentsTerminating = client.torrents.size
-
-            if (client._torrentsTerminating === 0) {
+            if (client.torrents.size === 0) {
               this.transition(client, 'DisconnectingFromBitcoinNetwork')
-              return
-            }
+            } else {
+              client.torrents.forEach(function (torrent, infoHash) {
+                //client.store.torrentRemoved(infoHash) // should we remove it?
 
-            client.torrents.forEach(function (torrent, infoHash) {
-              client.store.torrentRemoved(infoHash)
-              torrent.terminate()
+                // Listen for transition to Terminated state
+                torrent.on('transition', function ({transition, state}) {
+                  if (state.startsWith('Terminated')) {
+                    client.processStateMachineInput('torrentTerminated', torrent)
+                  }
+                })
 
-              const currentState = torrent.currentState()
-
-              // check if terminated
-              if (torrentHasTerminated(currentState)) {
-                return client.processStateMachineInput('torrentTerminated', infoHash, torrent)
-              }
-
-              // listen for transition to Terminated state
-              torrent.on('transition', function ({transition, state}) {
-                if (torrentHasTerminated(state)) {
-                  client.processStateMachineInput('torrentTerminated', infoHash, torrent)
-                }
+                torrent.terminate()
               })
-            })
+            }
           },
 
           torrentTerminated: function (client, infoHash, torrent) {
-            torrent.removeAllListeners()
+            var allTorrentsTerminated = true
 
-            client._torrentsTerminating--
+            client.torrents.forEach(function (torrent, infoHash) {
+              if (!torrent.currentState().startsWith('Terminated')) allTorrentsTerminated = false
+            })
 
-            if (client._torrentsTerminating === 0) {
-              client.processStateMachineInput('terminatedAllTorrents')
+            if (allTorrentsTerminated) {
+              this.transition(client, 'SavingTorrentsToDatabase')
             }
-          },
-
-          terminatedAllTorrents: function (client) {
-            this.transition(client, 'SavingTorrentsToDatabase')
           },
 
           lastPaymentReceived: function (client, alert) {
@@ -206,9 +192,5 @@ const BaseMachine = require('../../../BaseMachine')
         }
     }
 })
-
-function torrentHasTerminated (state) {
-  return state.startsWith('Terminated')
-}
 
 module.exports = Stopping

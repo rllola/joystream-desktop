@@ -22,10 +22,6 @@ var ApplicationStateMachine = new BaseMachine({
         client.config = config
         client.services = {}
         client.torrents = new Map()
-        client.torrentsLoading = new Map()
-        client.infoHashesToLoad = []
-        client.store.setTorrentsToLoad(0)
-        client.store.setTorrentLoadingProgress(0)
 
         this.go(client, 'Starting/InitializingResources')
       }
