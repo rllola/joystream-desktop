@@ -36,10 +36,8 @@ var Loading = new BaseMachine({
                         client.processStateMachineInput('resumeDataGenerated', resumeData)
                     })
 
-                    torrent.on('error', function(err) {
-
-                        if(err.message == 'resume data generation failed')
-                            client.processStateMachineInput('resumeDataGenerationFailed')
+                    torrent.on('resumedata_error', function(err) {
+                        client.processStateMachineInput('resumeDataGenerationFailed', err)
                     })
 
                     torrent.on('status_update', (status) => {
