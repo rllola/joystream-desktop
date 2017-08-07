@@ -77,8 +77,6 @@ var Torrent = new BaseMachine({
 
                 client.stopExtension()
 
-                // We want the application to handle events that result from stopping extension
-                // such as claiming last payment so we wait for extension to stop
                 this.transition(client, 'StoppingExtension')
             },
 
@@ -97,6 +95,8 @@ var Torrent = new BaseMachine({
             }
         },
 
+        // We want the application to handle events that result from stopping extension
+        // such as claiming last payment so we wait for extension to stop
         StoppingExtension: {
           stopExtensionResult: function (client) {
 
