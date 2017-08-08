@@ -59,47 +59,42 @@ const BaseMachine = require('../../../BaseMachine')
             _onEnter: function (client) {
               var operations = []
 
-              function addSaveOperation (torrent) {
-                var encoded = encodeTorrent(torrent._client)
-
-                if(!encoded) return
-
-                operations.push({
-                  type: 'put',
-                  key: encoded.infoHash,
-                  value: encoded
-                })
-              }
-
-              function encodeTorrent (torrentClient) {
-                // do not persist torrents which did not receive metadata
-                if (!torrentClient.metadata || !torrentClient.metadata.isValid()) return null
-
-                var encoded = {
-                  infoHash: torrentClient.infoHash,
-                  name: torrentClient.name,
-                  savePath: torrentClient.savePath,
-                  deepInitialState: torrentClient.deepInitialState,
-                  metadata: torrentClient.metadata.toBencodedEntry().toString('base64')
-                }
-
-                if (torrentClient.resumeData) {
-                  encoded.resumeData = torrentClient.resumeData.toString('base64')
-                }
-
-                encoded.extensionSettings = {
-                  buyerTerms: torrentClient.buyerTerms,
-                  sellerTerms: torrentClient.sellerTerms
-                }
-
-                return encoded
-              }
-
+              // Create batch put operations for each torrent
               client.torrents.forEach(function (torrent, infoHash) {
-                addSaveOperation(torrent)
-                client.torrents.delete(infoHash)
+                var torrentClient = torrent._client
+
+                if (!torrentClient.metadata || !torrentClient.metadata.isValid()) {
+
+                  // do not persist torrents which did not have metadata
+                  return
+
+                } else {
+
+                  let encoded = {
+                    infoHash: infoHash,
+                    name: torrentClient.name,
+                    savePath: torrentClient.savePath,
+                    deepInitialState: torrentClient.deepInitialState,
+                    metadata: torrentClient.metadata.toBencodedEntry().toString('base64'),
+                    extensionSettings: {
+                      buyerTerms: torrentClient.buyerTerms,
+                      sellerTerms: torrentClient.sellerTerms
+                    }
+                  }
+
+                  if (torrentClient.resumeData) {
+                    encoded.resumeData = torrentClient.resumeData.toString('base64')
+                  }
+
+                  operations.push({
+                    type: 'put',
+                    key: infoHash,
+                    value: encoded
+                  })
+                }
               })
 
+              // Save all the torrents to database
               client.services.db.batch('torrents', operations, (err) => {
                 client.processStateMachineInput('SavingTorrentsToDatabaseResult', err)
               })
