@@ -77,6 +77,8 @@ var LoadingTorrents = new BaseMachine({
               ti: metadata
             }
 
+            // joystream-node decoder doesn't correctly check if resumeData propery is undefined, it only checks
+            // if the key on the params object exists so we need to conditionally set it here.
             if (resumeData) params.resumeData = resumeData
 
             // Whether torrent should be added in (libtorrent) paused mode from the get go

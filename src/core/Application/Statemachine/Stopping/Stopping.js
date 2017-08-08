@@ -82,6 +82,7 @@ const BaseMachine = require('../../../BaseMachine')
                     }
                   }
 
+                  // It is possible that resume data generation has failed and resumeData could be null
                   if (torrentClient.resumeData) {
                     encoded.resumeData = torrentClient.resumeData.toString('base64')
                   }
