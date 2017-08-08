@@ -3,7 +3,7 @@ import Store from './store'
 import namespace from 'level-namespace'
 
 // Returns instance of a store immedietly, get/set operations will be queued
-function openImmediate (dbPath, namespaces) {
+function openImmediate (dbPath) {
   let db = levelup(dbPath, {
     keyEncoding: 'utf8',
     valueEncoding: 'json',
@@ -14,11 +14,11 @@ function openImmediate (dbPath, namespaces) {
 
   namespace(db)
 
-  return new Store(db, namespaces)
+  return new Store(db)
 }
 
 // Returns a promise of a store which gets resolved when the database is successfully opened
-function open (dbPath, namespaces) {
+function open (dbPath) {
   return new Promise(function (resolve, reject) {
     levelup(dbPath, {
       keyEncoding: 'utf8',
@@ -27,7 +27,7 @@ function open (dbPath, namespaces) {
     }, function (err, db) {
       if (err) return reject(err)
       namespace(db)
-      resolve(new Store(db, namespaces))
+      resolve(new Store(db))
     })
   })
 }

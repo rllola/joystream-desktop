@@ -121,7 +121,7 @@ function applicationStateToTerminatingState(s) {
 
     let terminatingState
 
-    if(s == "Stopping.TerminatingTorrents" || s == "Stopping.uninitialized")
+    if(s == "Stopping.TerminatingTorrents" || s == "Stopping.SavingTorrentsToDatabase" || s == "Stopping.uninitialized")
         terminatingState = TerminatingState.TerminatingTorrents
     else if(s == "Stopping.DisconnectingFromBitcoinNetwork")
         terminatingState = TerminatingState.DisconnectingFromBitcoinNetwork

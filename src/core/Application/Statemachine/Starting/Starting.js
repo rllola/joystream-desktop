@@ -38,12 +38,7 @@ var Starting = new BaseMachine({
           }, constants.POST_TORRENT_UPDATES_INTERVAL)
 
           // Get a function to call for openning the database store
-          client.services.openDatabase = client.factories.db(client.directories.databasePath(), {
-            // 'table' names to use
-            'torrents': 'torrents',
-            'resume_data': 'resume_data',
-            'torrent_plugin_settings': 'torrent_plugin_settings'
-          })
+          client.services.openDatabase = client.factories.db(client.directories.databasePath())
 
           client.services.testnetFaucet = client.factories.testnetFaucet()
 
@@ -134,7 +129,7 @@ var Starting = new BaseMachine({
         client.processStateMachineInput('connectingToBitcoinP2PNetworkSuccess')
       },
       connectingToBitcoinP2PNetworkSuccess: function (client) {
-        this.go(client, 'LoadingTorrents/GettingInfoHashes')
+        this.go(client, 'LoadingTorrents/AddingTorrents')
       },
       connectingToBitcoinP2PNetworkFailure: function (client, err) {
         client.reportError(err)

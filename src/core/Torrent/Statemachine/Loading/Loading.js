@@ -44,10 +44,6 @@ var Loading = new BaseMachine({
                         // We directly update store, although we really should
                         // create a fresh input for this
                         client.store.setStatus(status)
-
-                        // Used to monitor progress while loading
-                        client.lastStatus = status
-                        this.emit('status_update', client, status)
                     })
 
                     // This alert is generated when a torrent switches from being a downloader to a seed.

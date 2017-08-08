@@ -15,49 +15,37 @@ const BaseMachine = require('../../../BaseMachine')
         uninitialized: {
 
         },
+
         TerminatingTorrents: {
           _onEnter: function (client) {
-            client.store.setTorrentsToTerminate(client.torrents.length)
-            client.store.setTorrentTerminatingProgress(0)
-
             if (client.torrents.size === 0) {
               this.transition(client, 'DisconnectingFromBitcoinNetwork')
-              return
-            }
+            } else {
+              client.torrents.forEach(function (torrent, infoHash) {
+                //client.store.torrentRemoved(infoHash) // should we remove it?
 
-            client.torrents.forEach(function (torrent, infoHash) {
-              client.store.torrentRemoved(infoHash)
-              torrent.terminate()
+                // Listen for transition to Terminated state
+                torrent.on('transition', function ({transition, state}) {
+                  if (state.startsWith('Terminated')) {
+                    client.processStateMachineInput('torrentTerminated', torrent)
+                  }
+                })
 
-              const currentState = torrent.currentState()
-
-              // check if terminated
-              if (torrentHasTerminated(currentState)) {
-                return client.processStateMachineInput('torrentTerminated', infoHash, torrent)
-              }
-
-              // listen for transition to Terminated state
-              torrent.on('transition', function ({transition, state}) {
-                if (torrentHasTerminated(state)) {
-                  client.processStateMachineInput('torrentTerminated', infoHash, torrent)
-                }
+                torrent.terminate()
               })
-            })
+            }
           },
 
           torrentTerminated: function (client, infoHash, torrent) {
-            console.log('Terminated:', infoHash)
-            client.torrents.delete(infoHash)
+            var allTorrentsTerminated = true
 
-            torrent.removeAllListeners()
+            client.torrents.forEach(function (torrent, infoHash) {
+              if (!torrent.currentState().startsWith('Terminated')) allTorrentsTerminated = false
+            })
 
-            if (client.torrents.size === 0) {
-              client.processStateMachineInput('terminatedAllTorrents')
+            if (allTorrentsTerminated) {
+              this.transition(client, 'SavingTorrentsToDatabase')
             }
-          },
-
-          terminatedAllTorrents: function (client) {
-            this.transition(client, 'DisconnectingFromBitcoinNetwork')
           },
 
           lastPaymentReceived: function (client, alert) {
@@ -65,6 +53,58 @@ const BaseMachine = require('../../../BaseMachine')
 
             client.broadcastRawTransaction(alert.settlementTx)
           }
+        },
+
+        SavingTorrentsToDatabase: {
+            _onEnter: function (client) {
+              var operations = []
+
+              // Create batch put operations for each torrent
+              client.torrents.forEach(function (torrent, infoHash) {
+                var torrentClient = torrent._client
+
+                if (!torrentClient.metadata || !torrentClient.metadata.isValid()) {
+
+                  // do not persist torrents which did not have metadata
+                  return
+
+                } else {
+
+                  let encoded = {
+                    infoHash: infoHash,
+                    name: torrentClient.name,
+                    savePath: torrentClient.savePath,
+                    deepInitialState: torrentClient.deepInitialState,
+                    metadata: torrentClient.metadata.toBencodedEntry().toString('base64'),
+                    extensionSettings: {
+                      buyerTerms: torrentClient.buyerTerms,
+                      sellerTerms: torrentClient.sellerTerms
+                    }
+                  }
+
+                  // It is possible that resume data generation has failed and resumeData could be null
+                  if (torrentClient.resumeData) {
+                    encoded.resumeData = torrentClient.resumeData.toString('base64')
+                  }
+
+                  operations.push({
+                    type: 'put',
+                    key: infoHash,
+                    value: encoded
+                  })
+                }
+              })
+
+              // Save all the torrents to database
+              client.services.db.batch('torrents', operations, (err) => {
+                client.processStateMachineInput('SavingTorrentsToDatabaseResult', err)
+              })
+            },
+
+            SavingTorrentsToDatabaseResult: function (client, err) {
+              if(err) client.reportError(err)
+              this.transition(client, 'DisconnectingFromBitcoinNetwork')
+            }
         },
 
         DisconnectingFromBitcoinNetwork: {
@@ -148,9 +188,5 @@ const BaseMachine = require('../../../BaseMachine')
         }
     }
 })
-
-function torrentHasTerminated (state) {
-  return state.startsWith('Terminated')
-}
 
 module.exports = Stopping
