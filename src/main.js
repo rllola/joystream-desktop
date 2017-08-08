@@ -1,6 +1,7 @@
 const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
 const url = require('url')
+const isDev = require('electron-is-dev')
 
 import {enableLiveReload} from 'electron-compile'
 
@@ -36,7 +37,6 @@ if (shouldQuit) {
             createWindow()
         }
     })
-
 }
 
 // Listen to broadcast channel from main window
@@ -53,37 +53,46 @@ ipcMain.on('main-window-channel', (event, arg) => {
 })
 
 function createWindow () {
+  
+  // Create the browser window.
+  win = new BrowserWindow({width: 1024, height: 800})
 
-    if (process.env.NODE_ENV === 'development') {
-        // Enable live reloading
-        // https://github.com/electron/electron-compile/blob/master/README.md
-        enableLiveReload({strategy: 'react-hmr'});
+  if (isDev) {
+    // Enable live reloading
+    // https://github.com/electron/electron-compile/blob/master/README.md
+    enableLiveReload({strategy: 'react-hmr'})
+    // Open the DevTools.
+    win.webContents.openDevTools()
+  } else {
+    // Handle squirrel event. Avoid calling for updates when install
+    if(require('electron-squirrel-startup')) {
+      console.log('Squirrel events handle')
+      app.quit()
+      // Hack because app.quit() is not immediate
+      process.exit(0)
     }
-
-    // Create the browser window.
-    win = new BrowserWindow({width: 1024, height: 800})
-
-    // Load file for the app
-    var filename_to_load = process.env.COMPONENT_DEVELOPMENT_MODE ? 'component-development/index.html' : 'index.html'
-
-    win.loadURL(url.format({
-        pathname: path.join(__dirname, filename_to_load),
-        protocol: 'file:',
-        slashes: true
-    }))
-
-    if (process.env.NODE_ENV === 'development') {
-        // Open the DevTools.
-        win.webContents.openDevTools()
-    }
-
-    // Emitted when the window is closed.
-    win.on('closed', () => {
-
-        // Dereference the window object, usually you would store windows
-        // in an array if your app supports multi windows, this is the time
-        // when you should delete the corresponding element.
-
-        //win = null
+    // Check for updates
+    win.webContents.once("did-frame-finish-load", function (event) {
+      updater.init()
     })
+  }
+
+
+
+  // Load file for the app
+  var filename_to_load = process.env.COMPONENT_DEVELOPMENT_MODE ? 'component-development/index.html' : 'index.html'
+
+  win.loadURL(url.format({
+    pathname: path.join(__dirname, filename_to_load),
+    protocol: 'file:',
+    slashes: true
+  }))
+
+  // Emitted when the window is closed.
+  win.on('closed', () => {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    win = null
+  })
 }
