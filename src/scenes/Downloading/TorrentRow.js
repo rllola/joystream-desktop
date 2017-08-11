@@ -66,53 +66,6 @@ function readableETAString(bytes, bytes_per_second) {
     return ETAString
 }
 
-const ModeIndicator = (props) => {
-
-    if(props.paid)
-        return <span className="label paid-label">paid</span>
-    else
-        return<span className="label free-label">free</span>
-}
-
-ModeIndicator.propTypes = {
-    paid : PropTypes.bool.isRequired
-}
-
-const StatusIndicator = (props) => {
-
-    if(props.paused)
-        return <span className="label paused-label">paused</span>
-    else
-        return<span className="label inactive-label">started</span>
-}
-
-StatusIndicator.propTypes = {
-    paused : PropTypes.bool.isRequired
-}
-
-const ProgressIndicator = (props) => {
-    return <LinearProgress color="#55C855" style={{  height : 15, borderRadius: 10000}} mode="determinate" value={props.progress} min={0} max={100}/>
-}
-
-ProgressIndicator.propTypes = {
-    progress : PropTypes.number.isRequired
-}
-
-const ETAIndicator = (props) => {
-
-    var etaString
-
-    if(props.bytes_remaining && props.bytes_per_second)
-        etaString = readableETAString(props.bytes_remaining, props.bytes_per_second)
-
-    return <span>{etaString}</span>
-}
-
-ETAIndicator.propTypes = {
-    bytes_remaining: PropTypes.number.isRequired,
-    bytes_per_second : PropTypes.number.isRequired
-}
-
 const NameField = (props) => {
 
     return (

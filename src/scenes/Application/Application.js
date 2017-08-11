@@ -69,7 +69,7 @@ class Application extends Component {
 
             case Scene.Uploading:
                 return <NavigationFrame {...this.props}>
-                          <Seeding torrents={this.props.app._torrentsSeeding}
+                          <Seeding torrents={this.props.store._torrentsUploading}
                                 revenue={123}
                                 uploadSpeed={77777}
                                 onStartUploadCliked={() => {console.log(" start uploading clicked")}} />
@@ -77,7 +77,7 @@ class Application extends Component {
 
             case Scene.Completed:
                 return <NavigationFrame {...this.props}>
-                            <Completed torrents={this.props.app._torrentsCompleted} />
+                            <Completed torrents={this.props.store._torrentsCompleted} />
                         </NavigationFrame>
 
             case Scene.ShuttingDown:
