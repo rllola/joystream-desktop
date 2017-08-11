@@ -58,10 +58,14 @@ describe('Peer state machine', function () {
 
         assert.equal(peer.compositeState(), "StartingPaidUploading")
         assert.equal(torrent.startUploading.callCount, 1)
-        assert.equal(torrent.startUploading.getCall(0).args[0], s.pid)
-        assert.deepEqual(torrent.startUploading.getCall(0).args[1], buyerTerms)
-        assert.equal(torrent.startUploading.getCall(0).args[2], contractSk)
-        assert.equal(torrent.startUploading.getCall(0).args[3], finalPkHash)
+
+        let firstCall = torrent.startUploading.getCall(0)
+
+        assert.equal(firstCall.args[0], pid)
+        assert.equal(firstCall.args[1], buyerTerms)
+        assert.equal(firstCall.args[2], contractSk)
+        assert.equal(firstCall.args[3], finalPkHash)
+
     })
 
     it('goes to paid upload start', function () {

@@ -121,65 +121,8 @@ var ApplicationStateMachine = new BaseMachine({
       },
 
       endUpload: function (client, infoHash) {
-        var torrent = client.torrents.get(infoHash)
-        torrent.endUpload()
-      },
-
-      addNewTorrent: function (client, torrentFilePath, deepInitialState, extensionSettings) {
-        // Create a TorrentInfo from the file
-        try {
-          var ti = new TorrentInfo(torrentFilePath)
-        } catch (err) {
-          console.log(err)
-          return
-        }
-
-        const infoHash = ti.infoHash()
-
-        if (client.torrents.has(infoHash)) {
-          console.log('Torrent Already Exists')
-          // change scene to where the torrent is currently displayed?
-          return
-        }
-
-        let torrentStore = client.factories.torrentStore(infoHash)
-        let coreTorrent = client.factories.torrent(torrentStore)
-
-        coreTorrent.startLoading(infoHash, ti.name() || infoHash, client.directories.defaultSavePath(), null, ti, deepInitialState, extensionSettings)
-
-        let addParams = {
-          ti: ti,
-          name: ti.name() || infoHash,
-          savePath: client.directories.defaultSavePath(),
-          flags: {
-            paused: true,
-            auto_managed: false
-          }
-        }
-
-        client.services.session.addTorrent(addParams, (err, torrent) => {
-          if (err) {
-            client.reportError(err)
-            coreTorrent.addTorrentResult(err)
-            return
-          }
-
-          client.processStateMachineInput('newTorrentAdded', torrent, coreTorrent, torrentStore)
-        })
-      },
-
-      newTorrentAdded: function (client, torrent, coreTorrent, torrentStore) {
-        console.log('Added New Torrent:', torrent.infoHash)
-
-        torrent.on('lastPaymentReceived', function (alert) {
-          client.processStateMachineInput('lastPaymentReceived', alert)
-        })
-
-        client.torrents.set(torrent.infoHash, coreTorrent)
-        coreTorrent.addTorrentResult(null, torrent)
-
-        client.store.setTorrentBeingAdded(torrentStore)
-        client.store.torrentAdded(torrentStore)
+          var torrent = client.torrents.get(infoHash)
+          torrent.endUpload()
       },
 
       checkIfWalletNeedsRefill: async function (client, balance) {
@@ -223,11 +166,7 @@ var ApplicationStateMachine = new BaseMachine({
         client.processStateMachineInput('checkIfWalletNeedsRefill', balance)
       },
 
-      lastPaymentReceived: function (client, alert) {
-        if (!alert.settlementTx) return
 
-        client.broadcastRawTransaction(alert.settlementTx)
-      }
     },
 
     Stopping: {

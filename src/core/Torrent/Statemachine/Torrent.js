@@ -92,27 +92,46 @@ var Torrent = new BaseMachine({
             anchorAnnounced: function (client, alert) {
               var peer = client.peers[alert.pid]
               peer.anchorAnnounced(alert)
+            },
+
+            lastPaymentReceived: function (client, alert) {
+
+                if (!alert.settlementTx) return
+
+                console.log('Introduce tx broadcasting on torrent machine')
+
+                //client.broadcastRawTransaction(alert.settlementTx)
             }
         },
 
         // We want the application to handle events that result from stopping extension
         // such as claiming last payment so we wait for extension to stop
         StoppingExtension: {
-          stopExtensionResult: function (client) {
 
-            client.stopLibtorrentTorrent()
+            stopExtensionResult: function (client) {
 
-            if (client.generateResumeDataOnTermination && client.hasOutstandingResumeData()) {
+                client.stopLibtorrentTorrent()
 
-                client.generateResumeData()
+                if (client.generateResumeDataOnTermination && client.hasOutstandingResumeData()) {
 
-                this.transition(client, 'GeneratingResumeData')
+                    client.generateResumeData()
 
-            } else {
+                    this.transition(client, 'GeneratingResumeData')
 
-                this.transition(client, 'Terminated')
+                } else {
+
+                    this.transition(client, 'Terminated')
+                }
+            },
+
+            lastPaymentReceived: function (client, alert) {
+
+                if (!alert.settlementTx) return
+
+                console.log('Introduce tx broadcasting on torrent machine')
+
+                //client.broadcastRawTransaction(alert.settlementTx)
             }
-          }
         },
 
         GeneratingResumeData : {

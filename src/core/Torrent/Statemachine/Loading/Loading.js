@@ -40,9 +40,8 @@ var Loading = new BaseMachine({
                         client.processStateMachineInput('resumeDataGenerationFailed', err)
                     })
 
+                    // Update store when status changes
                     torrent.on('status_update', (status) => {
-                        // We directly update store, although we really should
-                        // create a fresh input for this
                         client.store.setStatus(status)
                     })
 
@@ -68,6 +67,10 @@ var Loading = new BaseMachine({
 
                     torrent.on('anchorAnnounced', function (alert) {
                       client.processStateMachineInput('anchorAnnounced', alert)
+                    })
+
+                    torrent.on('lastPaymentReceived', function (alert) {
+                        client.processStateMachineInput('lastPaymentReceived', alert)
                     })
 
                     // If we don´t have metadata, wait for it

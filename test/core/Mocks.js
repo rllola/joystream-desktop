@@ -81,10 +81,10 @@ function MakePeerPluginStatus(pid,
     }
 }
 
-function MakeConnectionStatus(endpoint, innerState, payor, payee, announcedModeAndTermsFromPeer) {
+function MakeConnectionStatus(pid, innerState, payor, payee, announcedModeAndTermsFromPeer) {
 
     return {
-        endpoint : endpoint,
+        pid : pid,
         innerState : innerState,
         payor: payor,
         payee: payee,

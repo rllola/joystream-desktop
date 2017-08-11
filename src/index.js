@@ -20,9 +20,19 @@ import ReactDOM from 'react-dom'
 
 import Application from './core/Application'
 
+/**
+ * Some components use react-tap-event-plugin to listen for touch events because onClick is not
+ * fast enough This dependency is temporary and will eventually go away.
+ * Until then, be sure to inject this plugin at the start of your app.
+ *
+ * NB:! Can only be called once per application lifecycle
+ */
+var injectTapEventPlugin = require('react-tap-event-plugin')
+injectTapEventPlugin()
+
 const application = new Application()
 
-function render (app) {
+function render (store) {
 
   // NB: We have to re-require Application every time, or else this won't work
   const ApplicationScene = require('./scenes/Application').default
@@ -32,14 +42,14 @@ function render (app) {
 
     ReactDOM.render(
       <AppContainer>
-        <ApplicationScene app={app} />
+        <ApplicationScene store={store} />
       </AppContainer>
       ,
       document.getElementById('root')
     )
   } else {
     ReactDOM.render(
-      <ApplicationScene app={app} />,
+      <ApplicationScene store={store} />,
       document.getElementById('root')
     )
   }
@@ -68,8 +78,6 @@ application.start(config)
 // NB: Be aware that when electron.app.quit is called, this callback will
 // be triggered yet another time
 window.onbeforeunload = function(e) {
-
-    console.log('onbeforeunload')
 
     // Tell state machine
     application.onBeforeUnloadMainWindow(e)

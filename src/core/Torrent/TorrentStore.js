@@ -6,6 +6,29 @@ class TorrentStore {
     @observable state
     @observable progress
     @observable totalSize
+
+    /**
+     * libtorrent::torrent_status::total_done
+     *
+     * The total number of bytes of the file(s) that we have.
+     * All this does not necessarily has to be downloaded during
+     * this session (that's total_payload_download).
+     */
+    @observable downloadedSize
+
+    @observable downloadSpeed
+    @observable uploadSpeed
+
+    /**
+     * libtorrent::torrent_status::total_download/total_upload
+     *
+     * The number of bytes downloaded and uploaded to all peers, accumulated, this session only.
+     * The session is considered to restart when a torrent is paused and restarted again.
+     * When a torrent is paused, these counters are reset to 0. If you want complete, persistent,
+     * stats, see all_time_upload and all_time_download.
+     *
+     */
+    @observable uploadedTotal
     @observable name
     @observable numberOfBuyers
     @observable numberOfSellers
@@ -17,6 +40,10 @@ class TorrentStore {
                  state,
                  progress,
                  totalSize,
+                 downloadedSize,
+                 downloadSpeed,
+                 uploadSpeed,
+                 uploadedTotal,
                  name,
                  numberOfBuyers,
                  numberOfSellers,
@@ -29,6 +56,10 @@ class TorrentStore {
         this.state = state
         this.progress = progress
         this.totalSize = totalSize
+        this.downloadedSize = downloadedSize
+        this.downloadSpeed = downloadSpeed
+        this.uploadSpeed = uploadSpeed
+        this.uploadedTotal = uploadedTotal
         this.name = name
         this.numberOfBuyers = numberOfBuyers
         this.numberOfSellers = numberOfSellers
@@ -40,9 +71,6 @@ class TorrentStore {
 
     @action.bound
     setMetadata(metadata) {
-
-        this.metadata = metadata // Not observable
-
         this.setName(metadata.name())
         this.setTotalSize(metadata.totalSize())
     }
@@ -62,13 +90,34 @@ class TorrentStore {
         this.totalSize = totalSize
     }
 
+    @action.bound
+    setDownloadedSize(downloadedSize) {
+        this.downloadedSize = downloadedSize
+    }
+
+    @action.bound
+    setDownloadSpeed(downloadSpeed) {
+        this.downloadSpeed = downloadSpeed
+    }
+
+    @action.bound
+    setUploadSpeed(uploadSpeed) {
+        this.uploadSpeed = uploadSpeed
+    }
+
+    @action.bound
+    setUploadedTotal(uploadedTotal) {
+        this.uploadedTotal = uploadedTotal
+    }
 
     @action.bound
     setStatus (status) {
 
-        // ignore other fields for now
-
-        this.setProgress(status.progress)
+        this.setProgress(100*status.progress)
+        this.setDownloadSpeed(status.downloadRate)
+        this.setUploadSpeed(status.uploadRate)
+        this.setDownloadedSize(status.totalDone)
+        this.setUploadedTotal(status.totalUpload)
     }
 
     @action.bound

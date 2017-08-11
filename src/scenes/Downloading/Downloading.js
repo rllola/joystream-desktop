@@ -3,8 +3,12 @@ import { inject, observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
 import TorrentTable from './TorrentTable'
+import StartDownloadingFlow, {Stage} from './components/StartDownloadingFlow'
 
-const Downloading = (props) => {
+const Downloading = observer((props) => {
+
+    console.log("Downloading.render()")
+    console.log(props.torrents.length)
 
     return (
         <div className="downloading-scene-container">
@@ -37,15 +41,18 @@ const Downloading = (props) => {
 
             <TorrentTable torrents={props.torrents} />
 
+            <StartDownloadingFlow store={props.store}/>
+
         </div>
     )
-}
+})
 
 Downloading.propTypes = {
-    torrents : PropTypes.array.isRequired,
+    //torrents : PropTypes.any.isRequired,
     revenue : PropTypes.number.isRequired,
     downloadSpeed : PropTypes.number.isRequired,
-    onStartDownloadClicked : PropTypes.func.isRequired
+    onStartDownloadClicked : PropTypes.func.isRequired,
+    torrentsBeingLoaded : PropTypes.array.isRequired
 }
 
 export default Downloading

@@ -8,6 +8,13 @@ class ApplicationStore {
 
   @observable state
 
+  @observable unconfirmedBalance
+
+  @observable confirmedBalance
+
+  // Total revenue
+  @observable revenue
+
   // Holds all TorrentStores - used to compute array of torrents for the active scene
   @observable _torrents = []
 
@@ -19,9 +26,6 @@ class ApplicationStore {
   @observable torrentsToTerminate = 0
   @observable torrentTerminatingProgress = 0 // Number between 0 and 1 (0% --> 100%)
 
-  // Will be set to a TorrentStore which is the last torrent being added to the session
-  @observable newTorrentBeingAdded = null
-
   // notifications in each category
   @observable _notifications = {
     uploading: new Map(),
@@ -29,15 +33,36 @@ class ApplicationStore {
     completed: new Map()
   }
 
-  constructor (handlers) {
+  constructor (state, unconfirmedBalance, confirmedBalance, revenue, handlers) {
+
+    this.setState(state)
+    this.setUnconfirmedBalance(unconfirmedBalance)
+    this.setConfirmedBalance(confirmedBalance)
+    this.setRevenue(revenue)
+
     // callbacks to make on user actions
     // (provided by the core application, which will submit them to statemachine as inputs)
     this._handlers = handlers
   }
 
   @action.bound
-  setState (stateString) {
-    this.state = stateString
+  setState (state) {
+    this.state = state
+  }
+
+  @action.bound
+  setUnconfirmedBalance(unconfirmedBalance) {
+    this.unconfirmedBalance = unconfirmedBalance
+  }
+
+  @action.bound
+  setConfirmedBalance(confirmedBalance) {
+    this.confirmedBalance = confirmedBalance
+  }
+
+  @action.bound
+  setRevenue(revenue) {
+    this.revenue = revenue
   }
 
   @computed get activeScene () {
@@ -139,6 +164,13 @@ class ApplicationStore {
     }
   }
 
+  @computed get totalDownloadRate() {
+
+    return this._torrentsDownloading.reduce(function(accum, torrentStore) {
+      return accum + torrentStore.downloadSpeed
+    }, 0)
+  }
+
   @computed get downloadingNotifications () {
     return this._notifications.downloading.size()
   }
@@ -149,6 +181,12 @@ class ApplicationStore {
 
   @computed get completedNotifications () {
     return this._notifications.completed.size()
+  }
+
+  @computed get torrentsBeingLoaded() {
+    return this._torrents.filter(function (torrent) {
+        return torrent.isLoading
+    })
   }
 
   @action.bound
@@ -171,26 +209,25 @@ class ApplicationStore {
     this.torrentTerminatingProgress = progress
   }
 
-  @action.bound
-  clearTorrentBeingAdded () {
-    this.newTorrentBeingAdded = null
-  }
-
-  @action.bound
-  setTorrentBeingAdded (torrentStore) {
-    if (this.isStarted) this.newTorrentBeingAdded = torrentStore
-  }
-
   //  Changing Scenes
   moveToScene (destinationScene) {
     this._handlers.moveToScene(destinationScene)
   }
 
-  // The UI should this method passing in a TorrentInfo object (after displaying info to user)
-  //, or string (magnetlink or infohash)
-  addTorrent (info, /* settings? */) {
-    this._handlers.addTorrent(info)
+  /// Downloading scene events
+
+  startDownload() {
+    this._handlers.startDownload()
   }
+
+  acceptTorrentFileAlreadyAdded() {
+    this._handlers.acceptTorrentWasAlreadyAdded()
+  }
+
+  acceptTorrentFileWasInvalid() {
+    this._handlers.acceptTorrentFileWasInvalid()
+  }
+
 }
 
 function torrentInArray (array, infoHash) {
