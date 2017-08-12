@@ -208,10 +208,6 @@ class ApplicationStatemachineClient {
     console.log(err.message)
   }
 
-  getStandardBuyerTerms () {
-    return standardBuyerTerms()
-  }
-
   privateKeyGenerator () {
     return bcoin.ec.generatePrivateKey()
   }
