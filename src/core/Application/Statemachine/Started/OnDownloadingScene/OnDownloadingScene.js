@@ -102,13 +102,8 @@ var OnDownloadingScene = new BaseMachine({
 
           /// Start loading torrent
 
-          // * Fetch from dbase in the future *
-          let standardBuyerTerms = {
-              maxPrice: 1,
-              maxLock: 5,
-              minNumberOfSellers: 1,
-              maxContractFeePerKb: 2000
-          }
+          // NB: Get from settings data store of some sort
+          let terms = Common.getStandardbuyerTerms()
 
           torrent.startLoading(
               infoHash,
@@ -117,7 +112,9 @@ var OnDownloadingScene = new BaseMachine({
               null, // no resume data
               torrentInfo,
               Common.DeepInitialState.DOWNLOADING.UNPAID.STARTED,
-              {buyerTerms: standardBuyerTerms}
+              {
+                  buyerTerms: terms
+              }
           )
 
       },

@@ -121,7 +121,13 @@ var LoadingTorrents = new BaseMachine({
       },
 
       torrentWaitingForMissingBuyerTerms: function (client, torrent) {
-        torrent.updateBuyerTerms(client.getStandardBuyerTerms())
+
+        // Standard buyer terms
+        // NB: Get from settings data store of some sort
+        let terms = Common.getStandardbuyerTerms()
+
+        // change name
+        torrent.updateBuyerTerms(terms)
       },
 
       torrentLoaded: function (client) {
