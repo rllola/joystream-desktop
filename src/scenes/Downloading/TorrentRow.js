@@ -192,7 +192,7 @@ class TorrentRow extends Component {
                 <ETAField bytes_remaining={this.props.torrent.totalSize - this.props.torrent.downloadedSize}
                           bytes_per_second={this.props.torrent.downloadSpeed}
                 />
-                <ModeField isPaid={this.props.torrent.paid} />
+                <ModeField isPaid={this.props.torrent.canStartPaidDownloading} />
 
                 { this.getRenderedToolbar() }
             </Row>

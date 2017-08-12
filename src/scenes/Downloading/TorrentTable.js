@@ -141,7 +141,7 @@ class TorrentsTable extends Component {
     getRenderedTorrentRow(t) {
 
         var toolbarProps = {
-            canSpeedup : t.canStartBuying,
+            canSpeedup : t.canStartPaidDownloading,
             onSpeedupClicked : () => { t.startBuying() },
             onOpenFolderClicked : () => { t.openFolder() },
             onMoreClicked : (e) => { this.toolbarMoreButtonClicked(e, t) }
