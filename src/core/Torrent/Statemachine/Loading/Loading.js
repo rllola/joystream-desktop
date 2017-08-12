@@ -8,6 +8,7 @@ var LibtorrentInteraction = require('joystream-node').LibtorrentInteraction
 var TorrentState = require('joystream-node').TorrentState
 
 var Common = require('./../Common')
+var DeepInitialState = require('../DeepInitialState')
 
 var Loading = new BaseMachine({
 
@@ -134,7 +135,7 @@ var Loading = new BaseMachine({
                         // we just go to passive, even if the user really wanted to download.
                         client.toObserveMode()
 
-                        client.deepInitialState = Common.DeepInitialState.PASSIVE
+                        client.deepInitialState = DeepInitialState.PASSIVE
 
                         client.startExtension()
 
@@ -166,7 +167,7 @@ var Loading = new BaseMachine({
                     } else { // isPassive || isUploading
 
                         // Overrule users wish, force (unpaid+started) downloading
-                        client.deepInitialState = Common.DeepInitialState.DOWNLOADING.UNPAID.STARTED
+                        client.deepInitialState = DeepInitialState.DOWNLOADING.UNPAID.STARTED
 
                         this.transition(client, 'WaitingForMissingBuyerTerms')
                     }
@@ -210,21 +211,21 @@ function goToDeepInitialState(machine, client) {
 function relativePathFromDeepInitialState(s) {
 
     switch (s) {
-        case Common.DeepInitialState.DOWNLOADING.UNPAID.STARTED:
+        case DeepInitialState.DOWNLOADING.UNPAID.STARTED:
             return '../Active/DownloadIncomplete/Unpaid/Started/ReadyForStartPaidDownloadAttempt'
-        case Common.DeepInitialState.DOWNLOADING.UNPAID.STOPPED:
+        case DeepInitialState.DOWNLOADING.UNPAID.STOPPED:
             return '../Active/DownloadIncomplete/Unpaid/Stopped'
         /**
-        case Common.DeepInitialState.DOWNLOADING.PAID.STARTED:
+        case DeepInitialState.DOWNLOADING.PAID.STARTED:
             return '../Active/DownloadIncomplete/Paid/Started'
-        case Common.DeepInitialState.DOWNLOADING.PAID.STOPPED:
+        case DeepInitialState.DOWNLOADING.PAID.STOPPED:
             return '../Active/DownloadIncomplete/Paid/Stopped'
         */
-        case Common.DeepInitialState.PASSIVE:
+        case DeepInitialState.PASSIVE:
             return '../Active/FinishedDownloading/Passive'
-        case Common.DeepInitialState.UPLOADING.STARTED:
+        case DeepInitialState.UPLOADING.STARTED:
             return '../Active/FinishedDownloading/Uploading/Started'
-        case Common.DeepInitialState.UPLOADING.STOPPED:
+        case DeepInitialState.UPLOADING.STOPPED:
             return '../Active/FinishedDownloading/Uploading/Stopped'
     }
 

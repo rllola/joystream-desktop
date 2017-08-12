@@ -4,9 +4,9 @@
 
 const dialog = require('electron').remote.dialog
 const BaseMachine = require('../../../../BaseMachine')
-const Common = require('../../../../Torrent/Statemachine/Common')
-
+const TorrentStatemachine = require('../../../../Torrent/Statemachine')
 const TorrentInfo = require('joystream-node').TorrentInfo
+const Common = require('./../../Common')
 
 var OnDownloadingScene = new BaseMachine({
   initialState: 'idle',
@@ -124,7 +124,7 @@ var OnDownloadingScene = new BaseMachine({
               addParams.savePath,
               null, // no resume data
               torrentInfo,
-              Common.DeepInitialState.DOWNLOADING.UNPAID.STARTED,
+              TorrentStatemachine.DeepInitialState.DOWNLOADING.UNPAID.STARTED,
               {
                   buyerTerms: terms
               }

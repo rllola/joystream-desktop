@@ -4,13 +4,10 @@
 
 var assert = require('chai').assert
 var sinon = require('sinon')
-var EventEmitter = require('events').EventEmitter
-var util = require('util')
 var Mocks = require('./Mocks')
 
-var ConnectionInnerState = require('joystream-node').ConnectionInnerState
-var Common = require('../../src/core/Torrent/Statemachine/Common')
-var Torrent = require('../../src/core/Torrent/Statemachine/Torrent')
+//var ConnectionInnerState = require('joystream-node').ConnectionInnerState
+var Torrent = require('../../src/core/Torrent/Statemachine')
 
 /**
  *
@@ -31,7 +28,7 @@ describe('Torrent state machine', function () {
             savePath: "save_path",
             resumeData: null,
             metadata: "my-metadata",
-            deepInitialState: Common.DeepInitialState.UPLOADING.STOPPED,
+            deepInitialState: Torrent.DeepInitialState.UPLOADING.STOPPED,
             extensionSettings: {
                 sellerTerms : {}
             },
@@ -79,7 +76,7 @@ describe('Torrent state machine', function () {
             savePath: "save_path",
             resumeData: null,
             metadata: "my-metadata",
-            deepInitialState: Common.DeepInitialState.UPLOADING.STOPPED,
+            deepInitialState: Torrent.DeepInitialState.UPLOADING.STOPPED,
             extensionSettings: {
                 sellerTerms : {}
             },
@@ -114,7 +111,7 @@ describe('Torrent state machine', function () {
             savePath: "save_path",
             resumeData: "resume_data",
             metadata: null,
-            deepInitialState: Common.DeepInitialState.DOWNLOADING.UNPAID.STOPPED,
+            deepInitialState: Torrent.DeepInitialState.DOWNLOADING.UNPAID.STOPPED,
             extensionSettings: {
                 buyerTerms : {
                     minNumberOfSellers : 1
@@ -263,7 +260,7 @@ describe('Torrent state machine', function () {
             savePath: "save_path",
             resumeData: "resume_data",
             metadata: null,
-            deepInitialState: Common.DeepInitialState.PASSIVE,
+            deepInitialState: Torrent.DeepInitialState.PASSIVE,
             extensionSettings: {},
             isFullyDownloaded: true
         }
@@ -316,7 +313,7 @@ describe('Torrent state machine', function () {
             savePath: "save_path",
             resumeData: "resume_data",
             metadata: null,
-            deepInitialState: Common.DeepInitialState.UPLOADING.STOPPED,
+            deepInitialState: Torrent.DeepInitialState.UPLOADING.STOPPED,
             extensionSettings: {
                 sellerTerms : {}
             },

@@ -6,6 +6,7 @@ var BaseMachine = require('../../BaseMachine')
 var Loading = require('./Loading/Loading')
 var Active = require('./Active')
 var Common = require('./Common')
+var DeepInitialState = require('./DeepInitialState')
 
 var Torrent = new BaseMachine({
 
@@ -179,9 +180,9 @@ function deepInitialStateFromActiveState(stateString) {
         if(states[2] == "Unpaid") {
 
             if(states[3] == "Started")
-                return Common.DeepInitialState.DOWNLOADING.UNPAID.STARTED
+                return DeepInitialState.DOWNLOADING.UNPAID.STARTED
             else if(states[3] == "Stopped")
-                return Common.DeepInitialState.DOWNLOADING.UNPAID.STOPPED
+                return DeepInitialState.DOWNLOADING.UNPAID.STOPPED
             else
                 assert(false, assertMsg)
 
@@ -189,9 +190,9 @@ function deepInitialStateFromActiveState(stateString) {
           else if(states[2] == "Paid") {
 
             if(states[3] == "Started")
-                return Common.DeepInitialState.DOWNLOADING.PAID.STARTED
+                return DeepInitialState.DOWNLOADING.PAID.STARTED
             else if(states[3] == "Stopped")
-                return Common.DeepInitialState.DOWNLOADING.PAID.STOPPED
+                return DeepInitialState.DOWNLOADING.PAID.STOPPED
             else
                 assert(false, assertMsg)
 
@@ -202,13 +203,13 @@ function deepInitialStateFromActiveState(stateString) {
     } else if(states[1] == "FinishedDownloading") {
 
         if(states[2] == "Passive")
-            return Common.DeepInitialState.PASSIVE
+            return DeepInitialState.PASSIVE
         else if(states[2] == "Uploading") {
 
             if(states[3] == "Started")
-                return Common.DeepInitialState.UPLOADING.STARTED
+                return DeepInitialState.UPLOADING.STARTED
             else if(states[3] == "Stopped")
-                return Common.DeepInitialState.UPLOADING.STOPPED
+                return DeepInitialState.UPLOADING.STOPPED
             else
                 assert(false, assertMsg)
 

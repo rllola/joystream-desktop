@@ -1,8 +1,13 @@
 const BaseMachine = require('../../../BaseMachine')
 
-const Common = require('../../../Torrent/Statemachine/Common')
+// Either Common should be exported, or .is* functions should be exported,
+// or these values should be here. Calling TorrentCommon is just a temporary fix until this is fixed
+// see: https://github.com/JoyStream/joystream-electron/issues/215
+const TorrentCommon = require('../../../Torrent/Statemachine/Common')
 
-const TorrentState = require('joystream-node').TorrentState
+const Common = require('../Common')
+
+//const TorrentState = require('joystream-node').TorrentState
 const TorrentInfo = require('joystream-node').TorrentInfo
 
 var LoadingTorrents = new BaseMachine({
@@ -82,7 +87,7 @@ var LoadingTorrents = new BaseMachine({
             if (resumeData) params.resumeData = resumeData
 
             // Whether torrent should be added in (libtorrent) paused mode from the get go
-            let addAsPaused = Common.isStopped(savedTorrent.deepInitialState)
+            let addAsPaused = TorrentCommon.isStopped(savedTorrent.deepInitialState)
 
             // Automanagement: We never want this, as our state machine should explicitly control
             // pause/resume behaviour torrents for now.
@@ -113,11 +118,6 @@ var LoadingTorrents = new BaseMachine({
       torrentAdded: function (client, err, torrent, coreTorrent) {
         coreTorrent.addTorrentResult(err, torrent)
 
-        if (torrent) {
-          torrent.on('lastPaymentReceived', function (alert) {
-            client.processStateMachineInput('lastPaymentReceived', alert)
-          })
-        }
       },
 
       torrentWaitingForMissingBuyerTerms: function (client, torrent) {
