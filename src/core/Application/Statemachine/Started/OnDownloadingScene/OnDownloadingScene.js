@@ -69,7 +69,20 @@ var OnDownloadingScene = new BaseMachine({
           }
 
           // Create torrent
-          let torrentStore = client.factories.torrentStore(infoHash)
+          let torrentStore = client.factories.torrentStore(infoHash,
+                                                                '',
+                                                                0,
+                                                                0,
+                                                                0,
+                                                                0,
+                                                                0,
+                                                                0,
+                                                                '',
+                                                                0,
+                                                                0,
+                                                                0,
+                                                                0,
+                                                                [])
           client.store.torrentAdded(torrentStore)
 
           // Create torrent object and hold on to it

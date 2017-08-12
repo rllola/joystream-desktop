@@ -125,8 +125,34 @@ class ApplicationStatemachineClient {
         return TorrentsStorage.open.bind(null, ...args)
       },
 
-      torrentStore: (infoHash) => {
-        return new TorrentStore(infoHash, '', 0, 0, infoHash, 0, 0, 0, 0, 0, {
+      torrentStore: (infoHash,
+                     state,
+                     progress,
+                     totalSize,
+                     downloadedSize,
+                     downloadSpeed,
+                     uploadSpeed,
+                     uploadedTotal,
+                     name,
+                     numberOfBuyers,
+                     numberOfSellers,
+                     numberOfObservers,
+                     numberOfNormalPeers,
+                     suitableSellers) => {
+        return new TorrentStore(infoHash,
+                                state,
+                                progress,
+                                totalSize,
+                                downloadedSize,
+                                downloadSpeed,
+                                uploadSpeed,
+                                uploadedTotal,
+                                name,
+                                numberOfBuyers,
+                                numberOfSellers,
+                                numberOfObservers,
+                                numberOfNormalPeers,
+                                suitableSellers, {
           startHandler: () => {
             this.processStateMachineInput('startTorrent', infoHash)
           },
