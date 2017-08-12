@@ -57,7 +57,7 @@ class Application extends Component {
 
             case Scene.Downloading:
                 return <NavigationFrame {...this.props}>
-                            <Downloading torrents={this.props.store._torrents}
+                            <Downloading torrents={this.props.store._torrentsDownloading}
                                          revenue={this.props.store.revenue}
                                          downloadSpeed={this.props.store.totalDownloadRate}
                                          onStartDownloadClicked={() => {this.props.store.startDownload()}}

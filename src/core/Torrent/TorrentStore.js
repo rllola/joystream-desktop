@@ -201,7 +201,7 @@ class TorrentStore {
     }
 
     @computed get showOnDownloadingScene () {
-        return this.state.startsWith("Active.DownloadingIncomplete")
+        return this.state.startsWith("Active.DownloadIncomplete")
     }
 
     @computed get showOnCompletedScene () {
@@ -248,6 +248,8 @@ class TorrentStore {
         return this.state.startsWith("Active.DownloadIncomplete.Unpaid.Stopped") ||
             this.state.startsWith("Active.FinishedDownloading.Uploading.Stopped")
     }
+
+
 
     /// User actions
 
