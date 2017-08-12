@@ -8,7 +8,6 @@ import StartDownloadingFlow, {Stage} from './components/StartDownloadingFlow'
 const Downloading = observer((props) => {
 
     console.log("Downloading.render()")
-    console.log(props.torrents.length)
 
     return (
         <div className="downloading-scene-container">
