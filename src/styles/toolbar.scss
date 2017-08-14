@@ -7,7 +7,7 @@
   .section-container {
     display: flex;
     border-radius: $max-border-radius;
-    border: 2px solid #B3B3B3;
+    border: 2px solid $toolbar-color;
     background-color: white;
 
     .section {
@@ -22,11 +22,11 @@
     }
 
     .section:first-of-type {
-      padding-left: 11px; /*16px; is 2x padding-right general case */
+      padding-left: 16px; /* 11px, 16px; is 2x padding-right general case */
     }
 
     .section:last-of-type {
-      padding-right: 11px; /*16px; is 2x padding-right general case */
+      padding-right: 16px; /*11px, 16px; is 2x padding-right general case */
     }
 
     .button {
@@ -38,7 +38,7 @@
 
     .separator {
       width: 0px;
-      border-left: 2px solid #B3B3B3;
+      border-left: 2px solid $toolbar-color;
       /**height: 30px;  same as .button **/
       padding-left: 0px;
       padding-right: 0px;
@@ -48,7 +48,7 @@
 
 // Styling react-tooltip
 .button-section-tooltip {
-  font-size: 14px !important;
+  //font-size: 14px !important;
   border-radius: 10000px;
   //color: #ff6e00 !important;
   //background-color: orange !important;
@@ -63,17 +63,123 @@
   */
 }
 
-.speedup {
+/** play **/
+
+.play {
   .button {
-    background-image: url('../assets/icon/speedup.svg');
+    background-image: url('../assets/icon/play.svg');
   }
 }
 
-.speedup:hover {
+.play:hover {
   .button {
-    background-image: url('../assets/icon/speedup-hover.svg');
+    background-image: url('../assets/icon/play-hover.svg');
   }
 }
+
+.play-disabled {
+  .button {
+    background-image: url('../assets/icon/play-disabled.svg');
+  }
+}
+
+/** start_paid_downloading **/
+
+.start_paid_downloading {
+  .button {
+    background-image: url('../assets/icon/start_paid_downloading.svg');
+  }
+}
+
+.start_paid_downloading:hover {
+  .button {
+    background-image: url('../assets/icon/start_paid_downloading-hover.svg');
+  }
+}
+
+.start_paid_downloading-disabled { // has no hover selector
+  .button {
+    background-image: url('../assets/icon/start_paid_downloading-disabled.svg');
+  }
+}
+
+/** toggle_status-start **/
+
+.toggle_status-start {
+  .button {
+    background-image: url('../assets/icon/start.svg');
+  }
+}
+
+.toggle_status-start:hover {
+  .button {
+    background-image: url('../assets/icon/start-hover.svg');
+  }
+}
+
+/** toggle_status-stop **/
+
+.toggle_status-stop {
+   .button {
+     background-image: url('../assets/icon/stop.svg');
+   }
+ }
+
+.toggle_status-stop:hover {
+  .button {
+    background-image: url('../assets/icon/stop-hover.svg');
+  }
+}
+
+/** remove **/
+
+.remove {
+  .button {
+    background-image: url('../assets/icon/remove.svg');
+  }
+}
+
+.remove:hover {
+  .button {
+    background-image: url('../assets/icon/remove-hover.svg');
+  }
+}
+
+/** trash **/
+
+.trash {
+  .button {
+    background-image: url('../assets/icon/trash.svg');
+  }
+}
+
+.trash:hover {
+  .button {
+    background-image: url('../assets/icon/trash-hover.svg');
+  }
+}
+
+/** change_buyer_terms **/
+
+.change_buyer_terms {
+  .button {
+    background-image: url('../assets/icon/change_buyer_terms.svg');
+  }
+}
+
+.change_buyer_terms:hover {
+  .button {
+    background-image: url('../assets/icon/change_buyer_terms-hover.svg');
+  }
+}
+
+.change_buyer_terms-disabled {
+  .button {
+    background-image: url('../assets/icon/change_buyer_terms-disabled.svg');
+  }
+}
+
+/** start_sell **/
 
 .start-sell {
   .button {
@@ -88,6 +194,8 @@
     background-size: 25px 25px;
   }
 }
+
+/** open-folder **/
 
 .open-folder {
   .button {
