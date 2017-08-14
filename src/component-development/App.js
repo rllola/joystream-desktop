@@ -12,6 +12,7 @@ import TerminatingSceneScenarios from './terminating'
 import StreamScenario from './stream'
 import Seeding from './seeding'
 import Completed from './completed'
+import StartDownloadingFlowScenarios from './startDownloadingFlow'
 
 const App = (props) => {
 
@@ -33,6 +34,9 @@ const App = (props) => {
                         <Link to="completed"> <RaisedButton label="Completed" style={style} /> </Link>
                         <Link to="seeding"> <RaisedButton label="Seeding" style={style} /> </Link>
                         <Link to="stream"> <RaisedButton label="Stream" style={style} /> </Link>
+                        <Link to="start_downloading_flow"> <RaisedButton label="Start Downloading Flow" style={style} /> </Link>
+
+                        <hr/>
 
                         <Route path="/loading" component={LoadingSceneScenarios} />
                         <Route path="/terminating" component={TerminatingSceneScenarios} />
@@ -41,8 +45,10 @@ const App = (props) => {
                         <Route path="/completed" component={Completed}/>
                         <Route path="/seeding" component={Seeding}/>
                         <Route path="/stream" component={StreamScenario} />
+                        <Route path="/start_downloading_flow" component={StartDownloadingFlowScenarios} />
                     </div>
                 </HashRouter>
+
             </div>
         </MuiThemeProvider>
     )

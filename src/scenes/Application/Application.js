@@ -32,6 +32,8 @@ class Application extends Component {
 
     render () {
 
+        console.log('Application.render()')
+
         return(
             <MuiThemeProvider>
                 <div className="app-container">
@@ -44,26 +46,30 @@ class Application extends Component {
 
     renderActiveScene() {
 
-        switch(this.props.app.activeScene) {
+        switch(this.props.store.activeScene) {
 
             case Scene.NotStarted:
                 return <h1>NotStarted</h1>
 
             case Scene.Loading:
-                return <Loading loadingState={applicationStateToLoadingState(this.props.app.state)}
-                                loadingTorrentsProgressValue={100*this.props.app.torrentLoadingProgress}/>
+                return <Loading loadingState={applicationStateToLoadingState(this.props.store.state)}
+                                loadingTorrentsProgressValue={100*this.props.store.torrentLoadingProgress}/>
 
             case Scene.Downloading:
                 return <NavigationFrame {...this.props}>
-                            <Downloading torrents={this.props.app._torrentsDownloading}
-                                                 revenue={123}
-                                                 downloadSpeed={77777}
-                                                 onStartDownloadClicked={() => { console.log(" start download clicked")}}/>
+                            <Downloading torrents={this.props.store._torrentsDownloading}
+                                         revenue={this.props.store.revenue}
+                                         downloadSpeed={this.props.store.totalDownloadRate}
+                                         onStartDownloadClicked={() => {this.props.store.startDownload()}}
+                                         state={this.props.store.state}
+                                         torrentsBeingLoaded={this.props.store.torrentsBeingLoaded}
+                                         store = {this.props.store}
+                            />
                         </NavigationFrame>
 
             case Scene.Uploading:
                 return <NavigationFrame {...this.props}>
-                          <Seeding torrents={this.props.app._torrentsSeeding}
+                          <Seeding torrents={this.props.store._torrentsUploading}
                                 revenue={123}
                                 uploadSpeed={77777}
                                 onStartUploadCliked={() => {console.log(" start uploading clicked")}} />
@@ -71,15 +77,19 @@ class Application extends Component {
 
             case Scene.Completed:
                 return <NavigationFrame {...this.props}>
-                            <Completed torrents={this.props.app._torrentsCompleted} />
+                            <Completed torrents={this.props.store._torrentsCompleted} />
                         </NavigationFrame>
 
             case Scene.ShuttingDown:
 
-                return <Terminating terminatingState={applicationStateToTerminatingState(this.props.app.state)}
-                                    terminatingTorrentsProgressValue={100*(this.props.app.torrentTerminatingProgress/this.props.app.torrentsToTerminate)} />
+                return <Terminating terminatingState={applicationStateToTerminatingState(this.props.store.state)}
+                                    terminatingTorrentsProgressValue={100*(this.props.store.torrentTerminatingProgress/this.props.store.torrentsToTerminate)} />
         }
     }
+
+}
+
+Application.propTypes = {
 
 }
 
@@ -88,9 +98,9 @@ const NavigationFrame = (props) => {
     return (
         <div className="navigation-frame-container">
 
-            <ApplicationHeader balance={13333337}
-                               activeScene={props.app.activeScene}
-                               onSceneSelected={(s) => {props.app.moveToScene(s)}}/>
+            <ApplicationHeader balance={props.store.unconfirmedBalance}
+                               activeScene={props.store.activeScene}
+                               onSceneSelected={(s) => {props.store.moveToScene(s)}}/>
 
             {props.children}
         </div>

@@ -3,6 +3,7 @@
  */
 
 var Peer = require('../../Peer')
+var DeepInitialState = require('./DeepInitialState')
 
 function processPeerPluginStatuses(client, statuses) {
 
@@ -50,26 +51,6 @@ function processPeerPluginStatuses(client, statuses) {
     client.store.setPeers(client.peers)
 }
 
-var DeepInitialState = {
-    UPLOADING : {
-        STARTED : 1,
-        STOPPED : 2,
-    },
-    PASSIVE : 3,
-    DOWNLOADING : {
-        UNPAID : {
-            STARTED : 4,
-            STOPPED : 5,
-        }
-        /**
-        PAID : {
-          STARTED : 6,
-          STOPPED : 7,
-        }
-        **/
-    }
-}
-
 function isUploading(s) {
     return s == DeepInitialState.UPLOADING.STARTED ||
         s == DeepInitialState.UPLOADING.STOPPED
@@ -92,7 +73,6 @@ function isStopped(s) {
 }
 
 module.exports.processPeerPluginStatuses = processPeerPluginStatuses
-module.exports.DeepInitialState = DeepInitialState
 module.exports.isUploading = isUploading
 module.exports.isPassive = isPassive
 module.exports.isDownloading = isDownloading

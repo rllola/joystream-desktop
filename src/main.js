@@ -5,6 +5,7 @@ const isDev = require('electron-is-dev')
 
 import {enableLiveReload} from 'electron-compile'
 
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win = null
@@ -43,8 +44,6 @@ if (shouldQuit) {
 ipcMain.on('main-window-channel', (event, arg) => {
 
     if(arg == 'user-closed-app') {
-
-        console.log('was told about user closeing app')
 
         // Exit application
         app.quit()

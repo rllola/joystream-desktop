@@ -3,5 +3,7 @@
  */
 
 var Torrent = require('./Torrent')
+var DeepInitialState = require('./DeepInitialState')
 
 module.exports = Torrent
+module.exports.DeepInitialState = DeepInitialState

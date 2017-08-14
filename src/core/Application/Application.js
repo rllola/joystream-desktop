@@ -25,10 +25,14 @@ class Application extends EventEmitter {
   constructor () {
     super()
 
-    this.store = new ApplicationStore({
+
+    // Properly initilize later!
+    this.store = new ApplicationStore("", 0, 0, 0, {
       // handlers
-      addNewTorrent: this.addNewTorrent.bind(this),
-      moveToScene: this.moveToScene.bind(this)
+      moveToScene: this.moveToScene.bind(this),
+      startDownload: this.startDownload.bind(this),
+      acceptTorrentWasAlreadyAdded: this.acceptTorrentWasAlreadyAdded.bind(this),
+      acceptTorrentFileWasInvalid: this.acceptTorrentFileWasInvalid.bind(this)
     })
 
     var client = new ApplicationStatemachineClient(this.store)
@@ -61,22 +65,6 @@ class Application extends EventEmitter {
     this.currentState()
   }
 
-  addNewTorrent (torrentFilePath, mode = 'buy', terms) {
-    if (mode === 'buy') {
-      // apply standard buyer terms if not provided
-      terms = terms || standardBuyerTerms()
-
-      this._process('addNewTorrent', torrentFilePath, DeepInitialState.DOWNLOADING.UNPAID.STARTED, {buyerTerms: terms})
-    } else if (mode === 'sell') {
-      // apply standard seller terms if not provided
-      terms = terms || standardSellerTerms()
-
-      this._process('addNewTorrent', torrentFilePath, DeepInitialState.UPLOADING.STARTED, {sellerTerms: terms})
-    } else {
-      this._process('addNewTorrent', torrentFilePath, DeepInitialState.PASSIVE, {})
-    }
-  }
-
   moveToScene (s) {
     if (s === Scene.Downloading) return this._process('downloading_scene_selected')
     if (s === Scene.Uploading) return this._process('uploading_scene_selected')
@@ -97,8 +85,20 @@ class Application extends EventEmitter {
   // needs for canceling the close request. Luckily, the event queue
   // is _guaranteed_ to be empty every time a call is made from the node
   // event loop, e.g. for this event.
-    onBeforeUnloadMainWindow(event) {
+  onBeforeUnloadMainWindow(event) {
     this._process('onBeforeUnloadMainWindow', event)
+  }
+
+  startDownload() {
+    this._process('startDownload')
+  }
+
+  acceptTorrentWasAlreadyAdded() {
+    this._process('acceptTorrentWasAlreadyAdded')
+  }
+
+  acceptTorrentFileWasInvalid() {
+    this._process('acceptTorrentFileWasInvalid')
   }
 }
 
@@ -125,8 +125,34 @@ class ApplicationStatemachineClient {
         return TorrentsStorage.open.bind(null, ...args)
       },
 
-      torrentStore: (infoHash) => {
-        return new TorrentStore(infoHash, '', 0, 0, infoHash, 0, 0, 0, 0, 0, {
+      torrentStore: (infoHash,
+                     state,
+                     progress,
+                     totalSize,
+                     downloadedSize,
+                     downloadSpeed,
+                     uploadSpeed,
+                     uploadedTotal,
+                     name,
+                     numberOfBuyers,
+                     numberOfSellers,
+                     numberOfObservers,
+                     numberOfNormalPeers,
+                     suitableSellers) => {
+        return new TorrentStore(infoHash,
+                                state,
+                                progress,
+                                totalSize,
+                                downloadedSize,
+                                downloadSpeed,
+                                uploadSpeed,
+                                uploadedTotal,
+                                name,
+                                numberOfBuyers,
+                                numberOfSellers,
+                                numberOfObservers,
+                                numberOfNormalPeers,
+                                suitableSellers, {
           startHandler: () => {
             this.processStateMachineInput('startTorrent', infoHash)
           },
@@ -182,10 +208,6 @@ class ApplicationStatemachineClient {
     console.log(err.message)
   }
 
-  getStandardBuyerTerms () {
-    return standardBuyerTerms()
-  }
-
   privateKeyGenerator () {
     return bcoin.ec.generatePrivateKey()
   }
@@ -218,25 +240,6 @@ class ApplicationStatemachineClient {
   broadcastRawTransaction (tx) {
     this.services.spvnode.sendTx(tx)
   }
-
-}
-
-function standardSellerTerms () {
-  return ({
-    minPrice: 1,
-    minLock: 5,
-    maxNumberOfSellers: 10,
-    minContractFeePerKb: 1000
-  })
-}
-
-function standardBuyerTerms () {
-  return ({
-    maxPrice: 1,
-    maxLock: 5,
-    minNumberOfSellers: 1,
-    maxContractFeePerKb: 2000
-  })
 }
 
 export default Application

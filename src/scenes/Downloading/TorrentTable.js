@@ -20,7 +20,7 @@ import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
 
 import { contextMenuHiddenState, contextMenuVisibleState, contextMenuRect } from '../../utils/ContextMenuHelper'
 
-//@observer // this.props.torrents
+@observer
 class TorrentsTable extends Component {
 
     /**
@@ -141,14 +141,14 @@ class TorrentsTable extends Component {
     getRenderedTorrentRow(t) {
 
         var toolbarProps = {
-            canSpeedup : t.canStartBuying,
+            canSpeedup : t.canStartPaidDownloading,
             onSpeedupClicked : () => { t.startBuying() },
             onOpenFolderClicked : () => { t.openFolder() },
             onMoreClicked : (e) => { this.toolbarMoreButtonClicked(e, t) }
         }
 
         return (
-            <TorrentRow key={t.info_hash}
+            <TorrentRow key={t.infoHash}
                         torrent={t}
                         toolbarVisibilityStatus = {this.getToolbarVisibilityTypeForTorrent(t)}
                         toolbarProps={toolbarProps}/>
@@ -171,7 +171,7 @@ class TorrentsTable extends Component {
 }
 
 TorrentsTable.propTypes = {
-    torrents : PropTypes.array.isRequired // Further refine this to require particular object (shapes) in array?
+    //torrents : PropTypes.array.isRequired // Further refine this to require particular object (shapes) in array?
 }
 
 export default TorrentsTable
