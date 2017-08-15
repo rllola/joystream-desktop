@@ -3,7 +3,6 @@ import { observer } from 'mobx-react'
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-//import Header from '../Header'
 import Header from '../../components/Header'
 import Scene from '../../core/Application/Scene'
 
@@ -59,10 +58,10 @@ class Application extends Component {
 
             case Scene.Downloading:
 
-                return <NavigationFrame {...this.props}>
+                return <NavigationFrame app={this.props.store}>
                             <Downloading torrents={this.props.store.torrentsDownloading}
-                                         revenue={this.props.store.revenue}
-                                         downloadSpeed={this.props.store.totalDownloadRate}
+                                         revenue={this.props.store.spending}
+                                         downloadSpeed={this.props.store.totalDownloadSpeed}
                                          onStartDownloadClicked={() => {this.props.store.startDownload()}}
                                          state={this.props.store.state}
                                          torrentsBeingLoaded={this.props.store.torrentsBeingLoaded}
@@ -72,17 +71,18 @@ class Application extends Component {
 
             case Scene.Uploading:
 
-                return <NavigationFrame {...this.props}>
-                          <Seeding torrents={this.props.app.torrentsUploading}
-                                   revenue={123}
-                                   uploadSpeed={77777}
-                                   onStartUploadCliked={() => {console.log(" start uploading clicked")}} />
+                return <NavigationFrame app={this.props.store}>
+                          <Seeding torrents={this.props.store.torrentsUploading}
+                                   revenue={this.props.store.revenue}
+                                   uploadSpeed={this.props.store.totalUploadSpeed}
+                                   onStartUploadCliked={() => {console.log(" start uploading clicked")}}
+                          />
                         </NavigationFrame>
 
             case Scene.Completed:
 
-                return <NavigationFrame {...this.props}>
-                            <Completed torrents={this.props.store._torrentsCompleted} />
+                return <NavigationFrame app={this.props.store}>
+                            <Completed torrents={this.props.store.torrentsCompleted} />
                         </NavigationFrame>
 
             case Scene.ShuttingDown:
@@ -98,7 +98,7 @@ Application.propTypes = {
 
 }
 
-const NavigationFrame = (props) => {
+const NavigationFrame = observer((props) => {
 
     return (
         <div className="navigation-frame-container">
@@ -106,7 +106,7 @@ const NavigationFrame = (props) => {
             {props.children}
         </div>
     )
-}
+})
 
 function applicationStateToLoadingState(s) {
 
