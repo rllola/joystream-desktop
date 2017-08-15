@@ -43,12 +43,18 @@ class ApplicationStore {
    */
   @observable revenue
 
+  /*
+   * {Number} Number of satoshies spent during *this session*
+   */
+  @observable spending
+
   constructor (state,
                torrents,
                numberCompletedInBackground,
                unconfirmedBalance,
                confirmedBalance,
                revenue,
+               spending,
                handlers) {
 
     this.setState(state)
@@ -57,6 +63,7 @@ class ApplicationStore {
     this.setUnconfirmedBalance(unconfirmedBalance)
     this.setConfirmedBalance(confirmedBalance)
     this.setRevenue(revenue)
+    this.setSpending(spending)
 
     // callbacks to make on user actions
     // (provided by the core application, which will submit them to statemachine as inputs)
@@ -83,9 +90,14 @@ class ApplicationStore {
     this.confirmedBalance = confirmedBalance
   }
 
-  //@action.bound
+  @action.bound
   setRevenue(revenue) {
     this.revenue = revenue
+  }
+
+  @action.bound
+  setSpending(spending) {
+    this.spending = spending
   }
 
   /// UI values
@@ -160,6 +172,20 @@ class ApplicationStore {
     return this.torrents.filter(function (torrent) {
         return torrent.isLoading
     })
+  }
+
+  @computed get
+  totalDownloadSpeed() {
+    return this.torrents.reduce(function(accumulator, torrent) {
+        return accumulator + torrent.downloadSpeed
+    },0)
+  }
+
+  @computed get
+  totalUploadSpeed() {
+    return this.torrents.reduce(function(accumulator, torrent) {
+      return accumulator + torrent.uploadSpeed
+    },0)
   }
 
   @action.bound

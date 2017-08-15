@@ -27,7 +27,7 @@ class Application extends EventEmitter {
 
 
     // Properly initilize later!
-    this.store = new ApplicationStore("", [], 0, 0, 0, 0,
+    this.store = new ApplicationStore("", [], 0, 0, 0, 0, 0,
     // handlers
     {
       moveToScene: this.moveToScene.bind(this),
