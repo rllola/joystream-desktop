@@ -47,7 +47,7 @@ const Downloading = observer((props) => {
 })
 
 Downloading.propTypes = {
-    //torrents : PropTypes.any.isRequired,
+    torrents : PropTypes.any.isRequired,
     revenue : PropTypes.number.isRequired,
     downloadSpeed : PropTypes.number.isRequired,
     onStartDownloadClicked : PropTypes.func.isRequired,
