@@ -212,6 +212,11 @@ class TorrentStore {
         return this.state.startsWith("Loading") // exception 'Loading.WaitingForMissingBuyerTerms'
     }
 
+    @computed get
+    isTerminating() {
+        return this.state.startsWith('Terminating')
+    }
+
     @computed get showOnDownloadingScene () {
         return this.state.startsWith("Active.DownloadIncomplete")
     }
