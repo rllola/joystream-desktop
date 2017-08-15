@@ -53,6 +53,8 @@ var LoadingTorrents = new BaseMachine({
 
             let coreTorrent = client.factories.torrent(store)
 
+            // THIS UNINSTALLS ITSELF, BUT ITS IMPOSSIBLE TO SEE,
+            // DEAL WITH THIS LATER!!!
             function handleTransition ({transition, state}) {
               if (state.startsWith('Active') || state.startsWith('Loading.FailedAdding')) {
                 coreTorrent.removeListener('transition', handleTransition)
@@ -63,6 +65,13 @@ var LoadingTorrents = new BaseMachine({
             }
 
             coreTorrent.on('transition', handleTransition)
+
+            coreTorrent.on('transition', function ({transition, state}) {
+
+                if(state.startsWith('Active.FinishedDownloading.Passive'))
+                    client.processStateMachineInput('torrentFinishedDownloading', infoHash)
+
+            })
 
             let metadata = new TorrentInfo(Buffer.from(savedTorrent.metadata, 'base64'))
 
