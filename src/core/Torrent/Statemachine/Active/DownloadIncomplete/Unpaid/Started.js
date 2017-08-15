@@ -30,7 +30,7 @@ var Started = new BaseMachine({
             stop : function(client) {
 
                 client.stopExtension()
-                client.stopLibTorrentTorrent()
+                client.stopLibtorrentTorrent()
 
                 this.go(client, '../Stopped')
             },
