@@ -8,13 +8,6 @@ class ApplicationStore {
 
   @observable state
 
-  @observable unconfirmedBalance
-
-  @observable confirmedBalance
-
-  // Total revenue
-  @observable revenue
-
   // Holds all TorrentStores - used to compute array of torrents for the active scene
   @observable torrents
 
@@ -76,6 +69,11 @@ class ApplicationStore {
   }
 
   @action.bound
+  setNumberCompletedInBackground(numberCompletedInBackground) {
+      this.numberCompletedInBackground = numberCompletedInBackground
+  }
+
+  @action.bound
   setUnconfirmedBalance(unconfirmedBalance) {
     this.unconfirmedBalance = unconfirmedBalance
   }
@@ -85,24 +83,9 @@ class ApplicationStore {
     this.confirmedBalance = confirmedBalance
   }
 
-  @action.bound
+  //@action.bound
   setRevenue(revenue) {
     this.revenue = revenue
-  }
-
-  @action.bound
-  setNumberCompletedInBackground(numberCompletedInBackground) {
-    this.numberCompletedInBackground = numberCompletedInBackground
-  }
-
-  @action.bound
-  setUnconfirmedBalance(unconfirmedBalance) {
-    this.unconfirmedBalance = unconfirmedBalance
-  }
-
-  @action.bound
-  setConfirmedBalance(confirmedBalance) {
-    this.confirmedBalance = confirmedBalance
   }
 
   /// UI values
@@ -173,6 +156,12 @@ class ApplicationStore {
     return this.torrentsUploading.length
   }
 
+  @computed get torrentsBeingLoaded() {
+    return this.torrents.filter(function (torrent) {
+        return torrent.isLoading
+    })
+  }
+
   @action.bound
   torrentRemoved (infoHash) {
     this.torrents.replace(this.torrents.filter(function (t) {
@@ -183,12 +172,6 @@ class ApplicationStore {
   @action.bound
   torrentAdded (torrent) {
     this.torrents.push(torrent)
-  }
-
-  @computed get torrentsBeingLoaded() {
-    return this._torrents.filter(function (torrent) {
-        return torrent.isLoading
-    })
   }
 
   @action.bound

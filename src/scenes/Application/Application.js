@@ -49,16 +49,18 @@ class Application extends Component {
         switch(this.props.store.activeScene) {
 
             case Scene.NotStarted:
+
                 return <h1>NotStarted</h1>
 
             case Scene.Loading:
+
                 return <Loading loadingState={applicationStateToLoadingState(this.props.store.state)}
                                 loadingTorrentsProgressValue={100*this.props.store.torrentLoadingProgress}/>
 
             case Scene.Downloading:
+
                 return <NavigationFrame {...this.props}>
-<<<<<<< HEAD
-                            <Downloading torrents={this.props.store._torrentsDownloading}
+                            <Downloading torrents={this.props.store.torrentsDownloading}
                                          revenue={this.props.store.revenue}
                                          downloadSpeed={this.props.store.totalDownloadRate}
                                          onStartDownloadClicked={() => {this.props.store.startDownload()}}
@@ -66,33 +68,21 @@ class Application extends Component {
                                          torrentsBeingLoaded={this.props.store.torrentsBeingLoaded}
                                          store = {this.props.store}
                             />
-=======
-                            <Downloading torrents={this.props.app.torrentsDownloading}
-                                                 revenue={123}
-                                                 downloadSpeed={77777}
-                                                 onStartDownloadClicked={() => { console.log(" start download clicked")}}/>
->>>>>>> Relocating and updating header components
                         </NavigationFrame>
 
             case Scene.Uploading:
+
                 return <NavigationFrame {...this.props}>
-<<<<<<< HEAD
-                          <Seeding torrents={this.props.store._torrentsUploading}
-=======
                           <Seeding torrents={this.props.app.torrentsUploading}
->>>>>>> Relocating and updating header components
-                                revenue={123}
-                                uploadSpeed={77777}
-                                onStartUploadCliked={() => {console.log(" start uploading clicked")}} />
+                                   revenue={123}
+                                   uploadSpeed={77777}
+                                   onStartUploadCliked={() => {console.log(" start uploading clicked")}} />
                         </NavigationFrame>
 
             case Scene.Completed:
+
                 return <NavigationFrame {...this.props}>
-<<<<<<< HEAD
                             <Completed torrents={this.props.store._torrentsCompleted} />
-=======
-                            <Completed torrents={this.props.app.torrentsCompleted} />
->>>>>>> Relocating and updating header components
                         </NavigationFrame>
 
             case Scene.ShuttingDown:
@@ -112,15 +102,7 @@ const NavigationFrame = (props) => {
 
     return (
         <div className="navigation-frame-container">
-
-<<<<<<< HEAD
-            <ApplicationHeader balance={props.store.unconfirmedBalance}
-                               activeScene={props.store.activeScene}
-                               onSceneSelected={(s) => {props.store.moveToScene(s)}}/>
-=======
             <Header app={props.app}/>
->>>>>>> Relocating and updating header components
-
             {props.children}
         </div>
     )
