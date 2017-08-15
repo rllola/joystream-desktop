@@ -4,7 +4,7 @@ import { observer } from 'mobx-react'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 //import Header from '../Header'
-import ApplicationHeader from './ApplicationHeader'
+import Header from '../../components/Header'
 import Scene from '../../core/Application/Scene'
 
 // Components
@@ -57,6 +57,7 @@ class Application extends Component {
 
             case Scene.Downloading:
                 return <NavigationFrame {...this.props}>
+<<<<<<< HEAD
                             <Downloading torrents={this.props.store._torrentsDownloading}
                                          revenue={this.props.store.revenue}
                                          downloadSpeed={this.props.store.totalDownloadRate}
@@ -65,11 +66,21 @@ class Application extends Component {
                                          torrentsBeingLoaded={this.props.store.torrentsBeingLoaded}
                                          store = {this.props.store}
                             />
+=======
+                            <Downloading torrents={this.props.app.torrentsDownloading}
+                                                 revenue={123}
+                                                 downloadSpeed={77777}
+                                                 onStartDownloadClicked={() => { console.log(" start download clicked")}}/>
+>>>>>>> Relocating and updating header components
                         </NavigationFrame>
 
             case Scene.Uploading:
                 return <NavigationFrame {...this.props}>
+<<<<<<< HEAD
                           <Seeding torrents={this.props.store._torrentsUploading}
+=======
+                          <Seeding torrents={this.props.app.torrentsUploading}
+>>>>>>> Relocating and updating header components
                                 revenue={123}
                                 uploadSpeed={77777}
                                 onStartUploadCliked={() => {console.log(" start uploading clicked")}} />
@@ -77,7 +88,11 @@ class Application extends Component {
 
             case Scene.Completed:
                 return <NavigationFrame {...this.props}>
+<<<<<<< HEAD
                             <Completed torrents={this.props.store._torrentsCompleted} />
+=======
+                            <Completed torrents={this.props.app.torrentsCompleted} />
+>>>>>>> Relocating and updating header components
                         </NavigationFrame>
 
             case Scene.ShuttingDown:
@@ -98,9 +113,13 @@ const NavigationFrame = (props) => {
     return (
         <div className="navigation-frame-container">
 
+<<<<<<< HEAD
             <ApplicationHeader balance={props.store.unconfirmedBalance}
                                activeScene={props.store.activeScene}
                                onSceneSelected={(s) => {props.store.moveToScene(s)}}/>
+=======
+            <Header app={props.app}/>
+>>>>>>> Relocating and updating header components
 
             {props.children}
         </div>

@@ -1,20 +1,24 @@
+/**
+ * Created by bedeho on 15/08/17.
+ */
+
 import React, { Component } from 'react'
-//import {Link} from 'react-router-dom'
+import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
-import {getCompactBitcoinUnitString, AbsolutePositionChildren} from '../../common'
-
-const Button = (props) => {
+const Button = observer((props) => {
 
     return (
         <div className={"button" + (props.isActive ? " button-active" : "")} onClick={props.onClick}>
             { props.label }
+            { props.value ? "/" + props.value : null}
+            { props.notificationCount && props.notificationCount > 0 ? "/" + props.notificationCount : null}
             {
                 /**
-                props.counter
-                ?
-                    <AbsolutePositionChildren left={10} top={-30}>
-                        <div style={{
+                 props.counter
+                 ?
+                 <AbsolutePositionChildren left={10} top={-30}>
+                 <div style={{
                                         backgroundColor: props.counter.color,
                                         color: 'white',
                                         padding: 2,
@@ -23,16 +27,16 @@ const Button = (props) => {
                                         paddingLeft: 5,
                                         paddingRight: 5
                                     }}>
-                            {props.counter.count}
-                        </div>
-                    </AbsolutePositionChildren>
-                :
-                null
+                 {props.counter.count}
+                 </div>
+                 </AbsolutePositionChildren>
+                 :
+                 null
                  **/
             }
         </div>
     )
-}
+})
 
 Button.propTypes = {
 
@@ -43,11 +47,15 @@ Button.propTypes = {
     isActive: PropTypes.bool.isRequired,
 
     // Called when button is clicked
-    onClick : PropTypes.func.isRequired
+    onClick : PropTypes.func.isRequired,
+
+    value : PropTypes.number.isRequired,
+
+    notificationCount : PropTypes.number
 
     /**
-    // Counter
-    counter : PropTypes.shape({
+     // Counter
+     counter : PropTypes.shape({
         count : PropTypes.number.isRequired,
         color : PropTypes.string.isRequired
     })
@@ -59,31 +67,4 @@ Button.defaultProps = {
     isActive : false
 }
 
-const Header = (props) => {
-
-    return (
-        <header className="header">
-
-            <img className="logo" src="assets/img/logo-contrast.svg"/>
-
-            <nav>
-                {props.children}
-            </nav>
-
-            <div className="flex-spacer"></div>
-
-            <div className="balance">
-                <span id="label">balance</span>
-                <span id="quantity"> {props.balance} B</span>
-            </div>
-
-        </header>
-    )
-}
-
-Header.propTypes = {
-    balance : PropTypes.number.isRequired
-}
-
-export {Button}
-export default Header
+export default Button
