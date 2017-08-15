@@ -249,8 +249,6 @@ class TorrentStore {
             this.state.startsWith("Active.FinishedDownloading.Uploading.Stopped")
     }
 
-
-
     /// User actions
 
     start() {
@@ -279,6 +277,10 @@ class TorrentStore {
 
     endUploading() {
         this._handlers.endUploadHandler()
+    }
+
+    play() {
+        console.log('User wants to play torrent')
     }
 
 }
