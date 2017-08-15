@@ -27,8 +27,9 @@ class Application extends EventEmitter {
 
 
     // Properly initilize later!
-    this.store = new ApplicationStore("", 0, 0, 0, {
-      // handlers
+    this.store = new ApplicationStore("", [], 0, 0, 0, 0,
+    // handlers
+    {
       moveToScene: this.moveToScene.bind(this),
       startDownload: this.startDownload.bind(this),
       acceptTorrentWasAlreadyAdded: this.acceptTorrentWasAlreadyAdded.bind(this),
