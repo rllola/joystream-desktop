@@ -53,12 +53,16 @@ const LoadingProgressIndicator = (props) => {
           <Step>
               <StepLabel>Connecting to Bitcoin peer network</StepLabel>
           </Step>
-          <Step>
-              <StepLabel>Loading torrents</StepLabel>
-              <StepContent>
-                  <LinearProgress mode="determinate" value={props.loadingTorrentsProgressValue} />
-              </StepContent>
-          </Step>
+          {
+              /*
+              <Step>
+                  <StepLabel>Loading torrents</StepLabel>
+                  <StepContent>
+                      <LinearProgress mode="determinate" value={props.loadingTorrentsProgressValue}/>
+                  </StepContent>
+              </Step>
+                */
+          }
       </Stepper>
   )
 }
