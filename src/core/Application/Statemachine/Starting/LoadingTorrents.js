@@ -57,11 +57,12 @@ var LoadingTorrents = new BaseMachine({
             store.setTorrent(coreTorrent)
 
             // THIS UNINSTALLS ITSELF, BUT ITS IMPOSSIBLE TO SEE,
+            // NOT CLEAR THAT ITS NEEDED
             // DEAL WITH THIS LATER!!!
             function handleTransition ({transition, state}) {
               if (state.startsWith('Active') || state.startsWith('Loading.FailedAdding')) {
-                coreTorrent.removeListener('transition', handleTransition)
-                client.processStateMachineInput('torrentLoaded')
+                // ==> do in proper location coreTorrent.removeListener('transition', handleTransition)
+                //client.processStateMachineInput('torrentLoaded')
               } else if (state.startsWith('Loading.WaitingForMissingBuyerTerms')) {
                 client.processStateMachineInput('torrentWaitingForMissingBuyerTerms', coreTorrent)
               }
@@ -121,17 +122,23 @@ var LoadingTorrents = new BaseMachine({
           // Add the torrents to libtorrent session
           addParameters.forEach(function ({params, coreTorrent}) {
             client.services.session.addTorrent(params, function (err, torrent) {
-              client.processStateMachineInput('torrentAdded', err, torrent, coreTorrent)
+              //client.processStateMachineInput('torrentAdded', err, torrent, coreTorrent)
+                coreTorrent.addTorrentResult(err, torrent)
             })
           })
+
+          // øøø
+          this.go(client, '../../Started')
         }
       },
 
+        /**
       torrentAdded: function (client, err, torrent, coreTorrent) {
         coreTorrent.addTorrentResult(err, torrent)
 
       },
-
+         */
+/**
       torrentWaitingForMissingBuyerTerms: function (client, torrent) {
 
         // Standard buyer terms
@@ -141,7 +148,7 @@ var LoadingTorrents = new BaseMachine({
         // change name
         torrent.updateBuyerTerms(terms)
       },
-
+*/
       torrentLoaded: function (client) {
         var allTorrentsLoaded = true
 
