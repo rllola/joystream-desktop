@@ -87,6 +87,15 @@ var OnDownloadingScene = new BaseMachine({
 
           // Create torrent object and hold on to it
           let torrent = client.factories.torrent(torrentStore)
+
+          //
+          torrent.on('transition', function({transition, state}) {
+
+              if(state.startsWith('Active.FinishedDownloading.Passive'))
+                  client.processStateMachineInput('torrentFinishedDownloading', infoHash)
+
+          })
+
           client.torrents.set(infoHash, torrent)
 
           /// Add torrent to libtorrent session

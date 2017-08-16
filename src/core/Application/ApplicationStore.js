@@ -8,15 +8,8 @@ class ApplicationStore {
 
   @observable state
 
-  @observable unconfirmedBalance
-
-  @observable confirmedBalance
-
-  // Total revenue
-  @observable revenue
-
   // Holds all TorrentStores - used to compute array of torrents for the active scene
-  @observable _torrents = []
+  @observable torrents
 
   // Updated while torrents are being loaded during Starting phase of the application
   @observable torrentsToLoad = 0
@@ -26,19 +19,51 @@ class ApplicationStore {
   @observable torrentsToTerminate = 0
   @observable torrentTerminatingProgress = 0 // Number between 0 and 1 (0% --> 100%)
 
-  // notifications in each category
-  @observable _notifications = {
-    uploading: new Map(),
-    downloading: new Map(),
-    completed: new Map()
-  }
+  // Will be set to a TorrentStore which is the last torrent being added to the session
+  @observable newTorrentBeingAdded = null
 
-  constructor (state, unconfirmedBalance, confirmedBalance, revenue, handlers) {
+  /**
+   * {Number} Number of torrents completed while the
+   * user was not on the Completed scene.
+   */
+  @observable numberCompletedInBackground
+
+  /**
+   * {Number} Number of unconfirmed satoshies in wallet
+   */
+  @observable unconfirmedBalance
+
+  /**
+   * {Number} Number of confirmed satoshies in wallet
+   */
+  @observable confirmedBalance
+
+  /*
+   * {Number} Number of satoshies earned during *this session*
+   */
+  @observable revenue
+
+  /*
+   * {Number} Number of satoshies spent during *this session*
+   */
+  @observable spending
+
+  constructor (state,
+               torrents,
+               numberCompletedInBackground,
+               unconfirmedBalance,
+               confirmedBalance,
+               revenue,
+               spending,
+               handlers) {
 
     this.setState(state)
+    this.torrents = torrents
+    this.setNumberCompletedInBackground(numberCompletedInBackground)
     this.setUnconfirmedBalance(unconfirmedBalance)
     this.setConfirmedBalance(confirmedBalance)
     this.setRevenue(revenue)
+    this.setSpending(spending)
 
     // callbacks to make on user actions
     // (provided by the core application, which will submit them to statemachine as inputs)
@@ -48,6 +73,11 @@ class ApplicationStore {
   @action.bound
   setState (state) {
     this.state = state
+  }
+
+  @action.bound
+  setNumberCompletedInBackground(numberCompletedInBackground) {
+      this.numberCompletedInBackground = numberCompletedInBackground
   }
 
   @action.bound
@@ -65,28 +95,31 @@ class ApplicationStore {
     this.revenue = revenue
   }
 
-  @computed get activeScene () {
+  @action.bound
+  setSpending(spending) {
+    this.spending = spending
+  }
 
-    if (!this.state) return Scene.NotStarted
+  /// UI values
 
-    if (this.state.startsWith('Started.OnCompletedScene')) {
-      this._notifications.completed.clear()
+  @computed get
+  activeScene () {
+
+    if (!this.state)
+      return Scene.NotStarted
+    else if (this.state.startsWith('Started.OnCompletedScene'))
       return Scene.Completed
-    }
-
-    if (this.state.startsWith('Started.OnDownloadingScene')) {
-      this._notifications.downloading.clear()
+    else if (this.state.startsWith('Started.OnDownloadingScene'))
       return Scene.Downloading
-    }
-
-    if (this.state.startsWith('Started.OnUploadingScene')) {
-      this._notifications.uploading.clear()
+    else if (this.state.startsWith('Started.OnUploadingScene'))
       return Scene.Uploading
-    }
+    else if (this.state.startsWith('Starting'))
+      return Scene.Loading
+    else if (this.state.startsWith('Stopping'))
+      return Scene.ShuttingDown
+    else if (this.state.startsWith('NotStarted'))
+      return Scene.NotStarted
 
-    if (this.state.startsWith('Starting')) return Scene.Loading
-    if (this.state.startsWith('Stopping')) return Scene.ShuttingDown
-    if (this.state.startsWith('NotStarted')) return Scene.NotStarted
   }
 
   @computed get
@@ -99,94 +132,72 @@ class ApplicationStore {
     return this.activeScene === Scene.Loading
   }
 
-  @computed get _torrentsDownloading () {
-    return this._torrents.filter(function (torrent) {
+  @computed get
+  torrentsDownloading () {
+    return this.torrents.filter(function (torrent) {
       return torrent.showOnDownloadingScene
     })
   }
 
-  @computed get _torrentsCompleted () {
-    return this._torrents.filter(function (torrent) {
+  @computed get
+  numberOfTorrentsDownloading () {
+    return this.torrentsDownloading.length
+  }
+
+  @computed get
+  torrentsCompleted () {
+    return this.torrents.filter(function (torrent) {
       return torrent.showOnCompletedScene
     })
   }
 
-  @computed get _torrentsUploading () {
-    return this._torrents.filter(function (torrent) {
+  @computed get
+  numberOfTorrentsCompleted() {
+    return this.torrentsCompleted.length
+  }
+
+  @computed get
+  torrentsUploading () {
+    return this.torrents.filter(function (torrent) {
       return torrent.showOnUploadingScene
     })
   }
 
-  // Torrents for the active scene
-  @computed get torrents () {
-    switch (this.activeScene) {
-      case Scene.Downloading: return this._torrentsDownloading
-      case Scene.Uploading: return this._torrentsUploading
-      case Scene.Completed: return this._torrentsCompleted
-      default: return []
-    }
+  @computed get
+  numberOfTorrentsUploading() {
+    return this.torrentsUploading.length
+  }
+
+  @computed get torrentsBeingLoaded() {
+    return this.torrents.filter(function (torrent) {
+        return torrent.isLoading
+    })
+  }
+
+  @computed get
+  totalDownloadSpeed() {
+    return this.torrents.reduce(function(accumulator, torrent) {
+        return accumulator + torrent.downloadSpeed
+    },0)
+  }
+
+  @computed get
+  totalUploadSpeed() {
+    return this.torrents.reduce(function(accumulator, torrent) {
+      return accumulator + torrent.uploadSpeed
+    },0)
   }
 
   @action.bound
   torrentRemoved (infoHash) {
-    this._torrents.replace(this._torrents.filter(function (t) {
+    this.torrents.replace(this.torrents.filter(function (t) {
       return t.infoHash !== infoHash
     }))
   }
 
   @action.bound
   torrentAdded (torrent) {
-    this._torrents.push(torrent)
-  }
-
-  @action.bound
-  addNotificationOnTorrent (infoHash) {
-    var setNotification = (category) => {
-      this._notifications[category].set(infoHash, true)
-    }
-
-    // look for torrent in active scene
-    if(torrentInArray(this.torrents, infoHash)) {
-      // torrent is in active scene no need to update the counter
-      return
-    }
-
-    if(torrentInArray(this._torrentsDownloading, infoHash)) {
-      return setNotification('downloading')
-    }
-
-    if(torrentInArray(this._torrentsUploading, infoHash)) {
-      return setNotification('uploading')
-    }
-
-    if(torrentInArray(this._torrentsCompleted, infoHash)) {
-      return setNotification('completed')
-    }
-  }
-
-  @computed get totalDownloadRate() {
-
-    return this._torrentsDownloading.reduce(function(accum, torrentStore) {
-      return accum + torrentStore.downloadSpeed
-    }, 0)
-  }
-
-  @computed get downloadingNotifications () {
-    return this._notifications.downloading.size()
-  }
-
-  @computed get uploadingNotifications () {
-    return this._notifications.uploading.size()
-  }
-
-  @computed get completedNotifications () {
-    return this._notifications.completed.size()
-  }
-
-  @computed get torrentsBeingLoaded() {
-    return this._torrents.filter(function (torrent) {
-        return torrent.isLoading
-    })
+    this.torrents.push(torrent)
   }
 
   @action.bound
@@ -228,13 +239,6 @@ class ApplicationStore {
     this._handlers.acceptTorrentFileWasInvalid()
   }
 
-}
-
-function torrentInArray (array, infoHash) {
-  for (var i in array) {
-    if (array[i].infoHash === infoHash) return true
-  }
-  return false
 }
 
 export default ApplicationStore

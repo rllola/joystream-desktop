@@ -3,8 +3,7 @@ import { observer } from 'mobx-react'
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-//import Header from '../Header'
-import ApplicationHeader from './ApplicationHeader'
+import Header from '../../components/Header'
 import Scene from '../../core/Application/Scene'
 
 // Components
@@ -49,17 +48,20 @@ class Application extends Component {
         switch(this.props.store.activeScene) {
 
             case Scene.NotStarted:
+
                 return <h1>NotStarted</h1>
 
             case Scene.Loading:
+
                 return <Loading loadingState={applicationStateToLoadingState(this.props.store.state)}
                                 loadingTorrentsProgressValue={100*this.props.store.torrentLoadingProgress}/>
 
             case Scene.Downloading:
-                return <NavigationFrame {...this.props}>
-                            <Downloading torrents={this.props.store._torrentsDownloading}
-                                         revenue={this.props.store.revenue}
-                                         downloadSpeed={this.props.store.totalDownloadRate}
+
+                return <NavigationFrame app={this.props.store}>
+                            <Downloading torrents={this.props.store.torrentsDownloading}
+                                         revenue={this.props.store.spending}
+                                         downloadSpeed={this.props.store.totalDownloadSpeed}
                                          onStartDownloadClicked={() => {this.props.store.startDownload()}}
                                          state={this.props.store.state}
                                          torrentsBeingLoaded={this.props.store.torrentsBeingLoaded}
@@ -68,16 +70,19 @@ class Application extends Component {
                         </NavigationFrame>
 
             case Scene.Uploading:
-                return <NavigationFrame {...this.props}>
-                          <Seeding torrents={this.props.store._torrentsUploading}
-                                revenue={123}
-                                uploadSpeed={77777}
-                                onStartUploadCliked={() => {console.log(" start uploading clicked")}} />
+
+                return <NavigationFrame app={this.props.store}>
+                          <Seeding torrents={this.props.store.torrentsUploading}
+                                   revenue={this.props.store.revenue}
+                                   uploadSpeed={this.props.store.totalUploadSpeed}
+                                   onStartUploadCliked={() => {console.log(" start uploading clicked")}}
+                          />
                         </NavigationFrame>
 
             case Scene.Completed:
-                return <NavigationFrame {...this.props}>
-                            <Completed torrents={this.props.store._torrentsCompleted} />
+
+                return <NavigationFrame app={this.props.store}>
+                            <Completed torrents={this.props.store.torrentsCompleted} />
                         </NavigationFrame>
 
             case Scene.ShuttingDown:
@@ -93,19 +98,15 @@ Application.propTypes = {
 
 }
 
-const NavigationFrame = (props) => {
+const NavigationFrame = observer((props) => {
 
     return (
         <div className="navigation-frame-container">
-
-            <ApplicationHeader balance={props.store.unconfirmedBalance}
-                               activeScene={props.store.activeScene}
-                               onSceneSelected={(s) => {props.store.moveToScene(s)}}/>
-
+            <Header app={props.app}/>
             {props.children}
         </div>
     )
-}
+})
 
 function applicationStateToLoadingState(s) {
 

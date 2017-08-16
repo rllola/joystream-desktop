@@ -45,6 +45,8 @@ function Torrent(store, privateKeyGenerator, publicKeyHashGenerator, contractGen
           state : stateString
         })
 
+        this.emit('enter-' + data.toState, data)
+
         // Detect functional events?
         //  - Loaded: Lots of destination events?
         //  - 'Loading.WaitingForMissingBuyerTerms'
