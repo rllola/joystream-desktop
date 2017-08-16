@@ -4,6 +4,7 @@ import { observer } from 'mobx-react'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import Header from '../../components/Header'
+import StatusBar,{ProgressStatusPanel} from '../../components/StatusBar'
 import Scene from '../../core/Application/Scene'
 
 // Components
@@ -37,10 +38,19 @@ class Application extends Component {
 
         console.log('Application.render()')
 
-        return(
+        return (
             <MuiThemeProvider>
                 <div className="app-container">
+
                     {this.renderActiveScene()}
+
+                    <StatusBar show={this.props.store.torrentsBeingLoaded > 0}
+                               bottom={true}>
+                        <ProgressStatusPanel title={'Loading torrents'}
+                                             percentageProgress={this.props.store.startingTorrentCheckingProgressPercentage}
+                        />
+                    </StatusBar>
+
                     {process.env.NODE_ENV === 'development' ? <div><MobxReactDevTools/></div> : null}
                     {this.renderVideoPlayer()}
                 </div>
@@ -57,8 +67,7 @@ class Application extends Component {
 
             case Scene.Loading:
 
-                return <Loading loadingState={applicationStateToLoadingState(this.props.store.state)}
-                                loadingTorrentsProgressValue={100*this.props.store.torrentLoadingProgress}/>
+                return <Loading loadingState={applicationStateToLoadingState(this.props.store.state)}/>
 
             case Scene.Downloading:
 
