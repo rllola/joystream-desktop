@@ -106,7 +106,7 @@ class ApplicationStore {
       return Scene.NotStarted
     else if (this.state.startsWith('Started.OnCompletedScene'))
       return Scene.Completed
-    else if (this.state.startsWith('Started.OnDownloadingScene') || this.state.startsWith('Starting.LoadingTorrents'))
+    else if (this.state.startsWith('Started.OnDownloadingScene'))
       return Scene.Downloading
     else if (this.state.startsWith('Started.OnUploadingScene'))
       return Scene.Uploading
@@ -122,11 +122,6 @@ class ApplicationStore {
   @computed get
   isStarted () {
     return this.state.startsWith('Started')
-  }
-
-  @computed get
-  isLoading () {
-    return this.activeScene === Scene.Loading
   }
 
   @computed get
