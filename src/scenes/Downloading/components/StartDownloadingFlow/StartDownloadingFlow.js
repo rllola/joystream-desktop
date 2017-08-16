@@ -18,9 +18,7 @@ const customContentStyle = {
 
 const StartDownloadingFlow = (props) => {
 
-    if(props.store.torrentsBeingLoaded.length > 0)
-        return <TorrentLoadingScene store={props.store}/>
-    else if(props.store.state == "Started.OnDownloadingScene.TorrentFileWasInvalid")
+    if(props.store.state == "Started.OnDownloadingScene.TorrentFileWasInvalid")
         return <InvalidTorrentFileScene store={props.store}/>
     else if(props.store.state == "Started.OnDownloadingScene.TorrentAlreadyAdded")
         return <TorrentAlreadyAddedScene store={props.store}/>
