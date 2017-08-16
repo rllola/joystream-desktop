@@ -209,7 +209,7 @@ class TorrentStore {
     /// Scene selector
 
     @computed get isLoading() {
-        return this.state.startsWith("Loading") // exception 'Loading.WaitingForMissingBuyerTerms'
+        return this.state.startsWith("Loading")
     }
 
     @computed get
