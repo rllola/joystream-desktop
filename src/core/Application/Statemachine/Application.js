@@ -73,58 +73,6 @@ var ApplicationStateMachine = new BaseMachine({
           this.handle(client, 'stop')
       },
 
-      startTorrent: function (client, infoHash) {
-        var torrent = client.torrents.get(infoHash)
-        torrent.start()
-      },
-
-      stopTorrent: function (client, infoHash) {
-        var torrent = client.torrents.get(infoHash)
-        torrent.stop()
-      },
-
-      removeTorrent: function (client, infoHash, deleteData) {
-        var torrent = client.torrents.get(infoHash)
-        //torrent.terminate()
-        //if(deleteData) delete files
-        //remove from libtorrent session
-      },
-
-      openTorrentFolder: function (client, infoHash) {
-        var torrent = client.torrents.get(infoHash)
-        //openFolder(torrent.torrent.handle.torrentFile().savePath)
-      },
-
-      updateBuyerTerms: function (client, infoHash, buyerTerms) {
-        var torrent = client.torrents.get(infoHash)
-        torrent.updateBuyerTerms(buyerTerms)
-      },
-
-      updateSellerTerms: function (client, infoHash, sellerTerms) {
-        var torrent = client.torrents.get(infoHash)
-        torrent.updateSellerTerms(sellerTerms)
-      },
-
-      startPaidDownload: function (client, infoHash) {
-        var torrent = client.torrents.get(infoHash)
-        // start downloading from cheapest sellers
-        torrent.startPaidDownload(function (sellerA, sellerB) {
-          const termsA = sellerA.connection.announcedModeAndTermsFromPeer.seller.terms
-          const termsB = sellerB.connection.announcedModeAndTermsFromPeer.seller.terms
-          return termsA.minPrice - termsB.minPrice
-        })
-      },
-
-      beingUpload: function (client, infoHash, sellerTerms) {
-        var torrent = client.torrents.get(infoHash)
-        torrent.beginUpload(sellerTerms)
-      },
-
-      endUpload: function (client, infoHash) {
-          var torrent = client.torrents.get(infoHash)
-          torrent.endUpload()
-      },
-
       checkIfWalletNeedsRefill: async function (client, balance) {
         if (client.services.spvnode.network !== 'testnet') return
         if (!client.services.testnetFaucet) return
