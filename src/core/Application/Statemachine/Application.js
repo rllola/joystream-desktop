@@ -113,17 +113,6 @@ var ApplicationStateMachine = new BaseMachine({
       walletBalanceChanged: function (client, balance) {
         client.processStateMachineInput('checkIfWalletNeedsRefill', balance)
       },
-
-      openVideoPlayer: function (client, infoHash) {
-        var torrent = client.torrents.get(infoHash)
-        torrent.play()
-      },
-
-      closeVideoPlayer: function (client, infoHash) {
-        var torrent = client.torrents.get(infoHash)
-        torrent.close()
-      }
-
     },
 
     Stopping: {

@@ -101,16 +101,6 @@ class Application extends EventEmitter {
   acceptTorrentFileWasInvalid() {
     this._process('acceptTorrentFileWasInvalid')
   }
-
-  openVideoPlayer (event) {
-    event.preventDefault()
-    console.log('Open Video Player')
-  }
-
-  closeVideoPlayer (event) {
-    event.preventDefault()
-    console.log('Close Video Player')
-  }
 }
 
 // Create a maker function from a class or constructor function using 'new'
@@ -193,12 +183,6 @@ class ApplicationStatemachineClient {
           },
           updateSellerTerms: (sellerTerms) => {
             this.processStateMachineInput('updateSellerTerms', infoHash, sellerTerms)
-          },
-          openVideoPlayer: () => {
-            this.processStateMachineInput('openVideoPlayer', infoHash)
-          },
-          closeVideoPlayer: () => {
-            this.processStateMachineInput('closeVideoPlayer', infoHash)
           }
         })
       },

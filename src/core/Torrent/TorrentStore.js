@@ -203,7 +203,6 @@ class TorrentStore {
 
     @action.bound
     setIsPlaying (isPlaying) {
-      console.log('Lol')
       this.isPlaying = isPlaying
     }
 
@@ -293,11 +292,11 @@ class TorrentStore {
     }
 
     play () {
-        this._handlers.openVideoPlayer()
+        this._torrent.play()
     }
 
     close () {
-        this._handlers.closeVideoPlayer()
+        this._torrent.close()
     }
 }
 
