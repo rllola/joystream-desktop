@@ -114,6 +114,14 @@ Torrent.prototype.endUpload = function () {
   this._client.processStateMachineInput('goToPassive')
 }
 
+Torrent.prototype.play = function () {
+  this._client.store.setIsPlaying(true)
+}
+
+Torrent.prototype.close = function () {
+  this._client.store.setIsPlaying(false)
+}
+
 /// TorrentStateMachineClient
 /// Holds state and external messaging implementations for a (behavoural machinajs) Torrent state machine instance
 

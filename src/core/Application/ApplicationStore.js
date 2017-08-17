@@ -100,6 +100,16 @@ class ApplicationStore {
     this.spending = spending
   }
 
+  @action.bound
+  closeVideoPlayer () {
+    this.isVideoPlayerOpened = false
+  }
+
+  @action.bound
+  openVideoPlayer () {
+    this.isVideoPlayerOpened = true
+  }
+
   /// UI values
 
   @computed get
@@ -186,6 +196,15 @@ class ApplicationStore {
     return this.torrents.reduce(function(accumulator, torrent) {
       return accumulator + torrent.uploadSpeed
     },0)
+  }
+
+
+  @computed get
+  isPlaying () {
+    for ( var i = 0; i < this.torrents.length; i++) {
+      if (this.torrents[i].isPlaying) return this.torrents[i]
+    }
+    return null
   }
 
   @action.bound

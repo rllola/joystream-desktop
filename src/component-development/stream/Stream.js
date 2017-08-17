@@ -3,6 +3,7 @@ import { Session, TorrentInfo, TorrentState } from 'joystream-node'
 import {ScenarioContainer} from '../common'
 import os from 'os'
 import path from 'path'
+import VideoPlayer from '../../components/VideoPlayer'
 
 class StreamScenario extends Component {
   constructor () {
@@ -48,42 +49,6 @@ class StreamScenario extends Component {
       </div>
     )
   }
-}
-
-const VideoPlayer = (props) => {
-  const overlayStyle = {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    top: 0,
-    background: 'black'
-  }
-
-  return (
-    <div>
-      <CloseButton closeVideoPlayer={props.closeVideoPlayer} />
-      <div style={overlayStyle}>
-        <video width="100%" height="auto" controls>
-          <source src="https://media.w3.org/2010/05/sintel/trailer_hd.mp4" />
-        </video>
-      </div>
-    </div>
-  )
-}
-
-const CloseButton = (props) => {
-
-  const closeStyle = {
-    position: 'absolute',
-    top: 0,
-    left: 5,
-    color: 'white',
-    zIndex: 99
-  }
-
-  return (
-    <a style={closeStyle} onClick={props.closeVideoPlayer} href="#"><span >X</span></a>
-  )
 }
 
 export default StreamScenario
