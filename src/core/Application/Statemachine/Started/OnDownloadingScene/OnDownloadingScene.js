@@ -98,6 +98,9 @@ var OnDownloadingScene = new BaseMachine({
 
           client.torrents.set(infoHash, torrent)
 
+          // Assign core torrent as action handler
+          torrentStore.setTorrent(torrent)
+
           /// Add torrent to libtorrent session
 
           // Default parameters
