@@ -53,6 +53,9 @@ var LoadingTorrents = new BaseMachine({
 
             let coreTorrent = client.factories.torrent(store)
 
+            // Assign core torrent as action handler
+            store.setTorrent(coreTorrent)
+
             // THIS UNINSTALLS ITSELF, BUT ITS IMPOSSIBLE TO SEE,
             // DEAL WITH THIS LATER!!!
             function handleTransition ({transition, state}) {

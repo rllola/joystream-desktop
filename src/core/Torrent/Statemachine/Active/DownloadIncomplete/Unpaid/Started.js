@@ -55,11 +55,17 @@ var Started = new BaseMachine({
                 client.suitableSellers = suitableSellers
             },
 
-            startPaidDownload : function (client, peerComparer) {
+            startPaidDownload : function (client) {
 
                 // Check that we can actually start
                 if(!client.suitableSellers)
                     return
+
+                let peerComparer = function (sellerA, sellerB) {
+                    const termsA = sellerA.connection.announcedModeAndTermsFromPeer.seller.terms
+                    const termsB = sellerB.connection.announcedModeAndTermsFromPeer.seller.terms
+                    return termsA.minPrice - termsB.minPrice
+                }
 
                 // Sort suitable sellers using `peerComparer` function
                 var sortedSellers = client.suitableSellers.sellers.sort(peerComparer)

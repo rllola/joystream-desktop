@@ -36,7 +36,8 @@ class TorrentStore {
     @observable numberOfNormalPeers
     @observable suitableSellers
 
-    constructor (infoHash,
+    constructor (torrent,
+                 infoHash,
                  state,
                  progress,
                  totalSize,
@@ -49,9 +50,9 @@ class TorrentStore {
                  numberOfSellers,
                  numberOfObservers,
                  numberOfNormalPeers,
-                 suitableSellers,
-                 handlers) {
+                 suitableSellers) {
 
+        this._torrent = torrent
         this.infoHash = infoHash
         this.state = state
         this.progress = progress
@@ -66,7 +67,10 @@ class TorrentStore {
         this.numberOfObservers = numberOfObservers
         this.numberOfNormalPeers = numberOfNormalPeers
         this.suitableSellers = suitableSellers
-        this._handlers = handlers
+    }
+
+    setTorrent(torrent) {
+        this._torrent = torrent
     }
 
     @action.bound
@@ -252,31 +256,31 @@ class TorrentStore {
     /// User actions
 
     start() {
-        this._handlers.startHandler()
+        this._torrent.start()
     }
 
     stop() {
-        this._handlers.stopHandler()
+        this._torrent.stop()
     }
 
     remove(deleteData) {
-        this._handlers.removeHandler(deleteData)
+        this._torrent.remove(deleteData)
     }
 
     openFolder() {
-        this._handlers.openFolderHandler()
+        this._torrent.openFolder()
     }
 
     startPaidDownload() {
-        this._handlers.startPaidDownloadHandler()
+        this._torrent.startPaidDownload()
     }
 
     beginUploading(sellerTerms) {
-        this._handlers.beginUploadHandler(sellerTerms)
+        this._torrent.beginUpload(sellerTerms)
     }
 
     endUploading() {
-        this._handlers.endUploadHandler()
+        this._torrent.endUpload()
     }
 
     play() {
