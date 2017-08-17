@@ -13,7 +13,8 @@ import { NameField,
          ProgressField,
          BytesPerSecondField,
          ETAField,
-        ModeField } from  '../../components/RowFields'
+        ModeField,
+    PeerCountField} from  '../../components/RowFields'
 import TorrentToolbar from './TorrentToolbar'
 
 
@@ -48,6 +49,8 @@ class TorrentRow extends Component {
                           bytes_per_second={this.props.torrent.downloadSpeed}
                 />
                 <ModeField isPaid={this.props.torrent.canStartPaidDownloading} />
+                <PeerCountField count={this.props.torrent.numberOfSeeders} />
+                <PeerCountField count={this.props.torrent.numberOfSellers} />
 
                 { this.getRenderedToolbar() }
             </Row>
