@@ -140,7 +140,8 @@ class ApplicationStatemachineClient {
                      numberOfObservers,
                      numberOfNormalPeers,
                      suitableSellers) => {
-        return new TorrentStore(infoHash,
+        return new TorrentStore(null,
+                                infoHash,
                                 state,
                                 progress,
                                 totalSize,
