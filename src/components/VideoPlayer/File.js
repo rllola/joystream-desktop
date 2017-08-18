@@ -2,7 +2,6 @@ import LibtorrentStream from './LibtorrentStream'
 
 class File {
     constructor (torrent, fileIndex) {
-      super()
 
       this._torrent = torrent
 

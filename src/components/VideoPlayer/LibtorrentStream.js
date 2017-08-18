@@ -164,4 +164,4 @@ const NORMAL_PRIORITY = 4
 
  }
 
-export default FileStream
+export default LibtorrentStream
