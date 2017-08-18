@@ -41,7 +41,7 @@ class Application extends Component {
                 <div className="app-container">
                     {this.renderActiveScene()}
                     {process.env.NODE_ENV === 'development' ? <div><MobxReactDevTools/></div> : null}
-                    {this.props.store.isPlaying ? <VideoPlayer torrent={this.props.store.isPlaying} /> : null}
+                    {this.props.store.isPlaying ? <VideoPlayer torrent={this.props.store.isPlaying} fileIndex={0} /> : null}
                 </div>
             </MuiThemeProvider>
         )
