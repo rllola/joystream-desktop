@@ -100,16 +100,6 @@ class ApplicationStore {
     this.spending = spending
   }
 
-  @action.bound
-  closeVideoPlayer () {
-    this.isVideoPlayerOpened = false
-  }
-
-  @action.bound
-  openVideoPlayer () {
-    this.isVideoPlayerOpened = true
-  }
-
   /// UI values
 
   @computed get

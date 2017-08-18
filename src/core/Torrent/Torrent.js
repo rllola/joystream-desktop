@@ -115,11 +115,11 @@ Torrent.prototype.endUpload = function () {
 }
 
 Torrent.prototype.play = function () {
-  this._client.store.setIsPlaying(true)
+  this._client.processStateMachineInput('play')
 }
 
 Torrent.prototype.close = function () {
-  this._client.store.setIsPlaying(false)
+  this._client.processStateMachineInput('close')
 }
 
 /// TorrentStateMachineClient
