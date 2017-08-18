@@ -110,8 +110,6 @@ const NORMAL_PRIORITY = 4
        this._missing -= piece.buffer.length
        this._piece += 1
 
-       console.log(this._piece)
-
        // Push the data to the stream
        this.push(piece.buffer)
 
@@ -125,7 +123,6 @@ const NORMAL_PRIORITY = 4
 
    // `size` is optional.
   _read (size) {
-    console.log(this._piece)
     // We don't have no more piece to read...
     if (this._missing === 0) return
     if (!this._torrent.handle.havePiece(this._piece)) {
