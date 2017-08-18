@@ -102,6 +102,12 @@ var Torrent = new BaseMachine({
                 console.log('Introduce tx broadcasting on torrent machine')
 
                 //client.broadcastRawTransaction(alert.settlementTx)
+            },
+            play: function (client) {
+              client.store.setIsPlaying(true)
+            },
+            close: function (client) {
+              client.store.setIsPlaying(false)
             }
         },
 

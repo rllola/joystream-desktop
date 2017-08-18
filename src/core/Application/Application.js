@@ -154,37 +154,7 @@ class ApplicationStatemachineClient {
                                 numberOfSellers,
                                 numberOfObservers,
                                 numberOfNormalPeers,
-                                suitableSellers, {
-          startHandler: () => {
-            this.processStateMachineInput('startTorrent', infoHash)
-          },
-          stopHandler: () => {
-            this.processStateMachineInput('stopTorrent', infoHash)
-          },
-          removeHandler: (deleteData) => {
-            this.processStateMachineInput('removeTorrent', infoHash, deleteData)
-          },
-          openFolderHandler: () => {
-            this.processStateMachineInput('openTorrentFolder', infoHash)
-          },
-          startPaidDownloadHandler: () => {
-            this.processStateMachineInput('startPaidDownload', infoHash)
-          },
-          beginUploadHandler: (sellerTerms) => {
-            // apply standard seller terms if not provided
-            sellerTerms = sellerTerms || standardSellerTerms()
-            this.processStateMachineInput('beginUpload', infoHash, sellerTerms)
-          },
-          endUploadHandler: () => {
-            this.processStateMachineInput('endUpload', infoHash)
-          },
-          updateBuyerTerms: (buyerTerms) => {
-            this.processStateMachineInput('updateBuyerTerms', infoHash, buyerTerms)
-          },
-          updateSellerTerms: (sellerTerms) => {
-            this.processStateMachineInput('updateSellerTerms', infoHash, sellerTerms)
-          }
-        })
+                                suitableSellers)
       },
 
       // Return a Torrent with generators bound to application statemachine to access the wallet

@@ -8,6 +8,7 @@ import Scene from '../../core/Application/Scene'
 
 // Components
 //import Sidebar from './components/Sidebar'
+import VideoPlayer from '../../components/VideoPlayer'
 
 // Our scenes
 import Loading, {LoadingState} from '../Loading/LoadingScene'
@@ -16,6 +17,7 @@ import Downloading from '../Downloading'
 import Seeding from '../Seeding'
 import Completed from '../Completed'
 //import Wallet from '../Wallet'
+
 
 let MobxReactDevTools
 if (process.env.NODE_ENV === 'development') {
@@ -38,6 +40,7 @@ class Application extends Component {
                 <div className="app-container">
                     {this.renderActiveScene()}
                     {process.env.NODE_ENV === 'development' ? <div><MobxReactDevTools/></div> : null}
+                    {this.props.store.isPlaying ? <VideoPlayer torrent={this.props.store.isPlaying} /> : null}
                 </div>
             </MuiThemeProvider>
         )

@@ -7,6 +7,9 @@ class TorrentStore {
     @observable progress
     @observable totalSize
 
+    // Is playing video/audio
+    @observable isPlaying = false
+
     /**
      * libtorrent::torrent_status::total_done
      *
@@ -198,6 +201,11 @@ class TorrentStore {
         this.suitableSellers = suitableSellers
     }
 
+    @action.bound
+    setIsPlaying (isPlaying) {
+      this.isPlaying = isPlaying
+    }
+
     /// Scene selector
 
     @computed get isLoading() {
@@ -283,10 +291,13 @@ class TorrentStore {
         this._torrent.endUpload()
     }
 
-    play() {
-        console.log('User wants to play torrent')
+    play () {
+        this._torrent.play()
     }
 
+    close () {
+        this._torrent.close()
+    }
 }
 
 export default TorrentStore

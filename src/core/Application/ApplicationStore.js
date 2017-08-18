@@ -188,6 +188,15 @@ class ApplicationStore {
     },0)
   }
 
+
+  @computed get
+  isPlaying () {
+    for ( var i = 0; i < this.torrents.length; i++) {
+      if (this.torrents[i].isPlaying) return this.torrents[i]
+    }
+    return null
+  }
+
   @action.bound
   torrentRemoved (infoHash) {
     this.torrents.replace(this.torrents.filter(function (t) {
