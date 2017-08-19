@@ -1,5 +1,10 @@
+/**
+ * Created by bedeho on 18/08/17.
+ */
+
 import React from 'react'
 import PropTypes from 'prop-types'
+import {Field} from './../Table'
 
 const StatusIndicator = (props) => {
 
@@ -13,4 +18,17 @@ StatusIndicator.propTypes = {
     paused : PropTypes.bool.isRequired
 }
 
-export default StatusIndicator
+const StatusField = (props) => {
+
+    return (
+        <Field>
+            <StatusIndicator paused={props.paused} />
+        </Field>
+    )
+}
+
+StatusField.propTypes = {
+    paused : PropTypes.bool.isRequired
+}
+
+export default StatusField
