@@ -11,4 +11,13 @@ function getStandardbuyerTerms() {
     }
 }
 
-export {getStandardbuyerTerms}
+function getStandardSellerTerms() {
+    return {
+        minPrice: 1,
+        minLock: 5,
+        maxNumberOfSellers: 1,
+        minContractFeePerKb: 2000
+    }
+}
+
+export {getStandardbuyerTerms, getStandardSellerTerms}
