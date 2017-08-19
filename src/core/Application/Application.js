@@ -15,6 +15,8 @@ const EventEmitter = require('events').EventEmitter
 const Statemachine = require('./Statemachine')
 const ApplicationStore = require('./ApplicationStore').default
 
+const Common = require('./Statemachine/Common')
+
 const bcoin = require('bcoin')
 
 const assert = require('assert')
@@ -162,7 +164,8 @@ class ApplicationStatemachineClient {
         return new Torrent(torrentStore,
             this.privateKeyGenerator.bind(this),
             this.pubKeyHashGenerator.bind(this),
-            this.contractGenerator.bind(this))
+            this.contractGenerator.bind(this),
+            Common.getStandardbuyerTerms)
       },
 
       testnetFaucet: function () { return faucet }
