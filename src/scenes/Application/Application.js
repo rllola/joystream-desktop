@@ -11,6 +11,7 @@ import Scene from '../../core/Application/Scene'
 import VideoPlayer from '../../components/VideoPlayer'
 
 // Our scenes
+import NotStartedScene from '../NotStarted'
 import Loading, {LoadingState} from '../Loading/LoadingScene'
 import Terminating, {TerminatingState} from '../Terminating'
 import Downloading from '../Downloading'
@@ -51,8 +52,7 @@ class Application extends Component {
         switch(this.props.store.activeScene) {
 
             case Scene.NotStarted:
-
-                return <h1>NotStarted</h1>
+                return <NotStartedScene />
 
             case Scene.Loading:
 
