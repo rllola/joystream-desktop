@@ -7,15 +7,17 @@ import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
 import {Field, Row} from  '../../components/Table'
-import BitcoinConvert from  '../../components/BitcoinConvert'
+import { NameField,
+         StatusField,
+         BytesPerSecondField,
+         BitcoinValueField } from  '../../components/RowFields'
+
 import TorrentToolbar from './TorrentToolbar'
-import bytes from 'bytes'
-import { StatusIndicator } from '../../components/RowFields'
+
 import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
 import ToolbarVisibilityType from '../../utils/ToolbarVisibilityState'
 
-
-//@observer
+@observer
 class TorrentRow extends Component {
 
     /**
@@ -33,21 +35,11 @@ class TorrentRow extends Component {
         return (
             <Row className={this.props.toolbarVisibilityStatus == ToolbarVisibilityType.OnHover ? "row-managed-toolbar-visiblity" : ""}>
 
-                <Field>
-                    {this.props.torrent.name}
-                </Field>
-                <Field>
-                    <StatusIndicator paused={this.props.torrent.paused} />
-                </Field>
-                <Field>
-                    {bytes(this.props.torrent.upload_speed)}/s
-                </Field>
-                <Field>
-                  <BitcoinConvert satoshis={this.props.torrent.price} />
-                </Field>
-                <Field>
-                   <BitcoinConvert satoshis={this.props.torrent.revenue} />
-                </Field>
+                <NameField name={this.props.torrent.name} />
+                <StatusField paused={this.props.torrent.canStart} />
+                <BytesPerSecondField bytes={this.props.torrent.uploadSpeed} />
+                <BitcoinValueField satoshis={0}/>
+                <BitcoinValueField satoshis={0}/>
 
                 { this.getRenderedToolbar() }
             </Row>
@@ -59,8 +51,8 @@ class TorrentRow extends Component {
         return (
             this.props.toolbarVisibilityStatus != ToolbarVisibilityType.Hidden
             ?
-            <AbsolutePositionChildren left={-132} top={-20}>
-                <TorrentToolbar {...this.props.toolbarProps}/>
+            <AbsolutePositionChildren left={-250} top={-20}>
+                <TorrentToolbar {...this.props.toolbarProps} torrent={this.props.torrent}/>
             </AbsolutePositionChildren>
             :
             null
