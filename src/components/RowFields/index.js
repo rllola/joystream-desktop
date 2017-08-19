@@ -1,7 +1,19 @@
-import ModeIndicator from './ModeIndicator'
-import StatusIndicator from './StatusIndicator'
-import ETAIndicator from './ETAIndicator'
-import ProgressIndicator from './ProgressIndicator'
+import NameField from './NameField'
+import StatusField from './StatusField'
+import BytesField from './BytesField'
+import ProgressField from './ProgressField'
+import BytesPerSecondField from './BytesPerSecondField'
+import ETAField from './ETAField'
+import ModeField from './ModeField'
+import BitcoinValueField from './BitcoinValueField'
 
-
-export { ModeIndicator, StatusIndicator, ETAIndicator, ProgressIndicator }
+export {
+    NameField,
+    StatusField,
+    BytesField,
+    ProgressField,
+    BytesPerSecondField,
+    ETAField,
+    ModeField,
+    BitcoinValueField
+}
