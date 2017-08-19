@@ -183,15 +183,33 @@
 
 .start-sell {
   .button {
-    background-image: url('../assets/icon/dollar.svg');
-    background-size: 25px 25px;
+    background-image: url('../assets/icon/start-uploading.svg');
   }
 }
 
 .start-sell:hover {
   .button {
-    background-image: url('../assets/icon/dollar-hover.svg');
-    background-size: 25px 25px;
+    background-image: url('../assets/icon/start-uploading-hover.svg');
+  }
+}
+
+.start-sell-disabled {
+  .button {
+    background-image: url('../assets/icon/start-uploading-disabled.svg');
+  }
+}
+
+/** start-sell **/
+
+.stop-sell {
+  .button {
+    background-image: url('../assets/icon/stop-uploading.svg');
+  }
+}
+
+.stop-sell:hover {
+  .button {
+    background-image: url('../assets/icon/stop-uploading-hover.svg');
   }
 }
 
