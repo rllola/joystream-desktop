@@ -13,6 +13,8 @@ import RemoveAndDeleteSection from './RemoveAndDeleteSection'
 import RemoveSection from './RemoveSection'
 import StartPaidDownloadingSection from './StartPaidDownloadingSection'
 import ToggleStatusSection from './ToggleStatusSection'
+import StartUploadingSection from './StartUploadingSection'
+import StopUploadingSection from './StopUploadingSection'
 
 export default Toolbar
 export {Separator,
@@ -24,5 +26,7 @@ export {Separator,
         RemoveAndDeleteSection,
         RemoveSection,
         StartPaidDownloadingSection,
-        ToggleStatusSection
+        ToggleStatusSection,
+        StartUploadingSection,
+        StopUploadingSection
 }
