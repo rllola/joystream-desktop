@@ -6,6 +6,7 @@ import BytesPerSecondField from './BytesPerSecondField'
 import ETAField from './ETAField'
 import ModeField from './ModeField'
 import BitcoinValueField from './BitcoinValueField'
+import IsUploading from './IsUploadingField'
 
 export {
     NameField,
@@ -15,5 +16,6 @@ export {
     BytesPerSecondField,
     ETAField,
     ModeField,
-    BitcoinValueField
+    BitcoinValueField,
+    IsUploading
 }
