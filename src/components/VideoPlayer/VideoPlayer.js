@@ -1,12 +1,10 @@
 import React, { Component } from 'react'
 import CloseButton from './CloseButton'
-import File from './File'
 import render from 'render-media'
 
 class VideoPlayer extends Component {
   componentDidMount () {
-    var file = new File(this.props.torrent._torrent._client.torrent, this.props.fileIndex)
-    render.render(file, '#video-player', function (err, elem) {
+    render.render(this.props.file, '#video-player', function (err, elem) {
       if (err) return console.error(err.message)
     })
   }
