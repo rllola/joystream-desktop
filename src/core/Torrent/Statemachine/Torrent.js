@@ -105,11 +105,11 @@ var Torrent = new BaseMachine({
 
                 //client.broadcastRawTransaction(alert.settlementTx)
             },
-            play: function (client) {
-              client.store.setIsPlaying(true)
+            play: function (client, fileIndex) {
+              client.store.setIsPlaying(fileIndex)
             },
             close: function (client) {
-              client.store.setIsPlaying(false)
+              client.store.setIsPlaying(null)
             },
             openFolder: function (client) {
               shell.openItem(client.getSavePath())

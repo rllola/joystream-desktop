@@ -114,8 +114,8 @@ Torrent.prototype.endUpload = function () {
   this._client.processStateMachineInput('goToPassive')
 }
 
-Torrent.prototype.play = function () {
-  this._client.processStateMachineInput('play')
+Torrent.prototype.play = function (fileIndex) {
+  this._client.processStateMachineInput('play', fileIndex)
 }
 
 Torrent.prototype.close = function () {
@@ -288,9 +288,13 @@ TorrentStatemachineClient.prototype.getSavePath = function() {
 
     return this.torrent.handle.savePath()
 }
-  
+
 TorrentStatemachineClient.prototype.getTorrentInfo = function() {
   return this.torrent.handle.torrentFile()
+}
+
+TorrentStatemachineClient.prototype.getFiles = function() {
+  // Get the files
 }
 
 function LOG_ERROR(source, err) {

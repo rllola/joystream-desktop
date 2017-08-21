@@ -107,7 +107,8 @@ class Application extends Component {
 
     renderVideoPlayer () {
       if (this.props.store.isPlaying) {
-        var file = new File(this.props.store.isPlaying._torrent._client.torrent, 0)
+        // Not the best way to get the torrent object.
+        var file = new File(this.props.store.isPlaying._torrent._client.torrent, this.props.store.isPlaying.isPlaying)
 
         return (
           <VideoPlayer file={file} torrent={this.props.store.isPlaying} />
