@@ -100,6 +100,9 @@ describe('Application Statemachine', function () {
     handle('completed_scene_selected')
     assertState('Started.OnCompletedScene.idle')
 
+    assert.equal(client.store.setNumberCompletedInBackground.callCount, 1)
+    assert.deepEqual(client.store.setNumberCompletedInBackground.getCall(0).args[0], 0)
+
     handle('uploading_scene_selected')
     assertState('Started.OnUploadingScene.idle')
 
@@ -231,6 +234,8 @@ function NewMockedClient () {
   store.torrentAdded = function (torrent) {
 
   }
+
+  store.setNumberCompletedInBackground = sinon.spy()
 
   return client
 }
