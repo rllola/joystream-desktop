@@ -6,165 +6,20 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
-import { Field, Row } from  '../../components/Table'
-import { StatusIndicator, ProgressIndicator, ETAIndicator, ModeIndicator } from '../../components/RowFields'
+import { Row, Field } from  '../../components/Table'
+import { NameField,
+         StatusField,
+         BytesField,
+         ProgressField,
+         BytesPerSecondField,
+         ETAField,
+        ModeField } from  '../../components/RowFields'
 import TorrentToolbar from './TorrentToolbar'
-import bytes from 'bytes'
+
 
 import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
 
 import ToolbarVisibilityType, { toolbarVisibilityState } from '../../utils/ToolbarVisibilityState'
-
-/**
- * Validates non-negative integers
- * @param n
- */
-function isNonNegativeInteger(n) {
-    return Number.isInteger(n) && n >= 0
-}
-
-/**
- * Human readable ETA for download of given number of bytes
- * at a given rate.
- *
- * @param bytes {Number} Total number of bytes to be downloaded
- * @param bytes_per_second {Numbre} Byte rate, per second, at which bytes are downloaded
- */
-function readableETAString(bytes, bytes_per_second) {
-
-    if(!isNonNegativeInteger(bytes))
-        throw Error('bytes: must be non-negative integer, found: ' + bytes)
-
-    if(!isNonNegativeInteger(bytes_per_second))
-        throw Error('bytes_per_second: must be non-negative integer, found: ' + bytes)
-
-    if(bytes_per_second == 0 || bytes == 0)
-        return ""
-
-    var total_seconds = bytes/bytes_per_second
-    var total_ms = 1000 * total_seconds
-
-    // Factor out humanizer setup, instead get humanizer injected or something
-    var ETAString = humanizeDuration(total_ms, {
-        round: true,
-        units: ['y', 'mo', 'w', 'd', 'h', 'm'],
-        language: 'shortEn',
-        languages: {
-            shortEn: {
-                y: function() { return 'y' },
-                mo: function() { return 'mo' },
-                w: function() { return 'w' },
-                d: function() { return 'd' },
-                h: function() { return 'h' },
-                m: function() { return 'm' },
-                s: function() { return 's' },
-                ms: function() { return 'ms' },
-            }
-        }
-    })
-
-    return ETAString
-}
-
-const NameField = (props) => {
-
-    return (
-        <Field>
-            {props.name}
-        </Field>
-    )
-}
-
-NameField.propTypes = {
-    name : PropTypes.string.isRequired
-}
-
-const StatusField = (props) => {
-
-    return (
-        <Field>
-            <StatusIndicator paused={props.paused} />
-        </Field>
-    )
-}
-
-StatusField.propTypes = {
-    paused : PropTypes.bool.isRequired
-}
-
-const BytesField = (props) => {
-
-    return (
-        <Field>
-            {bytes(props.bytes, { unitSeparator : ' '})}
-        </Field>
-    )
-}
-
-BytesField.propTypes = {
-    bytes : PropTypes.number.isRequired
-}
-
-const ProgressField = (props) => {
-
-    return (
-        <Field>
-            <ProgressIndicator progress={props.progress}/>
-        </Field>
-    )
-}
-
-ProgressField.propTypes = {
-    progress : PropTypes.number.isRequired
-}
-
-const BytesPerSecondField = (props) => {
-
-    var bytesPerSecondString
-
-    if(props.bytes)
-        bytesPerSecondString = bytes(props.bytes, { unitSeparator : ' '}) + '/s'
-
-    return (
-        <Field>
-            {bytesPerSecondString}
-        </Field>
-    )
-
-}
-
-BytesPerSecondField.propTypes = {
-    bytes : PropTypes.number.isRequired
-}
-
-const ETAField = (props) => {
-
-    return (
-        <Field>
-            <ETAIndicator bytes_remaining={props.bytes_remaining}
-                          bytes_per_second={props.bytes_per_second}
-            />
-        </Field>
-    )
-}
-
-ETAField.propTypes = {
-    bytes_remaining : PropTypes.number.isRequired,
-    bytes_per_second : PropTypes.number.isRequired
-}
-
-const ModeField = (props) => {
-
-    return (
-        <Field>
-            <ModeIndicator paid={props.isPaid} />
-        </Field>
-    )
-}
-
-ModeField.propTypes = {
-    isPaid : PropTypes.bool.isRequired
-}
 
 @observer
 class TorrentRow extends Component {

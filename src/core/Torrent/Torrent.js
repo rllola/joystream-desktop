@@ -17,11 +17,11 @@ util.inherits(Torrent, EventEmitter)
  * @param session
  * @constructor
  */
-function Torrent(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator) {
+function Torrent(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator, getStandardSellerTerms) {
 
     EventEmitter.call(this)
 
-    this._client = new TorrentStatemachineClient(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator)
+    this._client = new TorrentStatemachineClient(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator, getStandardSellerTerms)
 
     // Set initial state of store
     store.setState(TorrentStatemachine.compositeState(this._client))
@@ -106,8 +106,8 @@ Torrent.prototype.startPaidDownload = function (peerSorter) {
   this._client.processStateMachineInput('startPaidDownload', peerSorter)
 }
 
-Torrent.prototype.beginUpload = function (sellerTerms) {
-  this._client.processStateMachineInput('goToStartedUploading', sellerTerms)
+Torrent.prototype.beginUpload = function () {
+  this._client.processStateMachineInput('goToStartedUploading')
 }
 
 Torrent.prototype.endUpload = function () {
@@ -125,11 +125,12 @@ Torrent.prototype.close = function () {
 /// TorrentStateMachineClient
 /// Holds state and external messaging implementations for a (behavoural machinajs) Torrent state machine instance
 
-function TorrentStatemachineClient(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator) {
+function TorrentStatemachineClient(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator, getStandardSellerTerms) {
     this.store = store
     this._privateKeyGenerator = privateKeyGenerator
     this._publicKeyHashGenerator = publicKeyHashGenerator
     this._contractGenerator = contractGenerator
+    this._getStandardSellerTerms = getStandardSellerTerms
 }
 
 TorrentStatemachineClient.prototype.processStateMachineInput = function (...args) {
@@ -261,6 +262,10 @@ TorrentStatemachineClient.prototype.generateContractPrivateKey = function() {
 TorrentStatemachineClient.prototype.generatePublicKeyHash = function() {
 
     return this._publicKeyHashGenerator()
+}
+
+TorrentStatemachineClient.prototype.getStandardSellerTerms = function() {
+    return this._getStandardSellerTerms()
 }
 
 TorrentStatemachineClient.prototype.startDownloading = function(contract, downloadInfoMap) {

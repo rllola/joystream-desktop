@@ -283,8 +283,8 @@ class TorrentStore {
         this._torrent.startPaidDownload()
     }
 
-    beginUploading(sellerTerms) {
-        this._torrent.beginUpload(sellerTerms)
+    beginUploading() {
+        this._torrent.beginUpload()
     }
 
     endUploading() {

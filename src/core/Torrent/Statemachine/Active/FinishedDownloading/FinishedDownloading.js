@@ -15,7 +15,10 @@ var FinishedDownloading = new BaseMachine({
 
         Passive : {
 
-            goToStartedUploading : function (client, sellerTerms) {
+            goToStartedUploading : function (client) {
+
+                // Generate standard seller terms
+                let sellerTerms = client.getStandardSellerTerms()
 
                 client.sellerTerms = sellerTerms
 

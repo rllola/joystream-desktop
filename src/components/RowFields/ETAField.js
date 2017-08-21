@@ -1,6 +1,11 @@
+/**
+ * Created by bedeho on 18/08/17.
+ */
+
 import React from 'react'
-import humanizeDuration from 'humanize-duration'
 import PropTypes from 'prop-types'
+import {Field} from './../Table'
+import humanizeDuration from 'humanize-duration'
 
 /**
  * Validates non-negative integers
@@ -62,4 +67,20 @@ ETAIndicator.propTypes = {
     bytes_per_second : PropTypes.number.isRequired
 }
 
-export default ETAIndicator
+const ETAField = (props) => {
+
+    return (
+        <Field>
+            <ETAIndicator bytes_remaining={props.bytes_remaining}
+                          bytes_per_second={props.bytes_per_second}
+            />
+        </Field>
+    )
+}
+
+ETAField.propTypes = {
+    bytes_remaining : PropTypes.number.isRequired,
+    bytes_per_second : PropTypes.number.isRequired
+}
+
+export default ETAField

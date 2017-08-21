@@ -3,6 +3,7 @@ import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
 import { Field, Row } from  '../../../components/Table'
+import { NameField, BytesField, IsUploading} from '../../../components/RowFields'
 import TorrentToolbar from './TorrentToolbar'
 import bytes from 'bytes'
 
@@ -10,7 +11,7 @@ import AbsolutePositionChildren from '../../../common/AbsolutePositionChildren'
 
 import ToolbarVisibilityType from '../../../utils/ToolbarVisibilityState'
 
-//@observer
+@observer
 class TorrentRow extends Component {
 
     /**
@@ -28,12 +29,9 @@ class TorrentRow extends Component {
         return (
             <Row className={this.props.toolbarVisibilityStatus == ToolbarVisibilityType.OnHover ? "row-managed-toolbar-visiblity" : ""}>
 
-                <Field>
-                    {this.props.torrent.name}
-                </Field>
-                <Field>
-                    {bytes(this.props.torrent.size)}
-                </Field>
+                <NameField name={this.props.torrent.name}/>
+                <IsUploading uploading={this.props.torrent.canBeginUploading}/>
+                <BytesField bytes={this.props.torrent.totalSize}/>
 
                 { this.getRenderedToolbar() }
             </Row>
@@ -45,8 +43,8 @@ class TorrentRow extends Component {
         return (
             this.props.toolbarVisibilityStatus != ToolbarVisibilityType.Hidden
             ?
-            <AbsolutePositionChildren left={-132} top={-20}>
-                <TorrentToolbar {...this.props.toolbarProps}/>
+            <AbsolutePositionChildren left={-250} top={-20}>
+                <TorrentToolbar {...this.props.toolbarProps} torrent={this.props.torrent}/>
             </AbsolutePositionChildren>
             :
             null
