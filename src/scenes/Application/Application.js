@@ -19,6 +19,7 @@ import Seeding from '../Seeding'
 import Completed from '../Completed'
 //import Wallet from '../Wallet'
 
+import File from '../../utils/File'
 
 let MobxReactDevTools
 if (process.env.NODE_ENV === 'development') {
@@ -41,7 +42,7 @@ class Application extends Component {
                 <div className="app-container">
                     {this.renderActiveScene()}
                     {process.env.NODE_ENV === 'development' ? <div><MobxReactDevTools/></div> : null}
-                    {this.props.store.isPlaying ? <VideoPlayer torrent={this.props.store.isPlaying} /> : null}
+                    {this.renderVideoPlayer()}
                 </div>
             </MuiThemeProvider>
         )
@@ -95,6 +96,16 @@ class Application extends Component {
         }
     }
 
+    renderVideoPlayer () {
+      if (this.props.store.isPlaying) {
+        var file = new File(this.props.store.isPlaying._torrent._client.torrent, 0)
+
+        return (
+          <VideoPlayer file={file} torrent={this.props.store.isPlaying} />
+        )
+      }
+      return null
+    }
 }
 
 Application.propTypes = {

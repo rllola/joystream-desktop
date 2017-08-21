@@ -1,25 +1,33 @@
-import React from 'react'
+import React, { Component } from 'react'
 import CloseButton from './CloseButton'
+import render from 'render-media'
 
-const VideoPlayer = (props) => {
-  const overlayStyle = {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    top: 0,
-    background: 'black'
+class VideoPlayer extends Component {
+  componentDidMount () {
+    render.render(this.props.file, '#video-player', function (err, elem) {
+      if (err) return console.error(err.message)
+    })
   }
-  
-  return (
-    <div>
-      <CloseButton torrent={props.torrent} />
-      <div style={overlayStyle}>
-        <video width="100%" height="auto" autoPlay controls>
-          <source src="https://media.w3.org/2010/05/sintel/trailer_hd.mp4" />
-        </video>
+
+  render () {
+    const overlayStyle = {
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      top: 0,
+      background: 'black'
+    }
+
+    return (
+      <div>
+        <CloseButton torrent={this.props.torrent} />
+        <div id="video-player-container" style={overlayStyle}>
+          <video id="video-player" width="100%" height="auto" controls>
+          </video>
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 }
 
 export default VideoPlayer

@@ -22,7 +22,7 @@ const NORMAL_PRIORITY = 4
  * @param {object} torrent
  */
  class LibtorrentStream extends Readable {
-   constructor (torrent, opts) {
+   constructor (torrent, fileIndex, opts) {
      super(opts)
 
      this.destroyed = false
@@ -144,7 +144,7 @@ const NORMAL_PRIORITY = 4
 
     // Remove high priority on pieces
     for ( var i = 0; i < this._prioritizedPieces.length; i++ ) {
-      var piece = index + i
+      var piece = this._prioritizedPieces[i]
       this._torrent.handle.piecePriority(piece, NORMAL_PRIORITY)
     }
 
@@ -164,4 +164,4 @@ const NORMAL_PRIORITY = 4
 
  }
 
-export default FileStream
+export default LibtorrentStream
