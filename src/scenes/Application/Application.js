@@ -109,11 +109,11 @@ class Application extends Component {
 
     renderVideoPlayer () {
 
-      // Modify size here ?
-      // electron.ipcRenderer.send('set-bounds', {contentBounds: true, x: null, y: null, 1200, 800})
-
       if (this.props.store.isPlaying) {
-
+        // Modify size here ?
+        electron.ipcRenderer.send('set-bounds', {contentBounds: true, x: null, y: null, width: 1200, height: 800})
+        var file = new File(this.props.store.isPlaying._torrent._client.torrent, 0)
+        
         return (
           <VideoPlayer file={this.props.store.isPlaying.isPlaying} torrent={this.props.store.isPlaying._torrent} />
         )
