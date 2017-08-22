@@ -138,13 +138,18 @@ var Starting = new BaseMachine({
       _reset: 'uninitialized'
     },
 
+
     LoadingTorrents: {
       _child: LoadingTorrents,
       _reset: 'uninitialized',
+
+      /**
       // When all torrent state machines have entered into final loaded state (so they are renderable)
       completedLoadingTorrents: function (client) {
         this.go(client, '../Started')
       }
+      */
+
     }
   }
 })

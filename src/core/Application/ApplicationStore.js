@@ -6,18 +6,15 @@ import Scene from './Scene'
 
 class ApplicationStore {
 
+  /**
+   * {String} Composite state description for application state machine
+   */
   @observable state
 
-  // Holds all TorrentStores - used to compute array of torrents for the active scene
+  /*
+   * {Array{TorrentStores}} All torrent stores
+   */
   @observable torrents
-
-  // Updated while torrents are being loaded during Starting phase of the application
-  @observable torrentsToLoad = 0
-  @observable torrentLoadingProgress = 0 // Number between 0 and 1 (0% --> 100%)
-
-  // Updated while terminating torrents during Stopping phase of the application
-  @observable torrentsToTerminate = 0
-  @observable torrentTerminatingProgress = 0 // Number between 0 and 1 (0% --> 100%)
 
   // Will be set to a TorrentStore which is the last torrent being added to the session
   @observable newTorrentBeingAdded = null
@@ -113,7 +110,7 @@ class ApplicationStore {
       return Scene.Downloading
     else if (this.state.startsWith('Started.OnUploadingScene'))
       return Scene.Uploading
-    else if (this.state.startsWith('Starting'))
+    else if (this.state.startsWith('Starting')) // Notice that 'Starting.LoadingTorrents' is covered above
       return Scene.Loading
     else if (this.state.startsWith('Stopping'))
       return Scene.ShuttingDown
@@ -125,11 +122,6 @@ class ApplicationStore {
   @computed get
   isStarted () {
     return this.state.startsWith('Started')
-  }
-
-  @computed get
-  isLoading () {
-    return this.activeScene === Scene.Loading
   }
 
   @computed get
@@ -175,6 +167,44 @@ class ApplicationStore {
   }
 
   @computed get
+  torrentsFullyLoadedPercentage() {
+    return 100*(1 - (this.torrentsBeingLoaded.length/this.torrents.length))
+  }
+
+  @computed get
+  startingTorrentCheckingProgressPercentage() {
+
+    // Compute total size
+    let totalSize = this.torrents.reduce(function(accumulator, torrent) {
+      return accumulator + torrent.totalSize
+    }, 0)
+
+    // Computed total checked size
+    let totalCheckedSize = this.torrents.reduce(function(accumulator, torrent) {
+
+      let checkedSize = torrent.totalSize * (torrent.isLoading ? torrent.progress/100 : 1)
+
+      return accumulator + checkedSize
+
+    }, 0)
+
+    return totalCheckedSize*100/totalSize
+  }
+
+  @computed get
+  torrentsBeingTerminated() {
+
+    return this.torrents.filter(function (torrent) {
+        return torrent.isTerminating
+    })
+  }
+
+  @computed get
+  terminatingTorrentsProgressPercentage() {
+    return this.torrentsBeingTerminated*100/this.torrents.length
+  }
+
+  @computed get
   totalDownloadSpeed() {
     return this.torrents.reduce(function(accumulator, torrent) {
         return accumulator + torrent.downloadSpeed
@@ -209,21 +239,6 @@ class ApplicationStore {
   @action.bound
   torrentAdded (torrent) {
     this.torrents.push(torrent)
-  }
-
-  @action.bound
-  setTorrentsToLoad (count) {
-    this.torrentsToLoad = count
-  }
-
-  @action.bound
-  setTorrentLoadingProgress (progress) {
-    this.torrentLoadingProgress = progress
-  }
-
-  @action.bound
-  setTorrentsToTerminate (count) {
-    this.torrentsToTerminate = count
   }
 
   @action.bound

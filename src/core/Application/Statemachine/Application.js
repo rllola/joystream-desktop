@@ -73,6 +73,16 @@ var ApplicationStateMachine = new BaseMachine({
           this.handle(client, 'stop')
       },
 
+      torrentWaitingForMissingBuyerTerms: function (client, torrent) {
+
+          // Standard buyer terms
+          // NB: Get from settings data store of some sort
+          let terms = Common.getStandardbuyerTerms()
+
+          // change name
+          torrent.updateBuyerTerms(terms)
+      },
+
       checkIfWalletNeedsRefill: async function (client, balance) {
         if (client.services.spvnode.network !== 'testnet') return
         if (!client.services.testnetFaucet) return
