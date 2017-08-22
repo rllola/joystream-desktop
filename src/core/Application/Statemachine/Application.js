@@ -72,7 +72,7 @@ var ApplicationStateMachine = new BaseMachine({
           // Initiate stopping
           this.handle(client, 'stop')
       },
-        
+
       torrentWaitingForMissingBuyerTerms: function (client, torrent) {
 
           // Standard buyer terms
