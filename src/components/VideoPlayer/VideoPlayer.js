@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import CloseButton from './CloseButton'
 import render from 'render-media'
+import electron from 'electron'
+
 
 
 class VideoPlayer extends Component {
@@ -8,6 +10,12 @@ class VideoPlayer extends Component {
     render.render(this.props.file, '#video-player', function (err, elem) {
       if (err) return console.error(err.message)
     })
+  }
+
+  // Will be triggered when the metadata of the video will be loaded
+  onLoadedMetadata (event) {
+    // Modify size here ?
+    electron.ipcRenderer.send('set-bounds', {width: event.target.videoWidth, height: event.target.videoHeight})
   }
 
   render () {

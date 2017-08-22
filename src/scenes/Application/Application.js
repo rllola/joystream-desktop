@@ -20,8 +20,6 @@ import Seeding from '../Seeding'
 import Completed from '../Completed'
 //import Wallet from '../Wallet'
 
-import File from '../../utils/File'
-
 
 let MobxReactDevTools
 if (process.env.NODE_ENV === 'development') {
@@ -108,6 +106,7 @@ class Application extends Component {
     renderVideoPlayer () {
 
       if (this.props.store.isPlaying) {
+
         return (
           <VideoPlayer file={this.props.store.isPlaying.isPlaying} torrent={this.props.store.isPlaying._torrent} />
         )
