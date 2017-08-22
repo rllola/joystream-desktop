@@ -29,24 +29,19 @@ var LoadingTorrents = new BaseMachine({
       },
 
       gotTorrents: function (client, savedTorrents) {
-        if (savedTorrents.length === 0) {
 
-          client.processStateMachineInput('completedLoadingTorrents')
 
-        } else {
+        // Create core torrent objects and stores, initialize with loading settings,
+        // and prepare torrent add parameters
+        savedTorrents.forEach(function (savedTorrent) {
 
-          // Create core torrent objects and stores, initialize with loading settings,
-          // and prepare torrent add parameters
-          savedTorrents.forEach(function (savedTorrent) {
-              
-            // Add torrent
-            Common.addTorrent(client, savedTorrent)
+          // Add torrent
+          Common.addTorrent(client, savedTorrent)
 
-          })
+        })
 
-          // øøø
-          this.go(client, '../../Started')
-        }
+        // øøø
+        this.go(client, '../../Started')
       },
 
         /**
