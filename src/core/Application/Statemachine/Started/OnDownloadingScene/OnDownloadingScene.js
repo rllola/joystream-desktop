@@ -68,6 +68,26 @@ var OnDownloadingScene = new BaseMachine({
               return
           }
 
+          // NB: Get from settings data store of some sort
+          let terms = Common.getStandardbuyerTerms()
+
+          // Create settings
+          let settings = {
+              infoHash : infoHash,
+              metadata : torrentInfo,
+              resumeData : null,
+              name: torrentInfo.name() || infoHash,
+              savePath: client.directories.defaultSavePath(),
+              deepInitialState: TorrentStatemachine.DeepInitialState.DOWNLOADING.UNPAID.STARTED,
+              extensionSettings : {
+                  buyerTerms: terms
+              }
+          }
+
+          Common.addTorrent(client, settings)
+
+          /**
+
           // Create torrent
           let torrentStore = client.factories.torrentStore(infoHash,
                                                                 '',
@@ -127,8 +147,7 @@ var OnDownloadingScene = new BaseMachine({
 
           /// Start loading torrent
 
-          // NB: Get from settings data store of some sort
-          let terms = Common.getStandardbuyerTerms()
+
 
           torrent.startLoading(
               infoHash,
@@ -141,6 +160,8 @@ var OnDownloadingScene = new BaseMachine({
                   buyerTerms: terms
               }
           )
+
+           */
 
       },
 
