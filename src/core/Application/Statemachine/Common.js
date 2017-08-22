@@ -44,7 +44,13 @@ function addTorrent(client, settings) {
         client.processStateMachineInput('torrentFinishedDownloading', infoHash)
     })
 
-    let metadata = new TorrentInfo(Buffer.from(settings.metadata, 'base64'))
+    let metadata
+
+    if (settings.metadata instanceof TorrentInfo) {
+      metadata = settings.metadata
+    } else {
+      metadata = new TorrentInfo(Buffer.from(settings.metadata, 'base64'))
+    }
 
     if (settings.resumeData) {
         var resumeData = Buffer.from(settings.resumeData, 'base64')
@@ -84,7 +90,9 @@ function addTorrent(client, settings) {
     }
 
     client.services.session.addTorrent(params, function (err, torrent) {
-        client.processStateMachineInput('torrentAdded', err, torrent, coreTorrent)
+        // Is this needed ?
+        //client.processStateMachineInput('torrentAdded', err, torrent, coreTorrent)
+        coreTorrent.addTorrentResult(err, torrent)
     })
 
 }

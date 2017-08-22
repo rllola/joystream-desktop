@@ -44,12 +44,9 @@ var LoadingTorrents = new BaseMachine({
         this.go(client, '../../Started')
       },
 
-        /**
-      torrentAdded: function (client, err, torrent, coreTorrent) {
+      /* torrentAdded: function (client, err, torrent, coreTorrent) {
         coreTorrent.addTorrentResult(err, torrent)
-
-      },
-         */
+      }, */
 /**
       torrentWaitingForMissingBuyerTerms: function (client, torrent) {
 

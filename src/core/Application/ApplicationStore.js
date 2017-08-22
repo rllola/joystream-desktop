@@ -126,9 +126,11 @@ class ApplicationStore {
 
   @computed get
   torrentsDownloading () {
-    return this.torrents.filter(function (torrent) {
+    var result = this.torrents.filter(function (torrent) {
       return torrent.showOnDownloadingScene
     })
+
+    return result
   }
 
   @computed get

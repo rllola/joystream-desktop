@@ -139,7 +139,7 @@ class TorrentsTable extends Component {
     }
 
     getRenderedTorrentRow(t) {
-
+      
         var toolbarProps = {
             canSpeedup : t.canStartPaidDownloading,
             onSpeedupClicked : () => { t.startBuying() },
