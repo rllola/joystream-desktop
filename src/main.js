@@ -78,6 +78,14 @@ ipcMain.on('set-bounds', (event, arg) => {
     }
 })
 
+
+// Listen if we need to modify window size
+ipcMain.on('set-bounds', (event, arg) => {
+    if (win) {
+      win.setBounds(arg)
+    }
+})
+
 function createWindow () {
 
   // Create the browser window.
