@@ -36,7 +36,10 @@ class TorrentStore {
     @observable numberOfBuyers
     @observable numberOfSellers
     @observable numberOfObservers
+
     @observable numberOfNormalPeers
+    @observable numberOfSeeders
+
     @observable suitableSellers
 
     constructor (torrent,
@@ -53,6 +56,7 @@ class TorrentStore {
                  numberOfSellers,
                  numberOfObservers,
                  numberOfNormalPeers,
+                 numberOfSeeders,
                  suitableSellers) {
 
         this._torrent = torrent
@@ -69,6 +73,7 @@ class TorrentStore {
         this.numberOfSellers = numberOfSellers
         this.numberOfObservers = numberOfObservers
         this.numberOfNormalPeers = numberOfNormalPeers
+        this.numberOfSeeders = numberOfSeeders
         this.suitableSellers = suitableSellers
     }
 
@@ -125,6 +130,7 @@ class TorrentStore {
         this.setUploadSpeed(status.uploadRate)
         this.setDownloadedSize(status.totalDone)
         this.setUploadedTotal(status.totalUpload)
+        this.setNumberOfSeeders(status.numSeeds)
     }
 
     @action.bound
@@ -194,6 +200,11 @@ class TorrentStore {
     @action.bound
     setNumberOfNormalPeers (numberOfNormalPeers) {
         this.numberOfNormalPeers = numberOfNormalPeers
+    }
+
+    @action.bound
+    setNumberOfSeeders(numberOfSeeders) {
+        this.numberOfSeeders = numberOfSeeders
     }
 
     @action.bound

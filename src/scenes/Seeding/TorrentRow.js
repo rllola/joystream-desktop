@@ -10,10 +10,9 @@ import {Field, Row} from  '../../components/Table'
 import { NameField,
          StatusField,
          BytesPerSecondField,
-         BitcoinValueField } from  '../../components/RowFields'
-
+         BitcoinValueField,
+         PeerCountField} from  '../../components/RowFields'
 import TorrentToolbar from './TorrentToolbar'
-
 import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
 import ToolbarVisibilityType from '../../utils/ToolbarVisibilityState'
 
@@ -34,13 +33,13 @@ class TorrentRow extends Component {
 
         return (
             <Row className={this.props.toolbarVisibilityStatus == ToolbarVisibilityType.OnHover ? "row-managed-toolbar-visiblity" : ""}>
-
                 <NameField name={this.props.torrent.name} />
                 <StatusField paused={this.props.torrent.canStart} />
                 <BytesPerSecondField bytes={this.props.torrent.uploadSpeed} />
                 <BitcoinValueField satoshis={0}/>
                 <BitcoinValueField satoshis={0}/>
-
+                <PeerCountField count={this.props.torrent.numberOfBuyers} />
+                <PeerCountField count={this.props.torrent.numberOfSellers} />
                 { this.getRenderedToolbar() }
             </Row>
         )

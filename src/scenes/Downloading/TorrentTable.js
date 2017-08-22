@@ -94,7 +94,7 @@ class TorrentsTable extends Component {
 
         return (
           <Dropzone disableClick style={dropZoneStyle} onDrop={this.handleFileDrop}>
-            <Table column_titles={["", "State", "Size", "Progress", "Speed", "Arrival", "Mode"]}>
+            <Table column_titles={["", "State", "Size", "Progress", "Speed", "Arrival", "Mode", "Seeders", "Sellers"]}>
                 { this.getRenderedContextMenu() }
                 { this.getRenderedTorrentRows() }
             </Table>

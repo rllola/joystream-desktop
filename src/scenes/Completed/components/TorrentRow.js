@@ -3,12 +3,9 @@ import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
 import { Field, Row } from  '../../../components/Table'
-import { NameField, BytesField, IsUploading} from '../../../components/RowFields'
+import { NameField, BytesField, IsUploading, PeerCountField} from '../../../components/RowFields'
 import TorrentToolbar from './TorrentToolbar'
-import bytes from 'bytes'
-
-import AbsolutePositionChildren from '../../../common/AbsolutePositionChildren'
-
+import AbsolutePositionChildren from '../../../common/AbsolutePositionChildren
 import ToolbarVisibilityType from '../../../utils/ToolbarVisibilityState'
 
 @observer
@@ -28,11 +25,12 @@ class TorrentRow extends Component {
 
         return (
             <Row className={this.props.toolbarVisibilityStatus == ToolbarVisibilityType.OnHover ? "row-managed-toolbar-visiblity" : ""}>
-
                 <NameField name={this.props.torrent.name}/>
                 <IsUploading uploading={this.props.torrent.canBeginUploading}/>
                 <BytesField bytes={this.props.torrent.totalSize}/>
-
+                <PeerCountField count={this.props.torrent.numberOfBuyers} />
+                <PeerCountField count={this.props.torrent.numberOfSellers} />
+                <PeerCountField count={this.props.torrent.numberOfObservers} />
                 { this.getRenderedToolbar() }
             </Row>
         )

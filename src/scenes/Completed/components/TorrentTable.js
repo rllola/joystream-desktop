@@ -12,7 +12,7 @@ import AbsolutePositionChildren from '../../../common/AbsolutePositionChildren'
 
 import { contextMenuHiddenState, contextMenuVisibleState, contextMenuRect } from '../../../utils/ContextMenuHelper'
 
-//@observer // this.props.torrents
+@observer
 class TorrentsTable extends Component {
 
     constructor(props) {
@@ -65,7 +65,7 @@ class TorrentsTable extends Component {
     render() {
 
         return (
-            <Table column_titles={["", "Uploading", "Size"]}>
+            <Table column_titles={["", "Uploading", "Size", "Buyers", "Sellers", "Observers"]}>
                 { this.getRenderedContextMenu() }
                 { this.getRenderedTorrentRows() }
             </Table>

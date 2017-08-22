@@ -7,6 +7,7 @@ import ETAField from './ETAField'
 import ModeField from './ModeField'
 import BitcoinValueField from './BitcoinValueField'
 import IsUploading from './IsUploadingField'
+import PeerCountField from './PeerCountField'
 
 export {
     NameField,
@@ -17,5 +18,6 @@ export {
     ETAField,
     ModeField,
     BitcoinValueField,
-    IsUploading
+    IsUploading,
+    PeerCountField
 }
