@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import CloseButton from './CloseButton'
 import render from 'render-media'
+import electron from 'electron'
+
 
 class VideoPlayer extends Component {
   componentDidMount () {
@@ -9,20 +11,27 @@ class VideoPlayer extends Component {
     })
   }
 
+  // Will be triggered when the metadata of the video will be loaded
+  onLoadedMetadata (event) {
+    // Modify size here ?
+    electron.ipcRenderer.send('set-bounds', {width: event.target.videoWidth, height: event.target.videoHeight})
+  }
+
   render () {
     const overlayStyle = {
       position: 'absolute',
       width: '100%',
       height: '100%',
       top: 0,
-      background: 'black'
+      background: 'black',
+      overflow: 'hidden'
     }
 
     return (
       <div>
         <CloseButton torrent={this.props.torrent} />
-        <div id="video-player-container" style={overlayStyle}>
-          <video id="video-player" width="100%" height="auto" controls>
+        <div id="video-player-container" onLoadedMetadata={this.onLoadedMetadata} style={overlayStyle}>
+          <video id="video-player" controls>
           </video>
         </div>
       </div>

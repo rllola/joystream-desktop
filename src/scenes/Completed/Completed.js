@@ -5,9 +5,6 @@ import PropTypes from 'prop-types'
 import { TorrentTable } from './components'
 
 const Completed = (props) => {
-
-    console.log(props.torrents)
-
     return (
         <div className="downloading-scene-container">
             <section className="middle-section">
