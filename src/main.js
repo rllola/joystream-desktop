@@ -52,6 +52,14 @@ ipcMain.on('main-window-channel', (event, arg) => {
 
 })
 
+// Listen if we need to modify window size
+ipcMain.on('set-bounds', (event, arg) => {
+    console.log(arg)
+    if (win) {
+      win.setBounds(arg)
+    }
+})
+
 function createWindow () {
 
   // Create the browser window.

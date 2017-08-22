@@ -20,6 +20,10 @@ import Seeding from '../Seeding'
 import Completed from '../Completed'
 //import Wallet from '../Wallet'
 
+import File from '../../utils/File'
+
+import electron from 'electron'
+
 let MobxReactDevTools
 if (process.env.NODE_ENV === 'development') {
     MobxReactDevTools = require('mobx-react-devtools').default
@@ -104,6 +108,10 @@ class Application extends Component {
     }
 
     renderVideoPlayer () {
+
+      // Modify size here ?
+      // electron.ipcRenderer.send('set-bounds', {contentBounds: true, x: null, y: null, 1200, 800})
+
       if (this.props.store.isPlaying) {
 
         return (
