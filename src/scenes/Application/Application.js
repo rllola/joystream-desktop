@@ -41,7 +41,7 @@ class Application extends Component {
             <MuiThemeProvider>
                 <div className="app-container">
 
-                    {this.renderActiveScene()}
+                  {this.props.store.isPlaying ? this.renderVideoPlayer () : this.renderActiveScene()}
 
                     <StatusBar show={this.props.store.torrentsBeingLoaded > 0}
                                bottom={true}>
@@ -51,16 +51,12 @@ class Application extends Component {
                     </StatusBar>
 
                     {process.env.NODE_ENV === 'development' ? <div><MobxReactDevTools/></div> : null}
-                    {this.renderVideoPlayer()}
                 </div>
             </MuiThemeProvider>
         )
     }
 
     renderActiveScene() {
-
-      if (!this.props.store.isPlaying) {
-
 
         switch(this.props.store.activeScene) {
 
@@ -107,7 +103,6 @@ class Application extends Component {
                 return <Terminating terminatingState={applicationStateToTerminatingState(this.props.store.state)}
                                     terminatingTorrentsProgressValue={100*(this.props.store.torrentTerminatingProgress/this.props.store.torrentsToTerminate)} />
         }
-      }
     }
 
     renderVideoPlayer () {
@@ -115,13 +110,11 @@ class Application extends Component {
       if (this.props.store.isPlaying) {
 
         var file = new File(this.props.store.isPlaying._torrent._client.torrent, 0)
-        
+
         return (
           <VideoPlayer file={this.props.store.isPlaying.isPlaying} torrent={this.props.store.isPlaying._torrent} />
         )
       }
-      return null
-    }
 }
 
 Application.propTypes = {
