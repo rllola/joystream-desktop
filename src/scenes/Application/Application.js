@@ -36,8 +36,6 @@ class Application extends Component {
 
     render () {
 
-        console.log('Application.render()')
-
         return (
             <MuiThemeProvider>
                 <div className="app-container">
