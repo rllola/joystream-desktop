@@ -59,6 +59,9 @@ class Application extends Component {
 
     renderActiveScene() {
 
+      if (!this.props.store.isPlaying) {
+
+
         switch(this.props.store.activeScene) {
 
             case Scene.NotStarted:
@@ -104,6 +107,7 @@ class Application extends Component {
                 return <Terminating terminatingState={applicationStateToTerminatingState(this.props.store.state)}
                                     terminatingTorrentsProgressValue={100*(this.props.store.torrentTerminatingProgress/this.props.store.torrentsToTerminate)} />
         }
+      }
     }
 
     renderVideoPlayer () {

@@ -27,11 +27,17 @@ class VideoPlayer extends Component {
       overflow: 'hidden'
     }
 
+    const videoStyle = {
+      minHeight: '100%',
+      height: 'auto',
+      width: '100%'
+    }
+
     return (
       <div>
         <CloseButton torrent={this.props.torrent} />
         <div id="video-player-container" onLoadedMetadata={this.onLoadedMetadata} style={overlayStyle}>
-          <video id="video-player" controls>
+          <video id="video-player" style={videoStyle} controls>
           </video>
         </div>
       </div>
