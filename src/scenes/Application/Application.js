@@ -36,8 +36,6 @@ class Application extends Component {
 
     render () {
 
-        console.log('Application.render()')
-
         return (
             <MuiThemeProvider>
                 <div className="app-container">
@@ -70,7 +68,6 @@ class Application extends Component {
                 return <Loading loadingState={applicationStateToLoadingState(this.props.store.state)}/>
 
             case Scene.Downloading:
-
                 return <NavigationFrame app={this.props.store}>
                             <Downloading torrents={this.props.store.torrentsDownloading}
                                          revenue={this.props.store.spending}

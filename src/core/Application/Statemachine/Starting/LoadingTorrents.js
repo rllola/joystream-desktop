@@ -1,4 +1,5 @@
 const BaseMachine = require('../../../BaseMachine')
+const TorrentInfo = require('joystream-node').TorrentInfo
 
 const Common = require('../Common')
 
@@ -35,6 +36,9 @@ var LoadingTorrents = new BaseMachine({
         // and prepare torrent add parameters
         savedTorrents.forEach(function (savedTorrent) {
 
+          // Need to convert data from db into a torrentInfo
+          savedTorrent.metadata = new TorrentInfo(Buffer.from(savedTorrent.metadata, 'base64'))
+
           // Add torrent
           Common.addTorrent(client, savedTorrent)
 
@@ -44,12 +48,9 @@ var LoadingTorrents = new BaseMachine({
         this.go(client, '../../Started')
       },
 
-        /**
-      torrentAdded: function (client, err, torrent, coreTorrent) {
+      /* torrentAdded: function (client, err, torrent, coreTorrent) {
         coreTorrent.addTorrentResult(err, torrent)
-
-      },
-         */
+      }, */
 /**
       torrentWaitingForMissingBuyerTerms: function (client, torrent) {
 

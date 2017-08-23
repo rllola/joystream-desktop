@@ -122,6 +122,10 @@ Torrent.prototype.close = function () {
   this._client.processStateMachineInput('close')
 }
 
+Torrent.prototype.openFolder = function () {
+  this._client.processStateMachineInput('openFolder')
+}
+
 /// TorrentStateMachineClient
 /// Holds state and external messaging implementations for a (behavoural machinajs) Torrent state machine instance
 
@@ -274,6 +278,12 @@ TorrentStatemachineClient.prototype.startDownloading = function(contract, downlo
         this.processStateMachineInput('startDownloadingResult', err, res)
     })
 }
+
+TorrentStatemachineClient.prototype.getSavePath = function() {
+
+    return this.torrent.handle.savePath()
+}
+
 
 function LOG_ERROR(source, err) {
 

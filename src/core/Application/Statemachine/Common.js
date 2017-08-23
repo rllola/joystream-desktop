@@ -4,6 +4,7 @@
 
 //const TorrentState = require('joystream-node').TorrentState
 const TorrentInfo = require('joystream-node').TorrentInfo
+const assert = require('assert')
 
 // Either Common should be exported, or .is* functions should be exported,
 // or these values should be here. Calling TorrentCommon is just a temporary fix until this is fixed
@@ -44,13 +45,15 @@ function addTorrent(client, settings) {
         client.processStateMachineInput('torrentFinishedDownloading', infoHash)
     })
 
-    let metadata = new TorrentInfo(Buffer.from(settings.metadata, 'base64'))
+
+    // settings.metadata has to be a TorrentInfo object
+    assert(settings.metadata instanceof TorrentInfo)
 
     if (settings.resumeData) {
         var resumeData = Buffer.from(settings.resumeData, 'base64')
     }
 
-    coreTorrent.startLoading(infoHash, settings.name, settings.savePath, resumeData, metadata, settings.deepInitialState, settings.extensionSettings)
+    coreTorrent.startLoading(infoHash, settings.name, settings.savePath, resumeData, settings.metadata, settings.deepInitialState, settings.extensionSettings)
 
     client.torrents.set(infoHash, coreTorrent)
 
@@ -59,7 +62,7 @@ function addTorrent(client, settings) {
     let params = {
         name: settings.name,
         savePath: settings.savePath,
-        ti: metadata
+        ti: settings.metadata
     }
 
     // joystream-node decoder doesn't correctly check if resumeData propery is undefined, it only checks
@@ -84,7 +87,9 @@ function addTorrent(client, settings) {
     }
 
     client.services.session.addTorrent(params, function (err, torrent) {
-        client.processStateMachineInput('torrentAdded', err, torrent, coreTorrent)
+        // Is this needed ?
+        //client.processStateMachineInput('torrentAdded', err, torrent, coreTorrent)
+        coreTorrent.addTorrentResult(err, torrent)
     })
 
 }
