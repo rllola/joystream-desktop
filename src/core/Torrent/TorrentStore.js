@@ -288,6 +288,7 @@ class TorrentStore {
     }
 
     remove(deleteData) {
+        console.log(this)
         this._torrent.remove(deleteData)
     }
 

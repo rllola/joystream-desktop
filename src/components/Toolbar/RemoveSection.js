@@ -8,7 +8,7 @@ import { inject, observer } from 'mobx-react'
 
 import ButtonSection from './ButtonSection'
 
-const RemoveSection = observer((props) => {
+const RemoveSection = inject('applicationStore')(observer((props) => {
 
     // Derive ButtonSection props
     let className = "remove"
@@ -18,7 +18,7 @@ const RemoveSection = observer((props) => {
     return (
         <ButtonSection className={className} tooltip={tooltip} onClick={onClick} />
     )
-})
+}))
 
 RemoveSection.propTypes = {
     torrent : PropTypes.object.isRequired, // TorrentStore really

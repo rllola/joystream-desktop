@@ -123,6 +123,10 @@ var ApplicationStateMachine = new BaseMachine({
       walletBalanceChanged: function (client, balance) {
         client.processStateMachineInput('checkIfWalletNeedsRefill', balance)
       },
+
+      removeTorrent () {
+        
+      }
     },
 
     Stopping: {

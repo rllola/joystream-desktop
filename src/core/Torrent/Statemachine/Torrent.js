@@ -113,6 +113,13 @@ var Torrent = new BaseMachine({
             },
             openFolder: function (client) {
               shell.openItem(client.getSavePath())
+            },
+            remove: function (client, deleteData) {
+              client.remove()
+
+              if (deleteData) {
+                console.log()
+              }
             }
         },
 
