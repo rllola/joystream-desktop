@@ -37,7 +37,7 @@ var LoadingTorrents = new BaseMachine({
         savedTorrents.forEach(function (savedTorrent) {
 
           // Need to convert data from db into a torrentInfo
-          savedTorrent.metadata = new TorrentInfo(Buffer.from(settings.metadata, 'base64'))
+          savedTorrent.metadata = new TorrentInfo(Buffer.from(savedTorrent.metadata, 'base64'))
 
           // Add torrent
           Common.addTorrent(client, savedTorrent)

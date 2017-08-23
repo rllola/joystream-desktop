@@ -3,6 +3,8 @@
  */
 
 //const TorrentState = require('joystream-node').TorrentState
+const TorrentInfo = require('joystream-node').TorrentInfo
+const assert = require('assert')
 
 // Either Common should be exported, or .is* functions should be exported,
 // or these values should be here. Calling TorrentCommon is just a temporary fix until this is fixed
