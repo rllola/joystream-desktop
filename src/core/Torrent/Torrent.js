@@ -123,7 +123,7 @@ Torrent.prototype.close = function () {
 }
 
 Torrent.prototype.openFolder = function () {
-  console.log('openFolder')
+  this._client.processStateMachineInput('openFolder')
 }
 
 /// TorrentStateMachineClient
@@ -278,6 +278,12 @@ TorrentStatemachineClient.prototype.startDownloading = function(contract, downlo
         this.processStateMachineInput('startDownloadingResult', err, res)
     })
 }
+
+TorrentStatemachineClient.prototype.getSavePath = function() {
+
+    return this.torrent.handle.savePath()
+}
+
 
 function LOG_ERROR(source, err) {
 

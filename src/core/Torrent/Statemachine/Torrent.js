@@ -8,6 +8,8 @@ var Active = require('./Active')
 var Common = require('./Common')
 var DeepInitialState = require('./DeepInitialState')
 
+const {shell} = require('electron')
+
 var Torrent = new BaseMachine({
 
     initialState: "WaitingToLoad",
@@ -108,6 +110,9 @@ var Torrent = new BaseMachine({
             },
             close: function (client) {
               client.store.setIsPlaying(false)
+            },
+            openFolder: function (client) {
+              shell.openItem(client.getSavePath())
             }
         },
 
