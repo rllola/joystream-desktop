@@ -246,6 +246,11 @@ class ApplicationStore {
     this.torrentTerminatingProgress = progress
   }
 
+  // Remove Torrent from session
+  removeTorrent (infoHash, deleteData) {
+    this._handlers.removeTorrent(infoHash, deleteData)
+  }
+
   //  Changing Scenes
   moveToScene (destinationScene) {
     this._handlers.moveToScene(destinationScene)

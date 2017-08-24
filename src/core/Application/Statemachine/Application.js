@@ -124,8 +124,17 @@ var ApplicationStateMachine = new BaseMachine({
         client.processStateMachineInput('checkIfWalletNeedsRefill', balance)
       },
 
-      removeTorrent () {
-        
+      removeTorrent (client, infoHash, deleteData) {
+        if (deleteData) {
+          // retrieve path before deleting
+        }
+        console.log(client)
+        client.services.session.removeTorrent(infoHash, function () {
+          client.services.db.remove('torrents', infoHash).then(() => {
+            client.store.torrentRemoved(infoHash)
+          })
+          // Need to be removed also from db
+        })
       }
     },
 

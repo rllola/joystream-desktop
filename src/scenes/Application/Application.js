@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { observer } from 'mobx-react'
+import { Provider, observer } from 'mobx-react'
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
@@ -38,6 +38,7 @@ class Application extends Component {
 
         return (
             <MuiThemeProvider>
+              <Provider applicationStore={this.props.store}>
                 <div className="app-container">
 
                     {this.renderActiveScene()}
@@ -52,6 +53,7 @@ class Application extends Component {
                     {process.env.NODE_ENV === 'development' ? <div><MobxReactDevTools/></div> : null}
                     {this.renderVideoPlayer()}
                 </div>
+              </Provider>
             </MuiThemeProvider>
         )
     }

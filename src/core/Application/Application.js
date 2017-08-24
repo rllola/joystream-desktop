@@ -32,6 +32,7 @@ class Application extends EventEmitter {
     this.store = new ApplicationStore("", [], 0, 0, 0, 0, 0,
     // handlers
     {
+      removeTorrent: this.removeTorrent.bind(this),
       moveToScene: this.moveToScene.bind(this),
       startDownload: this.startDownload.bind(this),
       acceptTorrentWasAlreadyAdded: this.acceptTorrentWasAlreadyAdded.bind(this),
@@ -102,6 +103,10 @@ class Application extends EventEmitter {
 
   acceptTorrentFileWasInvalid() {
     this._process('acceptTorrentFileWasInvalid')
+  }
+
+  removeTorrent (infoHash, deleteData) {
+    this._process('removeTorrent', infoHash, deleteData)
   }
 }
 

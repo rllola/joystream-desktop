@@ -12,7 +12,7 @@ const RemoveSection = inject('applicationStore')(observer((props) => {
 
     // Derive ButtonSection props
     let className = "remove"
-    let onClick = () => { props.torrent.remove(false) }
+    let onClick = () => { props.applicationStore.removeTorrent(props.torrent.infoHash, false) }
     let tooltip = "Remove"
 
     return (
