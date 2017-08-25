@@ -22,20 +22,9 @@ var OnDownloadingScene = new BaseMachine({
         this.go(client, '../OnUploadingScene')
       },
 
-      startDownload: function(client) {
+      startDownload: function(client, filesPicked) {
 
           // this._defaultTorrentFileSourceLocation
-
-          // Allow user to pick a torrent file
-          var filesPicked = dialog.showOpenDialog({
-              title : "Pick torrent file",
-              defaultPath: client._defaultTorrentFileSourceLocation,
-              filters: [
-                  {name: 'Torrent file', extensions: ['torrent']},
-                  {name: 'All Files', extensions: ['*']}
-              ],
-              properties: ['openFile']}
-          )
 
           // If the user did no pick any files, then we are done
           if(!filesPicked || filesPicked.length == 0)

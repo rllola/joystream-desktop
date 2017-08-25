@@ -93,8 +93,8 @@ class Application extends EventEmitter {
     this._process('onBeforeUnloadMainWindow', event)
   }
 
-  startDownload() {
-    this._process('startDownload')
+  startDownload(filesPicked) {
+    this._process('startDownload', filesPicked)
   }
 
   acceptTorrentWasAlreadyAdded() {

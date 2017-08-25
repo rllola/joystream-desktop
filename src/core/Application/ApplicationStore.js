@@ -277,8 +277,8 @@ class ApplicationStore {
 
   /// Downloading scene events
 
-  startDownload() {
-    this._handlers.startDownload()
+  startDownload(filesPicked) {
+    this._handlers.startDownload(filesPicked)
   }
 
   acceptTorrentFileAlreadyAdded() {

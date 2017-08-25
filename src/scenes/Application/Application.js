@@ -70,7 +70,7 @@ class Application extends Component {
                             <Downloading torrents={this.props.store.torrentsDownloading}
                                          revenue={this.props.store.totalSpent}
                                          downloadSpeed={this.props.store.totalDownloadSpeed}
-                                         onStartDownloadClicked={() => {this.props.store.startDownload()}}
+                                         onStartDownloadClicked={(filesPicked) => {this.props.store.startDownload(filesPicked)}}
                                          state={this.props.store.state}
                                          torrentsBeingLoaded={this.props.store.torrentsBeingLoaded}
                                          store={this.props.store}
