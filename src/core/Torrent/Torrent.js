@@ -288,14 +288,9 @@ TorrentStatemachineClient.prototype.getSavePath = function() {
 
     return this.torrent.handle.savePath()
 }
-
-TorrentStatemachineClient.prototype.remove = function () {
-
-  console.log(this.torrent)
-  console.log(this)
-  this._client.services.session.removeTorrent(this.infoHash, function () {
-    console.log('Removed !')
-  })
+  
+TorrentStatemachineClient.prototype.getTorrentInfo = function() {
+  return this.torrent.handle.torrentFile()
 }
 
 function LOG_ERROR(source, err) {
