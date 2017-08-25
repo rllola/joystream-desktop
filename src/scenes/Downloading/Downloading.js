@@ -8,7 +8,6 @@ import StartDownloadingFlow, {Stage} from './components/StartDownloadingFlow'
 
 const Downloading = observer((props) => {
 
-
     return (
         <div className="downloading-scene-container">
 
@@ -38,7 +37,7 @@ const Downloading = observer((props) => {
 
             </section>
 
-            <TorrentTable torrents={props.torrents} store={props.store} />
+            <TorrentTable torrents={props.torrents} store={props.store} onStartDownloadDrop={props.onStartDownloadClicked} />
 
             <StartDownloadingFlow store={props.store}/>
 

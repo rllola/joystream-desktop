@@ -21,7 +21,7 @@ import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
 import { contextMenuHiddenState, contextMenuVisibleState, contextMenuRect } from '../../utils/ContextMenuHelper'
 
 @observer
-class TorrentsTable extends Component {
+class TorrentTable extends Component {
 
     /**
      * Local UI state
@@ -40,7 +40,14 @@ class TorrentsTable extends Component {
     }
 
     handleFileDrop (files) {
-      console.log(files)
+      // If the user did no pick any files, then we are done
+      if(!files || files.length == 0)
+          return
+
+      // Get torrent file name picked
+      var torrentFile = files[0]
+
+      this.props.onStartDownloadDrop(torrentFile.path)
     }
 
     hideContextMenu() {
@@ -93,7 +100,7 @@ class TorrentsTable extends Component {
         }
 
         return (
-          <Dropzone disableClick style={dropZoneStyle} onDrop={this.handleFileDrop}>
+          <Dropzone disableClick style={dropZoneStyle} onDrop={this.handleFileDrop.bind(this)}>
             <Table column_titles={["", "State", "Size", "Progress", "Speed", "Arrival", "Mode", "Seeders", "Sellers"]}>
                 { this.getRenderedContextMenu() }
                 { this.getRenderedTorrentRows() }
@@ -171,8 +178,8 @@ class TorrentsTable extends Component {
     }
 }
 
-TorrentsTable.propTypes = {
+TorrentTable.propTypes = {
     //torrents : PropTypes.array.isRequired // Further refine this to require particular object (shapes) in array?
 }
 
-export default TorrentsTable
+export default TorrentTable

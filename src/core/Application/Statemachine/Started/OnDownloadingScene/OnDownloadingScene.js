@@ -21,20 +21,13 @@ var OnDownloadingScene = new BaseMachine({
         this.go(client, '../OnUploadingScene')
       },
 
-      startDownload: function(client, filesPicked) {
-
-          // If the user did no pick any files, then we are done
-          if(!filesPicked || filesPicked.length == 0)
-              return
-
-          // Get torrent file name picked
-          var torrentFile = filesPicked[0]
+      startDownload: function(client, filePath) {
 
           // Load torrent file
           let torrentInfo
 
           try {
-              torrentInfo = new TorrentInfo(torrentFile)
+              torrentInfo = new TorrentInfo(filePath)
           } catch(e) {
 
               console.log(e)
