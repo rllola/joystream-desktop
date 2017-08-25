@@ -8,6 +8,7 @@ import StartDownloadingFlow, {Stage} from './components/StartDownloadingFlow'
 
 const Downloading = observer((props) => {
 
+
     return (
         <div className="downloading-scene-container">
 
