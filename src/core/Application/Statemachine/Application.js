@@ -1,6 +1,8 @@
 /**
  * Created by bedeho on 11/06/17.
  */
+ import path from 'path'
+
 const BaseMachine = require('../../BaseMachine')
 
 const Starting = require('./Starting/Starting')
@@ -126,22 +128,28 @@ var ApplicationStateMachine = new BaseMachine({
       },
 
       removeTorrent: function (client, infoHash, deleteData) {
-        var name
+        var fullPath
+
         if (deleteData) {
           // retrieve path before deleting
           var torrent = client.torrents.get(infoHash)
-          var torrentInfo = torrent._client.getFileInfo()
-          name = torrentInfo.name()
+          var torrentInfo = torrent._client.getTorrentInfo()
+          var name = torrentInfo.name()
+          var savePath = torrent._client.getSavePath()
+          fullPath = path.join(savePath, name, path.sep)
         }
+
+        // Remove the torrent from the session
         client.services.session.removeTorrent(infoHash, function () {
+          // Remove the torrent from the db
           client.services.db.remove('torrents', infoHash).then(() => {
+            // Remove the torrent from the applicationStore
             client.store.torrentRemoved(infoHash)
-            if (name) {
-              console.log(path)
-              shell.moveItemToTrash(path)
+            // If deleteData we want to remove the folder/file
+            if (fullPath && deleteData) {
+              shell.moveItemToTrash(fullPath)
             }
           })
-          // Need to be removed also from db
         })
       }
     },
