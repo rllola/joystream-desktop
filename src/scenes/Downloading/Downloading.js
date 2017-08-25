@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 import PropTypes from 'prop-types'
+import {remote} from 'electron'
 
 import TorrentTable from './TorrentTable'
 import StartDownloadingFlow, {Stage} from './components/StartDownloadingFlow'

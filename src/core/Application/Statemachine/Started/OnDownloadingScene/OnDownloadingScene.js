@@ -2,7 +2,6 @@
  * Created by bedeho on 12/06/17.
  */
 
-const dialog = require('electron').remote.dialog
 const BaseMachine = require('../../../../BaseMachine')
 const TorrentStatemachine = require('../../../../Torrent/Statemachine')
 const TorrentInfo = require('joystream-node').TorrentInfo
@@ -23,8 +22,6 @@ var OnDownloadingScene = new BaseMachine({
       },
 
       startDownload: function(client, filesPicked) {
-
-          // this._defaultTorrentFileSourceLocation
 
           // If the user did no pick any files, then we are done
           if(!filesPicked || filesPicked.length == 0)
