@@ -26,4 +26,4 @@ function diasble () {
   blockerId = powerSaveBlocker.start('prevent-display-sleep')
 }
 
-export default {enable, disable}
+export {enable, disable}

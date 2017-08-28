@@ -121,6 +121,10 @@ var Torrent = new BaseMachine({
               // restore original bounds
               // Should not be hardcoded (TODO)
               electron.ipcRenderer.send('set-bounds', bounds)
+              
+              // Disable save power blocker
+              electron.ipcRenderer.send('power-save-blocker', {enable:false})
+
               client.store.setIsPlaying(null)
             },
             openFolder: function (client) {

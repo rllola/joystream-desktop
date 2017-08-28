@@ -80,12 +80,18 @@ ipcMain.on('set-bounds', (event, arg) => {
   }
 })
 
+// Listen if we need to block the save power feature to avooid the screen going
+// black in the middle of a video.
 ipcMain.on('power-save-blocker', (event, arg) => {
     const {enable, disable} = require('./power-save-blocker')
 
+    console.log(arg)
+
     if (arg.enable) {
+      // Enable blocker
       enable()
     } else {
+      // Disable blocker
       disable()
     }
 })
