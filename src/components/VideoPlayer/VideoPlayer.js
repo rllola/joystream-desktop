@@ -30,7 +30,7 @@ class VideoPlayer extends Component {
       <div>
         <CloseButton torrent={this.props.torrent} />
         <div id="video-player-container"  style={overlayStyle}>
-          <video id="video-player" onLoadedMetadata={this.props.onLoadedMetadata} style={videoStyle} controls>
+          <video id="video-player" onLoadedMetadata={this.props.torrent.onLoadedMetadata} style={videoStyle} controls>
           </video>
         </div>
       </div>
