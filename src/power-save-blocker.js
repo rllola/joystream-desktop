@@ -18,7 +18,7 @@ function enable () {
 /**
  * Stop blocking the system from entering low-power mode.
  */
-function diasble () {
+function disable () {
   if (!powerSaveBlocker.isStarted(blockerId)) {
     // If a power saver block don't exists, do nothing.
     return
