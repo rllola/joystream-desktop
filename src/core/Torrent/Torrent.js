@@ -174,8 +174,8 @@ TorrentStatemachineClient.prototype.stopLibtorrentTorrent = function() {
 }
 
 TorrentStatemachineClient.prototype.hasOutstandingResumeData = function () {
-  // How do we determine if torrent has outstanding resume data?
-  return false
+
+  return this.torrent.handle.needSaveResumeData()
 }
 
 TorrentStatemachineClient.prototype.generateResumeData = function() {
