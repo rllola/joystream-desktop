@@ -143,6 +143,9 @@ var ApplicationStateMachine = new BaseMachine({
         client.services.session.removeTorrent(infoHash, function () {
           // Remove the torrent from the db
           client.services.db.remove('torrents', infoHash).then(() => {
+
+            client.torrents.delete(infoHash)
+
             // Remove the torrent from the applicationStore
             client.store.torrentRemoved(infoHash)
             // If deleteData we want to remove the folder/file
