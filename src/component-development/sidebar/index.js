@@ -10,34 +10,88 @@ import React from 'react'
 import {ScenarioContainer} from '../common'
 import {
     Button,
-    SideBar,
-    SideBarFrame
+    ChangeTermsButton,
+    UploadButton,
+    DowloadButton,
+    FinishedButton,
+    WalletButton,
+    CommunityButton,
+    LivestreamButton,
+    SideBar
 } from '../../components/SideBar'
+
+const BasicSideBar = (props) => {
+
+    return (
+        <SideBar backgroundColor="#202F53">
+
+            <UploadButton
+                onClick={() => { console.log("click: hello 1")}}
+            />
+
+            <DowloadButton
+                onClick={() => { console.log("click: hello 2")}}
+            />
+
+            <FinishedButton
+                selected={true}
+                onClick={() => { console.log("click: hello 2")}}
+            />
+
+            <WalletButton
+                onClick={() => { console.log("click: hello 2")}}
+            />
+
+            <CommunityButton
+                onClick={() => { console.log("click: hello 2")}}
+            />
+
+            <LivestreamButton
+                onClick={() => { console.log("click: hello 3")}}
+            />
+
+        </SideBar>
+    )
+
+}
 
 const SideBarScenarios = () => {
 
     return (
         <div>
-
-            <ScenarioContainer title="Basic sidebar">
-                <SideBar>
-
-                    <Button title={"downloads"}
-                            onClick={() => { console.log("click: hello 1")}}
-                            iconUrl=""/>
-
-                    <Button onClick={() => { console.log("click: hello 2")}}
-                            iconUrl=""/>
-
-                    <Button title={"finished"}
-                            onClick={() => { console.log("click: hello 3")}}
-                            iconUrl=""/>
-
-                </SideBar>
-            </ScenarioContainer>
-
+            <BasicSidebarScenario/>
+            <BasicNavigationScenario/>
         </div>
     )
+}
+
+const BasicSidebarScenario = () => {
+
+    return (
+        <ScenarioContainer title="Basic sidebar">
+            <BasicSideBar />
+        </ScenarioContainer>
+    )
+}
+
+const BasicNavigationScenario = () => {
+
+    var style = {
+        display : 'flex',
+        margin : '40px',
+        border : '2px solid grey',
+        borderRadius : '3px'
+    }
+
+    return (
+        <ScenarioContainer title="Basic navigation">
+            <div style={style}>
+                <div><BasicSideBar /></div>
+                <div>hh</div>
+            </div>
+        </ScenarioContainer>
+    )
+
 }
 
 

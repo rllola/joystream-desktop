@@ -7,20 +7,31 @@ import PropTypes from 'prop-types'
 
 const SideBar = (props) => {
 
-    var style = {
+    var style = props.style ? props.style : {
         display : 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        backgroundColor : props.backgroundColor
     }
+
+    let childStyle = {marginBottom: '30px'}
+
+    // skip last margin??
 
     return (
         <div style={style}>
-            {props.children}
+            {props.children.map(child => {
+                return (
+                    <div style={childStyle}>
+                        {child}
+                    </div>
+                )
+            })}
         </div>
     )
 }
 
 SideBar.propTypes = {
-    title : PropTypes.string.isRequired,
+    backgroundColor : PropTypes.string
 }
 
 export default SideBar
