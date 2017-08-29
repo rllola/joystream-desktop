@@ -8,6 +8,7 @@ const BaseMachine = require('../../BaseMachine')
 const Starting = require('./Starting/Starting')
 const Started = require('./Started/Started')
 const Stopping = require('./Stopping/Stopping')
+
 const {shell} = require('electron')
 
 const TorrentInfo = require('joystream-node').TorrentInfo
@@ -129,15 +130,17 @@ var ApplicationStateMachine = new BaseMachine({
 
       removeTorrent: function (client, infoHash, deleteData) {
         var fullPath
+        var torrent = client.torrents.get(infoHash)
 
         if (deleteData) {
           // retrieve path before deleting
-          var torrent = client.torrents.get(infoHash)
           var torrentInfo = torrent._client.getTorrentInfo()
           var name = torrentInfo.name()
           var savePath = torrent._client.getSavePath()
           fullPath = path.join(savePath, name, path.sep)
         }
+
+        torrent.terminate()
 
         // Remove the torrent from the session
         client.services.session.removeTorrent(infoHash, function () {
