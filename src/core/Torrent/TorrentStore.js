@@ -62,19 +62,19 @@ class TorrentStore {
         this._torrent = torrent
         this.infoHash = infoHash
         this.state = state
-        this.progress = progress
-        this.totalSize = totalSize
-        this.downloadedSize = downloadedSize
-        this.downloadSpeed = downloadSpeed
-        this.uploadSpeed = uploadSpeed
-        this.uploadedTotal = uploadedTotal
-        this.name = name
-        this.numberOfBuyers = numberOfBuyers
-        this.numberOfSellers = numberOfSellers
-        this.numberOfObservers = numberOfObservers
-        this.numberOfNormalPeers = numberOfNormalPeers
-        this.numberOfSeeders = numberOfSeeders
-        this.suitableSellers = suitableSellers
+        this.progress = progress ? progress : 0
+        this.totalSize = totalSize ? totalSize : 0
+        this.downloadedSize = downloadedSize ? downloadedSize : 0
+        this.downloadSpeed = downloadSpeed ? downloadSpeed : 0
+        this.uploadSpeed = uploadSpeed ? uploadSpeed : 0
+        this.uploadedTotal = uploadedTotal ? uploadedTotal : 0
+        this.name = name ? name : ''
+        this.numberOfBuyers = numberOfBuyers ? numberOfBuyers : 0
+        this.numberOfSellers = numberOfSellers ? numberOfSellers : 0
+        this.numberOfObservers = numberOfObservers ? numberOfObservers : 0
+        this.numberOfNormalPeers = numberOfNormalPeers ? numberOfNormalPeers : 0
+        this.numberOfSeeders = numberOfSeeders ? numberOfSeeders : 0
+        this.suitableSellers = suitableSellers ? suitableSellers : []
     }
 
     setTorrent(torrent) {
