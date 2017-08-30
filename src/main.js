@@ -54,7 +54,12 @@ ipcMain.on('main-window-channel', (event, arg) => {
 function createWindow () {
   
   // Create the browser window.
-  win = new BrowserWindow({width: 1024, height: 800})
+  win = new BrowserWindow({
+      width: 1200,
+      height: 800,
+      minHeight: 500,
+      minWidth: 1200
+  })
 
   if (isDev) {
     // Enable live reloading
