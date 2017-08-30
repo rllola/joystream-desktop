@@ -14,13 +14,14 @@ function contextMenuHiddenState() {
     return { contextMenu : null }
 }
 
-function contextMenuVisibleState(top, left, torrent) {
+function contextMenuVisibleState(top, left, torrent, applicationStore) {
 
     return {
         contextMenu : {
             top: top,
             left : left,
-            torrent : torrent
+            torrent : torrent,
+            store : applicationStore
         }
     }
 }

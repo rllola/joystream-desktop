@@ -115,8 +115,8 @@ class TorrentsTable extends Component {
                                     onChangePauseStatus = {() => {this.state.contextMenu.torrent.changePauseStatus(); this.hideContextMenu()}}
                                     changePriceEnabled = {this.state.contextMenu.torrent.canChangePrice}
                                     onChangePriceClicked = {() => {this.state.contextMenu.torrent.showChangePriceDialog(); this.hideContextMenu()}}
-                                    onRemoveClicked = {() => {this.state.contextMenu.torrent.remove(); this.hideContextMenu()}}
-                                    onRemoveAndDeleteDataClicked = {() => {this.state.contextMenu.torrent.removeAndDeleteData(); this.hideContextMenu()}}
+                                    onRemoveClicked = {() => {this.props.store.remove(); this.hideContextMenu()}}
+                                    onRemoveAndDeleteDataClicked = {() => {this.props.store.remove(); this.hideContextMenu()}}
                                     numberOfBuyers = {this.state.contextMenu.torrent.numberOfBuyers}
                                     numberOfSellers = {this.state.contextMenu.torrent.numberOfSellers}
                                     numberOfObservers = {this.state.contextMenu.torrent.numberOfObservers}
@@ -139,7 +139,9 @@ class TorrentsTable extends Component {
     }
 
     getRenderedTorrentRow(t) {
-      
+
+        console.log(this.props)
+
         var toolbarProps = {
             canSpeedup : t.canStartPaidDownloading,
             onSpeedupClicked : () => { t.startBuying() },
@@ -151,7 +153,8 @@ class TorrentsTable extends Component {
             <TorrentRow key={t.infoHash}
                         torrent={t}
                         toolbarVisibilityStatus = {this.getToolbarVisibilityTypeForTorrent(t)}
-                        toolbarProps={toolbarProps}/>
+                        toolbarProps={toolbarProps}
+                        store={this.props.store} />
         )
     }
 

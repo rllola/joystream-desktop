@@ -132,7 +132,8 @@ class TorrentsTable extends Component {
             <TorrentRow key={t.info_hash}
                         torrent={t}
                         toolbarVisibilityStatus = {this.getToolbarVisibilityTypeForTorrent(t)}
-                        toolbarProps={toolbarProps}/>
+                        toolbarProps={toolbarProps}
+                        store={this.props.store} />
         )
     }
 

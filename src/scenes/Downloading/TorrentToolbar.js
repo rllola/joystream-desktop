@@ -23,8 +23,8 @@ const TorrentToolbar = observer((props) => {
             <StartPaidDownloadingSection torrent={props.torrent}/>
             <ToggleStatusSection torrent={props.torrent}/>
             <ChangeBuyerTermsSection torrent={props.torrent}/>
-            <RemoveSection torrent={props.torrent}/>
-            <RemoveAndDeleteSection torrent={props.torrent}/>
+            <RemoveSection torrent={props.torrent} store={props.store}/>
+            <RemoveAndDeleteSection torrent={props.torrent} store={props.store}/>
             <OpenFolderSection torrent={props.torrent} />
         </Toolbar>
     )
@@ -37,6 +37,7 @@ const TorrentToolbar = observer((props) => {
 
 TorrentToolbar.propTypes = {
     torrent : PropTypes.object.isRequired, // TorrentStore really
+    store : PropTypes.object.isRequired,
     onMoreClicked : PropTypes.func.isRequired // <==
 }
 

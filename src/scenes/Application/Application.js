@@ -38,7 +38,6 @@ class Application extends Component {
 
         return (
             <MuiThemeProvider>
-              <Provider applicationStore={this.props.store}>
                 <div className="app-container">
 
                     {this.renderActiveScene()}
@@ -53,7 +52,6 @@ class Application extends Component {
                     {process.env.NODE_ENV === 'development' ? <div><MobxReactDevTools/></div> : null}
                     {this.renderVideoPlayer()}
                 </div>
-              </Provider>
             </MuiThemeProvider>
         )
     }
@@ -77,7 +75,7 @@ class Application extends Component {
                                          onStartDownloadClicked={() => {this.props.store.startDownload()}}
                                          state={this.props.store.state}
                                          torrentsBeingLoaded={this.props.store.torrentsBeingLoaded}
-                                         store = {this.props.store}
+                                         store={this.props.store}
                             />
                         </NavigationFrame>
 
@@ -88,13 +86,16 @@ class Application extends Component {
                                    revenue={this.props.store.revenue}
                                    uploadSpeed={this.props.store.totalUploadSpeed}
                                    onStartUploadCliked={() => {console.log(" start uploading clicked")}}
+                                   stores={this.props.store}
                           />
                         </NavigationFrame>
 
             case Scene.Completed:
 
                 return <NavigationFrame app={this.props.store}>
-                            <Completed torrents={this.props.store.torrentsCompleted} />
+                            <Completed torrents={this.props.store.torrentsCompleted}
+                                       store={this.props.store}
+                            />
                         </NavigationFrame>
 
             case Scene.ShuttingDown:
