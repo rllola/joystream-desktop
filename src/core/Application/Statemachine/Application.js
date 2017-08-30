@@ -144,19 +144,24 @@ var ApplicationStateMachine = new BaseMachine({
 
         // Remove the torrent from the session
         client.services.session.removeTorrent(infoHash, function () {
-          // Remove the torrent from the db
-          client.services.db.remove('torrents', infoHash).then(() => {
 
-            client.torrents.delete(infoHash)
-
-            // Remove the torrent from the applicationStore
-            client.store.torrentRemoved(infoHash)
-            // If deleteData we want to remove the folder/file
-            if (fullPath && deleteData) {
-              shell.moveItemToTrash(fullPath)
-            }
-          })
         })
+
+        // Remove the torrent from the db
+        client.services.db.remove('torrents', infoHash).then(() => {
+
+        })
+
+        // Delete torrent from the client map
+        client.torrents.delete(infoHash)
+
+        // Remove the torrent from the applicationStore
+        client.store.torrentRemoved(infoHash)
+        
+        // If deleteData we want to remove the folder/file
+        if (fullPath && deleteData) {
+          shell.moveItemToTrash(fullPath)
+        }
       }
     },
 
