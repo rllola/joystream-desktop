@@ -47,6 +47,9 @@ $content-padding: 10px;
       font-family: $major-font-family;
       font-size: 18px;
 
+      // Prevent growing or shrinking, and start out at 60px tall
+      flex: 0 0 60px;
+
       // border-bottom: 2px solid #cdcdcd; // temporary
     }
 
