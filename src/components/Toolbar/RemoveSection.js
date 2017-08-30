@@ -12,7 +12,7 @@ const RemoveSection = observer((props) => {
 
     // Derive ButtonSection props
     let className = "remove"
-    let onClick = () => { props.torrent.remove(false) }
+    let onClick = () => { props.store.removeTorrent(props.torrent.infoHash, false) }
     let tooltip = "Remove"
 
     return (
@@ -21,7 +21,8 @@ const RemoveSection = observer((props) => {
 })
 
 RemoveSection.propTypes = {
-    torrent : PropTypes.object.isRequired, // TorrentStore really
+    store : PropTypes.object.isRequired,
+    torrent : PropTypes.object.isRequired
 }
 
 export default RemoveSection

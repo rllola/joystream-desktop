@@ -63,7 +63,7 @@ class TorrentRow extends Component {
             this.props.toolbarVisibilityStatus != ToolbarVisibilityType.Hidden
             ?
             <AbsolutePositionChildren left={-340} top={-20}>
-                <TorrentToolbar {...this.props.toolbarProps} torrent={this.props.torrent}/>
+                <TorrentToolbar {...this.props.toolbarProps} torrent={this.props.torrent} store={this.props.store}/>
             </AbsolutePositionChildren>
             :
             null

@@ -18,15 +18,16 @@ const TorrentToolbar = (props) => {
         <Toolbar>
             <PlaySection torrent={props.torrent} />
             <StopUploadingSection torrent={props.torrent}/>
-            <RemoveSection torrent={props.torrent}/>
-            <RemoveAndDeleteSection torrent={props.torrent}/>
+            <RemoveSection torrent={props.torrent} store={props.store} />
+            <RemoveAndDeleteSection torrent={props.torrent} store={props.store} />
             <OpenFolderSection torrent={props.torrent} />
         </Toolbar>
     )
 }
 
 TorrentToolbar.propTypes = {
-    torrent : PropTypes.object.isRequired
+    torrent : PropTypes.object.isRequired,
+    store : PropTypes.object.isRequired
 }
 
 export default TorrentToolbar

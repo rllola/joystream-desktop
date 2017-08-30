@@ -287,10 +287,6 @@ class TorrentStore {
         this._torrent.stop()
     }
 
-    remove(deleteData) {
-        this._torrent.remove(deleteData)
-    }
-
     openFolder() {
         this._torrent.openFolder()
     }

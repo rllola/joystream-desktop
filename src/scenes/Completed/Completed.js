@@ -20,7 +20,7 @@ const Completed = (props) => {
 
             </section>
 
-            <TorrentTable torrents={props.torrents} />
+            <TorrentTable torrents={props.torrents} store={props.store} />
 
         </div>
     )
