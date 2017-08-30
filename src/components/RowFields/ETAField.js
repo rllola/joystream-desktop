@@ -21,8 +21,11 @@ function isNonNegativeInteger(n) {
  *
  * @param bytes {Number} Total number of bytes to be downloaded
  * @param bytes_per_second {Numbre} Byte rate, per second, at which bytes are downloaded
+ * @param max_tokens {Number} Maximum number of tokens to be used in humanized string
  */
-function readableETAString(bytes, bytes_per_second) {
+function readableETAString(bytes, bytes_per_second, max_tokens) {
+
+    max_tokens = max_tokens || 2
 
     if(!isNonNegativeInteger(bytes))
         throw Error('bytes: must be non-negative integer')
@@ -36,8 +39,12 @@ function readableETAString(bytes, bytes_per_second) {
     var total_seconds = bytes/bytes_per_second
     var total_ms = 1000 * total_seconds
 
+    var delimiter = '-'
+
     // Factor out humanizer setup, instead get humanizer injected or something
-    var ETAString = humanizeDuration(total_ms, {
+    var FullHumanizedETAString = humanizeDuration(total_ms, {
+        spacer: '', // String to display between each value and unit.
+        delimiter: delimiter, //
         round: true,
         units: ['y', 'mo', 'w', 'd', 'h', 'm'],
         language: 'shortEn',
@@ -54,6 +61,14 @@ function readableETAString(bytes, bytes_per_second) {
             }
         }
     })
+
+    // Trim off anything beyond second unit
+    var humanizedTokens = FullHumanizedETAString.split(delimiter)
+
+    var ETAString = ''
+
+    for(var i = 0;i < Math.min(max_tokens, humanizedTokens.length);i++)
+        ETAString += humanizedTokens[i] + ' '
 
     return ETAString
 }
