@@ -153,7 +153,8 @@ class TorrentsTable extends Component {
 }
 
 TorrentsTable.propTypes = {
-    torrents : PropTypes.array.isRequired // Further refine this to require particular object (shapes) in array?
+    torrents : PropTypes.array.isRequired, // Further refine this to require particular object (shapes) in array?
+    store : PropTypes.object.isRequired
 }
 
 export default TorrentsTable
