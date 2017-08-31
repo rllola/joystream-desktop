@@ -3,6 +3,7 @@
 // Values required in calculations
 $row-padding: 15px;
 $content-padding: 10px;
+$scrollbar-width: 13px;
 
 .my_table {
 
@@ -12,7 +13,7 @@ $content-padding: 10px;
 
     // Lateral padding must match total offset on row field
     padding-left: $row-padding + $content-padding;
-    padding-right: $row-padding + $content-padding;
+    padding-right: $row-padding + $content-padding + $scrollbar-width;
     padding-bottom: 12px;
 
     font-family: $major-font-family;
@@ -67,6 +68,56 @@ $content-padding: 10px;
       margin-bottom: 0px;
     }
   }
+
+  // .... //
+
+  /**
+  .content::-webkit-scrollbar-track
+  {
+    //-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    //border-radius: 10px;
+    //background-color: blue;
+  }
+
+  .content::-webkit-scrollbar
+  {
+    //width: 10px;
+    //background-color: red;
+  }
+
+  .content::-webkit-scrollbar-thumb
+  {
+    border-radius: 200000px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: green;
+    width: 200px;
+  }
+  */
+
+  // Entire scrollbar
+  .content::-webkit-scrollbar {
+    width: $scrollbar-width;
+  }
+
+  // Background track
+  .content::-webkit-scrollbar-track {
+    background: #F9F9F9;
+  }
+
+  .content::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #C2C2C2;
+    border: 3px solid #F9F9F9;
+  }
+
+  .content::-webkit-scrollbar-thumb:hover {
+    background:rgba(0,0,0,0.4);
+  }
+
+  .content::-webkit-scrollbar-thumb:window-inactive {
+    background:rgba(0,0,0,0.05);
+  }
+
 
   .field {
     display: flex;
