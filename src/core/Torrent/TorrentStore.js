@@ -220,8 +220,8 @@ class TorrentStore {
     }
 
     @action.bound
-    setSellerPrice (sellerPrice) {
-      this.sellerPrice = sellerPrice
+    setSellerPrice (sellerTerms) {
+      this.sellerPrice = sellerTerms.minPrice
     }
 
     /// Scene selector

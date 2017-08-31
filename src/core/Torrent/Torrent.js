@@ -127,7 +127,6 @@ Torrent.prototype.openFolder = function () {
 }
 
 Torrent.prototype.remove = function (deleteData) {
-  console.log(this)
   this._client.processStateMachineInput('remove', deleteData)
 }
 
@@ -288,7 +287,7 @@ TorrentStatemachineClient.prototype.getSavePath = function() {
 
     return this.torrent.handle.savePath()
 }
-  
+
 TorrentStatemachineClient.prototype.getTorrentInfo = function() {
   return this.torrent.handle.torrentFile()
 }

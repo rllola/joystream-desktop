@@ -13,6 +13,10 @@ var Uploading = new BaseMachine({
         Uninitialized : {},
 
         Started: {
+            _onEnter: function (client) {
+                console.log(client.sellerTerms)
+                client.store.setSellerPrice(client.sellerTerms)
+            },
 
             stop: function (client) {
 
@@ -28,6 +32,10 @@ var Uploading = new BaseMachine({
 
                 // Tell user to change seller terms
                 client.updateSellerTerms(sellerTerms)
+            },
+
+            sellerTermsUpdated: function (client, terms) {
+                client.store.setSellerPrice(terms)
             },
 
             goToPassive: function(client) {

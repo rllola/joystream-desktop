@@ -22,8 +22,6 @@ var FinishedDownloading = new BaseMachine({
 
                 client.sellerTerms = sellerTerms
 
-                console.log(sellerTerms)
-
                 client.toSellMode(sellerTerms)
 
                 this.go(client, 'Uploading/Started')
