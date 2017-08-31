@@ -64,6 +64,7 @@ TorrentRow.propTypes = {
     torrent: PropTypes.object.isRequired, // hould we here _require_ a TorrentStore?
     toolbarVisibilityStatus : PropTypes.oneOf(Object.values(ToolbarVisibilityType)).isRequired,
     toolbarProps : PropTypes.object, // later use shape?
+    store : PropTypes.object.isRequired
 }
 
 export default TorrentRow

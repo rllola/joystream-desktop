@@ -86,7 +86,7 @@ class Application extends Component {
                                    revenue={this.props.store.revenue}
                                    uploadSpeed={this.props.store.totalUploadSpeed}
                                    onStartUploadCliked={() => {console.log(" start uploading clicked")}}
-                                   stores={this.props.store}
+                                   store={this.props.store}
                           />
                         </NavigationFrame>
 

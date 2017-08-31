@@ -45,7 +45,8 @@ Seeding.propTypes = {
     torrents : PropTypes.array.isRequired,
     revenue : PropTypes.number.isRequired,
     uploadSpeed : PropTypes.number.isRequired,
-    onStartUploadCliked : PropTypes.func.isRequired
+    onStartUploadCliked : PropTypes.func.isRequired,
+    store : PropTypes.object.isRequired
 }
 
 export default Seeding
