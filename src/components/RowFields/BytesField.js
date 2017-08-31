@@ -11,13 +11,21 @@ const BytesField = (props) => {
 
     return (
         <Field>
-            {bytes(props.bytes, { unitSeparator : ' '})}
+            {bytes(props.bytes, {
+                unitSeparator : ' ',
+                decimalPlaces : props.decimalPlaces
+            })}
         </Field>
     )
 }
 
 BytesField.propTypes = {
-    bytes : PropTypes.number.isRequired
+    bytes : PropTypes.number.isRequired,
+    decimalPlaces : PropTypes.number
+}
+
+BytesField.defaultProps = {
+    decimalPlaces : 0
 }
 
 export default BytesField
