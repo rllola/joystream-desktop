@@ -95,7 +95,7 @@ class Button extends Component {
                     </SvgIcon>
 
 
-                <span style={style.title}>{this.props.title}</span>
+                { /** <span style={style.title}>{this.props.title}</span> **/ }
             </div>
         )
 
