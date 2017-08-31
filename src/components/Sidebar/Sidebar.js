@@ -17,7 +17,7 @@ function getStyle(props, context) {
     return style
 }
 
-const SideBar = (props) => {
+const Sidebar = (props) => {
 
     var style = props.style ? props.style : {
         display : 'flex',
@@ -25,15 +25,15 @@ const SideBar = (props) => {
         backgroundColor : props.backgroundColor
     }
 
-    let childStyle = {marginBottom: '30px'}
+    let childStyle = { marginBottom: '30px'}
 
     // skip last margin??
 
     return (
         <div style={style}>
-            {props.children.map(child => {
+            {props.children.map((child, index) => {
                 return (
-                    <div style={childStyle}>
+                    <div style={childStyle} key={index}>
                         {child}
                     </div>
                 )
@@ -42,9 +42,9 @@ const SideBar = (props) => {
     )
 }
 
-SideBar.propTypes = {
+Sidebar.propTypes = {
     backgroundColor : PropTypes.string,
-    style : PropTypes.string
+    style : PropTypes.object
 }
 
-export default SideBar
+export default Sidebar

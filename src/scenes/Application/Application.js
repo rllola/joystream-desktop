@@ -8,7 +8,7 @@ import StatusBar,{ProgressStatusPanel} from '../../components/StatusBar'
 import Scene from '../../core/Application/Scene'
 
 // Components
-//import Sidebar from './components/Sidebar'
+//import ApplicationSidebar from './components/ApplicationSidebar'
 import VideoPlayer from '../../components/VideoPlayer'
 
 // Our scenes
@@ -18,7 +18,7 @@ import Terminating, {TerminatingState} from '../Terminating'
 import Downloading from '../Downloading'
 import Seeding from '../Seeding'
 import Completed from '../Completed'
-import {Sidebar} from '../../components/Sidebar'
+import ApplicationSidebar from './components/ApplicationSidebar'
 //import Wallet from '../Wallet'
 
 let MobxReactDevTools
@@ -120,11 +120,11 @@ Application.propTypes = {
 const NavigationFrame = observer((props) => {
 
     // { /** <Header app={props.app}/> **/ }
-    // <Sidebar />
+    //
 
     return (
         <div className="navigation-frame-container">
-            <Header app={props.app}/>
+            <ApplicationSidebar />
             {props.children}
         </div>
     )
