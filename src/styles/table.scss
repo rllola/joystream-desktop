@@ -47,6 +47,9 @@ $content-padding: 10px;
       font-family: $major-font-family;
       font-size: 18px;
 
+      // Prevent growing or shrinking, and start out at 60px tall
+      flex: 0 0 60px;
+
       // border-bottom: 2px solid #cdcdcd; // temporary
     }
 
@@ -54,7 +57,7 @@ $content-padding: 10px;
     .hint-row {
       background-color: #D9D9D9;
       color: #818181;
-      font-family: TrebuchetMS;
+      font-family: $major-font-family;
       font-size: 24px;
       justify-content: center;
     }
@@ -70,7 +73,8 @@ $content-padding: 10px;
     align-items: center;
     justify-content: center;
 
-    flex-grow: 0.05;
+    //flex-grow: 0.05;
+    flex: 0 0 80px;
     margin-left: 30px;
     width: 80px;
     text-align: center;
