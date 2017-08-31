@@ -3,6 +3,7 @@
 // Values required in calculations
 $row-padding: 15px;
 $content-padding: 10px;
+$scrollbar-width: 13px;
 
 .my_table {
 
@@ -12,7 +13,7 @@ $content-padding: 10px;
 
     // Lateral padding must match total offset on row field
     padding-left: $row-padding + $content-padding;
-    padding-right: $row-padding + $content-padding;
+    padding-right: $row-padding + $content-padding + $scrollbar-width;
     padding-bottom: 12px;
 
     font-family: $major-font-family;
@@ -92,7 +93,7 @@ $content-padding: 10px;
 
   // Entire scrollbar
   .content::-webkit-scrollbar {
-    width:13px;
+    width: $scrollbar-width;
   }
 
   // Background track
