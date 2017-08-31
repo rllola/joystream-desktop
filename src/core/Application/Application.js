@@ -170,7 +170,7 @@ class ApplicationStatemachineClient {
             this.privateKeyGenerator.bind(this),
             this.pubKeyHashGenerator.bind(this),
             this.contractGenerator.bind(this),
-            Common.getStandardbuyerTerms)
+            Common.getStandardSellerTerms)
       },
 
       testnetFaucet: function () { return faucet }
