@@ -40,11 +40,9 @@ function getStyles(props, state) {
             },
 
             icon : {
-                height: '30px',
-                width: '30px',
+                height: '48px',
+                width: '48px',
                 marginBottom: '10px',
-                //viewBox: '0 0 30 300'
-                //,
                 svgIconColor : color
             },
 
@@ -90,12 +88,12 @@ class Button extends Component {
                  onMouseLeave={this.handleMouseLeave}
                  onClick={this.props.onClick}>
 
-                    <SvgIcon color={style.icon.svgIconColor} style={style.icon}>
+                    <SvgIcon color={style.icon.svgIconColor} style={style.icon} viewBox={this.props.viewBox}>
                         {this.props.children}
                     </SvgIcon>
 
 
-                { /** <span style={style.title}>{this.props.title}</span> **/ }
+                <span style={style.title}>{this.props.title}</span>
             </div>
         )
 
@@ -115,7 +113,9 @@ Button.propTypes = {
     hoverColor : PropTypes.string.isRequired,
     selectedColor : PropTypes.string.isRequired,
 
-    textColor : PropTypes.string.isRequired
+    textColor : PropTypes.string.isRequired,
+
+    viewBox : PropTypes.string
 }
 
 Button.defaultProps = {
@@ -179,19 +179,33 @@ const WalletButton = (props) => {
 
     return (
         <Button title="wallet" {...props}>
-            <rect data-color="color-2" x="6" width="16" height="4"></rect>
-            <path d="M23,6H3C2.449,6,2,5.551,2,5s0.449-1,1-1h1V2H3C1.343,2,0,3.343,0,5v15c0,2.209,1.791,4,4,4h19 c0.552,0,1-0.448,1-1V7C24,6.448,23.552,6,23,6z M18,17c-1.105,0-2-0.895-2-2c0-1.105,0.895-2,2-2s2,0.895,2,2 C20,16.105,19.105,17,18,17z"></path>
+            <g class="nc-icon-wrapper" >
+                <path d="M46,26h-9c-2.206,0-4,1.794-4,4s1.794,4,4,4h9c0.552,0,1-0.448,1-1v-6 C47,26.448,46.552,26,46,26z"></path>
+                <path d="M38,1H10C9.447,1,9,1.447,9,2v7c0,0.553,0.447,1,1,1h28c0.553,0,1-0.447,1-1V2 C39,1.447,38.553,1,38,1z"></path>
+                <path d="M43,13H6c-1.654,0-3-1.346-3-3s1.346-3,3-3h1V5H6c-2.757,0-5,2.243-5,5v30c0,3.86,3.14,7,7,7h35 c0.552,0,1-0.448,1-1V36h-7c-3.309,0-6-2.691-6-6s2.691-6,6-6h7V14C44,13.448,43.552,13,43,13z"></path>
+            </g>
         </Button>
     )
 }
 
 const CommunityButton = (props) => {
+/**
+    <g class="nc-icon-wrapper">
+        <path d="M12,6L12,6c-1.657,0-3-1.343-3-3v0c0-1.657,1.343-3,3-3h0c1.657,0,3,1.343,3,3v0C15,4.657,13.657,6,12,6z"></path>
+        <path d="M4,19v-8c0-1.13,0.391-2.162,1.026-3H2c-1.105,0-2,0.895-2,2v6h2v5c0,0.552,0.448,1,1,1h2 c0.552,0,1-0.448,1-1v-2H4z"></path> <path fill="#444444" d="M14,24h-4c-0.552,0-1-0.448-1-1v-6H6v-6c0-1.657,1.343-3,3-3h6c1.657,0,3,1.343,3,3v6h-3v6 C15,23.552,14.552,24,14,24z"></path> <path data-color="color-2" fill="#444444" d="M4,7L4,7C2.895,7,2,6.105,2,5v0c0-1.105,0.895-2,2-2h0c1.105,0,2,0.895,2,2v0 C6,6.105,5.105,7,4,7z"></path> <path data-color="color-2" fill="#444444" d="M20,19v-8c0-1.13-0.391-2.162-1.026-3H22c1.105,0,2,0.895,2,2v6h-2v5c0,0.552-0.448,1-1,1h-2 c-0.552,0-1-0.448-1-1v-2H20z"></path> <path data-color="color-2" fill="#444444" d="M20,7L20,7c1.105,0,2-0.895,2-2v0c0-1.105-0.895-2-2-2h0c-1.105,0-2,0.895-2,2v0 C18,6.105,18.895,7,20,7z"></path>
+    </g>
+   */
 
     return (
         <Button title="community" {...props}>
+
             <g class="nc-icon-wrapper">
-                <path d="M12,6L12,6c-1.657,0-3-1.343-3-3v0c0-1.657,1.343-3,3-3h0c1.657,0,3,1.343,3,3v0C15,4.657,13.657,6,12,6z"></path>
-                <path d="M4,19v-8c0-1.13,0.391-2.162,1.026-3H2c-1.105,0-2,0.895-2,2v6h2v5c0,0.552,0.448,1,1,1h2 c0.552,0,1-0.448,1-1v-2H4z"></path> <path fill="#444444" d="M14,24h-4c-0.552,0-1-0.448-1-1v-6H6v-6c0-1.657,1.343-3,3-3h6c1.657,0,3,1.343,3,3v6h-3v6 C15,23.552,14.552,24,14,24z"></path> <path data-color="color-2" fill="#444444" d="M4,7L4,7C2.895,7,2,6.105,2,5v0c0-1.105,0.895-2,2-2h0c1.105,0,2,0.895,2,2v0 C6,6.105,5.105,7,4,7z"></path> <path data-color="color-2" fill="#444444" d="M20,19v-8c0-1.13-0.391-2.162-1.026-3H22c1.105,0,2,0.895,2,2v6h-2v5c0,0.552-0.448,1-1,1h-2 c-0.552,0-1-0.448-1-1v-2H20z"></path> <path data-color="color-2" fill="#444444" d="M20,7L20,7c1.105,0,2-0.895,2-2v0c0-1.105-0.895-2-2-2h0c-1.105,0-2,0.895-2,2v0 C18,6.105,18.895,7,20,7z"></path>
+                <circle data-color="color-2" cx="9" cy="10" r="5"></circle>
+                <circle cx="24" cy="8" r="7"></circle>
+                <path d="M13.272,35.911C11.934,35.576,11,34.379,11,33V22c0-1.906,0.768-3.634,2.008-4.898 C12.682,17.035,12.345,17,12,17H6c-2.757,0-5,2.243-5,5v9c0,0.431,0.275,0.812,0.684,0.949l2.38,0.793l0.94,10.349 C5.051,43.605,5.483,44,6,44h6c0.517,0,0.949-0.395,0.996-0.91l0.644-7.088L13.272,35.911z"></path>
+                <circle cx="39" cy="10" r="5"></circle>
+                <path d="M34.728,35.911C36.066,35.576,37,34.379,37,33V22c0-1.906-0.768-3.634-2.008-4.898 C35.318,17.035,35.655,17,36,17h6c2.757,0,5,2.243,5,5v9c0,0.431-0.275,0.812-0.684,0.949l-2.38,0.793l-0.94,10.349 C42.949,43.605,42.517,44,42,44h-6c-0.517,0-0.949-0.395-0.996-0.91l-0.644-7.088L34.728,35.911z"></path>
+                <path d="M30,17H18c-2.757,0-5,2.243-5,5v11c0,0.459,0.312,0.859,0.757,0.97l3.306,0.826l0.94,11.287 C18.047,46.602,18.48,47,19,47h10c0.52,0,0.953-0.398,0.997-0.917l0.94-11.287l3.306-0.826C34.688,33.859,35,33.459,35,33V22 C35,19.243,32.757,17,30,17z"></path>
             </g>
         </Button>
     )

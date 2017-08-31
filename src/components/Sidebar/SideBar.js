@@ -5,6 +5,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+function getStyle(props, context) {
+
+    var style = {
+        root : props.style || {},
+        child : {
+            marginBottom: '30px'
+        }
+    }
+
+    return style
+}
+
 const SideBar = (props) => {
 
     var style = props.style ? props.style : {
@@ -31,7 +43,8 @@ const SideBar = (props) => {
 }
 
 SideBar.propTypes = {
-    backgroundColor : PropTypes.string
+    backgroundColor : PropTypes.string,
+    style : PropTypes.string
 }
 
 export default SideBar

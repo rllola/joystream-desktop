@@ -38,11 +38,12 @@ const BasicSideBar = (props) => {
                 onClick={() => { console.log("click: hello 2")}}
             />
 
-            <WalletButton
+            <WalletButton viewBox={'0 0 48 48'}
                 onClick={() => { console.log("click: hello 2")}}
             />
 
-            <CommunityButton
+            <CommunityButton viewBox={'0 0 48 48'}
+                selected={true}
                 onClick={() => { console.log("click: hello 2")}}
             />
 
