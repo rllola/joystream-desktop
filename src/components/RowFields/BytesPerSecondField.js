@@ -12,7 +12,7 @@ const BytesPerSecondField = (props) => {
     var bytesPerSecondString
 
     if(props.bytes)
-        bytesPerSecondString = bytes(props.bytes, { unitSeparator : ' '}) + '/s'
+        bytesPerSecondString = bytes(props.bytes, { unitSeparator : ' ', decimalPlaces : props.decimalPlaces}) + '/s'
 
     return (
         <Field>
@@ -23,7 +23,13 @@ const BytesPerSecondField = (props) => {
 }
 
 BytesPerSecondField.propTypes = {
-    bytes : PropTypes.number.isRequired
+    bytes : PropTypes.number.isRequired,
+    decimalPlaces : PropTypes.number
+}
+
+
+BytesPerSecondField.defaultProps = {
+    decimalPlaces : 0
 }
 
 export default BytesPerSecondField
