@@ -14,7 +14,6 @@ var Uploading = new BaseMachine({
 
         Started: {
             _onEnter: function (client) {
-                console.log(client.sellerTerms)
                 client.store.setSellerPrice(client.sellerTerms)
             },
 
@@ -34,7 +33,7 @@ var Uploading = new BaseMachine({
                 client.updateSellerTerms(sellerTerms)
             },
 
-            sellerTermsUpdated: function (client, terms) {
+            processSellerTermsUpdated: function (client, terms) {
                 client.store.setSellerPrice(terms)
             },
 

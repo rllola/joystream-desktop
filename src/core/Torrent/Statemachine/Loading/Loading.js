@@ -62,12 +62,8 @@ var Loading = new BaseMachine({
                       client.processStateMachineInput('processPeerPluginStatuses', peerStatuses)
                     })
 
-                    torrent.on('sessionToSellMode', function (alert) {
-                      console.log(alert)
-                    })
-
                     torrent.on('sellerTermsUpdated', function (alert) {
-                      console.log(alert)
+                      client.processStateMachineInput('processSellerTermsUpdated', alert.terms)
                     })
 
                     torrent.on('uploadStarted', function (alert) {
