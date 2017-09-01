@@ -1,7 +1,7 @@
 /**
  * Created by bedeho on 13/06/17.
  */
-
+import File from '../../../utils/File'
 var BaseMachine = require('../../BaseMachine')
 var Loading = require('./Loading/Loading')
 var Active = require('./Active')
@@ -106,7 +106,10 @@ var Torrent = new BaseMachine({
                 //client.broadcastRawTransaction(alert.settlementTx)
             },
             play: function (client, fileIndex) {
-              client.store.setIsPlaying(fileIndex)
+
+              var file = new File(client.torrent, fileIndex)
+
+              client.store.setIsPlaying(file)
             },
             close: function (client) {
               client.store.setIsPlaying(null)

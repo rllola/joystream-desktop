@@ -22,6 +22,9 @@ class TorrentStore {
     @observable downloadSpeed
     @observable uploadSpeed
 
+    // store the files (see libtorrent::file_storage)
+    @observable torrentFiles
+
     /**
      * libtorrent::torrent_status::total_download/total_upload
      *
@@ -213,8 +216,13 @@ class TorrentStore {
     }
 
     @action.bound
-    setIsPlaying (playablefileIndex) {
-      this.isPlaying = playablefileIndex
+    setIsPlaying (playableFile) {
+      this.isPlaying = playableFile
+    }
+
+    @action.bound
+    setTorrentFiles (torrentFiles) {
+      this.torrentFiles = torrentFiles
     }
 
     /// Scene selector
@@ -279,12 +287,9 @@ class TorrentStore {
 
     @computed get playableIndexfiles () {
         let playableIndexfiles = []
-        // Might not be the best way to get the torrentFile.
-        var torrentInfo = this._torrent._client.torrent.handle.torrentFile()
-        var files = torrentInfo.files()
 
-        for (var i = 0; i < files.numFiles(); i++) {
-          let fileName = files.fileName(i)
+        for (var i = 0; i < this.torrentFiles.numFiles(); i++) {
+          let fileName = this.torrentFiles.fileName(i)
           let fileExtension = fileName.split('.').pop()
 
           // Need a list of all the video extensions that render-media suport.
