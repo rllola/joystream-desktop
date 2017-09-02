@@ -59,8 +59,9 @@
     "debug": "^2.6.0",
     "electron-compile": "^6.4.1",
     "electron-config": "^1.0.0",
-    "humanize-duration": "^3.10.0",
     "electron-is-dev": "^0.1.2",
+    "electron-squirrel-startup": "^1.0.0",
+    "humanize-duration": "^3.10.0",
     "joystream-node": "git+ssh://git@github.com/JoyStream/joystream-node.git#development",
     "jquery": "^3.2.1",
     "level-namespace": "^0.1.0",
@@ -97,8 +98,8 @@
           "squirrel"
         ],
         "darwin": [
-          "zip",
-          "dmg"
+          "dmg",
+          "zip"
         ],
         "linux": [
           "deb"
@@ -134,10 +135,16 @@
           "Utility"
         ]
       },
-      "electronInstallerDMG": {},
+      "electronInstallerDMG": {
+        "background":"src/assets/img/main_logo.png",
+        "icon": "src/assets/icons/appicon_128x128.png",
+        "format": "UDZO"
+      },
       "github_repository": {
         "owner": "JoyStream",
-        "name": "joystream-electron"
+        "name": "joystream-electron",
+        "draft": true,
+        "prerelease": false
       },
       "windowsStoreConfig": {
         "packageName": "Joystream"

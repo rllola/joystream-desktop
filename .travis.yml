@@ -48,4 +48,4 @@ deploy:
   script: electron-forge publish
   on:
     branch:
-      - development
+      - master

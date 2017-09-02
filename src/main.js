@@ -2,6 +2,7 @@ const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
 const url = require('url')
 const isDev = require('electron-is-dev')
+const updater = require('./updater')
 
 import {enableLiveReload} from 'electron-compile'
 
@@ -52,7 +53,7 @@ ipcMain.on('main-window-channel', (event, arg) => {
 })
 
 function createWindow () {
-  
+
   // Create the browser window.
   win = new BrowserWindow({
       width: 1200,
