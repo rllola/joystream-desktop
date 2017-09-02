@@ -282,15 +282,10 @@ describe('Torrent state machine', function () {
 
         it('then to uploading', function() {
 
-            let sellerTerms = {
-                x : 123
-            }
-
-            Torrent.queuedHandle(client, 'goToStartedUploading', sellerTerms)
+            Torrent.queuedHandle(client, 'goToStartedUploading')
 
             assert.equal(Torrent.compositeState(client), 'Active.FinishedDownloading.Uploading.Started')
             assert.equal(client.toSellMode.callCount, 1)
-            assert.deepEqual(client.toSellMode.getCall(0).args[0], sellerTerms)
         })
 
         it('then back to passive', function() {
@@ -424,6 +419,7 @@ function MockClient() {
     this.updateSellerTerms = sinon.spy()
     this.updateBuyerTerms = sinon.spy()
     this.updatePeerPluginStatus = sinon.spy()
+    this.getStandardSellerTerms = sinon.spy()
 }
 
 // Drop??
