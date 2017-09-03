@@ -14,7 +14,7 @@
 
     .navigation-frame-container {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       flex-grow: 1;
     }
   }
@@ -187,21 +187,22 @@
     align-items: center;
     /* width: 220px;  old: 150px; */
 
-    background: #778EF8;
+    background: $primary-text-color;
     /* border: 3px solid #778EF8; */
     border-radius: 100px;
     font-size: 22px;
     color: white;
     cursor: pointer;
 
-    padding-top: 17px;
-    padding-bottom: 17px;
-    padding-left: 30px;
-    padding-right: 30px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    padding-left: 25px;
+    padding-right: 25px;
+    font-weight: bold;
   }
 
   .button:hover {
-    background-color: #4558b1;
+    background-color: #5c8ff7;
   }
 
   .vertical-bar {

@@ -5,39 +5,51 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-function getStyle(props, context) {
+function getStyles(props, context) {
 
-    var style = {
-        root : props.style || {},
-        child : {
-            marginBottom: '30px'
-        }
+    // Root node
+    let rootStyle = {
+        backgroundColor: props.backgroundColor,
+        //paddingBottom: '20px',
+        //paddingTop: '20px',
+        display: 'flex',
+        flexDirection: 'row',
+        //justifyContent: 'center',
+        //alignItems: 'center',
+        //paddingLeft: '20px'
     }
 
-    return style
+    rootStyle = Object.assign(rootStyle, props.style)
+
+    /**
+    // Section container
+    let sectionContainerStyle = {
+        display : 'flex',
+        flexDirection : 'row'
+    }
+     */
+
+    // Button container
+    let buttonContainerStyle = {
+        display : 'flex',
+        flexDirection : 'row'
+    }
+
+    return {
+        root : rootStyle,
+        //sectionContainer : sectionContainerStyle,
+        buttonContainer : buttonContainerStyle
+    }
 }
 
 const Sidebar = (props) => {
 
-    var style = props.style ? props.style : {
-        display : 'flex',
-        flexDirection: 'column',
-        backgroundColor : props.backgroundColor
-    }
-
-    let childStyle = { marginBottom: '30px'}
-
-    // skip last margin??
+    let style = getStyles(props)
 
     return (
-        <div style={style}>
-            {props.children.map((child, index) => {
-                return (
-                    <div style={childStyle} key={index}>
-                        {child}
-                    </div>
-                )
-            })}
+
+        <div style={style.root}>
+            { props.children }
         </div>
     )
 }

@@ -9,57 +9,79 @@ import SvgIcon from 'material-ui/SvgIcon'
 import Badge from 'material-ui/Badge'
 import {blue500, red500, greenA200} from 'material-ui/styles/colors'
 
+import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
+
 function getStyles(props, state) {
 
-    var styles
+    let rootColor
+    let contentColor
 
-    var color
+    if(props.selected) {
+        rootColor = props.rootColors.selected
+        contentColor = props.contentColors.selected
+    } else {
 
-    // this is redudant in combination with selectedColor, just using
-    // also perhaps the hovering? just doing color is ok?.... or have sidebar do
-    // it?
+        // not selected
 
-    if(props.selected)
-        color = props.selectedColor
-    else {
-        color = state.hover ? props.hoverColor : props.normalColor
+        if(state.hover) { //
+            rootColor = props.rootColors.hover
+            contentColor = props.contentColors.hover
+        } else { // normal
+            rootColor = props.rootColors.normal
+            contentColor = props.contentColors.normal
+        }
     }
 
-    if(props.className)
-        styles = {
-            root : null,
-            icon : null,
-            title : null
+    return {
+
+        root : Object.assign({
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width : '80px',
+            height: '80px',
+            backgroundColor: rootColor,
+        }, props.style),
+
+        contentContainer : {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center'
+        },
+
+        notification : {
+            color: 'white',
+            position: 'relative',
+            left: '15px',
+            background: props.notificationColor,
+            fontSize: '12px',
+            paddingLeft: '5px',
+            paddingRight: '5px',
+            paddingTop: '1px',
+            borderRadius: '30px',
+            border: '2px solid ' + rootColor,
+        },
+
+        icon : {
+            height: '24px',
+            width: '24px',
+            svgIconColor : contentColor
+        },
+
+        title : {
+            display : props.title ? 'block' : 'none',
+            color: contentColor,
+            fontSize: '10px',
+            padding: '0px',
+            paddingLeft: '8px',
+            paddingRight: '8px',
+            borderRadius: '100px',
+            backgroundColor : 'none',
+            cursor: 'default',
+            marginTop: '5px'
         }
-    else
-        styles = {
-            root : {
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-            },
-
-            icon : {
-                height: '48px',
-                width: '48px',
-                marginBottom: '10px',
-                svgIconColor : color
-            },
-
-            title : {
-                display : props.title ? 'block' : 'none',
-                color: props.textColor,
-                fontSize: '12px',
-                padding: '0px',
-                paddingLeft: '8px',
-                paddingRight: '8px',
-                borderRadius: '100px',
-                backgroundColor : 'none', //props.selected ? props.selectedColor : 'none',
-                cursor: 'default' // block selection cursor
-            }
-        }
-
-    return styles
+    }
 }
 
 class Button extends Component {
@@ -82,23 +104,48 @@ class Button extends Component {
 
         var style = getStyles(this.props, this.state)
 
+        console.log('re-rendering: ' + this.props.title + ' | ' + style.root.backgroundColor)
+
         return (
             <div style={style.root}
                  onMouseEnter={this.handleMouseEnter}
                  onMouseLeave={this.handleMouseLeave}
                  onClick={this.props.onClick}>
 
-                    <SvgIcon color={style.icon.svgIconColor} style={style.icon} viewBox={this.props.viewBox}>
+                <div style={style.contentContainer}>
+
+                    <NotificationCount count={this.props.notificationCount} style={style.notification}/>
+
+                    <SvgIcon color={style.icon.svgIconColor}
+                             viewBox={this.props.viewBox}
+                             style={style.icon}>
                         {this.props.children}
                     </SvgIcon>
 
+                    <span style={style.title}>{this.props.title}</span>
 
-                <span style={style.title}>{this.props.title}</span>
+                </div>
+
             </div>
         )
 
     }
- }
+
+}
+
+const NotificationCount = (props) => {
+
+    if(!props.count || props.count == 0)
+        return null
+    else
+        return (
+            <AbsolutePositionChildren left={-10} top={-8}>
+                <div style={props.style}>
+                    {props.count}
+                </div>
+            </AbsolutePositionChildren>
+        )
+}
 
 Button.propTypes = {
     disabled : PropTypes.bool,
@@ -106,28 +153,19 @@ Button.propTypes = {
     title : PropTypes.string.isRequired,
     onClick : PropTypes.func.isRequired,
 
-    alertCount : PropTypes.number,
-    totalCount : PropTypes.number,
+    rootColors : PropTypes.object.isRequired,
+    contentColors : PropTypes.object.isRequired,
+    notificationColor : PropTypes.string.isRequired,
 
-    normalColor : PropTypes.string.isRequired,
-    hoverColor : PropTypes.string.isRequired,
-    selectedColor : PropTypes.string.isRequired,
+    viewBox : PropTypes.string,
 
-    textColor : PropTypes.string.isRequired,
-
-    viewBox : PropTypes.string
+    notificationCount : PropTypes.number
 }
 
 Button.defaultProps = {
     disabled : false,
     selected : false,
     onClick : () => {},
-
-    normalColor : '#4E7296',
-    hoverColor : '#4A90E2',
-    selectedColor : 'white',
-
-    textColor : '#202F53'
 }
 
 

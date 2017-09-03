@@ -29,7 +29,7 @@ const Downloading = observer((props) => {
                     </div>
                     <div className="vertical-bar"></div>
                     <div className="button-section">
-                        <div className="button" onClick={props.onStartDownloadClicked}>Start Download</div>
+                        <div className="button" onClick={props.onStartDownloadClicked}>start download</div>
                     </div>
 
                 </div>
