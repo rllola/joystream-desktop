@@ -37,6 +37,10 @@ var Uploading = new BaseMachine({
                 client.store.setSellerPrice(terms)
             },
 
+            processValidPaymentReceived: function (client, alert) {
+                client.store.setSellerRevenue(alert.pid, alert.totalAmountPaid)
+            },
+
             goToPassive: function(client) {
 
                 client.toObserveMode()

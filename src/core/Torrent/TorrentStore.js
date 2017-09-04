@@ -11,7 +11,11 @@ class TorrentStore {
     // Is playing video/audio
     @observable isPlaying = null
 
+<<<<<<< 175a51b4e14fc76b5cdac6d8231318080682c952
     @observable sellerPrice = 0
+=======
+    @observable sellerRevenue = new Map()
+>>>>>>> Total Revenue by Torrent Observable
 
     /**
      * libtorrent::torrent_status::total_done
@@ -233,6 +237,11 @@ class TorrentStore {
       this.sellerPrice = sellerTerms.minPrice
     }
 
+    @action.bound
+    setSellerRevenue (pid, amountPaid) {
+        this.sellerRevenue.set(pid, amountPaid)
+    }
+
     /// Scene selector
 
     @computed get isLoading() {
@@ -308,6 +317,15 @@ class TorrentStore {
 
         return playableIndexfiles
     }
+
+    @computed get totalRevenue() {
+        var sum = 0
+        this.sellerRevenue.forEach(function (value, key, map) {
+            sum += value
+        })
+        return sum
+    }
+
 
     /// User actions
 
