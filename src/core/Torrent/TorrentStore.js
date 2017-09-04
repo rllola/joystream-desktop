@@ -347,6 +347,8 @@ class TorrentStore {
     onLoadedMetadata (event) {
       // Modify size here ?
       electron.ipcRenderer.send('set-bounds', {width: event.target.videoWidth, height: event.target.videoHeight})
+      // enable power save blocker because we are watching a video
+      electron.ipcRenderer.send('power-save-blocker', {enable:true})
     }
 }
 

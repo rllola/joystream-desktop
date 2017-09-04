@@ -3,6 +3,7 @@ import CloseButton from './CloseButton'
 import render from 'render-media'
 
 
+
 class VideoPlayer extends Component {
   componentDidMount () {
     render.render(this.props.file, '#video-player', function (err, elem) {
