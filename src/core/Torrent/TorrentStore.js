@@ -11,6 +11,8 @@ class TorrentStore {
     // Is playing video/audio
     @observable isPlaying = null
 
+    @observable sellerPrice = 0
+
     /**
      * libtorrent::torrent_status::total_done
      *
@@ -224,6 +226,11 @@ class TorrentStore {
     @action.bound
     setTorrentFiles (torrentFiles) {
       this.torrentFiles = torrentFiles
+    }
+
+    @action.bound
+    setSellerPrice (sellerTerms) {
+      this.sellerPrice = sellerTerms.minPrice
     }
 
     /// Scene selector

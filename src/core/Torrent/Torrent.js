@@ -127,7 +127,6 @@ Torrent.prototype.openFolder = function () {
 }
 
 Torrent.prototype.remove = function (deleteData) {
-  console.log(this)
   this._client.processStateMachineInput('remove', deleteData)
 }
 
