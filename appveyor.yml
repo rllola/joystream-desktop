@@ -16,7 +16,7 @@ install:
   - ps: $fileContent += $env:priv_key.Replace(' ', "`n")
   - ps: $fileContent += "`n-----END RSA PRIVATE KEY-----`n"
   - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
-  - npm install npm -g
+  - npm install -g npm@5.2.0
   - npm install -g electron-forge
   - npm install -g electron-prebuilt-compile@1.6.4
   - npm install -g electron-rebuild
