@@ -115,6 +115,7 @@ class Application extends Component {
           <VideoPlayer file={this.props.store.isPlaying.isPlaying} torrent={this.props.store.isPlaying._torrent} />
         )
       }
+    }
 }
 
 Application.propTypes = {
