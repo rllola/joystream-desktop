@@ -288,7 +288,6 @@ TorrentStatemachineClient.prototype.getSavePath = function() {
     return this.torrent.handle.savePath()
 }
 
-<<<<<<< 4d428bf2c23c5e7ada079c01ab23a26acc51d331
 TorrentStatemachineClient.prototype.getTorrentInfo = function() {
   return this.torrent.handle.torrentFile()
 }
@@ -296,8 +295,6 @@ TorrentStatemachineClient.prototype.getTorrentInfo = function() {
 TorrentStatemachineClient.prototype.getFiles = function() {
   // Get the files
 }
-=======
->>>>>>> Open Folder action
 
 function LOG_ERROR(source, err) {
 

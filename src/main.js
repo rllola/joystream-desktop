@@ -56,7 +56,6 @@ ipcMain.on('main-window-channel', (event, arg) => {
 
 // Listen if we need to modify window size to fit video or going back to
 // application size
-<<<<<<< 3376e2f32f02925942dea8bfa59cd57aacd4d081
 ipcMain.on('set-bounds', (event, arg) => {
     // verify if window exist and if we are not already in fullscreen
     if (win && !win.isFullScreen()) {
@@ -93,36 +92,6 @@ ipcMain.on('power-save-blocker', (event, arg) => {
     } else {
       // Disable blocker
       disable()
-    }
-})
-
-
-// Listen if we need to modify window size
-ipcMain.on('set-bounds', (event, arg) => {
-    if (win) {
-      win.setBounds(arg)
-=======
-ipcMain.on('set-bounds', (event, arg) => {
-    // verify if window exist and if we are not already in fullscreen
-    if (win && !win.isFullScreen()) {
-      let bounds = {
-        contentBounds: true,
-        x: null,
-        y: null,
-        width: arg.width,
-        height: arg.height
-      }
-
-      // Will get the primary screen of the user
-      const scr = electron.screen.getPrimaryDisplay()
-
-      // always start in center
-      bounds.x = Math.round(scr.workArea.x + (scr.workArea.width / 2) - (bounds.width / 2))
-      bounds.y = Math.round(scr.workArea.y + (scr.workArea.height / 2) - (bounds.height / 2))
-
-      // Set the new window size
-      win.setBounds(bounds)
->>>>>>> Handle size modification for video player
     }
 })
 
