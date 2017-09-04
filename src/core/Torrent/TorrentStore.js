@@ -8,7 +8,7 @@ class TorrentStore {
     @observable totalSize
 
     // Is playing video/audio
-    @observable isPlaying = false
+    @observable isPlaying = null
 
     /**
      * libtorrent::torrent_status::total_done
@@ -21,6 +21,9 @@ class TorrentStore {
 
     @observable downloadSpeed
     @observable uploadSpeed
+
+    // store the files (see libtorrent::file_storage)
+    @observable torrentFiles
 
     /**
      * libtorrent::torrent_status::total_download/total_upload
@@ -213,8 +216,13 @@ class TorrentStore {
     }
 
     @action.bound
-    setIsPlaying (isPlaying) {
-      this.isPlaying = isPlaying
+    setIsPlaying (playableFile) {
+      this.isPlaying = playableFile
+    }
+
+    @action.bound
+    setTorrentFiles (torrentFiles) {
+      this.torrentFiles = torrentFiles
     }
 
     /// Scene selector
@@ -277,6 +285,22 @@ class TorrentStore {
             this.state.startsWith("Active.FinishedDownloading.Uploading.Stopped")
     }
 
+    @computed get playableIndexfiles () {
+        let playableIndexfiles = []
+
+        for (var i = 0; i < this.torrentFiles.numFiles(); i++) {
+          let fileName = this.torrentFiles.fileName(i)
+          let fileExtension = fileName.split('.').pop()
+
+          // Need a list of all the video extensions that render-media suport.
+          if (fileExtension === 'mp4' || fileExtension === 'wbm' || fileExtension === 'mkv') {
+            playableIndexfiles.push(i)
+          }
+        }
+
+        return playableIndexfiles
+    }
+
     /// User actions
 
     start() {
@@ -303,8 +327,8 @@ class TorrentStore {
         this._torrent.endUpload()
     }
 
-    play () {
-        this._torrent.play()
+    play (fileIndex) {
+        this._torrent.play(fileIndex)
     }
 
     close () {

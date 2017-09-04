@@ -222,7 +222,7 @@ class ApplicationStore {
   @computed get
   isPlaying () {
     for ( var i = 0; i < this.torrents.length; i++) {
-      if (this.torrents[i].isPlaying) {
+      if (this.torrents[i].isPlaying !== null) {
         return this.torrents[i]
       }
     }

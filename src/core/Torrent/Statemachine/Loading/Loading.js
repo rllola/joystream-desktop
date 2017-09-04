@@ -77,7 +77,10 @@ var Loading = new BaseMachine({
                     // If we don´t have metadata, wait for it
                     if(client.metadata && client.metadata.isValid()) {
                         this.transition(client, 'CheckingPartialDownload')
+                        const torrentInfo = client.torrent.handle.torrentFile()
+
                         client.store.setMetadata(client.metadata)
+                        client.store.setTorrentFiles(torrentInfo.files())
                     } else {
                         this.transition(client, 'WaitingForMetadata')
                     }
@@ -101,8 +104,11 @@ var Loading = new BaseMachine({
                 // Hold on to metadata, is required when shutting down
                 client.metadata = metadata
 
+                const torrentInfo = client.torrent.handle.torrentFile()
+
                 // Update store
                 client.store.setMetadata(metadata)
+                client.store.setTorrentFiles(torrentInfo.files())
 
                 this.transition(client, 'CheckingPartialDownload')
             }

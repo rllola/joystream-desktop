@@ -14,9 +14,11 @@ const PlaySection = observer((props) => {
     let className
     let onClick
 
-    if(true) { // Do we some how guard when we can play?
+    if(props.torrent.playableIndexfiles.length > 0) {
         className = "play"
-        onClick = () => { props.torrent.play() }
+        // Will later let the user pick which file to play. By default it is the
+        // first one.
+        onClick = () => { props.torrent.play(props.torrent.playableIndexfiles[0]) }
     } else {
         className = "play-disabled"
         onClick = null
