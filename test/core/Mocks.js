@@ -13,6 +13,7 @@ function MockTorrentStore() {
     this.setMetadata = sinon.spy()
     this.setPeers = sinon.spy()
     this.setSuitableSellers = sinon.spy()
+    this.setTorrentFiles = sinon.spy()
 }
 
 /// MockTorrent
@@ -45,6 +46,10 @@ MockTorrentHandle.prototype.status = function () {
     return this._status
 }
 
+MockTorrentHandle.prototype.torrentFile = function () {
+  return new MockTorrentInfo(this._fixture)
+}
+
 /// MockTorrentStatus
 
 function MockTorrentStatus(fixture) {
@@ -62,6 +67,15 @@ function MockTorrentInfo(fixture) {
 
 MockTorrentInfo.prototype.isValid = function() {
     return this._fixture.metadata != null
+}
+
+MockTorrentInfo.prototype.files = function () {
+  return new MockFileStorage(this._fixture)
+}
+
+/// MockFileStorage
+function MockFileStorage(fixture) {
+
 }
 
 /// MakePeerPluginStatus
