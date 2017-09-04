@@ -40,14 +40,7 @@ class TorrentTable extends Component {
     }
 
     handleFileDrop (files) {
-      // If the user did no pick any files, then we are done
-      if(!files || files.length == 0)
-          return
-
-      // Get torrent file name picked
-      var torrentFile = files[0]
-
-      this.props.onStartDownloadDrop(torrentFile.path)
+      this.props.onStartDownloadDrop(files)
     }
 
     hideContextMenu() {
@@ -100,7 +93,7 @@ class TorrentTable extends Component {
         }
 
         return (
-          <Dropzone disableClick style={dropZoneStyle} onDrop={this.handleFileDrop.bind(this)}>
+          <Dropzone disableClick style={dropZoneStyle} onDrop={this.props.onStartDownloadDrop}>
             <Table column_titles={["", "State", "Size", "Progress", "Speed", "Arrival", "Mode", "Seeders", "Sellers"]}>
                 { this.getRenderedContextMenu() }
                 { this.getRenderedTorrentRows() }

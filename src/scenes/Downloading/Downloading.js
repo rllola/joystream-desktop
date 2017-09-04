@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 import PropTypes from 'prop-types'
-import {remote} from 'electron'
 
 import TorrentTable from './TorrentTable'
 import StartDownloadingFlow, {Stage} from './components/StartDownloadingFlow'
@@ -37,7 +36,7 @@ const Downloading = observer((props) => {
 
             </section>
 
-            <TorrentTable torrents={props.torrents} store={props.store} onStartDownloadDrop={props.onStartDownloadClicked} />
+            <TorrentTable torrents={props.torrents} store={props.store} onStartDownloadDrop={props.onStartDownloadDrop} />
 
             <StartDownloadingFlow store={props.store}/>
 
@@ -50,6 +49,7 @@ Downloading.propTypes = {
     revenue : PropTypes.number.isRequired,
     downloadSpeed : PropTypes.number.isRequired,
     onStartDownloadClicked : PropTypes.func.isRequired,
+    onStartDownloadDrop : PropTypes.func.isRequired,
     torrentsBeingLoaded : PropTypes.array.isRequired
 }
 
