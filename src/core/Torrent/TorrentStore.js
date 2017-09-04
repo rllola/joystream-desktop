@@ -1,4 +1,5 @@
 import { observable, action, computed } from 'mobx'
+import electron from 'electron'
 
 class TorrentStore {
 
@@ -333,6 +334,12 @@ class TorrentStore {
 
     close () {
         this._torrent.close()
+    }
+
+    // Will be triggered when the metadata of the video will be loaded
+    onLoadedMetadata (event) {
+      // Modify size here ?
+      electron.ipcRenderer.send('set-bounds', {width: event.target.videoWidth, height: event.target.videoHeight})
     }
 }
 

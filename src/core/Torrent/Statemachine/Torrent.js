@@ -7,6 +7,7 @@ var Loading = require('./Loading/Loading')
 var Active = require('./Active')
 var Common = require('./Common')
 var DeepInitialState = require('./DeepInitialState')
+var electron = require('electron')
 
 const {shell} = require('electron')
 
@@ -113,6 +114,15 @@ var Torrent = new BaseMachine({
             },
             close: function (client) {
               client.store.setIsPlaying(null)
+
+              let bounds = {
+                width: 1024,
+                height: 800
+              }
+              // restore original bounds
+              // Should not be hardcoded (TODO)
+              electron.ipcRenderer.send('set-bounds', bounds)
+              client.store.setIsPlaying(false)
             },
             openFolder: function (client) {
               shell.openItem(client.getSavePath())
