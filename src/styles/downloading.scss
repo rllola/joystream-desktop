@@ -1,0 +1,46 @@
+@import '_constants';
+
+.downloading-scene-container {
+  display: flex;
+  flex-direction: column;
+
+  flex-grow: 1;
+
+  .my_table {
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    .content {
+      flex-grow: 1;
+      overflow-y: scroll;
+    }
+  }
+}
+
+.progress-bar {
+  height : 15px;
+  border-radius: $max-border-radius;
+
+  /** This is the progress bar div **/
+  div {
+    background-color: #55C855
+  }
+}
+
+.row-managed-toolbar-visiblity {
+  
+  .toolbar {
+    display: none;
+  }
+  
+}
+
+.row-managed-toolbar-visiblity:hover {
+  
+  .toolbar {
+    display: block;
+  }
+  
+}
