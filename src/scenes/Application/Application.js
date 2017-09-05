@@ -18,7 +18,7 @@ import Terminating, {TerminatingState} from '../Terminating'
 import Downloading from '../Downloading'
 import Seeding from '../Seeding'
 import Completed from '../Completed'
-import ApplicationSidebar from './components/ApplicationSidebar'
+import ApplicationHeader from './components/ApplicationHeader'
 //import Wallet from '../Wallet'
 
 let MobxReactDevTools
@@ -121,7 +121,7 @@ const NavigationFrame = observer((props) => {
 
     return (
         <div className="navigation-frame-container">
-            <ApplicationSidebar app={props.app}/>
+            <ApplicationHeader app={props.app}/>
             {props.children}
         </div>
     )
