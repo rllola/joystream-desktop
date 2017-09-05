@@ -37,7 +37,7 @@ class TorrentRow extends Component {
                 <StatusField paused={this.props.torrent.canStart} />
                 <BytesPerSecondField bytes={this.props.torrent.uploadSpeed} />
                 <BitcoinValueField satoshis={this.props.torrent.sellerPrice}/>
-                <BitcoinValueField satoshis={0}/>
+                <BitcoinValueField satoshis={this.props.torrent.totalRevenue}/>
                 <PeerCountField count={this.props.torrent.numberOfBuyers} />
                 <PeerCountField count={this.props.torrent.numberOfSellers} />
                 { this.getRenderedToolbar() }

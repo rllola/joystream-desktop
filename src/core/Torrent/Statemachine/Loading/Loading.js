@@ -78,6 +78,11 @@ var Loading = new BaseMachine({
                         client.processStateMachineInput('lastPaymentReceived', alert)
                     })
 
+                    torrent.on('validPaymentReceived', function (alert) {
+                      client.processStateMachineInput('processValidPaymentReceived', alert)
+                    })
+
+
                     // If we don´t have metadata, wait for it
                     if(client.metadata && client.metadata.isValid()) {
                         this.transition(client, 'CheckingPartialDownload')
