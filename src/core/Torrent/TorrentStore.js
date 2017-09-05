@@ -15,7 +15,7 @@ class TorrentStore {
     @observable sellerRevenue = new Map()
 
     @observable buyerPrice = 0
-    @observable buyerRevenue = new Map()
+    @observable buyerSpent = new Map()
 
     /**
      * libtorrent::torrent_status::total_done
@@ -248,8 +248,8 @@ class TorrentStore {
     }
 
     @action.bound
-    setBuyerRevenue (pid, amountPaid) {
-        this.buyerRevenue.set(pid, amountPaid)
+    setBuyerSpent (pid, amountPaid) {
+        this.buyerSpent.set(pid, amountPaid)
     }
 
     /// Scene selector

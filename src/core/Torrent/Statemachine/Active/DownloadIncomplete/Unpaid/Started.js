@@ -42,7 +42,7 @@ var Started = new BaseMachine({
             },
 
             processSentPayment  : function (client, alert) {
-              client.store.setBuyerRevenue(alert.pid, alert.totalAmountPaid)
+              client.store.setBuyerSpent(alert.pid, alert.totalAmountPaid)
             },
 
             processBuyerTermsUpdated: function (client, terms) {
