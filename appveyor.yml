@@ -38,5 +38,4 @@ test_script:
 
 branches:
     only:
-      - master
-      - appveyor
+      - release*
