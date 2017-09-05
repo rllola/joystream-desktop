@@ -8,7 +8,7 @@ import StatusBar,{ProgressStatusPanel} from '../../components/StatusBar'
 import Scene from '../../core/Application/Scene'
 
 // Components
-//import ApplicationSidebar from './components/ApplicationSidebar'
+//import ApplicationHeader from './components/ApplicationHeader'
 import VideoPlayer from '../../components/VideoPlayer'
 
 // Our scenes

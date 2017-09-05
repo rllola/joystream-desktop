@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import RaisedButton from 'material-ui/RaisedButton'
 
-import HeaderScenarios from './header'
 import Downloading from './downloading'
 import LoadingSceneScenarios from './loading'
 import TerminatingSceneScenarios from './terminating'
@@ -13,7 +12,7 @@ import StreamScenario from './stream'
 import Seeding from './seeding'
 import Completed from './completed'
 import StartDownloadingFlowScenarios from './startDownloadingFlow'
-import SideBarScenarios from './sidebar'
+import ApplicationHeaderScenarios from './ApplicationHeader'
 
 const App = (props) => {
 
@@ -36,19 +35,18 @@ const App = (props) => {
                         <Link to="seeding"> <RaisedButton label="Seeding" style={style} /> </Link>
                         <Link to="stream"> <RaisedButton label="Stream" style={style} /> </Link>
                         <Link to="start_downloading_flow"> <RaisedButton label="Start Downloading Flow" style={style} /> </Link>
-                        <Link to="sidebar"> <RaisedButton label="Sidebar" style={style} /> </Link>
+                        <Link to="application_header"> <RaisedButton label="Application Header" style={style} /> </Link>
 
                         <hr/>
 
                         <Route path="/loading" component={LoadingSceneScenarios} />
                         <Route path="/terminating" component={TerminatingSceneScenarios} />
-                        <Route path="/header" component={HeaderScenarios} />
                         <Route path="/downloading" component={Downloading} />
                         <Route path="/completed" component={Completed}/>
                         <Route path="/seeding" component={Seeding}/>
                         <Route path="/stream" component={StreamScenario} />
                         <Route path="/start_downloading_flow" component={StartDownloadingFlowScenarios} />
-                        <Route path="/sidebar" component={SideBarScenarios} />
+                        <Route path="/application_header" component={ApplicationHeaderScenarios} />
                     </div>
                 </HashRouter>
 

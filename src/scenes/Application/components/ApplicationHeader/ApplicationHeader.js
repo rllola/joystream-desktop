@@ -1,28 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import {Button, Sidebar} from '../../../../components/Sidebar'
+import {Button, Header} from '../../../../components/Header'
 
 import Scene from '../../../../core/Application/Scene'
 
 /**
  * Buttons
  */
-
-const ChangeTermsButton = (props) => {
-
-    return (
-        <Button title="Balance" {...props}
-                viewBox={'0 0 24 24'}>
-            <path d="M17,16c-2.951,0-5.403-0.639-7-1.712c0,0.746,0,1.238,0,1.712c0,1.657,3.134,3,7,3s7-1.343,7-3 c0-0.474,0-0.966,0-1.712C22.403,15.361,19.951,16,17,16z"></path>
-            <path d="M17,21c-2.951,0-5.403-0.639-7-1.712c0,0.746,0,1.238,0,1.712c0,1.657,3.134,3,7,3s7-1.343,7-3 c0-0.474,0-0.966,0-1.712C22.403,20.361,19.951,21,17,21z"></path>
-            <ellipse cx="17" cy="11" rx="7" ry="3"></ellipse>
-            <ellipse cx="7" cy="3" rx="7" ry="3"></ellipse>
-            <path d="M8,17.973C7.673,17.989,7.341,18,7,18c-2.951,0-5.403-0.639-7-1.712C0,17.034,0,17.526,0,18 c0,1.657,3.134,3,7,3c0.34,0,0.673-0.014,1-0.034V17.973z"></path>
-            <path d="M8,12.973C7.673,12.989,7.341,13,7,13c-2.951,0-5.403-0.639-7-1.712C0,12.034,0,12.526,0,13 c0,1.657,3.134,3,7,3c0.34,0,0.673-0.014,1-0.034V12.973z"></path>
-            <path d="M9.92,7.766C9.018,7.916,8.042,8,7,8C4.049,8,1.597,7.361,0,6.288C0,7.034,0,7.526,0,8 c0,1.657,3.134,3,7,3c0.341,0,0.674-0.014,1.003-0.034C8.015,9.703,8.71,8.606,9.92,7.766z"></path>
-        </Button>
-    )
-}
 
 const UploadButton = (props) => {
 
@@ -97,8 +81,34 @@ const LivestreamButton = (props) => {
     )
 }
 
+const NewButton = (props) => {
+
+    return (
+        <Button title="NEW" {...props}
+                viewBox={'0 0 24 24'}>
+            <g className="nc-icon-wrapper">
+                <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zM8.5 15H7.3l-2.55-3.5V15H3.5V9h1.25l2.5 3.5V9H8.5v6zm5-4.74H11v1.12h2.5v1.26H11v1.11h2.5V15h-4V9h4v1.26zm7 3.74c0 .55-.45 1-1 1h-4c-.55 0-1-.45-1-1V9h1.25v4.51h1.13V9.99h1.25v3.51h1.12V9h1.25v5z"></path>
+            </g>
+        </Button>
+    )
+}
+
+const PublicButton = (props) => {
+
+    return (
+        <Button title="PUBLISH" {...props}
+                viewBox={'0 0 24 24'}>
+            <g className="nc-icon-wrapper">
+                <polygon points="12,0 24,7 12,14 0,7 "></polygon>
+                <polygon points="12,21.315 2.301,15.658 0,17 12,24 24,17 21.699,15.658 "></polygon>
+                <polygon points="12,16.315 2.301,10.658 0,12 12,19 24,12 21.699,10.658 "></polygon>
+            </g>
+        </Button>
+    )
+}
+
 /**
- * ApplicationSidebar
+ * ApplicationHeader
  */
 
 function getStyle(props) {
@@ -120,13 +130,33 @@ function getStyle(props) {
             flexGrow: 1
         },
 
+        divider : {
+            width: '2px',
+            backgroundColor: '#61647d',
+            marginTop: '15px',
+            marginBottom: '15px'
+        },
+
         balance : {
             color : 'white',
             flex: '0 0 220px',
-            backgroundColor: props.balanceColor,
+            //backgroundColor: props.balanceColor,
             alignItems: 'center',
             justifyContent: 'center',
             display: 'flex'
+        },
+
+        unconfirmedBalance : {
+            marginRight : '10px',
+            fontSize : '25px',
+            fontWeight: 'bold'
+        },
+
+        balanceSubtitle : {
+            fontSize: '10px',
+            top: '-5px',
+            position: 'relative',
+            color: '#babdc1'
         },
 
         button : {
@@ -135,7 +165,11 @@ function getStyle(props) {
     }
 }
 
-const ApplicationSidebar = (props) => {
+function getBalanceUnits(unconfirmedBalance, balanceUnits) {
+    return 'bits'
+}
+
+const ApplicationHeader = (props) => {
 
     var style = getStyle(props)
 
@@ -154,7 +188,7 @@ const ApplicationSidebar = (props) => {
     }
 
     return (
-        <Sidebar style={style.root}>
+        <Header style={style.root}>
 
             <div style={style.buttonGroup}>
 
@@ -174,7 +208,7 @@ const ApplicationSidebar = (props) => {
 
                 <FinishedButton
                     selected={props.app.activeScene == Scene.Completed}
-                    notificationCount={7}
+                    notificationCount={props.app.numberCompletedInBackground}
                     onClick={() => { props.app.moveToScene(Scene.Completed)}}
                     style={style.button}
                     {...buttonColorProps}
@@ -198,39 +232,47 @@ const ApplicationSidebar = (props) => {
                     {...buttonColorProps}
                 />
 
+                <NewButton
+                    onClick={() => { console.log("click: hello 4")}}
+                    style={style.button}
+                    {...buttonColorProps}
+                />
+
+                <PublicButton
+                    onClick={() => { console.log("click: hello 5")}}
+                    style={style.button}
+                    {...buttonColorProps}
+                />
+
             </div>
 
             <div style={style.spacer}></div>
 
+            <div style={style.divider}></div>
+
             <div style={style.balance}>
                 <div>
-                    <span style={{marginRight : '10px', fontSize : '25px', fontWeight: 'bold'}}>{props.balance}</span>
-                    <span>{props.balanceUnits}</span>
-                    <div style={{
-                        fontSize: '10px',
-                        top: '-3px',
-                        position: 'relative'}}>UNCONFIRMED BALANCE</div>
+                    <span style={style.unconfirmedBalance}>{props.app.unconfirmedBalance}</span>
+                    <span>{getBalanceUnits(props.app.unconfirmedBalance, props.app.balanceUnits)}</span>
+                    <div style={style.balanceSubtitle}>UNCONFIRMED BALANCE</div>
                 </div>
-
             </div>
 
-        </Sidebar>
+        </Header>
     )
 
 }
 
-ApplicationSidebar.propTypes = {
+ApplicationHeader.propTypes = {
     app : PropTypes.object.isRequired,
     baseColor : PropTypes.string,
     attentionColor : PropTypes.string,
     accentColor : PropTypes.string,
     notificationColor : PropTypes.string,
-    balance : PropTypes.string.isRequired,
-    balanceUnits : PropTypes.string.isRequired,
     balanceColor : PropTypes.string.isRequired
 }
 
-ApplicationSidebar.defaultProps = {
+ApplicationHeader.defaultProps = {
     baseColor : '#11153b', // '#414a56'
     attentionColor : '#5c8ff7',
     accentColor : '#f2b925',
@@ -241,4 +283,4 @@ ApplicationSidebar.defaultProps = {
 }
 
 
-export default ApplicationSidebar
+export default ApplicationHeader
