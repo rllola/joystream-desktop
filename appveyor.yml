@@ -23,12 +23,14 @@ install:
   - pip install conan
   - conan remote add joystream https://conan.joystream.co:9300 True
   - conan user travis -p trav444 -r=joystream
+
+build_script:
   - npm install
   - mkdir C:\Users\appveyor\.electron-gyp
   - mklink /J C:\Users\appveyor\.electron-gyp\.conan C:\Users\appveyor\.conan
   - electron-rebuild
 
-build_script:
+deploy_script:
   - electron-forge publish
 
 test: on
@@ -38,4 +40,4 @@ test_script:
 
 branches:
     only:
-      - release*
+      - /^release_\d_\d_\d/
