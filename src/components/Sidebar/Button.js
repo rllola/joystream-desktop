@@ -72,7 +72,8 @@ function getStyles(props, state) {
         title : {
             display : props.title ? 'block' : 'none',
             color: contentColor,
-            fontSize: '10px',
+            fontSize: '8px',
+            fontWeight: 'bold',
             padding: '0px',
             paddingLeft: '8px',
             paddingRight: '8px',
@@ -103,8 +104,6 @@ class Button extends Component {
     render() {
 
         var style = getStyles(this.props, this.state)
-
-        console.log('re-rendering: ' + this.props.title + ' | ' + style.root.backgroundColor)
 
         return (
             <div style={style.root}

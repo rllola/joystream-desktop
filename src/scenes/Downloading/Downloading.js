@@ -25,11 +25,11 @@ const Downloading = observer((props) => {
 
                     <div className="heading">
                         <h1>Downloading</h1>
-                        <h2> {props.torrents.length} downloads</h2>
+                        <h2> {props.torrents.length} torrents</h2>
                     </div>
                     <div className="vertical-bar"></div>
                     <div className="button-section">
-                        <div className="button" onClick={props.onStartDownloadClicked}>start download</div>
+                        <div className="button" onClick={props.onStartDownloadClicked}>DOWNLOAD</div>
                     </div>
 
                 </div>

@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {Button, Sidebar} from '../../../../components/Sidebar'
 
+import Scene from '../../../../core/Application/Scene'
+
 /**
  * Buttons
  */
-
-
 
 const ChangeTermsButton = (props) => {
 
@@ -27,7 +27,7 @@ const ChangeTermsButton = (props) => {
 const UploadButton = (props) => {
 
     return (
-        <Button title="uploads" {...props}
+        <Button title="UPLOADS" {...props}
                 viewBox={'0 0 24 24'}>
             <path d="M12.8,5.4c-0.377-0.504-1.223-0.504-1.6,0l-9,12c-0.228,0.303-0.264,0.708-0.095,1.047 C2.275,18.786,2.621,19,3,19h18c0.379,0,0.725-0.214,0.895-0.553c0.169-0.339,0.133-0.744-0.095-1.047L12.8,5.4z"></path>
         </Button>
@@ -37,7 +37,7 @@ const UploadButton = (props) => {
 const DowloadButton = (props) => {
 
     return (
-        <Button title="downloads" {...props}
+        <Button title="DOWNLOADS" {...props}
                 viewBox={'0 0 24 24'}>
             <path d="M21,5H3C2.621,5,2.275,5.214,2.105,5.553C1.937,5.892,1.973,6.297,2.2,6.6l9,12 c0.188,0.252,0.485,0.4,0.8,0.4s0.611-0.148,0.8-0.4l9-12c0.228-0.303,0.264-0.708,0.095-1.047C21.725,5.214,21.379,5,21,5z"></path>
         </Button>
@@ -47,7 +47,7 @@ const DowloadButton = (props) => {
 const FinishedButton = (props) => {
 
     return (
-        <Button title="finished" {...props}
+        <Button title="FINISHED" {...props}
                 viewBox={'0 0 24 24'}>
             <polygon points="9,20 2,13 5,10 9,14 19,4 22,7 "></polygon>
         </Button>
@@ -57,7 +57,7 @@ const FinishedButton = (props) => {
 const WalletButton = (props) => {
 
     return (
-        <Button title="wallet" {...props}
+        <Button title="WALLET" {...props}
                 viewBox={'0 0 24 24'}>
 
             <g className="nc-icon-wrapper" >
@@ -71,7 +71,7 @@ const WalletButton = (props) => {
 const CommunityButton = (props) => {
 
     return (
-        <Button title="community" {...props}
+        <Button title="COMMUNITY" {...props}
                 viewBox={'0 0 24 24'}>
 
             <g className="nc-icon-wrapper" >
@@ -90,7 +90,7 @@ const CommunityButton = (props) => {
 const LivestreamButton = (props) => {
 
     return (
-        <Button title="livestreams" {...props}
+        <Button title="LIVESTREAMS" {...props}
                 viewBox={'0 0 24 24'}>
             <path d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z"></path>
         </Button>
@@ -107,7 +107,8 @@ function getStyle(props) {
 
         root : {
             backgroundColor: props.baseColor,
-            borderBottom: '5px solid ' + props.accentColor
+            borderBottom: '5px solid ' + props.accentColor,
+            flex: '0 0 85px'
         },
 
         buttonGroup : {
@@ -120,8 +121,12 @@ function getStyle(props) {
         },
 
         balance : {
-            flex: '0 0 200px',
-            backgroundColor : '#3f558a'
+            color : 'white',
+            flex: '0 0 220px',
+            backgroundColor: props.balanceColor,
+            alignItems: 'center',
+            justifyContent: 'center',
+            display: 'flex'
         },
 
         button : {
@@ -153,21 +158,24 @@ const ApplicationSidebar = (props) => {
 
             <div style={style.buttonGroup}>
 
-                <UploadButton
-                    onClick={() => { console.log("click: hello 1")}}
+                <DowloadButton
+                    selected={props.app.activeScene == Scene.Downloading}
+                    onClick={() => { props.app.moveToScene(Scene.Downloading)}}
                     style={style.button}
                     {...buttonColorProps}
                 />
 
-                <DowloadButton
-                    onClick={() => { console.log("click: hello 2")}}
+                <UploadButton
+                    selected={props.app.activeScene == Scene.Uploading}
+                    onClick={() => { props.app.moveToScene(Scene.Uploading)}}
                     style={style.button}
                     {...buttonColorProps}
                 />
 
                 <FinishedButton
+                    selected={props.app.activeScene == Scene.Completed}
                     notificationCount={7}
-                    onClick={() => { console.log("click: hello 2")}}
+                    onClick={() => { props.app.moveToScene(Scene.Completed)}}
                     style={style.button}
                     {...buttonColorProps}
                 />
@@ -179,7 +187,6 @@ const ApplicationSidebar = (props) => {
                 />
 
                 <CommunityButton
-                    selected={true}
                     onClick={() => { console.log("click: hello 2")}}
                     style={style.button}
                     {...buttonColorProps}
@@ -196,8 +203,15 @@ const ApplicationSidebar = (props) => {
             <div style={style.spacer}></div>
 
             <div style={style.balance}>
-                <div>8.388</div>
-                <div>BTC</div>
+                <div>
+                    <span style={{marginRight : '10px', fontSize : '25px', fontWeight: 'bold'}}>{props.balance}</span>
+                    <span>{props.balanceUnits}</span>
+                    <div style={{
+                        fontSize: '10px',
+                        top: '-3px',
+                        position: 'relative'}}>UNCONFIRMED BALANCE</div>
+                </div>
+
             </div>
 
         </Sidebar>
@@ -206,17 +220,24 @@ const ApplicationSidebar = (props) => {
 }
 
 ApplicationSidebar.propTypes = {
+    app : PropTypes.object.isRequired,
     baseColor : PropTypes.string,
     attentionColor : PropTypes.string,
     accentColor : PropTypes.string,
     notificationColor : PropTypes.string,
+    balance : PropTypes.string.isRequired,
+    balanceUnits : PropTypes.string.isRequired,
+    balanceColor : PropTypes.string.isRequired
 }
 
 ApplicationSidebar.defaultProps = {
     baseColor : '#11153b', // '#414a56'
     attentionColor : '#5c8ff7',
     accentColor : '#f2b925',
-    notificationColor : '#c52578'
+    notificationColor : '#c52578',
+    balance : '8,112,300',
+    balanceUnits : 'bits',
+    balanceColor : '#414a56' //'#65aaf9'
 }
 
 

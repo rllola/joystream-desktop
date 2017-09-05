@@ -119,12 +119,9 @@ Application.propTypes = {
 
 const NavigationFrame = observer((props) => {
 
-    // { /** <Header app={props.app}/> **/ }
-    //
-
     return (
         <div className="navigation-frame-container">
-            <ApplicationSidebar />
+            <ApplicationSidebar app={props.app}/>
             {props.children}
         </div>
     )
