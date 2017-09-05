@@ -14,6 +14,7 @@ function MockTorrentStore() {
     this.setPeers = sinon.spy()
     this.setSuitableSellers = sinon.spy()
     this.setTorrentFiles = sinon.spy()
+    this.setSellerPrice = sinon.spy()
 }
 
 /// MockTorrent
