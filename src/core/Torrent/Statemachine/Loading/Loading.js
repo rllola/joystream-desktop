@@ -66,6 +66,10 @@ var Loading = new BaseMachine({
                       client.processStateMachineInput('processSellerTermsUpdated', alert.terms)
                     })
 
+                    torrent.on('buyerTermsUpdated', function (alert) {
+                      client.processStateMachineInput('processBuyerTermsUpdated', alert.terms)
+                    })
+
                     torrent.on('uploadStarted', function (alert) {
                       client.processStateMachineInput('uploadStarted', alert)
                     })
@@ -82,6 +86,9 @@ var Loading = new BaseMachine({
                       client.processStateMachineInput('processValidPaymentReceived', alert)
                     })
 
+                    torrent.on('sentPayment', function (alert) {
+                      client.processStateMachineInput('processSentPayment', alert)
+                    })
 
                     // If we don´t have metadata, wait for it
                     if(client.metadata && client.metadata.isValid()) {

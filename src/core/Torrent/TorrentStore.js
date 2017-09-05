@@ -11,11 +11,11 @@ class TorrentStore {
     // Is playing video/audio
     @observable isPlaying = null
 
-<<<<<<< 175a51b4e14fc76b5cdac6d8231318080682c952
     @observable sellerPrice = 0
-=======
     @observable sellerRevenue = new Map()
->>>>>>> Total Revenue by Torrent Observable
+
+    @observable buyerPrice = 0
+    @observable buyerRevenue = new Map()
 
     /**
      * libtorrent::torrent_status::total_done
@@ -240,6 +240,16 @@ class TorrentStore {
     @action.bound
     setSellerRevenue (pid, amountPaid) {
         this.sellerRevenue.set(pid, amountPaid)
+    }
+
+    @action.bound
+    setBuyerPrice (buyerTerms) {
+      this.buyerPrice = buyerTerms.maxPrice
+    }
+
+    @action.bound
+    setBuyerRevenue (pid, amountPaid) {
+        this.buyerRevenue.set(pid, amountPaid)
     }
 
     /// Scene selector

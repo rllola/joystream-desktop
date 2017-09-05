@@ -41,6 +41,14 @@ var Started = new BaseMachine({
                 client.updateBuyerTerms(buyerTerms)
             },
 
+            processSentPayment  : function (client, alert) {
+              client.store.setBuyerRevenue(alert.pid, alert.totalAmountPaid)
+            },
+
+            processBuyerTermsUpdated: function (client, terms) {
+                client.store.setBuyerPrice(terms)
+            },
+
             processPeerPluginStatuses: function(client, statuses) {
                 // Update peer list
                 Common.processPeerPluginStatuses(client, statuses)
