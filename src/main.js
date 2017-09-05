@@ -12,6 +12,7 @@ import {enableLiveReload} from 'electron-compile'
 // be closed automatically when the JavaScript object is garbage collected.
 let win = null
 
+
 // This method makes your application a Single Instance Application -
 // instead of allowing multiple instances of your app to run,
 // this will ensure that only a single instance of your app is running
@@ -75,6 +76,22 @@ ipcMain.on('set-bounds', (event, arg) => {
 
       // Set the new window size
       win.setBounds(bounds)
+  }
+})
+
+// Listen if we need to block the save power feature to avooid the screen going
+// black in the middle of a video.
+ipcMain.on('power-save-blocker', (event, arg) => {
+    const {enable, disable} = require('./power-save-blocker')
+
+    console.log(arg)
+
+    if (arg.enable) {
+      // Enable blocker
+      enable()
+    } else {
+      // Disable blocker
+      disable()
     }
 })
 
