@@ -2,10 +2,16 @@ platform:
   - x64
 
 environment:
-  priv_key:
-    secure: <encryped-value>
-  GITHUB_TOKEN:
-    secure: <encryped-value>
+  # Githib deploy ssh key
+  priv_key: value
+  # Githib personal access token
+  GITHUB_TOKEN: value
+  # Base64 encoded string signing cert to be written to disk
+  CODE_SIGN_CERT_BASE64: value
+  # Path to Authenticode Code Signing Certificate
+  ELECTRON_FORGE_ELECTRON_WINSTALLER_CONFIG_CERTIFICATE_FILE: value
+  # Password to decrypt code signing cert
+  ELECTRON_FORGE_ELECTRON_WINSTALLER_CONFIG_CERTIFICATE_PASSWORD: value
 
 init:
   - git config --global core.autocrlf input
@@ -16,6 +22,8 @@ install:
   - ps: $fileContent += $env:priv_key.Replace(' ', "`n")
   - ps: $fileContent += "`n-----END RSA PRIVATE KEY-----`n"
   - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
+  - ps: $certBytes = [System.Convert]::FromBase64String($env:CODE_SIGN_CERT_BASE64)
+  - ps: Set-Content $env:ELECTRON_FORGE_ELECTRON_WINSTALLER_CONFIG_CERTIFICATE_FILE $certBytes
   - npm install -g npm@5.2.0
   - npm install -g electron-forge
   - npm install -g electron-prebuilt-compile@1.6.4
