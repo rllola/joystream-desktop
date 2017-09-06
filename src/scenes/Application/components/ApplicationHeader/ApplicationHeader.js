@@ -193,21 +193,21 @@ const ApplicationHeader = (props) => {
             <div style={style.buttonGroup}>
 
                 <DowloadButton
-                    selected={props.app.activeScene == Scene.Downloading}
+                    selected={props.app.activeScene === Scene.Downloading}
                     onClick={() => { props.app.moveToScene(Scene.Downloading)}}
                     style={style.button}
                     {...buttonColorProps}
                 />
 
                 <UploadButton
-                    selected={props.app.activeScene == Scene.Uploading}
+                    selected={props.app.activeScene === Scene.Uploading}
                     onClick={() => { props.app.moveToScene(Scene.Uploading)}}
                     style={style.button}
                     {...buttonColorProps}
                 />
 
                 <FinishedButton
-                    selected={props.app.activeScene == Scene.Completed}
+                    selected={props.app.activeScene === Scene.Completed}
                     notificationCount={props.app.numberCompletedInBackground}
                     onClick={() => { props.app.moveToScene(Scene.Completed)}}
                     style={style.button}
