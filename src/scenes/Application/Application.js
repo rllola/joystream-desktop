@@ -40,7 +40,7 @@ class Application extends Component {
 
                   {this.props.store.isPlaying ? this.renderVideoPlayer () : this.renderActiveScene()}
 
-                    <StatusBar show={this.props.store.torrentsBeingLoaded > 0}
+                    <StatusBar show={this.props.store.torrentsBeingLoaded.length > 0}
                                bottom={true}>
                         <ProgressStatusPanel title={'Loading torrents'}
                                              percentageProgress={this.props.store.startingTorrentCheckingProgressPercentage}
