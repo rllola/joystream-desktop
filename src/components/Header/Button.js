@@ -38,7 +38,7 @@ function getStyles(props, state) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width : '80px',
+            width : '120px',
             height: '80px',
             backgroundColor: rootColor,
         }, props.style),
@@ -77,7 +77,7 @@ function getStyles(props, state) {
         title : {
             display : props.title ? 'block' : 'none',
             color: contentColor,
-            fontSize: '8px',
+            fontSize: '10px',
             fontWeight: 'bold',
             padding: '0px',
             paddingLeft: '8px',
