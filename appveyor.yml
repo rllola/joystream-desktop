@@ -3,15 +3,19 @@ platform:
 
 environment:
   # Githib deploy ssh key
-  priv_key: value
+  priv_key:
+    secure: value
   # Githib personal access token
-  GITHUB_TOKEN: value
+  GITHUB_TOKEN:
+    secure: value
   # Base64 encoded string signing cert to be written to disk
-  CODE_SIGN_CERT_BASE64: value
+  CODE_SIGN_CERT_BASE64:
+    secure: value
   # Path to Authenticode Code Signing Certificate
   ELECTRON_FORGE_ELECTRON_WINSTALLER_CONFIG_CERTIFICATE_FILE: value
   # Password to decrypt code signing cert
-  ELECTRON_FORGE_ELECTRON_WINSTALLER_CONFIG_CERTIFICATE_PASSWORD: value
+  ELECTRON_FORGE_ELECTRON_WINSTALLER_CONFIG_CERTIFICATE_PASSWORD:
+    secure: value
 
 init:
   - git config --global core.autocrlf input
