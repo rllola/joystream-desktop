@@ -92,63 +92,6 @@
     "parser": "babel-eslint"
   },
   "config": {
-    "forge": {
-      "make_targets": {
-        "win32": [
-          "squirrel"
-        ],
-        "darwin": [
-          "dmg",
-          "zip"
-        ],
-        "linux": [
-          "deb"
-        ]
-      },
-      "electronPackagerConfig": {
-        "asar": true,
-        "icon": "src/assets/icons/appicon_128x128",
-        "protocol": [
-          "joystream",
-          "magnet"
-        ],
-        "ignore": [
-          ".gitignore",
-          ".travis",
-          "appveyor.yml",
-          "README.md"
-        ],
-        "overwrite": true,
-        "appCategoryType": "public.app-category.utilities",
-        "win32metadata": {
-          "CompanyName": "Joystream"
-        }
-      },
-      "electronWinstallerConfig": {
-        "name": "Joystream",
-        "setupIcon": "src/assets/icons/appicon_128x128.ico",
-        "loadingGif": "src/assets/img/main_logo.png"
-      },
-      "electronInstallerDebian": {
-        "icon": "src/assets/icons/appicon_128x128.png",
-        "categories": [
-          "Utility"
-        ]
-      },
-      "electronInstallerDMG": {
-        "background":"src/assets/img/main_logo.png",
-        "icon": "src/assets/icons/appicon_128x128.png",
-        "format": "UDZO"
-      },
-      "github_repository": {
-        "owner": "JoyStream",
-        "name": "joystream-electron",
-        "draft": true,
-        "prerelease": false
-      },
-      "windowsStoreConfig": {
-        "packageName": "Joystream"
-      }
-    }
+    "forge": "./forge-config.js"
   }
 }
