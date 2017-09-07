@@ -67,7 +67,7 @@ class Application extends Component {
             case Scene.Downloading:
                 return <NavigationFrame app={this.props.store}>
                             <Downloading torrents={this.props.store.torrentsDownloading}
-                                         revenue={this.props.store.spending}
+                                         revenue={this.props.store.totalSpent}
                                          downloadSpeed={this.props.store.totalDownloadSpeed}
                                          onStartDownloadClicked={() => {this.props.store.startDownload()}}
                                          state={this.props.store.state}
@@ -80,7 +80,7 @@ class Application extends Component {
 
                 return <NavigationFrame app={this.props.store}>
                           <Seeding torrents={this.props.store.torrentsUploading}
-                                   revenue={this.props.store.revenue}
+                                   revenue={this.props.store.totalRevenue}
                                    uploadSpeed={this.props.store.totalUploadSpeed}
                                    onStartUploadCliked={() => {console.log(" start uploading clicked")}}
                                    store={this.props.store}

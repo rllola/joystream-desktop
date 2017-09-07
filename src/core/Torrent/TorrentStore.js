@@ -349,6 +349,14 @@ class TorrentStore {
         return sum
     }
 
+    @computed get totalSpent() {
+        var sum = 0
+        this.buyerSpent.forEach(function (value, key, map) {
+            sum += value
+        })
+        return sum
+    }
+
 
     /// User actions
 

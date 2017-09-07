@@ -229,6 +229,25 @@ class ApplicationStore {
     return null
   }
 
+  @computed get
+  totalSpent () {
+    var total = 0
+    for (var i= 0; i< this.torrents.length; i++) {
+      total += this.torrents[i].totalSpent
+    }
+    return total
+  }
+
+  @computed get
+  totalRevenue () {
+    var total = 0
+    for (var i= 0; i< this.torrents.length; i++) {
+      total += this.torrents[i].totalRevenue
+    }
+    return total
+  }
+
+
   @action.bound
   torrentRemoved (infoHash) {
     this.torrents.replace(this.torrents.filter(function (t) {
