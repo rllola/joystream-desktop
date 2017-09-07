@@ -20,6 +20,11 @@ function getSigningCertPassword () {
   return process.env['ELECTRON_FORGE_ELECTRON_WINSTALLER_CONFIG_CERTIFICATE_PASSWORD']
 }
 
+// Wether to do OSX code-signing
+function getOsxSign () {
+  return Boolean(process.env['ELECTRON_FORGE_OSX_SIGN'])
+}
+
 module.exports = {
   "make_targets": {
     "win32": [
@@ -50,7 +55,8 @@ module.exports = {
     "appCategoryType": "public.app-category.utilities",
     "win32metadata": {
       "CompanyName": "Joystream"
-    }
+    },
+    "osxSign": getOsxSign()
   },
   "electronWinstallerConfig": {
     "name": "Joystream",
