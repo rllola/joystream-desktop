@@ -3,5 +3,7 @@
  */
 
 import LoadingScene from './LoadingScene'
+import LoadingState from './LoadingState'
 
 export default LoadingScene
+export {LoadingState}
