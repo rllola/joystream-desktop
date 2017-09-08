@@ -4,62 +4,54 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import {
-    Step,
-    Stepper,
-    StepLabel,
-    StepContent,
-} from 'material-ui/Stepper'
-import LinearProgress from 'material-ui/LinearProgress'
 import TerminatingState from './TerminatingState'
+import SplashProgress from '../../components/SplashProgress'
 
-const TerminatingProgressIndicator = (props) => {
+function progressTextFromTerminatingState(state) {
 
-    return (
-        <Stepper
-            activeStep={props.terminatingState}
-            orientation="vertical"
-            connector={null}>
+    let text = null
 
-            <Step>
-                <StepLabel>Terminating torrents</StepLabel>
-                <StepContent>
-                    <LinearProgress mode="determinate" value={props.terminatingTorrentsProgressValue} />
-                </StepContent>
-            </Step>
+    switch(state) {
 
-            <Step>
-                <StepLabel>Disconnecting from Bitcoin peer network</StepLabel>
-            </Step>
+        case TerminatingState.TerminatingTorrents:
+            text = 'Stopping and storing torrents'
+            break
 
-            <Step>
-                <StepLabel>Closing wallet</StepLabel>
-            </Step>
+        case TerminatingState.DisconnectingFromBitcoinNetwork:
+            text = 'Disconnecting from Bitcoin peer network'
+            break
 
-            <Step>
-                <StepLabel>Stopping Bitcoin SPV node</StepLabel>
-            </Step>
+        case TerminatingState.ClosingWallet:
+            text = 'Closing wallet'
+            break
 
-            <Step>
-                <StepLabel>Closing application database</StepLabel>
-            </Step>
+        case TerminatingState.StoppingSpvNode:
+            text = 'Stopping SPV node'
+            break
 
-            <Step>
-                <StepLabel>Clearing resources</StepLabel>
-            </Step>
-        </Stepper>
-    )
+        case TerminatingState.ClosingApplicationDatabase:
+            text = 'Closing the application database'
+            break
+
+        case TerminatingState.ClearingResources:
+            text = 'Stopping database, wallet and BitTorrent node'
+            break
+    }
+
+    return text
 }
+
 
 const TerminatingScene = (props) => {
 
+    let text = progressTextFromTerminatingState(props.terminatingState)
+    let percentage = 100 * (props.terminatingState + 1) / (Object.keys(TerminatingState).length)
+
     return (
-        <div className="LoadingScene">
-            <div className="CenterPiece">
-                <h1>logo</h1>
-                <TerminatingProgressIndicator {...props}/>
-            </div>
-        </div>
+        <SplashProgress progressText={text}
+                        progressPercentage={percentage}
+        />
+
     )
 }
 
