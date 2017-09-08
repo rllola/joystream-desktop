@@ -24,6 +24,7 @@ install:
   - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
   - ps: Start-FileDownload $env:CODE_SIGN_CERT_URL -FileName $env:ELECTRON_FORGE_ELECTRON_WINSTALLER_CONFIG_CERTIFICATE_FILE
   - npm install -g npm@5.2.0
+  - npm config set loglevel warn
   - npm install -g electron-forge
   - npm install -g electron-prebuilt-compile@1.6.4
   - npm install -g electron-rebuild
