@@ -24,7 +24,7 @@ install:
   - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
   - ps: Start-FileDownload $env:CODE_SIGN_CERT_URL -FileName $env:ELECTRON_FORGE_ELECTRON_WINSTALLER_CONFIG_CERTIFICATE_FILE
   # stick to old version of npm until issue is resolved: https://github.com/npm/npm/issues/17671
-  - npm install -g npm@ 5.0.3
+  - npm install -g npm@5.0.3
   - npm config set loglevel warn
   - npm install -g electron-forge
   - npm install -g electron-prebuilt-compile@1.6.4
