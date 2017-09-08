@@ -46,6 +46,10 @@ script:
   - npm test
 
 before_deploy:
+  - if [ "$TRAVIS_OS_NAME" = osx ]; then ./deploy_scripts/travis/add-osx-certs.sh; fi
+
+after_deploy:
+  - if [ "$TRAVIS_OS_NAME" = osx ]; then ./deploy_scripts/travis/remove-osx-certs.sh; fi
 
 deploy:
   provider: script
