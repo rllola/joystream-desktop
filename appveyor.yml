@@ -23,8 +23,9 @@ install:
   - ps: $fileContent += "`n-----END RSA PRIVATE KEY-----`n"
   - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
   - ps: Start-FileDownload $env:CODE_SIGN_CERT_URL -FileName $env:ELECTRON_FORGE_ELECTRON_WINSTALLER_CONFIG_CERTIFICATE_FILE
-  # stick to old version of npm until issue is resolved: https://github.com/npm/npm/issues/17671
-  - npm install -g npm@5.2.0
+  # use npm@4.6.1 due to issues between npm5 and postinstall-build module behaviour
+  # https://github.com/exogen/postinstall-build/issues/29
+  - npm install -g npm@4.6.1
   - npm config set loglevel warn
   - npm install -g electron-forge
   - npm install -g electron-prebuilt-compile@1.6.4
@@ -34,7 +35,7 @@ install:
   - conan user travis -p trav444 -r=joystream
 
 build_script:
-  - npm install
+  - npm install --no-optional
   - mkdir C:\Users\appveyor\.electron-gyp
   - mklink /J C:\Users\appveyor\.electron-gyp\.conan C:\Users\appveyor\.conan
   - electron-rebuild
