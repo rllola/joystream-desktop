@@ -13,7 +13,7 @@ import VideoPlayer from '../../components/VideoPlayer'
 
 // Our scenes
 import NotStartedScene from '../NotStarted'
-import Loading, {LoadingState} from '../Loading/LoadingScene'
+import Loading, {LoadingState} from '../Loading'
 import Terminating, {TerminatingState} from '../Terminating'
 import Downloading from '../Downloading'
 import Seeding from '../Seeding'
