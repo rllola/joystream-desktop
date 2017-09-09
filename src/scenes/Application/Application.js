@@ -13,8 +13,8 @@ import VideoPlayer from '../../components/VideoPlayer'
 
 // Our scenes
 import NotStartedScene from '../NotStarted'
-import Loading, {LoadingState} from '../Loading'
-import Terminating, {TerminatingState} from '../Terminating'
+import LoadingScene, {LoadingState} from '../Loading'
+import TerminatingScene, {TerminatingState} from '../Terminating'
 import Downloading from '../Downloading'
 import Seeding from '../Seeding'
 import Completed from '../Completed'
@@ -63,7 +63,7 @@ class Application extends Component {
 
             case Scene.Loading:
 
-                return <Loading loadingState={applicationStateToLoadingState(this.props.store.state)}/>
+                return <LoadingScene loadingState={applicationStateToLoadingState(this.props.store.state)}/>
 
             case Scene.Downloading:
                 return <NavigationFrame app={this.props.store}>
@@ -98,8 +98,8 @@ class Application extends Component {
 
             case Scene.ShuttingDown:
 
-                return <Terminating terminatingState={applicationStateToTerminatingState(this.props.store.state)}
-                                    terminatingTorrentsProgressValue={100*(this.props.store.torrentTerminatingProgress/this.props.store.torrentsToTerminate)} />
+                return <TerminatingScene terminatingState={applicationStateToTerminatingState(this.props.store.state)}
+                                         terminatingTorrentsProgressValue={100*(this.props.store.torrentTerminatingProgress/this.props.store.torrentsToTerminate)} />
         }
     }
 
@@ -131,7 +131,7 @@ function applicationStateToLoadingState(s) {
 
     let loadingState
 
-    if(s == "Starting.InitializingResources" || s == "Starting.NotStarted")
+    if(s == "Starting.uninitialized" || s == "Starting.InitializingResources" || s == "Starting.NotStarted")
         loadingState = LoadingState.InitializingResources
     else if(s== "Starting.initializingApplicationDatabase")
         loadingState = LoadingState.OpeningApplicationDatabase
