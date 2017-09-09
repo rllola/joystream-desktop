@@ -11,11 +11,15 @@ class TorrentStore {
     // Is playing video/audio
     @observable isPlaying = null
 
-    @observable sellerPrice = 0
-    @observable sellerRevenue = new Map()
+    // Seller minimum price for this torrent
+    @observable sellerPrice
+    // Map of revenue per connection (using pid as a key)
+    @observable sellerRevenue
 
-    @observable buyerPrice = 0
-    @observable buyerSpent = new Map()
+    // Buyer max price for this torrent
+    @observable buyerPrice
+    // Map of total spent per connection (using pid as a key)
+    @observable buyerSpent
 
     /**
      * libtorrent::torrent_status::total_done
@@ -67,7 +71,11 @@ class TorrentStore {
                  numberOfObservers,
                  numberOfNormalPeers,
                  numberOfSeeders,
-                 suitableSellers) {
+                 suitableSellers,
+                 sellerPrice,
+                 sellerRevenue,
+                 buyerPrice,
+                 buyerSpent) {
 
         this._torrent = torrent
         this.infoHash = infoHash
@@ -85,6 +93,11 @@ class TorrentStore {
         this.numberOfNormalPeers = numberOfNormalPeers ? numberOfNormalPeers : 0
         this.numberOfSeeders = numberOfSeeders ? numberOfSeeders : 0
         this.suitableSellers = suitableSellers ? suitableSellers : []
+        this.sellerPrice = sellerPrice ? sellerPrice : 0
+        this.sellerRevenue = sellerRevenue ? sellerRevenue : new Map()
+        this.buyerPrice = buyerPrice ? buyerPrice : 0
+        this.buyerSpent = buyerSpent ? buyerSpent : new Map()
+
     }
 
     setTorrent(torrent) {
@@ -331,6 +344,14 @@ class TorrentStore {
     @computed get totalRevenue() {
         var sum = 0
         this.sellerRevenue.forEach(function (value, key, map) {
+            sum += value
+        })
+        return sum
+    }
+
+    @computed get totalSpent() {
+        var sum = 0
+        this.buyerSpent.forEach(function (value, key, map) {
             sum += value
         })
         return sum

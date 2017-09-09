@@ -10,8 +10,8 @@ const Completed = (props) => {
             <section className="middle-section">
                 <div className="toolbar-section">
                     <div className="heading">
-                        <h1>Completed</h1>
-                        <h2> {props.torrents.length} completed torrent</h2>
+                        <h1>Finished</h1>
+                        <h2> {props.torrents.length} torrents</h2>
                     </div>
                     <div className="vertical-bar"></div>
 

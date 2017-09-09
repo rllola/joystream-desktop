@@ -23,12 +23,12 @@ const Seeding = (props) => {
                 <div className="toolbar-section">
 
                     <div className="heading">
-                        <h1>Seeding</h1>
-                        <h2> {props.torrents.length} seedings</h2>
+                        <h1>Uploading</h1>
+                        <h2> {props.torrents.length} torrents</h2>
                     </div>
                     <div className="vertical-bar"></div>
                     <div className="button-section">
-                        <div className="button" onClick={props.onStartUploadClicked}>Start Upload</div>
+                        <div className="button" onClick={props.onStartUploadClicked}>UPLOAD</div>
                     </div>
 
                 </div>

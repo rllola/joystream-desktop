@@ -8,7 +8,7 @@ import StatusBar,{ProgressStatusPanel} from '../../components/StatusBar'
 import Scene from '../../core/Application/Scene'
 
 // Components
-//import Sidebar from './components/Sidebar'
+//import ApplicationHeader from './components/ApplicationHeader'
 import VideoPlayer from '../../components/VideoPlayer'
 
 // Our scenes
@@ -18,6 +18,7 @@ import Terminating, {TerminatingState} from '../Terminating'
 import Downloading from '../Downloading'
 import Seeding from '../Seeding'
 import Completed from '../Completed'
+import ApplicationHeader from './components/ApplicationHeader'
 //import Wallet from '../Wallet'
 
 let MobxReactDevTools
@@ -40,7 +41,7 @@ class Application extends Component {
 
                   {this.props.store.isPlaying ? this.renderVideoPlayer () : this.renderActiveScene()}
 
-                    <StatusBar show={this.props.store.torrentsBeingLoaded > 0}
+                    <StatusBar show={this.props.store.torrentsBeingLoaded.length > 0}
                                bottom={true}>
                         <ProgressStatusPanel title={'Loading torrents'}
                                              percentageProgress={this.props.store.startingTorrentCheckingProgressPercentage}
@@ -67,7 +68,7 @@ class Application extends Component {
             case Scene.Downloading:
                 return <NavigationFrame app={this.props.store}>
                             <Downloading torrents={this.props.store.torrentsDownloading}
-                                         revenue={this.props.store.spending}
+                                         revenue={this.props.store.totalSpent}
                                          downloadSpeed={this.props.store.totalDownloadSpeed}
                                          onStartDownloadClicked={() => {this.props.store.startDownload()}}
                                          state={this.props.store.state}
@@ -80,7 +81,7 @@ class Application extends Component {
 
                 return <NavigationFrame app={this.props.store}>
                           <Seeding torrents={this.props.store.torrentsUploading}
-                                   revenue={this.props.store.revenue}
+                                   revenue={this.props.store.totalRevenue}
                                    uploadSpeed={this.props.store.totalUploadSpeed}
                                    onStartUploadCliked={() => {console.log(" start uploading clicked")}}
                                    store={this.props.store}
@@ -120,7 +121,7 @@ const NavigationFrame = observer((props) => {
 
     return (
         <div className="navigation-frame-container">
-            <Header app={props.app}/>
+            <ApplicationHeader app={props.app}/>
             {props.children}
         </div>
     )

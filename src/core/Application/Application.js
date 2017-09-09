@@ -146,7 +146,11 @@ class ApplicationStatemachineClient {
                      numberOfSellers,
                      numberOfObservers,
                      numberOfNormalPeers,
-                     suitableSellers) => {
+                     suitableSellers,
+                     sellerPrice,
+                     sellerRevenue,
+                     buyerPrice,
+                     buyerSpent) => {
         return new TorrentStore(null,
                                 infoHash,
                                 state,
@@ -161,7 +165,11 @@ class ApplicationStatemachineClient {
                                 numberOfSellers,
                                 numberOfObservers,
                                 numberOfNormalPeers,
-                                suitableSellers)
+                                suitableSellers,
+                                sellerPrice,
+                                sellerRevenue,
+                                buyerPrice,
+                                buyerSpent)
       },
 
       // Return a Torrent with generators bound to application statemachine to access the wallet

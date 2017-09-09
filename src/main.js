@@ -103,6 +103,7 @@ function createWindow () {
       height: 800,
       minHeight: 500,
       minWidth: 1200
+      , frame: true
   })
 
   if (isDev) {

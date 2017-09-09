@@ -1,55 +1,62 @@
 /**
- * Created by bedeho on 30/05/17.
+ * Created by bedeho on 20/08/17.
  */
 
-import React, { Component } from 'react'
-import { observer } from 'mobx-react'
+import React from 'react'
 import PropTypes from 'prop-types'
 
-import Button from './Button'
-import Panel from './Panel'
-import Scene from '../../core/Application/Scene'
+function getStyles(props, context) {
 
-const Header = observer((props) => {
+    // Root node
+    let rootStyle = {
+        backgroundColor: props.backgroundColor,
+        //paddingBottom: '20px',
+        //paddingTop: '20px',
+        display: 'flex',
+        flexDirection: 'row',
+        //justifyContent: 'center',
+        //alignItems: 'center',
+        //paddingLeft: '20px'
+    }
+
+    rootStyle = Object.assign(rootStyle, props.style)
+
+    /**
+    // Section container
+    let sectionContainerStyle = {
+        display : 'flex',
+        flexDirection : 'row'
+    }
+     */
+
+    // Button container
+    let buttonContainerStyle = {
+        display : 'flex',
+        flexDirection : 'row'
+    }
+
+    return {
+        root : rootStyle,
+        //sectionContainer : sectionContainerStyle,
+        buttonContainer : buttonContainerStyle
+    }
+}
+
+const Header = (props) => {
+
+    let style = getStyles(props)
 
     return (
-        <div className="header">
 
-            <img className="logo" src="assets/img/logo-contrast.svg"/>
-
-            <nav>
-                <Button isActive={props.app.activeScene == Scene.Downloading}
-                        onClick={() => { props.app.moveToScene(Scene.Downloading)}}
-                        label="Downloading"
-                        value={props.app.numberOfTorrentsDownloading}
-                />
-
-                <Button isActive={props.app.activeScene == Scene.Uploading}
-                        onClick={() => { props.app.moveToScene(Scene.Uploading)}}
-                        label="Uploading"
-                        value={props.app.numberOfTorrentsUploading}
-                />
-
-                <Button isActive={props.app.activeScene == Scene.Completed}
-                        onClick={() => { props.app.moveToScene(Scene.Completed)}}
-                        label="Completed"
-                        value={props.app.numberOfTorrentsCompleted}
-                        notificationCount={props.app.numberCompletedInBackground}
-                />
-            </nav>
-
-            <div className="flex-spacer"></div>
-
-            <Panel label={"Balance"}
-                   quantity={props.app.unconfirmedBalance}
-            />
-
+        <div style={style.root}>
+            { props.children }
         </div>
     )
-})
+}
 
 Header.propTypes = {
-    app : PropTypes.object.isRequired
+    backgroundColor : PropTypes.string,
+    style : PropTypes.object
 }
 
 export default Header
