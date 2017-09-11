@@ -69,7 +69,8 @@ module.exports = {
     "icon": "src/assets/icons/appicon_128x128.png",
     "categories": [
       "Utility"
-    ]
+    ],
+    "bin" : "Joystream"
   },
   "electronInstallerDMG": {
     "background":"src/assets/img/main_logo.png",
