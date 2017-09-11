@@ -57,7 +57,6 @@ const TerminatingScene = (props) => {
 
 TerminatingScene.propTypes = {
     terminatingState : PropTypes.oneOf(Object.values(TerminatingState)),
-    terminatingTorrentsProgressValue : PropTypes.number
 }
 
 export default TerminatingScene

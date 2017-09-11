@@ -57,7 +57,6 @@ const LoadingScene = (props) => {
 
 LoadingScene.propTypes = {
     loadingState : PropTypes.oneOf(Object.values(LoadingState)),
-    loadingTorrentsProgressValue : PropTypes.number
 }
 
 export default LoadingScene
