@@ -34,7 +34,8 @@ class Application extends EventEmitter {
     {
       removeTorrent: this.removeTorrent.bind(this),
       moveToScene: this.moveToScene.bind(this),
-      startDownload: this.startDownload.bind(this),
+      startDownloadWithTorrentFileFromFilePicker: this.startDownloadWithTorrentFileFromFilePicker.bind(this),
+      startDownloadWithTorrentFileFromDragAndDrop: this.startDownloadWithTorrentFileFromDragAndDrop.bind(this),
       acceptTorrentWasAlreadyAdded: this.acceptTorrentWasAlreadyAdded.bind(this),
       acceptTorrentFileWasInvalid: this.acceptTorrentFileWasInvalid.bind(this)
     })
@@ -93,8 +94,12 @@ class Application extends EventEmitter {
     this._process('onBeforeUnloadMainWindow', event)
   }
 
-  startDownload() {
-    this._process('startDownload')
+  startDownloadWithTorrentFileFromFilePicker() {
+    this._process('startDownloadWithTorrentFileFromFilePicker')
+  }
+
+  startDownloadWithTorrentFileFromDragAndDrop(files) {
+    this._process('startDownloadWithTorrentFileFromDragAndDrop', files)
   }
 
   acceptTorrentWasAlreadyAdded() {

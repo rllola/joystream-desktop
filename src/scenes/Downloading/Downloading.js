@@ -36,7 +36,7 @@ const Downloading = observer((props) => {
 
             </section>
 
-            <TorrentTable torrents={props.torrents} store={props.store} />
+            <TorrentTable torrents={props.torrents} store={props.store} onStartDownloadDrop={props.onStartDownloadDrop} />
 
             <StartDownloadingFlow store={props.store}/>
 
@@ -49,6 +49,7 @@ Downloading.propTypes = {
     revenue : PropTypes.number.isRequired,
     downloadSpeed : PropTypes.number.isRequired,
     onStartDownloadClicked : PropTypes.func.isRequired,
+    onStartDownloadDrop : PropTypes.func.isRequired,
     torrentsBeingLoaded : PropTypes.array.isRequired
 }
 

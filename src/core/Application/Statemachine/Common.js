@@ -11,6 +11,8 @@ const assert = require('assert')
 // see: https://github.com/JoyStream/joystream-electron/issues/215
 const TorrentCommon = require('../../Torrent/Statemachine/Common')
 
+const TorrentStatemachine = require('../../Torrent/Statemachine')
+
 function addTorrent(client, settings) {
 
     const infoHash = settings.infoHash
@@ -94,6 +96,50 @@ function addTorrent(client, settings) {
 
 }
 
+function prepareTorrentParams (client, filePath) {
+
+  // Load torrent file
+  let torrentInfo
+
+  try {
+    torrentInfo = new TorrentInfo(filePath)
+  } catch(e) {
+
+    console.log(e)
+
+    // <Set error_code on store also perhaps?>
+
+    throw 'TorrentFileWasInvalid'
+  }
+
+  const infoHash = torrentInfo.infoHash()
+
+  // Make sure torrent is not already added
+  if(client.torrents.has(infoHash)) {
+
+    throw 'TorrentAlreadyAdded'
+  }
+
+  // NB: Get from settings data store of some sort
+  let terms = getStandardbuyerTerms()
+
+  // Create settings
+  let settings = {
+    infoHash : infoHash,
+    metadata : torrentInfo,
+    resumeData : null,
+    name: torrentInfo.name() || infoHash,
+    savePath: client.directories.defaultSavePath(),
+    deepInitialState: TorrentStatemachine.DeepInitialState.DOWNLOADING.UNPAID.STARTED,
+    extensionSettings : {
+      buyerTerms: terms
+    }
+  }
+
+
+  return settings
+}
+
 function getStandardbuyerTerms() {
     return {
         maxPrice: 1,
@@ -112,4 +158,4 @@ function getStandardSellerTerms() {
     }
 }
 
-export {getStandardbuyerTerms, getStandardSellerTerms, addTorrent}
+export {getStandardbuyerTerms, getStandardSellerTerms, addTorrent, prepareTorrentParams}
