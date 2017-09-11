@@ -8,8 +8,7 @@ import FlatButton from 'material-ui/FlatButton'
 import Slider from 'material-ui/Slider'
 
 import {ScenarioContainer} from '../common'
-import LoadingScene,{LoadingState} from '../../scenes/Loading/LoadingScene'
-
+import LoadingScene, {LoadingState} from '../../scenes/Loading'
 
 function getState(s) {
 
@@ -61,28 +60,22 @@ class ControllableLoadingScene extends Component {
                 </div>
                 <CardActions>
 
-                    {
-                      this.state.loadingState != LoadingState.InitializingResources
-                        ?
-                      <FlatButton label="Previous" onTouchTap={() => { this.goToPriorState()}}/>
-                        :
-                      null
-                    }
+                      <FlatButton label="Previous"
+                                  onTouchTap={() => { this.goToPriorState()}}
+                                  disabled={this.state.loadingState == LoadingState.InitializingResources}/>
+
+                      <FlatButton label="Next"
+                                  onTouchTap={() => { this.goToNextState()}}
+                                  disabled={this.state.loadingState == LoadingState.LoadingTorrents}/>
 
                     {
-                      this.state.loadingState != LoadingState.LoadingTorrents
-                        ?
-                      <FlatButton label="Next" onTouchTap={() => { this.goToNextState()}}/>
-                        :
-                      null
-                    }
-
-                    {
+                        /**
                       this.state.loadingState == LoadingState.LoadingTorrents
                         ?
                       <Slider defaultValue={this.state.loadingTorrentsProgressValue/100} onChange={this.handleSliderChange} />
                         :
                       null
+                        */
                     }
 
                 </CardActions>

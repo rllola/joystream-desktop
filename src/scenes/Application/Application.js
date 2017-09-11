@@ -13,8 +13,8 @@ import VideoPlayer from '../../components/VideoPlayer'
 
 // Our scenes
 import NotStartedScene from '../NotStarted'
-import Loading, {LoadingState} from '../Loading/LoadingScene'
-import Terminating, {TerminatingState} from '../Terminating'
+import LoadingScene, {LoadingState} from '../Loading'
+import TerminatingScene, {TerminatingState} from '../Terminating'
 import Downloading from '../Downloading'
 import Seeding from '../Seeding'
 import Completed from '../Completed'
@@ -63,7 +63,7 @@ class Application extends Component {
 
             case Scene.Loading:
 
-                return <Loading loadingState={applicationStateToLoadingState(this.props.store.state)}/>
+                return <LoadingScene loadingState={applicationStateToLoadingState(this.props.store.state)}/>
 
             case Scene.Downloading:
                 return <NavigationFrame app={this.props.store}>
@@ -99,8 +99,8 @@ class Application extends Component {
 
             case Scene.ShuttingDown:
 
-                return <Terminating terminatingState={applicationStateToTerminatingState(this.props.store.state)}
-                                    terminatingTorrentsProgressValue={100*(this.props.store.torrentTerminatingProgress/this.props.store.torrentsToTerminate)} />
+                return <TerminatingScene terminatingState={applicationStateToTerminatingState(this.props.store.state)}
+                                         terminatingTorrentsProgressValue={100*(this.props.store.torrentTerminatingProgress/this.props.store.torrentsToTerminate)} />
         }
     }
 
@@ -132,15 +132,15 @@ function applicationStateToLoadingState(s) {
 
     let loadingState
 
-    if(s == "Starting.InitializingResources" || s == "Starting.NotStarted")
+    if(s === "Starting.uninitialized" || s === "Starting.InitializingResources" || s === "Starting.NotStarted")
         loadingState = LoadingState.InitializingResources
-    else if(s== "Starting.initializingApplicationDatabase")
+    else if(s === "Starting.initializingApplicationDatabase")
         loadingState = LoadingState.OpeningApplicationDatabase
-    else if(s== "Starting.InitialializingSpvNode")
+    else if(s === "Starting.InitialializingSpvNode")
         loadingState = LoadingState.InitializingSPVNode
-    else if(s == "Starting.OpeningWallet")
+    else if(s === "Starting.OpeningWallet")
         loadingState = LoadingState.OpeningWallet
-    else if(s == "Starting.ConnectingToBitcoinP2PNetwork")
+    else if(s === "Starting.ConnectingToBitcoinP2PNetwork")
         loadingState = LoadingState.ConnectingToBitcoinP2PNetwork
     else if(s.startsWith("Starting.LoadingTorrents"))
         loadingState = LoadingState.LoadingTorrents
@@ -152,17 +152,17 @@ function applicationStateToTerminatingState(s) {
 
     let terminatingState
 
-    if(s == "Stopping.TerminatingTorrents" || s == "Stopping.SavingTorrentsToDatabase" || s == "Stopping.uninitialized")
+    if(s === "Stopping.TerminatingTorrents" || s === "Stopping.SavingTorrentsToDatabase" || s === "Stopping.uninitialized")
         terminatingState = TerminatingState.TerminatingTorrents
-    else if(s == "Stopping.DisconnectingFromBitcoinNetwork")
+    else if(s === "Stopping.DisconnectingFromBitcoinNetwork")
         terminatingState = TerminatingState.DisconnectingFromBitcoinNetwork
-    else if(s == "Stopping.ClosingWallet")
+    else if(s === "Stopping.ClosingWallet")
         terminatingState = TerminatingState.ClosingWallet
-    else if(s == "Stopping.StoppingSpvNode")
+    else if(s === "Stopping.StoppingSpvNode")
         terminatingState = TerminatingState.StoppingSpvNode
-    else if(s == "Stopping.ClosingApplicationDatabase")
+    else if(s === "Stopping.ClosingApplicationDatabase")
         terminatingState = TerminatingState.ClosingApplicationDatabase
-    else if(s == "Stopping.ClearingResources")
+    else if(s === "Stopping.ClearingResources")
         terminatingState = TerminatingState.ClearingResources
 
     return terminatingState

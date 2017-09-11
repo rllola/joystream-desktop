@@ -61,29 +61,20 @@ class ControllableTerminatingScene extends Component {
                 </div>
                 <CardActions>
 
-                    {
-                        this.state.terminatingState != TerminatingState.TerminatingTorrents
-                            ?
-                            <FlatButton label="Previous" onTouchTap={() => { this.goToPriorState()}}/>
-                            :
-                            null
-                    }
+                    <FlatButton label="Previous"
+                                onTouchTap={() => { this.goToPriorState()}}
+                                disabled={this.state.terminatingState == TerminatingState.TerminatingTorrents}
+                    />
 
-                    {
-                        this.state.terminatingState != TerminatingState.ClearingResources
-                            ?
-                            <FlatButton label="Next" onTouchTap={() => { this.goToNextState()}}/>
-                            :
-                            null
-                    }
+                    <FlatButton label="Next"
+                                onTouchTap={() => { this.goToNextState()}}
+                                disabled={this.state.terminatingState == TerminatingState.ClearingResources}
+                    />
 
-                    {
-                        this.state.terminatingState == TerminatingState.TerminatingTorrents
-                            ?
-                            <Slider defaultValue={this.state.terminatingTorrentsProgressValue/100} onChange={this.handleSliderChange} />
-                            :
-                            null
-                    }
+                    <Slider defaultValue={this.state.terminatingTorrentsProgressValue/100}
+                            onChange={this.handleSliderChange}
+                            disabled={this.state.terminatingState != TerminatingState.TerminatingTorrents}
+                    />
 
                 </CardActions>
             </div>
