@@ -131,15 +131,15 @@ function applicationStateToLoadingState(s) {
 
     let loadingState
 
-    if(s == "Starting.uninitialized" || s == "Starting.InitializingResources" || s == "Starting.NotStarted")
+    if(s === "Starting.uninitialized" || s === "Starting.InitializingResources" || s === "Starting.NotStarted")
         loadingState = LoadingState.InitializingResources
-    else if(s== "Starting.initializingApplicationDatabase")
+    else if(s === "Starting.initializingApplicationDatabase")
         loadingState = LoadingState.OpeningApplicationDatabase
-    else if(s== "Starting.InitialializingSpvNode")
+    else if(s === "Starting.InitialializingSpvNode")
         loadingState = LoadingState.InitializingSPVNode
-    else if(s == "Starting.OpeningWallet")
+    else if(s === "Starting.OpeningWallet")
         loadingState = LoadingState.OpeningWallet
-    else if(s == "Starting.ConnectingToBitcoinP2PNetwork")
+    else if(s === "Starting.ConnectingToBitcoinP2PNetwork")
         loadingState = LoadingState.ConnectingToBitcoinP2PNetwork
     else if(s.startsWith("Starting.LoadingTorrents"))
         loadingState = LoadingState.LoadingTorrents
@@ -151,17 +151,17 @@ function applicationStateToTerminatingState(s) {
 
     let terminatingState
 
-    if(s == "Stopping.TerminatingTorrents" || s == "Stopping.SavingTorrentsToDatabase" || s == "Stopping.uninitialized")
+    if(s === "Stopping.TerminatingTorrents" || s === "Stopping.SavingTorrentsToDatabase" || s === "Stopping.uninitialized")
         terminatingState = TerminatingState.TerminatingTorrents
-    else if(s == "Stopping.DisconnectingFromBitcoinNetwork")
+    else if(s === "Stopping.DisconnectingFromBitcoinNetwork")
         terminatingState = TerminatingState.DisconnectingFromBitcoinNetwork
-    else if(s == "Stopping.ClosingWallet")
+    else if(s === "Stopping.ClosingWallet")
         terminatingState = TerminatingState.ClosingWallet
-    else if(s == "Stopping.StoppingSpvNode")
+    else if(s === "Stopping.StoppingSpvNode")
         terminatingState = TerminatingState.StoppingSpvNode
-    else if(s == "Stopping.ClosingApplicationDatabase")
+    else if(s === "Stopping.ClosingApplicationDatabase")
         terminatingState = TerminatingState.ClosingApplicationDatabase
-    else if(s == "Stopping.ClearingResources")
+    else if(s === "Stopping.ClearingResources")
         terminatingState = TerminatingState.ClearingResources
 
     return terminatingState
