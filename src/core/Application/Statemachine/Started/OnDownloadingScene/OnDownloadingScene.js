@@ -22,7 +22,7 @@ var OnDownloadingScene = new BaseMachine({
         this.go(client, '../OnUploadingScene')
       },
 
-      uploadTorrentFileFromFilePicker: function (client) {
+      startDownloadWithTorrentFileFromFilePicker: function (client) {
         // Allow user to pick a torrent file
         var filesPicked = remote.dialog.showOpenDialog({
             title : "Pick torrent file",
@@ -44,7 +44,7 @@ var OnDownloadingScene = new BaseMachine({
         client.processStateMachineInput('startDownload', torrentFile)
       },
 
-      uploadTorrentFileFromDragAndDrop: function (client, files) {
+      startDownloadWithTorrentFileFromDragAndDrop: function (client, files) {
         // If the user did no pick any files, then we are done
         if(!files || files.length == 0)
             return

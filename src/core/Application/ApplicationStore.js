@@ -277,12 +277,12 @@ class ApplicationStore {
 
   /// Downloading scene events
 
-  uploadTorrentFileFromFilePicker() {
-    this._handlers.uploadTorrentFileFromFilePicker()
+  startDownloadWithTorrentFileFromFilePicker() {
+    this._handlers.startDownloadWithTorrentFileFromFilePicker()
   }
 
-  uploadTorrentFileFromDragAndDrop(files) {
-    this._handlers.uploadTorrentFileFromDragAndDrop(files)
+  startDownloadWithTorrentFileFromDragAndDrop(files) {
+    this._handlers.startDownloadWithTorrentFileFromDragAndDrop(files)
   }
 
   acceptTorrentFileAlreadyAdded() {
