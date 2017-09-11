@@ -3,8 +3,6 @@
  */
 
 const BaseMachine = require('../../../../BaseMachine')
-const TorrentStatemachine = require('../../../../Torrent/Statemachine')
-const TorrentInfo = require('joystream-node').TorrentInfo
 const Common = require('./../../Common')
 import {remote} from 'electron'
 
@@ -41,7 +39,16 @@ var OnDownloadingScene = new BaseMachine({
         var torrentFile = filesPicked[0]
 
 
-        client.processStateMachineInput('startDownload', torrentFile)
+        let settings
+
+        try {
+          settings = Common.prepareTorrentParams(client, torrentFile)
+        } catch (error) {
+          this.transition(client, error)
+          return
+        }
+
+        Common.addTorrent(client, settings)
       },
 
       startDownloadWithTorrentFileFromDragAndDrop: function (client, files) {
@@ -52,52 +59,17 @@ var OnDownloadingScene = new BaseMachine({
         // Get torrent file name picked
         var torrentFile = files[0]
 
-        client.processStateMachineInput('startDownload', torrentFile.path)
-      },
+        let settings
 
-      startDownload: function(client, filePath) {
+        try {
+          settings = Common.prepareTorrentParams(client, torrentFile)
+        } catch (error) {
+          this.transition(client, error)
+          return
+        }
 
-          // Load torrent file
-          let torrentInfo
+        Common.addTorrent(client, settings)
 
-          try {
-              torrentInfo = new TorrentInfo(filePath)
-          } catch(e) {
-
-              console.log(e)
-
-              // <Set error_code on store also perhaps?>
-
-              this.transition(client, 'TorrentFileWasInvalid')
-              return
-          }
-
-          const infoHash = torrentInfo.infoHash()
-
-          // Make sure torrent is not already added
-          if(client.torrents.has(infoHash)) {
-
-              this.transition(client, 'TorrentAlreadyAdded')
-              return
-          }
-
-          // NB: Get from settings data store of some sort
-          let terms = Common.getStandardbuyerTerms()
-
-          // Create settings
-          let settings = {
-              infoHash : infoHash,
-              metadata : torrentInfo,
-              resumeData : null,
-              name: torrentInfo.name() || infoHash,
-              savePath: client.directories.defaultSavePath(),
-              deepInitialState: TorrentStatemachine.DeepInitialState.DOWNLOADING.UNPAID.STARTED,
-              extensionSettings : {
-                  buyerTerms: terms
-              }
-          }
-
-          Common.addTorrent(client, settings)
       },
 
     },
