@@ -33,7 +33,7 @@ function initDarwinWin32 () {
   electron.autoUpdater.on(
     'update-downloaded',
     (event, releaseNotes, releaseName) => {
-      dialog.showMessageBox(window, {
+      electron.dialog.showMessageBox({
         type: 'question',
         buttons: ['Update', 'Cancel'],
         defaultId: 0,
