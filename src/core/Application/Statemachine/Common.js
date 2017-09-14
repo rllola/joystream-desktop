@@ -38,7 +38,7 @@ function addTorrent(client, settings) {
     })
 
     // When torrent is missing buyer terms
-    coreTorrent.on('Loading.WaitingForMissingBuyerTerms', function (data) {
+    coreTorrent.on('enter-Loading.WaitingForMissingBuyerTerms', function (data) {
         client.processStateMachineInput('torrentWaitingForMissingBuyerTerms', coreTorrent)
     })
 
@@ -121,7 +121,7 @@ function prepareTorrentParams (client, filePath) {
   }
 
   // NB: Get from settings data store of some sort
-  let terms = getStandardbuyerTerms()
+  let terms = getStandardBuyerTerms()
 
   // Create settings
   let settings = {
@@ -140,7 +140,7 @@ function prepareTorrentParams (client, filePath) {
   return settings
 }
 
-function getStandardbuyerTerms() {
+function getStandardBuyerTerms() {
     return {
         maxPrice: 1,
         maxLock: 5,
@@ -158,4 +158,4 @@ function getStandardSellerTerms() {
     }
 }
 
-export {getStandardbuyerTerms, getStandardSellerTerms, addTorrent, prepareTorrentParams}
+export {getStandardBuyerTerms, getStandardSellerTerms, addTorrent, prepareTorrentParams}
