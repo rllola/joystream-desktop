@@ -354,7 +354,6 @@ class ApplicationStore {
     this._handlers.acceptTorrentFileWasInvalid()
   }
 
-
   retryPickingTorrentFile() {
       this._handlers.retryPickingTorrentFile()
   }
@@ -397,6 +396,12 @@ class ApplicationStore {
 
   dropDownloadClicked() {
     this._handlers.dropDownloadClicked()
+
+  }
+
+  // On Boarding
+  onBoardingFinished () {
+    this._handlers.onBoardingFinished()
   }
 
 }

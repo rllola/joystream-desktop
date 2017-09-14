@@ -88,7 +88,8 @@
     "react-tooltip": "^3.3.0",
     "render-media": "^2.10.0",
     "request": "^2.82.0",
-    "tether": "^1.4.0"
+    "tether": "^1.4.0",
+    "version_compare": "0.0.3"
   },
   "standard": {
     "parser": "babel-eslint"

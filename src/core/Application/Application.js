@@ -50,8 +50,10 @@ class Application extends EventEmitter {
       chooseSavePathButtonClicked : this.chooseSavePathButtonClicked.bind(this),
       useTorrentFilePathButtonClicked : this.useTorrentFilePathButtonClicked.bind(this),
       keepDownloadingClicked: this.keepDownloadingClicked.bind(this),
-      dropDownloadClicked: this.dropDownloadClicked.bind(this)
+      dropDownloadClicked: this.dropDownloadClicked.bind(this),
 
+      /// Onboarding scene
+      onBoardingFinished: this.onBoardingFinished.bind(this)
     })
 
     var client = new ApplicationStatemachineClient(this.store)
@@ -171,6 +173,12 @@ class Application extends EventEmitter {
 
   dropDownloadClicked() {
     this._process('dropDownloadClicked')
+  }
+
+  //// Onboarding flow
+
+  onBoardingFinished () {
+    this._process('onBoardingFinished')
   }
 
 }

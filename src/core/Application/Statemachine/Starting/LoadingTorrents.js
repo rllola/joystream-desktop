@@ -3,6 +3,8 @@ const TorrentInfo = require('joystream-node').TorrentInfo
 
 const Common = require('../Common')
 
+import { isRunningForTheFirstTime } from '../../onboarding'
+
 var LoadingTorrents = new BaseMachine({
   namespace: 'LoadingTorrents',
 
@@ -44,8 +46,13 @@ var LoadingTorrents = new BaseMachine({
 
         })
 
-        // øøø
-        this.go(client, '../../Started')
+        // If first time running the application show the on boarding message
+        if (isRunningForTheFirstTime()) {
+          this.go(client, '../../Started/OnBoarding')
+        } else {
+          // øøø
+          this.go(client, '../../Started')
+        }
       },
 
       torrentLoaded: function (client) {
