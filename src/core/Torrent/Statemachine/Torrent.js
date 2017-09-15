@@ -1,7 +1,6 @@
 /**
  * Created by bedeho on 13/06/17.
  */
-import File from '../../../utils/File'
 var BaseMachine = require('../../BaseMachine')
 var Loading = require('./Loading/Loading')
 var Active = require('./Active')
@@ -106,12 +105,6 @@ var Torrent = new BaseMachine({
 
                 //client.broadcastRawTransaction(alert.settlementTx)
             },
-            play: function (client, fileIndex) {
-
-              var file = new File(client.torrent, fileIndex)
-
-              client.store.setIsPlaying(file)
-            },
             close: function (client) {
 
               let bounds = {
@@ -121,7 +114,7 @@ var Torrent = new BaseMachine({
               // restore original bounds
               // Should not be hardcoded (TODO)
               electron.ipcRenderer.send('set-bounds', bounds)
-              
+
               // Disable save power blocker
               electron.ipcRenderer.send('power-save-blocker', {enable:false})
 
