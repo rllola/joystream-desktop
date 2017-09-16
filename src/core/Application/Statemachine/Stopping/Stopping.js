@@ -46,13 +46,8 @@ const BaseMachine = require('../../../BaseMachine')
             if (allTorrentsTerminated) {
               this.transition(client, 'SavingTorrentsToDatabase')
             }
-          },
-
-          lastPaymentReceived: function (client, alert) {
-            if (!alert.settlementTx) return
-
-            client.broadcastRawTransaction(alert.settlementTx)
           }
+
         },
 
         SavingTorrentsToDatabase: {
