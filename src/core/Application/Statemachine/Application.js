@@ -9,6 +9,8 @@ const Starting = require('./Starting/Starting')
 const Started = require('./Started/Started')
 const Stopping = require('./Stopping/Stopping')
 
+const Common = require('./Common')
+
 const {shell} = require('electron')
 
 const TorrentInfo = require('joystream-node').TorrentInfo
@@ -81,7 +83,7 @@ var ApplicationStateMachine = new BaseMachine({
 
           // Standard buyer terms
           // NB: Get from settings data store of some sort
-          let terms = Common.getStandardbuyerTerms()
+          let terms = Common.getStandardBuyerTerms()
 
           // change name
           torrent.updateBuyerTerms(terms)
@@ -157,7 +159,7 @@ var ApplicationStateMachine = new BaseMachine({
 
         // Remove the torrent from the applicationStore
         client.store.torrentRemoved(infoHash)
-        
+
         // If deleteData we want to remove the folder/file
         if (fullPath && deleteData) {
           shell.moveItemToTrash(fullPath)
