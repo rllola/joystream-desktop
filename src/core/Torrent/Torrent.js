@@ -17,11 +17,17 @@ util.inherits(Torrent, EventEmitter)
  * @param session
  * @constructor
  */
-function Torrent(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator, getStandardSellerTerms) {
+function Torrent(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator, getStandardSellerTerms, broadcastRawTransaction) {
 
     EventEmitter.call(this)
 
-    this._client = new TorrentStatemachineClient(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator, getStandardSellerTerms)
+    this._client = new TorrentStatemachineClient(
+      store,
+      privateKeyGenerator,
+      publicKeyHashGenerator,
+      contractGenerator,
+      getStandardSellerTerms,
+      broadcastRawTransaction)
 
     // Set initial state of store
     store.setState(TorrentStatemachine.compositeState(this._client))
@@ -133,12 +139,13 @@ Torrent.prototype.remove = function (deleteData) {
 /// TorrentStateMachineClient
 /// Holds state and external messaging implementations for a (behavoural machinajs) Torrent state machine instance
 
-function TorrentStatemachineClient(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator, getStandardSellerTerms) {
+function TorrentStatemachineClient(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator, getStandardSellerTerms, broadcastRawTransaction) {
     this.store = store
     this._privateKeyGenerator = privateKeyGenerator
     this._publicKeyHashGenerator = publicKeyHashGenerator
     this._contractGenerator = contractGenerator
     this._getStandardSellerTerms = getStandardSellerTerms
+    this._broadcastRawTransaction = broadcastRawTransaction
 }
 
 TorrentStatemachineClient.prototype.processStateMachineInput = function (...args) {
@@ -294,6 +301,10 @@ TorrentStatemachineClient.prototype.getTorrentInfo = function() {
 
 TorrentStatemachineClient.prototype.getFiles = function() {
   // Get the files
+}
+
+TorrentStatemachineClient.prototype.broadcastRawTransaction = function (tx) {
+  return this._broadcastRawTransaction(tx)
 }
 
 function LOG_ERROR(source, err) {

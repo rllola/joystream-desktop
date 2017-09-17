@@ -102,9 +102,7 @@ var Torrent = new BaseMachine({
 
                 if (!alert.settlementTx) return
 
-                console.log('Introduce tx broadcasting on torrent machine')
-
-                //client.broadcastRawTransaction(alert.settlementTx)
+                client.broadcastRawTransaction(alert.settlementTx)
             },
             play: function (client, fileIndex) {
 
@@ -121,7 +119,7 @@ var Torrent = new BaseMachine({
               // restore original bounds
               // Should not be hardcoded (TODO)
               electron.ipcRenderer.send('set-bounds', bounds)
-              
+
               // Disable save power blocker
               electron.ipcRenderer.send('power-save-blocker', {enable:false})
 
@@ -156,9 +154,7 @@ var Torrent = new BaseMachine({
 
                 if (!alert.settlementTx) return
 
-                console.log('Introduce tx broadcasting on torrent machine')
-
-                //client.broadcastRawTransaction(alert.settlementTx)
+                client.broadcastRawTransaction(alert.settlementTx)
             }
         },
 
