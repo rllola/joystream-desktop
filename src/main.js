@@ -1,5 +1,5 @@
 const electron = require('electron')
-const {app, BrowserWindow, ipcMain} = require('electron')
+const {app, BrowserWindow, ipcMain, crashReporter} = require('electron')
 const path = require('path')
 const url = require('url')
 const isDev = require('electron-is-dev')
@@ -136,6 +136,13 @@ function createWindow () {
     protocol: 'file:',
     slashes: true
   }))
+
+  crashReporter.start({
+    productName: "JoyStream",
+    companyName: "joystream",
+    submitURL: "https://joystream.sp.backtrace.io:6098/post?format=minidump&token=55e469c9e2258e7fd1b47a8ebd4bdc4ddc16b7521b18d3c34941fe186f660ca8",
+    uploadToServer: true
+  })
 
   // Emitted when the window is closed.
   win.on('closed', () => {
