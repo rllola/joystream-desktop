@@ -32,12 +32,11 @@
 
     <script type="text/javascript">
         window.doorbellOptions = {
-            // Need to be changed with proper appkey
             appKey: 'Z8RYHGIQeb7QeVtJD1HLn0fMZlhQgPovzorgfutn8gnCuLfTP8t2d3LnybV2Ow1s'
         };
         (function(w, d, t) {
             var hasLoaded = false;
-            function l() { if (hasLoaded) { return; } hasLoaded = true; window.doorbellOptions.windowLoaded = true; var g = d.createElement(t);g.id = 'doorbellScript';g.type = 'text/javascript';g.async = true;g.src = 'https://embed.doorbell.io/button/7028?t='+(new Date().getTime());(d.getElementsByTagName('head')[0]||d.getElementsByTagName('body')[0]).appendChild(g); }
+            function l() { if (hasLoaded) { return; } hasLoaded = true; window.doorbellOptions.windowLoaded = true; var g = d.createElement(t);g.id = 'doorbellScript';g.type = 'text/javascript';g.async = true;g.src = 'https://embed.doorbell.io/button/7029?t='+(new Date().getTime());(d.getElementsByTagName('head')[0]||d.getElementsByTagName('body')[0]).appendChild(g); }
             if (w.attachEvent) { w.attachEvent('onload', l); } else if (w.addEventListener) { w.addEventListener('load', l, false); } else { l(); }
             if (d.readyState == 'complete') { l(); }
         }(window, document, 'script'));
