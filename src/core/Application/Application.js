@@ -234,6 +234,23 @@ class ApplicationStatemachineClient {
   broadcastRawTransaction (tx) {
     this.services.spvnode.sendTx(tx)
   }
+
+  getWalletBalance (callback = () => {}) {
+    this.services.wallet.getBalance().then((balance) => {
+      callback(balance)
+    })
+  }
+
+  topUpWalletFromFaucet (callback = () => {}) {
+    if (this.services.spvnode.network !== 'testnet') return
+    if (!this.services.testnetFaucet) return
+
+    var address = this.services.wallet.getAddress()
+
+    console.log('Faucet: Requesting some testnet coins...')
+
+    this.services.testnetFaucet.getCoins(address.toString(), callback)
+  }
 }
 
 export default Application

@@ -143,6 +143,14 @@ function NewMockedClient () {
     ASM.queuedHandle(client, ...args)
   }
 
+  client.getWalletBalance = function () {
+
+  }
+
+  client.topUpWalletFromFaucet = function () {
+
+  }
+
   client.factories = null
 
   client.config = {
