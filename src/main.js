@@ -144,11 +144,6 @@ function createWindow () {
     uploadToServer: true
   })
 
-  if (process.env.NODE_ENV === 'development') {
-    // Open the DevTools.
-    win.webContents.openDevTools()
-  }
-
   // Emitted when the window is closed.
   win.on('closed', () => {
     // Dereference the window object, usually you would store windows
