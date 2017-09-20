@@ -58,10 +58,12 @@ var ApplicationStateMachine = new BaseMachine({
       _onEnter: function (client) {
         // listen for changes in wallet balance
         client.services.wallet.on('balance', (balance) => {
-          client.processStateMachineInput('walletBalanceChanged', balance)
+          client.processStateMachineInput('walletBalanceUpdated', balance)
         })
 
-        client.processStateMachineInput('checkIfWalletNeedsRefill')
+        client.getWalletBalance(function (balance) {
+          client.processStateMachineInput('walletBalanceUpdated', balance)
+        })
       },
 
       stop: function (client) {
@@ -89,45 +91,21 @@ var ApplicationStateMachine = new BaseMachine({
           torrent.updateBuyerTerms(terms)
       },
 
-      checkIfWalletNeedsRefill: async function (client, balance) {
-        if (client.services.spvnode.network !== 'testnet') return
-        if (!client.services.testnetFaucet) return
+      walletBalanceUpdated: function (client, balance) {
+        // Update UI
+        client.store.setUnconfirmedBalance(balance.unconfirmed)
+        client.store.setConfirmedBalance(balance.confirmed)
 
-        if (!balance) {
-          // Check balance on startup
-          try {
-            balance = await client.services.wallet.getBalance()
-          } catch (err) {
-            return
-          }
+        // Automatically request testnet coins
+        if (balance.unconfirmed < 25000) {
+          client.topUpWalletFromFaucet(function (err) {
+            if (err) {
+              console.log('Faucet:', err)
+            } else {
+              console.log('Faucet: Request accepted')
+            }
+          })
         }
-
-        client.processStateMachineInput('topUpWalletFromFaucet', balance.unconfirmed)
-      },
-
-      topUpWalletFromFaucet: function (client, balance) {
-        if (!client.services.testnetFaucet) return
-
-        // Only top up if we are running low
-        if (balance > 25000) {
-          return
-        }
-
-        var address = client.services.wallet.getAddress()
-
-        console.log('Faucet: Requesting some testnet coins...')
-
-        client.services.testnetFaucet.getCoins(address.toString(), function (err) {
-          if (err) {
-            console.log('Faucet:', err)
-          } else {
-            console.log('Faucet: Received testnet coins')
-          }
-        })
-      },
-
-      walletBalanceChanged: function (client, balance) {
-        client.processStateMachineInput('checkIfWalletNeedsRefill', balance)
       },
 
       removeTorrent: function (client, infoHash, deleteData) {
