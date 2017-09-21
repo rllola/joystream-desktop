@@ -34,6 +34,18 @@ var UI_CONSTANTS = {
     higlightColor : '#E87461'
 }
 
+function getStyles(props) {
+
+    return {
+        innerRoot : {
+            height: '100%',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+        }
+    }
+}
+
 @observer
 class Application extends Component {
 
@@ -43,9 +55,11 @@ class Application extends Component {
 
     render () {
 
+        let styles = getStyles(this.props)
+
         return (
             <MuiThemeProvider>
-                <div className="app-container">
+                <div style={styles.innerRoot}>
 
                     {
                             this.props.store.isPlaying
