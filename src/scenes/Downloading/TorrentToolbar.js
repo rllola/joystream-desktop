@@ -22,7 +22,7 @@ const TorrentToolbar = observer((props) => {
             <PlaySection torrent={props.torrent} />
             <StartPaidDownloadingSection torrent={props.torrent}/>
             <ToggleStatusSection torrent={props.torrent}/>
-            <ChangeBuyerTermsSection torrent={props.torrent}/>
+            {/** <ChangeBuyerTermsSection torrent={props.torrent}/> **/}
             <RemoveSection torrent={props.torrent} store={props.store}/>
             <RemoveAndDeleteSection torrent={props.torrent} store={props.store}/>
             <OpenFolderSection torrent={props.torrent} />

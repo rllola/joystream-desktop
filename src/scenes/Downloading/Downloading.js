@@ -2,39 +2,91 @@ import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
+import SvgIcon from 'material-ui/SvgIcon'
+
 import TorrentTable from './TorrentTable'
 import StartDownloadingFlow, {Stage} from './components/StartDownloadingFlow'
 
-const Downloading = observer((props) => {
+/**
+const AddTorrentIcon = (props) => {
 
     return (
-        <div className="downloading-scene-container">
+        <SvgIcon>
+            <polygon points="9,4 7,4 7,7 4,7 4,9 7,9 7,12 9,12 9,9 12,9 12,7 9,7 "></polygon>
+        </SvgIcon>
+    )
+}
+*/
 
-            <section className="middle-section">
+import {
+    Label,
+    LabelContainer,
+    MiddleSection,
+    SimpleLabel,
+    Toolbar,
+    ToolbarButton,
+    MaxFlexSpacer,
+    TorrentCountLabel,
+    CurrencyLabel,
+    BandwidthLabel
+} from  './../../components/MiddleSection'
 
-                <div className="indicators">
-                    <span className="flex-spacer"></span>
-                    <span className="label">Revenue</span>
-                    <span className="quantity">{props.revenue} B</span>
-                    <span className="vertical-bar"></span>
-                    <span className="label">Bandwidth</span>
-                    <span className="quantity">{props.downloadSpeed} Kb/s</span>
-                </div>
+function getStyles(props) {
 
-                <div className="toolbar-section">
+    return {
+        root : {
+            display: 'flex',
+            flexDirection: 'column',
+            flexGrow: 1
+        }
+    }
 
-                    <div className="heading">
-                        <h1>Downloading</h1>
-                        <h2> {props.torrents.length} torrents</h2>
-                    </div>
-                    <div className="vertical-bar"></div>
-                    <div className="button-section">
-                        <div className="button" onClick={props.onStartDownloadClicked}>DOWNLOAD</div>
-                    </div>
+}
 
-                </div>
+const Downloading = observer((props) => {
 
-            </section>
+    let styles = getStyles(props)
+
+    let labelColorProps = {
+        backgroundColorLeft : props.middleSectionDarkBaseColor,
+        backgroundColorRight : props.middleSectionHighlightColor
+    }
+
+    return (
+        <div style={styles.root}>
+
+            <MiddleSection backgroundColor={props.middleSectionBaseColor}>
+
+                <Toolbar>
+
+                    <ToolbarButton title="Start downloading"
+                                   onClick={props.onStartDownloadClicked}
+                                   //iconNode={<AddTorrentIcon/>}
+                    />
+
+                </Toolbar>
+
+                <MaxFlexSpacer />
+
+                <LabelContainer>
+
+                    <TorrentCountLabel count={props.torrents.length}
+                                       {...labelColorProps}
+                    />
+
+                    <CurrencyLabel labelText={"SPENDING"}
+                                   satoshies={props.spending}
+                                   {...labelColorProps}
+                    />
+
+                    <BandwidthLabel labelText={'DOWNLOAD SPEED'}
+                                    bytesPerSecond={props.downloadSpeed}
+                                    {...labelColorProps}
+                    />
+
+                </LabelContainer>
+
+            </MiddleSection>
 
             <TorrentTable torrents={props.torrents} store={props.store} onStartDownloadDrop={props.onStartDownloadDrop} />
 
@@ -46,11 +98,16 @@ const Downloading = observer((props) => {
 
 Downloading.propTypes = {
     torrents : PropTypes.any.isRequired,
-    revenue : PropTypes.number.isRequired,
+    spending : PropTypes.number.isRequired,
     downloadSpeed : PropTypes.number.isRequired,
     onStartDownloadClicked : PropTypes.func.isRequired,
     onStartDownloadDrop : PropTypes.func.isRequired,
-    torrentsBeingLoaded : PropTypes.array.isRequired
+    torrentsBeingLoaded : PropTypes.array.isRequired,
+
+    //
+    middleSectionBaseColor : PropTypes.string.isRequired,
+    middleSectionDarkBaseColor : PropTypes.string.isRequired,
+    middleSectionHighlightColor : PropTypes.string.isRequired
 }
 
 export default Downloading

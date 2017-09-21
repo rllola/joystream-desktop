@@ -14,7 +14,7 @@ import TorrentContextMenu from './TorrentContextMenu'
 
 import Dropzone from 'react-dropzone'
 
-import StartDownloadingHint from './components/StartDownloadingHint'
+import {Hint} from '../../components/Table'
 
 import AbsolutePositionChildren from '../../components/AbsolutePositionChildren/AbsolutePositionChildren'
 
@@ -94,7 +94,7 @@ class TorrentTable extends Component {
 
         return (
           <Dropzone disableClick style={dropZoneStyle} onDrop={this.props.onStartDownloadDrop}>
-            <Table column_titles={["", "State", "Size", "Progress", "Speed", "Arrival", "Mode", "Seeders", "Sellers"]}>
+              <Table column_titles={["", "STATE", "SIZE", "PROGRESS", "SPEED", "ARRIVAL", "MODE", "SEEDERS", "SELLERS"]}>
                 { this.getRenderedContextMenu() }
                 { this.getRenderedTorrentRows() }
             </Table>
@@ -132,13 +132,13 @@ class TorrentTable extends Component {
         return (
             this.props.torrents.length == 0
             ?
-            <StartDownloadingHint key={0}/>
+            <Hint title="Drop torrent file here to start download" key={0}/>
             :
-            this.props.torrents.map((t) => { return this.getRenderedTorrentRow(t) })
+            this.props.torrents.map((t, index) => { return this.getRenderedTorrentRow(t, index % 2 === 0) })
         )
     }
 
-    getRenderedTorrentRow(t) {
+    getRenderedTorrentRow(t, isEven) {
 
         var toolbarProps = {
             canSpeedup : t.canStartPaidDownloading,
@@ -147,12 +147,15 @@ class TorrentTable extends Component {
             onMoreClicked : (e) => { this.toolbarMoreButtonClicked(e, t) }
         }
 
+        let backgroundColor = isEven ? '#f5f5f5' : 'white'
+
         return (
             <TorrentRow key={t.infoHash}
                         torrent={t}
                         toolbarVisibilityStatus = {this.getToolbarVisibilityTypeForTorrent(t)}
                         toolbarProps={toolbarProps}
-                        store={this.props.store} />
+                        store={this.props.store}
+                        backgroundColor={backgroundColor}/>
         )
     }
 

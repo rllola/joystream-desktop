@@ -38,7 +38,8 @@ class TorrentRow extends Component {
     render(props) {
 
         return (
-            <Row className={this.props.toolbarVisibilityStatus == ToolbarVisibilityType.OnHover ? "row-managed-toolbar-visiblity" : ""}>
+            <Row className={this.props.toolbarVisibilityStatus == ToolbarVisibilityType.OnHover ? "row-managed-toolbar-visiblity" : ""}
+                 backgroundColor={this.props.backgroundColor}>
 
                 <NameField name={this.props.torrent.name} />
                 <StatusField paused={this.props.torrent.canStart} />
@@ -62,7 +63,7 @@ class TorrentRow extends Component {
         return (
             this.props.toolbarVisibilityStatus != ToolbarVisibilityType.Hidden
             ?
-            <AbsolutePositionChildren left={-340} top={-20}>
+            <AbsolutePositionChildren left={-310} top={3}>
                 <TorrentToolbar {...this.props.toolbarProps} torrent={this.props.torrent} store={this.props.store}/>
             </AbsolutePositionChildren>
             :
@@ -76,6 +77,7 @@ TorrentRow.propTypes = {
     torrent: PropTypes.object.isRequired, // hould we here _require_ a TorrentStore?
     toolbarVisibilityStatus : PropTypes.oneOf(Object.values(ToolbarVisibilityType)).isRequired,
     toolbarProps : PropTypes.object, // later use shape?
+    backgroundColor : PropTypes.string
 }
 
 export default TorrentRow
