@@ -9,9 +9,9 @@ import {Field} from './../Table'
 const StatusIndicator = (props) => {
 
     if(props.paused)
-        return <span className="label paused-label">paused</span>
+        return <span className="label paused-label">PAUSED</span>
     else
-        return<span className="label inactive-label">started</span>
+        return<span className="label inactive-label">STARTED</span>
 }
 
 StatusIndicator.propTypes = {

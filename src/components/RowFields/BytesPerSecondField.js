@@ -5,18 +5,45 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {Field} from './../Table'
-import bytes from 'bytes'
+import {convenientBytes} from '../../common'
+
+function getStyles(props) {
+
+    return {
+        container : {
+            display : 'flex',
+            alignItems: 'flex-end'
+        },
+        value :  {
+            fontWeight: 'bold',
+        },
+
+        unit : {
+            marginLeft: '4px',
+            //fontSize: '14px'
+        }
+    }
+}
 
 const BytesPerSecondField = (props) => {
 
-    var bytesPerSecondString
+    let styles = getStyles(props)
+    let representation
 
     if(props.bytes)
-        bytesPerSecondString = bytes(props.bytes, { unitSeparator : ' ', decimalPlaces : props.decimalPlaces}) + '/s'
+        representation = convenientBytes(props.bytes, {decimalPlaces : props.decimalPlaces})
+    else
+        representation = {
+            value : '',
+            unit : ''
+        }
 
     return (
         <Field>
-            {bytesPerSecondString}
+            <div style={styles.container}>
+                <span style={styles.value}>{representation.value}</span>
+                <span style={styles.unit}>{representation.unit ? representation.unit + '/s' : ''}</span>
+            </div>
         </Field>
     )
 
