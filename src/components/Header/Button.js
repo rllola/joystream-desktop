@@ -16,7 +16,10 @@ function getStyles(props, state) {
     let rootColor
     let contentColor
 
-    if(props.selected) {
+    if(props.disabled) {
+        rootColor = props.rootColors.disabled
+        contentColor = props.contentColors.disabled
+    } else if(props.selected) {
         rootColor = props.rootColors.selected
         contentColor = props.contentColors.selected
     } else {
@@ -39,8 +42,9 @@ function getStyles(props, state) {
             alignItems: 'center',
             justifyContent: 'center',
             width : '120px',
-            height: '80px',
+            //height: '80px',
             backgroundColor: rootColor,
+            //borderBottom : '2px solid ' + ,
         }, props.style),
 
         contentContainer : {
@@ -59,7 +63,7 @@ function getStyles(props, state) {
             top: '0px',
             right: '0px',
             fontWeight: '500',
-            fontSize: '12px',
+            fontSize: '10px',
             width: '24px',
             height: '24px',
             borderRadius: '50%',
@@ -77,15 +81,15 @@ function getStyles(props, state) {
         title : {
             display : props.title ? 'block' : 'none',
             color: contentColor,
-            fontSize: '10px',
+            fontSize: '12px',
             fontWeight: 'bold',
             padding: '0px',
             paddingLeft: '8px',
             paddingRight: '8px',
-            borderRadius: '100px',
+            //borderRadius: '100px',
             backgroundColor : 'none',
             cursor: 'default',
-            marginTop: '5px'
+            marginTop: '7px'
         }
     }
 }
@@ -99,11 +103,15 @@ class Button extends Component {
     }
 
     handleMouseEnter = () => {
-        this.setState({hover : true})
+
+        if(!this.props.disabled)
+            this.setState({hover : true})
     }
 
     handleMouseLeave = () => {
-        this.setState({hover : false})
+
+        if(!this.props.disabled)
+            this.setState({hover : false})
     }
 
     render() {
