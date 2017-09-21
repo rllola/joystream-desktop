@@ -1,31 +1,14 @@
 @import '_constants';
 
-.downloading-scene-container {
+.my_table {
+  flex-grow: 1;
+
   display: flex;
   flex-direction: column;
 
-  flex-grow: 1;
-
-  .my_table {
+  .content {
     flex-grow: 1;
-
-    display: flex;
-    flex-direction: column;
-
-    .content {
-      flex-grow: 1;
-      overflow-y: scroll;
-    }
-  }
-}
-
-.progress-bar {
-  height : 15px;
-  border-radius: $max-border-radius;
-
-  /** This is the progress bar div **/
-  div {
-    background-color: #55C855
+    overflow-y: scroll;
   }
 }
 

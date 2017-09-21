@@ -12,13 +12,17 @@ $scrollbar-width: 13px;
     flex-direction: row;
 
     // Lateral padding must match total offset on row field
-    padding-left: $row-padding + $content-padding;
-    padding-right: $row-padding + $content-padding + $scrollbar-width;
-    padding-bottom: 12px;
+    padding-left: 20px;
+    padding-right: 20px + $scrollbar-width;
+
+    flex : 0 0 45px;
 
     font-family: $major-font-family;
-    font-size: 18px;
-    color: $primary-text-color;
+    font-size: 13px;
+    font-weight: bold;
+    color: hsl(219, 41%, 76%);//#fcd9cf;
+
+    background-color: #496daf;
   }
 
   .content {
@@ -27,32 +31,13 @@ $scrollbar-width: 13px;
     padding-bottom: $content-padding;
     background-color: $grey-background;
 
-    border-top-width: 2px;
+    border-top-width: 3px;
     border-top-color: $grey-accent;
     border-top-style: solid;
 
-    border-left-width: 2px;
-    border-left-color: $grey-accent;
-    border-left-style: solid;
-
-    .row {
-      display: flex;
-      flex-direction: row;
-
-      background-color: white;
-      color: $primary-text-color;
-      margin: $content-padding;
-      margin-bottom: 0; // top margin of next row is enough. and container bottom padding
-      padding: $row-padding;
-      border-radius: $max-border-radius;
-      font-family: $major-font-family;
-      font-size: 18px;
-
-      // Prevent growing or shrinking, and start out at 60px tall
-      flex: 0 0 60px;
-
-      // border-bottom: 2px solid #cdcdcd; // temporary
-    }
+    //border-left-width: 2px;
+    //border-left-color: $grey-accent;
+    //border-left-style: solid;
 
     // Move this out, as its part of do
     .hint-row {
@@ -63,10 +48,6 @@ $scrollbar-width: 13px;
       justify-content: center;
     }
 
-    /* Drop bottom margin on last torrent */
-    .row:last-of-type {
-      margin-bottom: 0px;
-    }
   }
 
   // .... //
@@ -132,18 +113,13 @@ $scrollbar-width: 13px;
 
     .label {
 
-      // thes emust be same
-      padding-left: 13px;
-      padding-right: 13px;
+      height: 16px;
+      font-weight: bold;
+      font-size: 10px;
+      border-radius: 12px;
 
-      // these must be same
-      padding-top: 3px;
-      padding-bottom: 3px;
-
-      font-size: 16px;
-      border-radius: $max-border-radius;
-
-
+      padding-left: 5px;
+      padding-right: 5px;
     }
   }
 
