@@ -5,6 +5,7 @@
 var BaseMachine = require('../../../BaseMachine')
 var DownloadIncomplete = require('./DownloadIncomplete')
 var FinishedDownloading = require('./FinishedDownloading')
+var Common = require('../Common')
 
 import File from '../../../../utils/File'
 
@@ -30,6 +31,8 @@ var Active = new BaseMachine({
 
               var file = new File(client.torrent, fileIndex, false)
 
+              Common.hideDoorbell()
+
               client.store.setIsPlaying(file)
             },
         },
@@ -40,6 +43,8 @@ var Active = new BaseMachine({
             play: function (client, fileIndex) {
 
               var file = new File(client.torrent, fileIndex, true)
+
+              Common.hideDoorbell()
 
               client.store.setIsPlaying(file)
             },
