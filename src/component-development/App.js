@@ -27,6 +27,7 @@ const App = (props) => {
 
                 <HashRouter>
                     <div>
+                        <Link to="alertDialog"> <RaisedButton label="Alert Dialog" style={style} /> </Link>
                         <Link to="loading"> <RaisedButton label="Loading" style={style} /> </Link>
                         <Link to="terminating"> <RaisedButton label="Terminating" style={style} /> </Link>
                         <Link to="header"> <RaisedButton label="Header" style={style} />  </Link>
