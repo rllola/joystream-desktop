@@ -36,8 +36,9 @@ class Application extends EventEmitter {
       moveToScene: this.moveToScene.bind(this),
       startDownloadWithTorrentFileFromFilePicker: this.startDownloadWithTorrentFileFromFilePicker.bind(this),
       startDownloadWithTorrentFileFromDragAndDrop: this.startDownloadWithTorrentFileFromDragAndDrop.bind(this),
-      acceptTorrentWasAlreadyAdded: this.acceptTorrentWasAlreadyAdded.bind(this),
-      acceptTorrentFileWasInvalid: this.acceptTorrentFileWasInvalid.bind(this)
+      acceptTorrentFileWasAlreadyAdded: this.acceptTorrentFileWasAlreadyAdded.bind(this),
+      acceptTorrentFileWasInvalid: this.acceptTorrentFileWasInvalid.bind(this),
+      retryPickingTorrentFile: this.retryPickingTorrentFile.bind(this)
     })
 
     var client = new ApplicationStatemachineClient(this.store)
@@ -102,17 +103,22 @@ class Application extends EventEmitter {
     this._process('startDownloadWithTorrentFileFromDragAndDrop', files)
   }
 
-  acceptTorrentWasAlreadyAdded() {
-    this._process('acceptTorrentWasAlreadyAdded')
+  acceptTorrentFileWasAlreadyAdded() {
+    this._process('acceptTorrentFileWasAlreadyAdded')
   }
 
   acceptTorrentFileWasInvalid() {
     this._process('acceptTorrentFileWasInvalid')
   }
 
+  retryPickingTorrentFile() {
+      this._process('retryPickingTorrentFile')
+  }
+
   removeTorrent (infoHash, deleteData) {
     this._process('removeTorrent', infoHash, deleteData)
   }
+
 }
 
 // Create a maker function from a class or constructor function using 'new'

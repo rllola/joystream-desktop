@@ -285,12 +285,16 @@ class ApplicationStore {
     this._handlers.startDownloadWithTorrentFileFromDragAndDrop(files)
   }
 
-  acceptTorrentFileAlreadyAdded() {
-    this._handlers.acceptTorrentWasAlreadyAdded()
+  acceptTorrentFileWasAlreadyAdded() {
+    this._handlers.acceptTorrentFileWasAlreadyAdded()
   }
 
   acceptTorrentFileWasInvalid() {
     this._handlers.acceptTorrentFileWasInvalid()
+  }
+
+  retryPickingTorrentFile() {
+    this._handlers.retryPickingTorrentFile()
   }
 
 }

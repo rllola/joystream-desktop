@@ -3,22 +3,35 @@
  */
 
 import React from 'react'
-import {ScenarioContainer} from '../common'
-
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card'
+import FlatButton from 'material-ui/FlatButton'
 import StartDownloadingFlow from '../../scenes/Downloading/components/StartDownloadingFlow'
 
-
-// <StartDownloadingFlow />
-const StartDownloadingFlowScenarios = () => {
+const StartDownloadingFlowScenarios = (props) => {
 
     return (
-        <div>
+        <Card>
 
-            <ScenarioContainer title="Normal">
-                <h1> Not done yet! </h1>
-            </ScenarioContainer>
+            <CardHeader
+                title="DOWNLOADING FLOW"
+                subtitle="Click on the given action to trigger this flow"
+                //actAsExpander={true}
+                //showExpandableButton={true}
+            />
 
-        </div>
+            <CardActions>
+
+                <FlatButton
+                    label="Invalid torrent file"
+                    onTouchTap={() => { props.store.setState('Started.OnDownloadingScene.TorrentFileWasInvalid')}}/>
+                <FlatButton
+                    label="Already added"
+                    onTouchTap={() => { props.store.setState('Started.OnDownloadingScene.TorrentAlreadyAdded')}}/>
+
+            </CardActions>
+
+            <StartDownloadingFlow store={props.store} />
+        </Card>
     )
 }
 
