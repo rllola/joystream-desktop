@@ -1,6 +1,45 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+
+/**
+ * Isolated application store just for powering components
+ */
+import ApplicationStore from '../core/Application/ApplicationStore'
+import Scene from '../core/Application/Scene'
+
+var applicationStore = new ApplicationStore(
+    'Started.OnDownloadingScene',
+    [],
+    12,
+    2351212,
+    12321,
+    553,
+    21,
+    {
+        addNewTorrent: () => { console.log("adding new torrent")},
+        moveToScene: (s) => {
+
+            console.log("moveToScene:" + s)
+
+            if (s == Scene.Completed)
+                applicationStore.setState('Started.OnCompletedScene')
+            else if (s == Scene.Downloading)
+                applicationStore.setState('Started.OnDownloadingScene')
+            else if (s == Scene.Uploading)
+                applicationStore.setState('Started.OnUploadingScene')
+        },
+        acceptTorrentFileWasInvalid: () => {
+            applicationStore.setState('Started.OnDownloadingScene')
+        },
+        retryPickingTorrentFile: () => {
+            applicationStore.setState('Started.OnDownloadingScene')
+        },
+        acceptTorrentFileAlreadyAdded: () => {
+            applicationStore.setState('Started.OnDownloadingScene')
+        }
+    })
+
 /**
  * Some components use react-tap-event-plugin to listen for touch events because onClick is not
  * fast enough This dependency is temporary and will eventually go away.
@@ -27,7 +66,7 @@ function render() {
 
     ReactDOM.render(
         <AppContainer>
-            <ComponentDevelopmentApplication />
+            <ComponentDevelopmentApplication store={applicationStore}/>
         </AppContainer>
         ,
         document.getElementById('root')

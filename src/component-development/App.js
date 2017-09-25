@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import RaisedButton from 'material-ui/RaisedButton'
 
+import Application from '../scenes/Application'
 import AlertDialog from './AlertDialog'
 import Downloading from './downloading'
 import LoadingSceneScenarios from './loading'
@@ -14,6 +15,22 @@ import Seeding from './seeding'
 import Completed from './completed'
 import StartDownloadingFlowScenarios from './startDownloadingFlow'
 import ApplicationHeaderScenarios from './ApplicationHeader'
+
+// Workaround to get props passed to `Application` component when used with `Route`
+const ComponentWithStoreProp = (component, props) => {
+
+    return () => {
+
+        return React.createElement(
+            component,
+            props
+        )
+        /** (
+            <component store={applicationStore}/>
+        ) **/
+
+    }
+}
 
 const App = (props) => {
 
@@ -28,6 +45,7 @@ const App = (props) => {
 
                 <HashRouter>
                     <div>
+                        <Link to="application"> <RaisedButton label="Application" style={style} /> </Link>
                         <Link to="alertDialog"> <RaisedButton label="Alert Dialog" style={style} /> </Link>
                         <Link to="loading"> <RaisedButton label="Loading" style={style} /> </Link>
                         <Link to="terminating"> <RaisedButton label="Terminating" style={style} /> </Link>
@@ -41,14 +59,16 @@ const App = (props) => {
 
                         <hr/>
 
+                        <Route path="/application" component={ComponentWithStoreProp(Application, props)} />
+                        <Route path="/alertDialog" component={AlertDialog} />
                         <Route path="/loading" component={LoadingSceneScenarios} />
                         <Route path="/terminating" component={TerminatingSceneScenarios} />
                         <Route path="/downloading" component={Downloading} />
                         <Route path="/completed" component={Completed}/>
                         <Route path="/seeding" component={Seeding}/>
                         <Route path="/stream" component={StreamScenario} />
-                        <Route path="/start_downloading_flow" component={StartDownloadingFlowScenarios} />
-                        <Route path="/application_header" component={ApplicationHeaderScenarios} />
+                        <Route path="/start_downloading_flow" component={ComponentWithStoreProp(StartDownloadingFlowScenarios, props)} />
+                        <Route path="/application_header" component={ComponentWithStoreProp(ApplicationHeaderScenarios, props)} />
                     </div>
                 </HashRouter>
 
