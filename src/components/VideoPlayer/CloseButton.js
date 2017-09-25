@@ -6,16 +6,18 @@ const CloseButton = observer((props) => {
 
   const closeStyle = {
     position: 'absolute',
-    top: 0,
-    left: 5,
-    color: 'white',
+    top: 10,
+    left: 10,
+    width: 12,
+    height: 12,
+    backgroundImage: 'url("./assets/icon/close.svg")',
     zIndex: 99
   }
 
   const onClick = () => { props.torrent.close() }
 
   return (
-    <a style={closeStyle} onClick={onClick} href="#"><span >X</span></a>
+    <a style={closeStyle} onClick={onClick}></a>
   )
 })
 
