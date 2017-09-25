@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import RaisedButton from 'material-ui/RaisedButton'
 
+import AlertDialog from './AlertDialog'
 import Downloading from './downloading'
 import LoadingSceneScenarios from './loading'
 import TerminatingSceneScenarios from './terminating'
