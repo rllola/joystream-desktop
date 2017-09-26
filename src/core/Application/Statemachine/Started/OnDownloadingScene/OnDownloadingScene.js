@@ -62,7 +62,7 @@ var OnDownloadingScene = new BaseMachine({
         let settings
 
         try {
-          settings = Common.prepareTorrentParams(client, torrentFile)
+          settings = Common.prepareTorrentParams(client, torrentFile.path)
         } catch (error) {
           this.transition(client, error)
           return
