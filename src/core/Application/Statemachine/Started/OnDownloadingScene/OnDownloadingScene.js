@@ -4,7 +4,7 @@
 
 const BaseMachine = require('../../../../BaseMachine')
 const Common = require('./../../Common')
-import {remote} from 'electron'
+
 
 var OnDownloadingScene = new BaseMachine({
   initialState: 'idle',
@@ -21,34 +21,13 @@ var OnDownloadingScene = new BaseMachine({
       },
 
       startDownloadWithTorrentFileFromFilePicker: function (client) {
-        // Allow user to pick a torrent file
-        var filesPicked = remote.dialog.showOpenDialog({
-            title : "Pick torrent file",
-            filters: [
-                {name: 'Torrent file', extensions: ['torrent']},
-                {name: 'All Files', extensions: ['*']}
-            ],
-            properties: ['openFile']}
-        )
 
-        // If the user did no pick any files, then we are done
-        if(!filesPicked || filesPicked.length == 0)
-            return
-
-        // Get torrent file name picked
-        var torrentFile = filesPicked[0]
-
-
-        let settings
-
-        try {
-          settings = Common.prepareTorrentParams(client, torrentFile)
-        } catch (error) {
-          this.transition(client, error)
-          return
-        }
-
-        Common.addTorrent(client, settings)
+          try {
+              Common.startDownloadWithTorrentFileFromFilePicker(client)
+          } catch (error) {
+              this.transition(client, error)
+              return
+          }
       },
 
       startDownloadWithTorrentFileFromDragAndDrop: function (client, files) {
@@ -80,12 +59,26 @@ var OnDownloadingScene = new BaseMachine({
 
             // Go back to idle
             this.transition(client, 'idle')
+        },
+
+        retryPickingTorrentFile : function (client) {
+
+            this.transition(client, 'idle')
+
+            // Try to start download again
+            try {
+                Common.startDownloadWithTorrentFileFromFilePicker(client)
+            } catch (error) {
+                this.transition(client, error)
+                return
+            }
+
         }
     },
 
     TorrentAlreadyAdded : {
 
-        acceptTorrentWasAlreadyAdded : function(client) {
+        acceptTorrentFileWasAlreadyAdded : function(client) {
 
             // Go back to idle
             this.transition(client, 'idle')

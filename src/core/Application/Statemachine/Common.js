@@ -5,6 +5,7 @@
 //const TorrentState = require('joystream-node').TorrentState
 const TorrentInfo = require('joystream-node').TorrentInfo
 const assert = require('assert')
+import {remote} from 'electron'
 
 // Either Common should be exported, or .is* functions should be exported,
 // or these values should be here. Calling TorrentCommon is just a temporary fix until this is fixed
@@ -12,6 +13,31 @@ const assert = require('assert')
 const TorrentCommon = require('../../Torrent/Statemachine/Common')
 
 const TorrentStatemachine = require('../../Torrent/Statemachine')
+
+function startDownloadWithTorrentFileFromFilePicker(client)  {
+
+    // Allow user to pick a torrent file
+    var filesPicked = remote.dialog.showOpenDialog({
+        title : "Pick torrent file",
+        filters: [
+            {name: 'Torrent file', extensions: ['torrent']},
+            {name: 'All Files', extensions: ['*']}
+        ],
+        properties: ['openFile']}
+    )
+
+    // If the user did no pick any files, then we are done
+    if(!filesPicked || filesPicked.length == 0)
+        return
+
+    // Get torrent file name picked
+    var torrentFile = filesPicked[0]
+
+    let settings = prepareTorrentParams(client, torrentFile)
+
+    addTorrent(client, settings)
+
+}
 
 function addTorrent(client, settings) {
 
@@ -157,4 +183,10 @@ function getStandardSellerTerms() {
     }
 }
 
-export {getStandardBuyerTerms, getStandardSellerTerms, addTorrent, prepareTorrentParams}
+export {
+    getStandardBuyerTerms,
+    getStandardSellerTerms,
+    startDownloadWithTorrentFileFromFilePicker,
+    addTorrent,
+    prepareTorrentParams
+}
