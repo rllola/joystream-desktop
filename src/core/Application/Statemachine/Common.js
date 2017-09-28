@@ -47,7 +47,6 @@ function addTorrent(client, settings) {
         client.processStateMachineInput('torrentFinishedDownloading', infoHash)
     })
 
-
     // settings.metadata has to be a TorrentInfo object
     assert(settings.metadata instanceof TorrentInfo)
 

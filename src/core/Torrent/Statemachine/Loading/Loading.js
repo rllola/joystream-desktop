@@ -90,6 +90,15 @@ var Loading = new BaseMachine({
                       client.processStateMachineInput('processSentPayment', alert)
                     })
 
+                    // DO we have new peers
+                    /* torrent.on('dhtGetPeersReply', function (peers) {
+                      for (var i in peers) {
+                        console.log(peers[i])
+                        torrent.connectPeer(peers[i])
+                      }
+                      console.log(peers)
+                    }) */
+
                     // If we don´t have metadata, wait for it
                     if(client.metadata && client.metadata.isValid()) {
                         this.transition(client, 'CheckingPartialDownload')

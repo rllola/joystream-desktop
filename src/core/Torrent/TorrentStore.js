@@ -1,5 +1,6 @@
 import { observable, action, computed } from 'mobx'
 import electron from 'electron'
+import { BEPSupportStatus } from 'joystream-node'
 
 class TorrentStore {
 
@@ -177,16 +178,16 @@ class TorrentStore {
         let normals = 0
 
         // Iterate peers and determine type
-        for(var i in this.peers) {
+        for(var i in peers) {
 
             // Get status
-            var s = statuses[i]
+            var s = peers[i]._client.status
 
-            if(s.peerBitSwaprBEPSupportStatus != BEPSupportStatus.supported) {
+            if(s.peerBitSwaprBEPSupportStatus !== BEPSupportStatus.supported) {
                 normals++
             } else if(s.connection) {
 
-                var announced = s.connnection.announcedModeAndTermsFromPeer
+                var announced = s.connection.announcedModeAndTermsFromPeer
 
                 if(announced.buyer)
                     buyers++
