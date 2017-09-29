@@ -1,80 +1,138 @@
 const electron = require('electron')
+const {BrowserWindow, ipcMain} = electron
+const path = require('path')
+const url = require('url')
+
 const request = require('request')
 
 const APP_VERSION = require('../package.json').version
 const AUTO_UPDATE_BASE_URL = require('./constants').AUTO_UPDATE_BASE_URL
 const AUTO_UPDATE_FEED_URL = AUTO_UPDATE_BASE_URL + process.platform + '/' + APP_VERSION
 
-function init (feedUrl = AUTO_UPDATE_FEED_URL) {
-  // Auto updates not available on linux
-  if (process.platform === 'linux') return
+let updaterWindow = null
 
-  checkForUpdate(feedUrl, function (err, releaseName) {
-    if (!err) {
-      // If update is available, prompt user if they want to download it or not
-      electron.dialog.showMessageBox({
-        type: 'question',
-        buttons: ['Download', 'Cancel'],
-        defaultId: 0,
-        message: 'A new version of JoyStream is available, do you want to download it now?',
-        title: `Download version ${releaseName}`
-      }, response => {
-        if (response === 0) downloadUpdate(feedUrl)
-      })
-    }
+function createWindow () {
+  // Create the updater browser window.
+  updaterWindow = new BrowserWindow({
+    width: 400,
+    height: 200,
+    minHeight: 400,
+    minWidth: 200,
+    frame: true,
+    show: false
+  })
+
+  updaterWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'updater-window', 'index.html'),
+    protocol: 'file:',
+    slashes: true
+  }))
+
+  // Emitted when the window is closed.
+  updaterWindow.on('closed', () => {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    updaterWindow = null
   })
 }
 
-function checkForUpdate (feedUrl, callback) {
-  request({url: feedUrl}, function (err, response, body) {
-    if (err) return callback(err)
+function init (showWindowOnCreation = false) {
+  // Auto updates not available on linux
+  if (process.platform === 'linux') return
+
+  // Only create one instance of the updater renderer process
+  if (updaterWindow) {
+    updaterWindow.show()
+  } else {
+    // Create the updater process window
+    // the renderer initiates check for update by sending an rpc message
+    createWindow()
+
+    if (showWindowOnCreation) updaterWindow.show()
+  }
+}
+
+ipcMain.on('auto-updater-channel', (event, command) => {
+  if (command === 'check-for-update') {
+    checkForUpdate(function (err, updateAvailable, releaseName) {
+      // If user has closed updater window, ignore result
+      if (updaterWindow) {
+        if (err) {
+          updaterWindow.webContents.send('auto-updater-channel', 'error', err)
+        } else {
+          if (updateAvailable) {
+            // If the update check was started automatically at startup show the window now
+            if (!updaterWindow.isVisible()) updaterWindow.show()
+
+            updaterWindow.webContents.send('auto-updater-channel', 'update-available', releaseName)
+          } else {
+            updaterWindow.webContents.send('auto-updater-channel', 'no-update-available')
+          }
+        }
+      }
+    })
+  } else if (command === 'download-update') {
+    downloadUpdate()
+  } else if (command === 'install') {
+    electron.autoUpdater.quitAndInstall()
+  } else if (command === 'init') {
+    init(true)
+  }
+})
+
+function checkForUpdate (callback) {
+  request({url: AUTO_UPDATE_FEED_URL}, function (err, response, body) {
+    if (err) {
+      return callback(err)
+    }
 
     if (response.statusCode === 200) {
       try {
         var updateInfo = JSON.parse(body)
       } catch (e) {
-        return callback(new Error('failed to parse response from server'))
+        return callback(new Error('failed to parse response body from server'))
       }
-      callback(null, updateInfo.name)
+      callback(null, true, updateInfo.name)
     } else {
-      callback(new Error('Update Not Found'))
+      callback(null, false)
     }
   })
 }
 
-function downloadUpdate (feedUrl) {
+function downloadUpdate () {
   // Electron autoUpdater checks for update and automatically downloads update if available
   // it doesn't give user a choice
-  electron.autoUpdater.setFeedURL(feedUrl)
+  electron.autoUpdater.setFeedURL(AUTO_UPDATE_FEED_URL)
   electron.autoUpdater.checkForUpdates()
 }
 
 electron.autoUpdater.on('error', (err) => {
-  electron.dialog.showMessageBox({
-    type: 'error',
-    defaultId: 0,
-    message: `Update Error: ${err.message}`,
-    title: 'Update Error'
-  })
+  if (updaterWindow) {
+    updaterWindow.webContents.send('auto-updater-channel', 'error', err.message)
+  }
 })
 
-// When update has been downloaded
-electron.autoUpdater.on('update-downloaded', confirmInstallation)
+electron.autoUpdater.on('update-available', () => {
+  if (updaterWindow) {
+    updaterWindow.webContents.send('auto-updater-channel', 'downloading')
+  }
+})
 
-// Prompt user if they want to install update or not
-function confirmInstallation (event, releaseNotes, releaseName) {
-  electron.dialog.showMessageBox({
-    type: 'question',
-    buttons: ['Install', 'Cancel'],
-    defaultId: 0,
-    message: 'Latest version downloaded, do you want to install it now?',
-    title: `Update to version ${releaseName}`
-  }, response => {
-    if (response === 0) {
-      electron.autoUpdater.quitAndInstall()
-    }
-  })
-}
+// If there is inconsistency in how we check for updates and how electron.autoUpdater is checking we
+// will get this event, because we only ask electron.autoUpdater to check for updates if we detect
+// and update is available in our custom code checkForUpdates()
+electron.autoUpdater.on('update-not-available', () => {
+  if (updaterWindow) {
+    updaterWindow.webContents.send('auto-updater-channel', 'error', 'Update not found')
+  }
+})
+
+electron.autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+  if (updaterWindow) {
+    updaterWindow.webContents.send('auto-updater-channel', 'downloaded', event, releaseNotes, releaseName)
+  }
+})
 
 module.exports = {
   init
