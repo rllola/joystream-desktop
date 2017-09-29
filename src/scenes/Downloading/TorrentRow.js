@@ -48,7 +48,7 @@ class TorrentRow extends Component {
                 <ETAField bytes_remaining={this.props.torrent.totalSize - this.props.torrent.downloadedSize}
                           bytes_per_second={this.props.torrent.downloadSpeed}
                 />
-                <ModeField isPaid={this.props.torrent.canStartPaidDownloading} />
+                <ModeField isPaid={this.props.torrent.hasStartedPaidDownloading} />
                 <PeerCountField count={this.props.torrent.numberOfSeeders} />
                 <PeerCountField count={this.props.torrent.numberOfSellers} />
 

@@ -90,6 +90,10 @@ var Loading = new BaseMachine({
                       client.processStateMachineInput('processSentPayment', alert)
                     })
 
+                    torrent.on('downloadStarted', function (alert) {
+                      client.processStateMachineInput('paidDownloadInitiationCompleted', alert)
+                    })
+
                     // DO we have new peers
                     /* torrent.on('dhtGetPeersReply', function (peers) {
                       for (var i in peers) {

@@ -171,9 +171,10 @@ var Started = new BaseMachine({
 
             // NB: We don't handleSequence peer plugin statuses
 
-            paidDownloadInitiationCompleted : function (client, err, res) {
+            paidDownloadInitiationCompleted : function (client, alert) {
 
-                if (err) {
+              // NB: Joystream alert never throw error. Need to be added in extension-cpp
+                if (alert.error) {
 
                     // Tell user about failure
                     client.paidDownloadInitiationFailed(err)

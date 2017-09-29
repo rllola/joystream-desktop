@@ -312,7 +312,10 @@ class TorrentStore {
     @computed get canStartPaidDownloading() {
         return this.state.startsWith("Active.DownloadIncomplete.Unpaid.Started.ReadyForStartPaidDownloadAttempt") &&
                 this.suitableSellers != null
+    }
 
+    @computed get hasStartedPaidDownloading() {
+        return this.state.startsWith("Active.DownloadIncomplete.Paid.Started")
     }
 
     @computed get canStop() {
