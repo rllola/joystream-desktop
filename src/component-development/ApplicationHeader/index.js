@@ -10,7 +10,7 @@ import React from 'react'
 import {ScenarioContainer} from '../common'
 import ApplicationHeader from '../../scenes/Application/components/ApplicationHeader'
 
-const ApplicationHeaderScenarios = () => {
+const ApplicationHeaderScenarios = (props) => {
 
     return (
         <ScenarioContainer title="Basic sidebar">
