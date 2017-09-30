@@ -14,13 +14,11 @@ var store = new UpdaterStore()
 
 function checkForUpdate () {
   store.setState('checking')
-  store.setMessage('Checking for updates...')
   ipcRenderer.send('auto-updater-channel', 'check-for-update')
 }
 
 function downloadUpdate () {
   store.setState('downloading')
-  store.setMessage('Downloading...')
   ipcRenderer.send('auto-updater-channel', 'download-update')
 }
 
@@ -33,20 +31,17 @@ function quitAndInstall () {
 ipcRenderer.on('auto-updater-channel', function (event, command, arg) {
   switch (command) {
     case 'update-available':
-      store.setMessage('A new version of JoyStream is available to download')
       store.setState('waiting-to-start-download')
       break
     case 'no-update-available':
-      store.setMessage('You are running the latest version')
-      store.setState('done')
+      store.setState('no-update-available')
       break
     case 'error':
       // Error checking for update or downloading update
       store.setErrorMessage(arg)
-      store.setState('done')
+      store.setState('error')
       break
     case 'downloaded':
-      store.setMessage('Update downloaded and ready to install')
       store.setState('waiting-to-start-install')
       break
   }

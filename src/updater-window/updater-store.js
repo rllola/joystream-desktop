@@ -1,7 +1,6 @@
 import {observable, action, runInAction, computed} from 'mobx'
 
 class UpdaterStore {
-  @observable message
   @observable state
   @observable errorMessage
 
@@ -12,11 +11,6 @@ class UpdaterStore {
   @computed get
   isWorking () {
     return this.state === 'checking' || this.state === 'downloading'
-  }
-
-  @action.bound
-  setMessage (message) {
-    this.message = message
   }
 
   @action.bound
