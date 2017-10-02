@@ -63,7 +63,7 @@ render(application.store)
 
 //const config = new Config()
 var config = {
-  appDirectory: path.join(os.homedir(), 'joystream'),
+  appDirectory: path.join(os.homedir(), '.joystream'),
   network: 'testnet',
   //logLevel: 'info'
 }
