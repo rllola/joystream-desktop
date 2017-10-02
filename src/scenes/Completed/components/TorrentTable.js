@@ -65,7 +65,7 @@ class TorrentsTable extends Component {
     render() {
 
         return (
-            <Table column_titles={["", "Uploading", "Size", "Buyers", "Sellers", "Observers"]}>
+            <Table column_titles={["", "Uploading", "Size", "Buyers", "Observers"]}>
                 { this.getRenderedContextMenu() }
                 { this.getRenderedTorrentRows() }
             </Table>
@@ -84,7 +84,6 @@ class TorrentsTable extends Component {
                                     onRemoveClicked = {() => {this.state.contextMenu.torrent.remove(); this.hideContextMenu()}}
                                     onRemoveAndDeleteDataClicked = {() => {this.state.contextMenu.torrent.removeAndDeleteData(); this.hideContextMenu()}}
                                     numberOfBuyers = {this.state.contextMenu.torrent.numberOfBuyers}
-                                    numberOfSellers = {this.state.contextMenu.torrent.numberOfSellers}
                                     numberOfObservers = {this.state.contextMenu.torrent.numberOfObservers}
                                     numberOfNormalPeers = {this.state.contextMenu.torrent.numberOfNormalPeers}/>
             </AbsolutePositionChildren>
