@@ -45,6 +45,19 @@ class ApplicationStore {
    */
   @observable spending
 
+
+  /// Start upoading flow
+
+  /**
+   * {String} Path to torrent file currently part of start uploading flow
+   */
+  @observable startUploadingTorrentFile
+
+  /**
+   * {TorrentStore} Torrent store for torrent with bad save path during start upload flow
+   */
+  @observable torrentWithBadSavePathDuringStartUploadFlow
+
   constructor (state,
                torrents,
                numberCompletedInBackground,
@@ -61,6 +74,9 @@ class ApplicationStore {
     this.setConfirmedBalance(confirmedBalance)
     this.setRevenue(revenue)
     this.setSpending(spending)
+
+    this.setStartUploadingTorrentFile(null)
+    this.setTorrentWithBadSavePathDuringStartUploadFlow(null)
 
     // callbacks to make on user actions
     // (provided by the core application, which will submit them to statemachine as inputs)
@@ -95,6 +111,16 @@ class ApplicationStore {
   @action.bound
   setSpending(spending) {
     this.spending = spending
+  }
+
+  @action.bound
+  setStartUploadingTorrentFile(torrentFile) {
+    this.startUploadingTorrentFile = torrentFile
+  }
+
+  @action.bound
+  setTorrentWithBadSavePathDuringStartUploadFlow(torrentStore) {
+    this.torrentWithBadSavePathDuringStartUploadFlow = torrentStore
   }
 
   /// UI values
@@ -285,8 +311,8 @@ class ApplicationStore {
     this._handlers.startDownloadWithTorrentFileFromDragAndDrop(files)
   }
 
-  acceptTorrentFileWasAlreadyAdded() {
-    this._handlers.acceptTorrentFileWasAlreadyAdded()
+  acceptTorrentWasAlreadyAdded() {
+    this._handlers.acceptTorrentWasAlreadyAdded()
   }
 
   acceptTorrentFileWasInvalid() {
@@ -294,7 +320,47 @@ class ApplicationStore {
   }
 
   retryPickingTorrentFile() {
-    this._handlers.retryPickingTorrentFile()
+      this._handlers.retryPickingTorrentFile()
+  }
+
+  /// Uploading scene events
+
+  // upload flow
+
+  startTorrentUploadFlow() {
+    this._handlers.startTorrentUploadFlow()
+  }
+
+  startTorrentUploadFlowWithTorrentFile(files) {
+    this._handlers.startTorrentUploadFlowWithTorrentFile(files)
+  }
+
+  exitStartUploadingFlow() {
+    this._handlers.exitStartUploadingFlow()
+  }
+
+  hasTorrentFile() {
+    this._handlers.hasTorrentFile()
+  }
+
+  hasRawContent() {
+    this._handlers.hasRawContent()
+  }
+
+  chooseSavePathButtonClicked() {
+    this._handlers.chooseSavePathButtonClicked()
+  }
+
+  useTorrentFilePathButtonClicked() {
+    this._handlers.useTorrentFilePathButtonClicked()
+  }
+
+  keepDownloadingClicked() {
+    this._handlers.keepDownloadingClicked()
+  }
+
+  dropDownloadClicked() {
+    this._handlers.dropDownloadClicked()
   }
 
 }

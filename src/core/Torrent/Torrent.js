@@ -58,7 +58,31 @@ function Torrent(store, privateKeyGenerator, publicKeyHashGenerator, contractGen
         //  - 'Loading.WaitingForMissingBuyerTerms'
         //  - Terminated: emit event with payload client.deepInitialState
 
+        //console.log(data.fromState + ' -> ' + data.toState)
     })
+
+
+    // Relay convenience signal about loading event
+    // ****** This is hack in two ways ******
+    // 1) Due to machinajs not being able to properly propagate
+    // child signals when used in BehavioralFSM mode, we have to dig inside state hierearchy
+    // and grab the child state object to listen to.
+    // 2) Due to machinajs state machine reorging their child structuer after their first
+    // usage, we have to conditionally detect where signal is emitted.
+
+    let source =
+        TorrentStatemachine.states.Loading._child.on
+            ?
+        TorrentStatemachine.states.Loading._child
+            :
+        TorrentStatemachine.states.Loading._child.instance
+
+    source.on('loaded', (client, deepInitialState) => {
+
+        if(client === this._client)
+            this.emit('loaded', deepInitialState)
+    })
+
 }
 
 /**

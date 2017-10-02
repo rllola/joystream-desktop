@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import { Field, Row } from  '../../../components/Table'
 import { NameField, BytesField, IsUploading, PeerCountField} from '../../../components/RowFields'
 import TorrentToolbar from './TorrentToolbar'
-import AbsolutePositionChildren from '../../../common/AbsolutePositionChildren'
+import AbsolutePositionChildren from '../../../components/AbsolutePositionChildren/AbsolutePositionChildren'
 import ToolbarVisibilityType from '../../../utils/ToolbarVisibilityState'
 
 @observer

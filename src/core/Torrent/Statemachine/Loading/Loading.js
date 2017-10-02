@@ -239,14 +239,18 @@ var Loading = new BaseMachine({
 
 function goToDeepInitialState(machine, client) {
 
+    let deepInitialState = client.deepInitialState
+
     // Path to active substate we need to transition to
     var path = relativePathFromDeepInitialState(client.deepInitialState)
 
     // Transition to active state
     machine.go(client, path)
 
-    // Drop temprorary storage of inital state we want to load to
+    // Drop temporary storage of inital state we want to load to
     delete client.deepInitialState
+
+    machine.emit('loaded', client, deepInitialState)
 }
 
 function relativePathFromDeepInitialState(s) {

@@ -9,6 +9,11 @@ class TorrentStore {
     @observable progress
     @observable totalSize
 
+    /**
+     * {String} Path where torrent data is saved and or read from
+     */
+    @observable savePath
+
     // Is playing video/audio
     @observable isPlaying = null
 
@@ -59,6 +64,7 @@ class TorrentStore {
 
     constructor (torrent,
                  infoHash,
+                 savePath,
                  state,
                  progress,
                  totalSize,
@@ -80,6 +86,7 @@ class TorrentStore {
 
         this._torrent = torrent
         this.infoHash = infoHash
+        this.savePath = savePath
         this.state = state
         this.progress = progress ? progress : 0
         this.totalSize = totalSize ? totalSize : 0
@@ -103,6 +110,11 @@ class TorrentStore {
 
     setTorrent(torrent) {
         this._torrent = torrent
+    }
+
+    @action.bound
+    setSavePath(savePath) {
+        this.savePath = savePath
     }
 
     @action.bound

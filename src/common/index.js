@@ -3,8 +3,6 @@
  */
 
 import {getCompactBitcoinUnits, getCompactBitcoinUnitString} from './common'
-import AbsolutePositionChildren from './AbsolutePositionChildren'
 
 export {getCompactBitcoinUnits,
-        getCompactBitcoinUnitString,
-        AbsolutePositionChildren}
+        getCompactBitcoinUnitString}

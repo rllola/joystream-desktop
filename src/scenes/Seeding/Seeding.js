@@ -3,6 +3,7 @@ import { inject, observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
 import TorrentTable from './TorrentTable'
+import StartUploadingFlow from './components/StartUploadingFlow'
 
 const Seeding = (props) => {
 
@@ -28,7 +29,7 @@ const Seeding = (props) => {
                     </div>
                     <div className="vertical-bar"></div>
                     <div className="button-section">
-                        <div className="button" onClick={props.onStartUploadClicked}>UPLOAD</div>
+                        <div className="button" onClick={props.onStartUploadCliked}>UPLOAD</div>
                     </div>
 
                 </div>
@@ -36,6 +37,8 @@ const Seeding = (props) => {
             </section>
 
             <TorrentTable torrents={props.torrents} store={props.store} />
+
+            <StartUploadingFlow store={props.store}/>
 
         </div>
     )
