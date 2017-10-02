@@ -12,6 +12,8 @@ import UpdaterStore from './updater-store.js'
 
 var store = new UpdaterStore()
 
+var blockClosingWindow = true
+
 function checkForUpdate () {
   store.setState('checking')
   ipcRenderer.send('auto-updater-channel', 'check-for-update')
@@ -30,6 +32,9 @@ function quitAndInstall () {
 // Listen to events from the auto-updater running in the main process
 ipcRenderer.on('auto-updater-channel', function (event, command, arg) {
   switch (command) {
+    case 'quit':
+      blockClosingWindow = false
+      break
     case 'update-available':
       store.setState('waiting-to-start-download')
       break
@@ -53,5 +58,12 @@ ReactDOM.render(
     downloadUpdate={downloadUpdate}
     quitAndInstall={quitAndInstall} />,
   document.getElementById('root'))
+
+// Prevent window closing while downloading an update unless main app is exiting
+window.onbeforeunload = function (e) {
+  if (store.state === 'downloading' && blockClosingWindow) {
+    e.returnValue = false
+  }
+}
 
 checkForUpdate()

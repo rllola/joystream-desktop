@@ -37,6 +37,12 @@ function createWindow () {
   })
 }
 
+function quit () {
+  if (updaterWindow) {
+    updaterWindow.webContents.send('auto-updater-channel', 'quit')
+  }
+}
+
 function init (showWindowOnCreation = false) {
   // Auto updates not available on linux
   if (process.platform === 'linux') return
@@ -59,14 +65,15 @@ ipcMain.on('auto-updater-channel', (event, command) => {
       // If user has closed updater window, ignore result
       if (updaterWindow) {
         if (err) {
-          updaterWindow.webContents.send('auto-updater-channel', 'error', err)
+          if (updaterWindow.isVisible()) updaterWindow.show()
+          updaterWindow.webContents.send('auto-updater-channel', 'error', err.message)
         } else {
           if (updateAvailable) {
-            // If the update check was started automatically at startup show the window now
-            if (!updaterWindow.isVisible()) updaterWindow.show()
-
+            // Force show the updater window
+            updaterWindow.show()
             updaterWindow.webContents.send('auto-updater-channel', 'update-available', releaseName)
           } else {
+            if (updaterWindow.isVisible()) updaterWindow.show()
             updaterWindow.webContents.send('auto-updater-channel', 'no-update-available')
           }
         }
@@ -109,12 +116,14 @@ function downloadUpdate () {
 
 electron.autoUpdater.on('error', (err) => {
   if (updaterWindow) {
+    if (updaterWindow.isVisible()) updaterWindow.show()
     updaterWindow.webContents.send('auto-updater-channel', 'error', err.message)
   }
 })
 
 electron.autoUpdater.on('update-available', () => {
   if (updaterWindow) {
+    if (updaterWindow.isVisible()) updaterWindow.show()
     updaterWindow.webContents.send('auto-updater-channel', 'downloading')
   }
 })
@@ -124,16 +133,19 @@ electron.autoUpdater.on('update-available', () => {
 // and update is available in our custom code checkForUpdates()
 electron.autoUpdater.on('update-not-available', () => {
   if (updaterWindow) {
+    if (updaterWindow.isVisible()) updaterWindow.show()
     updaterWindow.webContents.send('auto-updater-channel', 'error', 'Update not found')
   }
 })
 
 electron.autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
   if (updaterWindow) {
+    updaterWindow.show()
     updaterWindow.webContents.send('auto-updater-channel', 'downloaded', event, releaseNotes, releaseName)
   }
 })
 
 module.exports = {
-  init
+  init,
+  quit
 }

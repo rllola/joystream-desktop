@@ -49,6 +49,7 @@ ipcMain.on('main-window-channel', (event, arg) => {
     if(arg == 'user-closed-app') {
 
         // Exit application
+        updater.quit()
         app.quit()
     }
 
@@ -112,6 +113,7 @@ function createWindow () {
     enableLiveReload({strategy: 'react-hmr'})
     // Open the DevTools.
     win.webContents.openDevTools()
+
   } else {
     // Handle squirrel event. Avoid calling for updates when install
     if(require('electron-squirrel-startup')) {
