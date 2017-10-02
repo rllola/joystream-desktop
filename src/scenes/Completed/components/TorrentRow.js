@@ -29,7 +29,6 @@ class TorrentRow extends Component {
                 <IsUploading uploading={this.props.torrent.canBeginUploading}/>
                 <BytesField bytes={this.props.torrent.totalSize}/>
                 <PeerCountField count={this.props.torrent.numberOfBuyers} />
-                <PeerCountField count={this.props.torrent.numberOfSellers} />
                 <PeerCountField count={this.props.torrent.numberOfObservers} />
                 { this.getRenderedToolbar() }
             </Row>
