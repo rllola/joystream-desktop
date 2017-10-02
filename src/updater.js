@@ -16,8 +16,8 @@ function createWindow () {
   updaterWindow = new BrowserWindow({
     width: 400,
     height: 200,
-    minHeight: 400,
-    minWidth: 200,
+    fullscreen: false,
+    resizable: false,
     frame: true,
     show: false
   })
