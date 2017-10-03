@@ -59,16 +59,18 @@ const Completed = (props) => {
                                 satoshies={props.store.totalRevenue}
                                 {...labelColorProps}
                     />
+                    { /**
+                     <BandwidthLabel labelText={'DOWNLOAD SPEED'}
+                     bytesPerSecond={props.store.totalDownloadSpeed}
+                     {...labelColorProps}
+                     />
 
-                    <BandwidthLabel labelText={'DOWNLOAD SPEED'}
-                                 bytesPerSecond={props.store.totalDownloadSpeed}
-                                 {...labelColorProps}
-                    />
-
-                    <BandwidthLabel labelText={'UPLOAD SPEED'}
-                                 bytesPerSecond={props.store.totalUploadSpeed}
-                                 {...labelColorProps}
-                    />
+                     <BandwidthLabel labelText={'UPLOAD SPEED'}
+                     bytesPerSecond={props.store.totalUploadSpeed}
+                     {...labelColorProps}
+                     />
+                     **/
+                    }
 
                 </LabelContainer>
 
