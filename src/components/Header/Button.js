@@ -41,7 +41,7 @@ function getStyles(props, state) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width : '120px',
+            width : '110px',
             //height: '80px',
             backgroundColor: rootColor,
             //borderBottom : '2px solid ' + ,
@@ -81,7 +81,7 @@ function getStyles(props, state) {
         title : {
             display : props.title ? 'block' : 'none',
             color: contentColor,
-            fontSize: '12px',
+            fontSize: '11px',
             fontWeight: 'bold',
             padding: '0px',
             paddingLeft: '8px',
@@ -89,7 +89,8 @@ function getStyles(props, state) {
             //borderRadius: '100px',
             backgroundColor : 'none',
             cursor: 'default',
-            marginTop: '7px'
+            marginTop: '10px',
+            textTransform : 'uppercase'
         }
     }
 }
