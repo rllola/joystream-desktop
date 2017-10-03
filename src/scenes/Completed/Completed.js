@@ -48,33 +48,27 @@ const Completed = (props) => {
                 <LabelContainer>
 
                     <TorrentCountLabel count={props.store.torrentsCompleted.length}
-                                       {...labelColorProps}
+                                   {...labelColorProps}
                     />
 
-                    { /**
+                    <CurrencyLabel labelText={"SPENDING"}
+                                 satoshies={props.store.totalSpent}
+                                 {...labelColorProps}
+                    />
+                    <CurrencyLabel labelText={"REVENUE"}
+                                satoshies={props.store.totalRevenue}
+                                {...labelColorProps}
+                    />
 
-                     <CurrencyLabel labelText={"SPENDING"}
-                     satoshies={props.store.totalSpent}
-                     {...labelColorProps}
-                     />
+                    <BandwidthLabel labelText={'DOWNLOAD SPEED'}
+                                 bytesPerSecond={props.store.totalDownloadSpeed}
+                                 {...labelColorProps}
+                    />
 
-                     <BandwidthLabel labelText={'DOWNLOAD SPEED'}
-                     bytesPerSecond={props.store.totalDownloadSpeed}
-                     {...labelColorProps}
-                     />
-
-                     <CurrencyLabel labelText={"REVENUE"}
-                     satoshies={props.store.totalRevenue}
-                     {...labelColorProps}
-                     />
-
-                     <BandwidthLabel labelText={'UPLOAD SPEED'}
-                     bytesPerSecond={props.store.totalUploadSpeed}
-                     {...labelColorProps}
-                     />
-                     **/
-                    }
-
+                    <BandwidthLabel labelText={'UPLOAD SPEED'}
+                                 bytesPerSecond={props.store.totalUploadSpeed}
+                                 {...labelColorProps}
+                    />
 
                 </LabelContainer>
 
