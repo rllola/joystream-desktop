@@ -58,7 +58,7 @@ const ApplicationHeader = observer((props) => {
             normal : props.faceColor,
             hover : props.activeFaceColor,
             selected : props.activeFaceColor,
-            disabled: props.separatorColor
+            disabled: props.faceColor //props.separatorColor
         },
         notificationColor : props.notificationColor
     }
