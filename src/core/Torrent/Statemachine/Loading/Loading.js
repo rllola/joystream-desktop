@@ -44,6 +44,12 @@ var Loading = new BaseMachine({
                     // Update store when status changes
                     torrent.on('status_update', (status) => {
                         client.store.setStatus(status)
+
+                        // Workaround used in place of finished alert not being reliable due to a bug
+                        // in libtorrent
+                        if (status.state === TorrentState.finished || status.state === TorrentState.seeding) {
+                          client.processStateMachineInput('downloadFinished')
+                        }
                     })
 
                     // This alert is generated when a torrent switches from being a downloader to a seed.
