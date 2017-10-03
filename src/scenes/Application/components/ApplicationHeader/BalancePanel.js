@@ -28,8 +28,9 @@ function getStyles(props) {
         },
         subtitle : {
             color: props.subtitleColor,
-            fontSize: '10px',
-            top: '-5px',
+            fontSize: '11px',
+            fontWeight: 'bold',
+            //top: '-5px',
             position: 'relative'
         }
     }
