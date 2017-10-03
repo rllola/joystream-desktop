@@ -15,6 +15,8 @@ const {shell} = require('electron')
 
 const TorrentInfo = require('joystream-node').TorrentInfo
 
+const Doorbell = require('../doorbell')
+
 var ApplicationStateMachine = new BaseMachine({
   namespace: 'Application',
   initialState: 'NotStarted',
@@ -64,6 +66,8 @@ var ApplicationStateMachine = new BaseMachine({
         client.getWalletBalance(function (balance) {
           client.processStateMachineInput('walletBalanceUpdated', balance)
         })
+
+        Doorbell.loadDoorbell()
       },
 
       stop: function (client) {

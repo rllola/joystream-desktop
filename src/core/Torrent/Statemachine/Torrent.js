@@ -116,6 +116,8 @@ var Torrent = new BaseMachine({
               // Disable save power blocker
               electron.ipcRenderer.send('power-save-blocker', {enable:false})
 
+              Common.hideDoorbell()
+
               client.store.setIsPlaying(null)
             },
             openFolder: function (client) {
