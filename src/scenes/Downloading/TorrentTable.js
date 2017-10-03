@@ -147,7 +147,7 @@ class TorrentTable extends Component {
             onMoreClicked : (e) => { this.toolbarMoreButtonClicked(e, t) }
         }
 
-        let backgroundColor = isEven ? '#f5f5f5' : 'white'
+        let backgroundColor = isEven ? 'hsla(0, 0%, 93%, 1)' : 'white'
 
         return (
             <TorrentRow key={t.infoHash}
