@@ -65,7 +65,7 @@ class TorrentsTable extends Component {
     render() {
 
         return (
-            <Table column_titles={["", "Uploading", "Size", "Buyers", "Observers"]}>
+            <Table column_titles={["", "UPLOADING", "SIZE", "BUYERS", "OBSERVERS"]}>
                 { this.getRenderedContextMenu() }
                 { this.getRenderedTorrentRows() }
             </Table>
