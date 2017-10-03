@@ -15,7 +15,7 @@ const TorrentCountLabel = (props) => {
     return (
         <SimpleLabel labelNode="TORRENTS"
                      valueNode={value}
-                     valueFieldWidth="20px"
+                     valueFieldWidth="50px"
                      {...props}
         />
     )

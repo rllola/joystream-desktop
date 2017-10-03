@@ -15,20 +15,22 @@ function getStyle(props) {
         },
 
         left : {
-            paddingLeft: '14px',
+            paddingTop: '1px', // adjust text to vertical center
+            paddingLeft: '20px',
             paddingRight: '14px',
-            color: 'white',
+            color: props.colorLeft,
             fontWeight: 'bold',
-            fontSize: '10px',
+            fontSize: '15px',
             textAlign: 'center'
         },
 
         right :  {
+            paddingTop: '1px', // adjust text to vertical center
             width: props.valueFieldWidth,
-            marginLeft: 14,
-            marginRight: 14+14,
+            //marginLeft: 14,
+            //marginRight: 14+14,
             color: 'white',
-            fontSize: '14px',
+            fontSize: '15px',
             textAlign: 'center'
         }
 
@@ -49,7 +51,7 @@ const SimpleLabel = (props) => {
     let rightField = <div style={style.right}> {props.valueNode} </div>
 
     return (
-        <Label height={30}
+        <Label height={props.height}
                leftField={leftField}
                rightField={rightField}
                backgroundColorLeft={props.backgroundColorLeft}
@@ -73,9 +75,17 @@ SimpleLabel.propTypes = {
     labelNode : PropTypes.node.isRequired,
     valueNode : PropTypes.node.isRequired,
     //titleWidth : PropTypes.string.isRequired,
+    height : PropTypes.number,
     valueFieldWidth : PropTypes.string.isRequired,
     backgroundColorLeft : PropTypes.string.isRequired,
-    backgroundColorRight : PropTypes.string.isRequired
+    backgroundColorRight : PropTypes.string.isRequired,
+
+    colorLeft : PropTypes.string.isRequired
+}
+
+SimpleLabel.defaultProps = {
+    height : 45,
+    colorLeft : 'white', //'hsla(218, 41%, 66%, 1)'
 }
 
 export default SimpleLabel

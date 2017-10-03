@@ -38,7 +38,7 @@ const BandwidthLabel = (props) => {
     return (
         <SimpleLabel labelNode={props.labelText}
                      valueNode={value}
-                     valueFieldWidth="90px"
+                     valueFieldWidth="100px"
                      {...props}
         />
     )

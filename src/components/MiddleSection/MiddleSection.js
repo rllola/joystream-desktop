@@ -11,7 +11,7 @@ function getStyles(props) {
 
         root :  {
             backgroundColor : props.backgroundColor,
-            borderBottom : '3px solid hsl(219, 41%, 60%)',
+            //borderBottom : '2px solid hsl(219, 41%, 60%)',
             display: 'flex',
             flexDirection: 'row',
             flex: '0 0 100px',

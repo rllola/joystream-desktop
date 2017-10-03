@@ -42,7 +42,7 @@ const CurrencyLabel = (props) => {
     return (
         <SimpleLabel labelNode={props.labelText}
                      valueNode={value}
-                     valueFieldWidth="60px"
+                     valueFieldWidth="100px"
                      {...props}
         />
     )
