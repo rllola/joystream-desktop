@@ -113,7 +113,7 @@ class ElevatedAutoLitButton extends Component {
 }
 
 ElevatedAutoLitButton.propTypes = {
-    title : PropTypes.string.isRequired,
+    title : PropTypes.node.isRequired,
     onClick : PropTypes.func.isRequired,
     hue: PropTypes.number.isRequired,
     saturation: PropTypes.number.isRequired,
