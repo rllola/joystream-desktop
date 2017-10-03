@@ -69,7 +69,7 @@ function addTorrent(client, settings) {
     })
 
     // When torrent has completed downloading
-    coreTorrent.on('Active.FinishedDownloading.Passive', function (data) {
+    coreTorrent.on('enter-Active.FinishedDownloading.Passive', function (data) {
         client.processStateMachineInput('torrentFinishedDownloading', infoHash)
     })
 
