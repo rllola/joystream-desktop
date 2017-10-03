@@ -68,7 +68,7 @@ var OnDownloadingScene = new BaseMachine({
 
     TorrentAlreadyAdded : {
 
-        acceptTorrentFileWasAlreadyAdded : function(client) {
+        acceptTorrentWasAlreadyAdded : function(client) {
 
             // Go back to idle
             this.transition(client, 'idle')

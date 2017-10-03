@@ -20,7 +20,7 @@ const StartDownloadingFlow = observer((props) => {
             />
             <TorrentAlreadyAddedAlertDialog store={props.store}
                                             open={props.store.state == "Started.OnDownloadingScene.TorrentAlreadyAdded"}
-                                            onOkClicked={() => { props.store.acceptTorrentFileWasAlreadyAdded()} }
+                                            onOkClicked={() => { props.store.acceptTorrentWasAlreadyAdded()} }
 
             />
         </div>
