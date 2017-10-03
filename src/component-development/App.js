@@ -15,6 +15,7 @@ import Seeding from './seeding'
 import Completed from './completed'
 import StartDownloadingFlowScenarios from './startDownloadingFlow'
 import ApplicationHeaderScenarios from './ApplicationHeader'
+import UpdaterUi from './Updater'
 
 // Workaround to get props passed to `Application` component when used with `Route`
 const ComponentWithStoreProp = (component, props) => {
@@ -30,6 +31,12 @@ const ComponentWithStoreProp = (component, props) => {
         ) **/
 
     }
+}
+
+const updaterProps = {
+  store: {
+    state: 'waiting-to-start-download'
+  }
 }
 
 const App = (props) => {
@@ -55,6 +62,7 @@ const App = (props) => {
                         <Link to="stream"> <RaisedButton label="Stream" style={style} /> </Link>
                         <Link to="start_downloading_flow"> <RaisedButton label="Start Downloading Flow" style={style} /> </Link>
                         <Link to="application_header"> <RaisedButton label="Application Header" style={style} /> </Link>
+                        <Link to="auto_updater"> <RaisedButton label="AutoUpdater Window" style={style} /> </Link>
 
                         <hr/>
 
@@ -68,6 +76,7 @@ const App = (props) => {
                         <Route path="/stream" component={StreamScenario} />
                         <Route path="/start_downloading_flow" component={ComponentWithStoreProp(StartDownloadingFlowScenarios, props)} />
                         <Route path="/application_header" component={ComponentWithStoreProp(ApplicationHeaderScenarios, props)} />
+                        <Route path="/auto_updater" component={ComponentWithStoreProp(UpdaterUi, updaterProps)} />
                     </div>
                 </HashRouter>
 

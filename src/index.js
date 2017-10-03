@@ -84,3 +84,8 @@ window.onbeforeunload = function(e) {
 
     return
 }
+
+// Hook this up to a menu item
+function checkForUpdates () {
+  ipcRenderer.send('auto-updater-channel', 'init')
+}
