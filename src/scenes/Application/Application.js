@@ -31,7 +31,7 @@ var UI_CONSTANTS = {
     labelTextHighlightColor : 'hsl(219, 41%, 42%)',
     darkPrimaryColor : 'hsla(219, 41%, 37%, 1)',
     darkestPrimaryColor : 'hsla(219, 41%, 26%, 1)',
-    higlightColor : '#E87461'
+    higlightColor : 'hsl(218, 41%, 30%)'
 }
 
 function getStyles(props) {
