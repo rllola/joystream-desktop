@@ -111,6 +111,8 @@ function createWindow () {
     // Enable live reloading
     // https://github.com/electron/electron-compile/blob/master/README.md
     enableLiveReload({strategy: 'react-hmr'})
+    enableLiveReload({strategy: 'react-hmr'})
+
     // Open the DevTools.
     win.webContents.openDevTools()
 

@@ -11,7 +11,7 @@ const StatusBar = (props) => {
         return null
 
     let style = {
-        zIndex : 100,
+        zIndex : 1,
         display : 'fixed',
         position: 'absolute',
         width: '100%',

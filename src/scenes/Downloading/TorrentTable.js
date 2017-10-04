@@ -16,7 +16,7 @@ import Dropzone from 'react-dropzone'
 
 import StartDownloadingHint from './components/StartDownloadingHint'
 
-import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
+import AbsolutePositionChildren from '../../components/AbsolutePositionChildren/AbsolutePositionChildren'
 
 import { contextMenuHiddenState, contextMenuVisibleState, contextMenuRect } from '../../utils/ContextMenuHelper'
 

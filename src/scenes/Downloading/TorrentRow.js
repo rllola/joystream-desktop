@@ -18,7 +18,7 @@ import { NameField,
 import TorrentToolbar from './TorrentToolbar'
 
 
-import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
+import AbsolutePositionChildren from '../../components/AbsolutePositionChildren/AbsolutePositionChildren'
 
 import ToolbarVisibilityType, { toolbarVisibilityState } from '../../utils/ToolbarVisibilityState'
 

@@ -9,7 +9,7 @@ import SvgIcon from 'material-ui/SvgIcon'
 import Badge from 'material-ui/Badge'
 import {blue500, red500, greenA200} from 'material-ui/styles/colors'
 
-import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
+import AbsolutePositionChildren from '../AbsolutePositionChildren/AbsolutePositionChildren'
 
 function getStyles(props, state) {
 

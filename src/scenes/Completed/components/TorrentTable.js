@@ -8,7 +8,7 @@ import TorrentToolbar from './TorrentToolbar'
 import TorrentContextMenu from './TorrentContextMenu'
 import ToolbarVisibilityType from '../../../utils/ToolbarVisibilityState'
 
-import AbsolutePositionChildren from '../../../common/AbsolutePositionChildren'
+import AbsolutePositionChildren from '../../../components/AbsolutePositionChildren/AbsolutePositionChildren'
 
 import { contextMenuHiddenState, contextMenuVisibleState, contextMenuRect } from '../../../utils/ContextMenuHelper'
 

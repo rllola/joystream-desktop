@@ -12,7 +12,8 @@ import TorrentToolbar from './TorrentToolbar'
 import TorrentContextMenu from './TorrentContextMenu'
 import ToolbarVisibilityType from '../../utils/ToolbarVisibilityState'
 import StartSeedingHint from './components/StartSeedingHint'
-import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
+import AbsolutePositionChildren from '../../components/AbsolutePositionChildren/AbsolutePositionChildren'
+import Dropzone from 'react-dropzone'
 
 import { contextMenuHiddenState, contextMenuVisibleState, contextMenuRect } from '../../utils/ContextMenuHelper'
 
@@ -77,11 +78,20 @@ class TorrentsTable extends Component {
 
     render() {
 
+        var dropZoneStyle = {
+            display: 'flex',
+            flexDirection: 'column',
+            flexGrow: 1,
+            borderStyle:'none'
+        }
+
         return (
-            <Table column_titles={["", "State", "Speed", "Price", "Revenue", "Buyers", "Sellers"]}>
-                { this.getRenderedContextMenu() }
-                { this.getRenderedTorrentRows() }
-            </Table>
+            <Dropzone disableClick style={dropZoneStyle} onDrop={(files) => { this.props.store.startTorrentUploadFlowWithTorrentFile(files) }}>
+                <Table column_titles={["", "State", "Speed", "Price", "Revenue", "Buyers", "Sellers"]}>
+                    { this.getRenderedContextMenu() }
+                    { this.getRenderedTorrentRows() }
+                </Table>
+            </Dropzone>
         )
     }
 

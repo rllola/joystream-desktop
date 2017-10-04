@@ -84,7 +84,7 @@ class Application extends Component {
                           <Seeding torrents={this.props.store.torrentsUploading}
                                    revenue={this.props.store.totalRevenue}
                                    uploadSpeed={this.props.store.totalUploadSpeed}
-                                   onStartUploadCliked={() => {console.log(" start uploading clicked")}}
+                                   onStartUploadCliked={() => { this.props.store.startTorrentUploadFlow() }}
                                    store={this.props.store}
                           />
                         </NavigationFrame>

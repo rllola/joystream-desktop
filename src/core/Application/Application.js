@@ -36,9 +36,22 @@ class Application extends EventEmitter {
       moveToScene: this.moveToScene.bind(this),
       startDownloadWithTorrentFileFromFilePicker: this.startDownloadWithTorrentFileFromFilePicker.bind(this),
       startDownloadWithTorrentFileFromDragAndDrop: this.startDownloadWithTorrentFileFromDragAndDrop.bind(this),
-      acceptTorrentFileWasAlreadyAdded: this.acceptTorrentFileWasAlreadyAdded.bind(this),
+
+      acceptTorrentWasAlreadyAdded: this.acceptTorrentWasAlreadyAdded.bind(this),
       acceptTorrentFileWasInvalid: this.acceptTorrentFileWasInvalid.bind(this),
-      retryPickingTorrentFile: this.retryPickingTorrentFile.bind(this)
+      retryPickingTorrentFile: this.retryPickingTorrentFile.bind(this),
+
+      /// Uploading scene
+      startTorrentUploadFlow: this.startTorrentUploadFlow.bind(this),
+      startTorrentUploadFlowWithTorrentFile: this.startTorrentUploadFlowWithTorrentFile.bind(this),
+      exitStartUploadingFlow: this.exitStartUploadingFlow.bind(this),
+      hasTorrentFile: this.hasTorrentFile.bind(this),
+      hasRawContent: this.hasRawContent.bind(this),
+      chooseSavePathButtonClicked : this.chooseSavePathButtonClicked.bind(this),
+      useTorrentFilePathButtonClicked : this.useTorrentFilePathButtonClicked.bind(this),
+      keepDownloadingClicked: this.keepDownloadingClicked.bind(this),
+      dropDownloadClicked: this.dropDownloadClicked.bind(this)
+
     })
 
     var client = new ApplicationStatemachineClient(this.store)
@@ -95,6 +108,10 @@ class Application extends EventEmitter {
     this._process('onBeforeUnloadMainWindow', event)
   }
 
+  removeTorrent (infoHash, deleteData) {
+      this._process('removeTorrent', infoHash, deleteData)
+  }
+
   startDownloadWithTorrentFileFromFilePicker() {
     this._process('startDownloadWithTorrentFileFromFilePicker')
   }
@@ -103,8 +120,8 @@ class Application extends EventEmitter {
     this._process('startDownloadWithTorrentFileFromDragAndDrop', files)
   }
 
-  acceptTorrentFileWasAlreadyAdded() {
-    this._process('acceptTorrentFileWasAlreadyAdded')
+  acceptTorrentWasAlreadyAdded() {
+    this._process('acceptTorrentWasAlreadyAdded')
   }
 
   acceptTorrentFileWasInvalid() {
@@ -115,8 +132,45 @@ class Application extends EventEmitter {
       this._process('retryPickingTorrentFile')
   }
 
-  removeTorrent (infoHash, deleteData) {
-    this._process('removeTorrent', infoHash, deleteData)
+  /// Uploading scene
+
+  startTorrentUploadFlow() {
+    this._process('startTorrentUploadFlow')
+  }
+
+  startTorrentUploadFlowWithTorrentFile(torrentFile) {
+    this._process('startTorrentUploadFlowWithTorrentFile', torrentFile)
+  }
+
+  //// Start upload flow
+
+  exitStartUploadingFlow() {
+    this._process('exitStartUploadingFlow')
+  }
+
+  hasTorrentFile() {
+    this._process('hasTorrentFile')
+  }
+
+  hasRawContent() {
+    this._process('hasRawContent')
+
+  }
+
+  chooseSavePathButtonClicked() {
+    this._process('chooseSavePathButtonClicked')
+  }
+
+  useTorrentFilePathButtonClicked() {
+    this._process('useTorrentFilePathButtonClicked')
+  }
+
+  keepDownloadingClicked() {
+    this._process('keepDownloadingClicked')
+  }
+
+  dropDownloadClicked() {
+    this._process('dropDownloadClicked')
   }
 
 }
@@ -145,6 +199,7 @@ class ApplicationStatemachineClient {
       },
 
       torrentStore: (infoHash,
+                     savePath,
                      state,
                      progress,
                      totalSize,
@@ -164,6 +219,7 @@ class ApplicationStatemachineClient {
                      buyerSpent) => {
         return new TorrentStore(null,
                                 infoHash,
+                                savePath,
                                 state,
                                 progress,
                                 totalSize,

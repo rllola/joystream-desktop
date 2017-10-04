@@ -5,6 +5,7 @@
 const BaseMachine = require('../../../../BaseMachine')
 const Common = require('./../../Common')
 
+const TorrentInfo = require('joystream-node').TorrentInfo
 
 var OnDownloadingScene = new BaseMachine({
   initialState: 'idle',
@@ -22,32 +23,25 @@ var OnDownloadingScene = new BaseMachine({
 
       startDownloadWithTorrentFileFromFilePicker: function (client) {
 
-          try {
-              Common.startDownloadWithTorrentFileFromFilePicker(client)
-          } catch (error) {
-              this.transition(client, error)
-              return
-          }
+        // Allow user to pick a torrent file
+        var filesPicked = Common.showNativeTorrentFilePickerDialog()
+
+        // If the user did no pick any files, then we are done
+        if(!filesPicked || filesPicked.length == 0)
+            return
+
+        startDownload(this, client, filesPicked[0])
+
       },
 
       startDownloadWithTorrentFileFromDragAndDrop: function (client, files) {
+
         // If the user did no pick any files, then we are done
         if(!files || files.length == 0)
             return
 
-        // Get torrent file name picked
-        var torrentFile = files[0]
-
-        let settings
-
-        try {
-          settings = Common.prepareTorrentParams(client, torrentFile.path)
-        } catch (error) {
-          this.transition(client, error)
-          return
-        }
-
-        Common.addTorrent(client, settings)
+        // Try to start download based on torrent file name
+        startDownload(this, client, files[0])
 
       },
 
@@ -66,19 +60,15 @@ var OnDownloadingScene = new BaseMachine({
             this.transition(client, 'idle')
 
             // Try to start download again
-            try {
-                Common.startDownloadWithTorrentFileFromFilePicker(client)
-            } catch (error) {
-                this.transition(client, error)
-                return
-            }
+            // HACK
+            this.handle(client, 'startDownloadWithTorrentFileFromFilePicker')
 
         }
     },
 
     TorrentAlreadyAdded : {
 
-        acceptTorrentFileWasAlreadyAdded : function(client) {
+        acceptTorrentWasAlreadyAdded : function(client) {
 
             // Go back to idle
             this.transition(client, 'idle')
@@ -86,6 +76,32 @@ var OnDownloadingScene = new BaseMachine({
     }
   }
 })
+
+function startDownload(machine, client, torrentFile) {
+
+    // Get torrent file name picked
+    let torrentInfo
+
+    try {
+        torrentInfo = new TorrentInfo(torrentFile)
+    } catch(e) {
+        machine.transition(client, 'TorrentFileWasInvalid')
+        return
+    }
+
+    // Make sure torrent is not already added
+    if(client.torrents.has(torrentInfo.infoHash())) {
+        machine.transition(client, 'TorrentAlreadyAdded')
+        return
+    }
+
+    // otherwise, get new settings
+    let settings = Common.getStartingDownloadSettings(torrentInfo, client.directories.defaultSavePath())
+
+    // and start adding torrent
+    Common.addTorrent(client, settings)
+
+}
 
 
 module.exports = OnDownloadingScene

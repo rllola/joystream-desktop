@@ -6,6 +6,8 @@
 const TorrentInfo = require('joystream-node').TorrentInfo
 const assert = require('assert')
 import {remote} from 'electron'
+import path from 'path'
+const {shell} = require('electron')
 
 // Either Common should be exported, or .is* functions should be exported,
 // or these values should be here. Calling TorrentCommon is just a temporary fix until this is fixed
@@ -14,36 +16,11 @@ const TorrentCommon = require('../../Torrent/Statemachine/Common')
 
 const TorrentStatemachine = require('../../Torrent/Statemachine')
 
-function startDownloadWithTorrentFileFromFilePicker(client)  {
-
-    // Allow user to pick a torrent file
-    var filesPicked = remote.dialog.showOpenDialog({
-        title : "Pick torrent file",
-        filters: [
-            {name: 'Torrent file', extensions: ['torrent']},
-            {name: 'All Files', extensions: ['*']}
-        ],
-        properties: ['openFile']}
-    )
-
-    // If the user did no pick any files, then we are done
-    if(!filesPicked || filesPicked.length == 0)
-        return
-
-    // Get torrent file name picked
-    var torrentFile = filesPicked[0]
-
-    let settings = prepareTorrentParams(client, torrentFile)
-
-    addTorrent(client, settings)
-
-}
-
 function addTorrent(client, settings) {
 
     const infoHash = settings.infoHash
 
-    let store = client.factories.torrentStore(infoHash)
+    let store = client.factories.torrentStore(infoHash, settings.savePath)
 
     let coreTorrent = client.factories.torrent(store)
 
@@ -119,50 +96,99 @@ function addTorrent(client, settings) {
         coreTorrent.addTorrentResult(err, torrent)
     })
 
+    // Return core torrent, typically so user can setup their own context
+    // specific event handlers
+    return coreTorrent
 }
 
-function prepareTorrentParams (client, filePath) {
+function removeTorrent(client, infoHash, deleteData) {
 
-  // Load torrent file
-  let torrentInfo
+    var fullPath
+    var torrent = client.torrents.get(infoHash)
 
-  try {
-    torrentInfo = new TorrentInfo(filePath)
-  } catch(e) {
-
-    console.log(e)
-
-    // <Set error_code on store also perhaps?>
-
-    throw 'TorrentFileWasInvalid'
-  }
-
-  const infoHash = torrentInfo.infoHash()
-
-  // Make sure torrent is not already added
-  if(client.torrents.has(infoHash)) {
-
-    throw 'TorrentAlreadyAdded'
-  }
-
-  // NB: Get from settings data store of some sort
-  let terms = getStandardBuyerTerms()
-
-  // Create settings
-  let settings = {
-    infoHash : infoHash,
-    metadata : torrentInfo,
-    resumeData : null,
-    name: torrentInfo.name() || infoHash,
-    savePath: client.directories.defaultSavePath(),
-    deepInitialState: TorrentStatemachine.DeepInitialState.DOWNLOADING.UNPAID.STARTED,
-    extensionSettings : {
-      buyerTerms: terms
+    if (deleteData) {
+        // retrieve path before deleting
+        var torrentInfo = torrent._client.getTorrentInfo()
+        var name = torrentInfo.name()
+        var savePath = torrent._client.getSavePath()
+        fullPath = path.join(savePath, name, path.sep)
     }
-  }
 
+    torrent.terminate()
 
-  return settings
+    // Remove the torrent from the session
+    client.services.session.removeTorrent(infoHash, function () {
+
+    })
+
+    // Remove the torrent from the db
+    client.services.db.remove('torrents', infoHash).then(() => {
+
+    })
+
+    // Delete torrent from the client map
+    client.torrents.delete(infoHash)
+
+    // Remove the torrent from the applicationStore
+    client.store.torrentRemoved(infoHash)
+
+    // If deleteData we want to remove the folder/file
+    if (fullPath && deleteData) {
+        shell.moveItemToTrash(fullPath)
+    }
+
+}
+
+function showNativeTorrentFilePickerDialog () {
+
+    return remote.dialog.showOpenDialog({
+        title : "Pick torrent file",
+        filters: [
+            {name: 'Torrent file', extensions: ['torrent']},
+            {name: 'All Files', extensions: ['*']}
+        ],
+        properties: ['openFile']}
+    )
+}
+
+function getStartingDownloadSettings(torrentInfo, defaultSavePath) {
+
+    // NB: Get from settings data store of some sort
+    let terms = getStandardBuyerTerms()
+
+    const infoHash = torrentInfo.infoHash()
+
+    return {
+        infoHash : infoHash,
+        metadata : torrentInfo,
+        resumeData : null,
+        name: torrentInfo.name() || infoHash,
+        savePath: defaultSavePath,
+        deepInitialState: TorrentStatemachine.DeepInitialState.DOWNLOADING.UNPAID.STARTED,
+        extensionSettings : {
+            buyerTerms: terms
+        }
+    }
+}
+
+function getStartingUploadSettings(torrentInfo, defaultSavePath) {
+
+    // NB: Get from settings data store of some sort
+    let terms = getStandardSellerTerms()
+
+    const infoHash = torrentInfo.infoHash()
+
+    return {
+        infoHash : infoHash,
+        metadata : torrentInfo,
+        resumeData : null,
+        name: torrentInfo.name() || infoHash,
+        savePath: defaultSavePath,
+        deepInitialState: TorrentStatemachine.DeepInitialState.UPLOADING.STARTED,
+        extensionSettings : {
+            sellerTerms: terms
+        }
+    }
 }
 
 function getStandardBuyerTerms() {
@@ -186,7 +212,9 @@ function getStandardSellerTerms() {
 export {
     getStandardBuyerTerms,
     getStandardSellerTerms,
-    startDownloadWithTorrentFileFromFilePicker,
     addTorrent,
-    prepareTorrentParams
+    removeTorrent,
+    showNativeTorrentFilePickerDialog,
+    getStartingDownloadSettings,
+    getStartingUploadSettings
 }
