@@ -10,12 +10,9 @@ import {
         standardHumanizeDurationOptions
 } from './common'
 
-import AbsolutePositionChildren from './AbsolutePositionChildren'
-
 export {
         getCompactBitcoinUnits,
         getCompactBitcoinUnitsString,
-        AbsolutePositionChildren,
         convenientBytes,
         convenientHumanizeDuration,
         standardHumanizeDurationOptions
