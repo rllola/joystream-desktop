@@ -30,7 +30,7 @@ function getStyles(props) {
 
 }
 
-const Seeding = (props) => {
+const Seeding = observer((props) => {
 
     let styles = getStyles(props)
 
@@ -47,7 +47,7 @@ const Seeding = (props) => {
                 <Toolbar>
 
                     <ToolbarButton title="Start uploading"
-                                   onClick={props.store.startTorrentUploadFlow}
+                                   onClick={() => { props.store.startTorrentUploadFlow() }}
                         //iconNode={<AddTorrentIcon/>}
                     />
 
@@ -82,7 +82,7 @@ const Seeding = (props) => {
 
         </div>
     )
-}
+})
 
 Seeding.propTypes = {
     store : PropTypes.object.isRequired,
