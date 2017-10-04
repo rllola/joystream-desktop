@@ -13,19 +13,17 @@ function getStyles(state, props) {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            borderTop: '2px solid hsla(120, 39%, 73%, 1)',
-            //borderLeft: '2px solid hsla(120, 39%, 73%, 1)',
-            borderBottom: '2px solid hsla(120, 39%, 47%, 1)',
+            borderBottom: '3px solid hsla(120, 39%, 47%, 1)',
             borderRadius: '6px',
-            backgroundColor: state.mouseIsOver ? '#49a749' : '#5cb85c',
-            padding: '10px 18px',
+            backgroundColor: state.mouseIsOver ? 'hsl(120, 39%, 55%)' : 'hsl(120, 39%, 65%)',
+            padding: '14px 30px',
             color: 'white',
-            fontSize: '15px',
+            fontSize: '20px',
             fontWeight: 'bold',
-            width: '180px',
-            height: '45px',
+            //width: '180px',
+            //height: '65px',
             fontFamily: 'helvetica',
-            boxShadow: '1px 1px 2px hsla(219, 41%, 39%, 1)'
+            //boxShadow: '1px 1px 2px hsla(219, 41%, 39%, 1)'
         }
     }
 }

@@ -17,6 +17,7 @@ import {
 
 import TorrentTable from './TorrentTable'
 import StartUploadingFlow from './components/StartUploadingFlow'
+import ElevatedAutoLitButton from '../../components/ElevatedAutoLitButton'
 
 function getStyles(props) {
 
@@ -46,10 +47,19 @@ const Seeding = observer((props) => {
 
                 <Toolbar>
 
-                    <ToolbarButton title="Start uploading"
-                                   onClick={() => { props.store.startTorrentUploadFlow() }}
-                        //iconNode={<AddTorrentIcon/>}
-                    />
+                    { /**
+                     <ElevatedAutoLitButton title={<div>Start uploading</div>}
+                     onClick={() => { props.store.startTorrentUploadFlow()}}
+                     hue={120}
+                     saturation={50}
+                     />
+                     **/
+                    }
+
+                     <ToolbarButton title="Start uploading"
+                     onClick={() => { props.store.startTorrentUploadFlow() }}
+                     //iconNode={<AddTorrentIcon/>}
+                     />
 
                 </Toolbar>
 

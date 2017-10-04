@@ -9,6 +9,8 @@ function getStyles() {
 
     return {
         root : {
+            position: 'relative',
+            top: '14px',
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'center',
