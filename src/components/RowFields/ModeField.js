@@ -8,10 +8,10 @@ import {Field} from './../Table'
 
 const ModeIndicator = (props) => {
     if(props.paid) {
-        return <span className="label paid-label">paid</span>
+        return <span className="label paid-label">PAID</span>
     }
     else {
-        return<span className="label free-label">free</span>
+        return<span className="label free-label">FREE</span>
     }
 }
 

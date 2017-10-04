@@ -65,7 +65,7 @@ class TorrentsTable extends Component {
     render() {
 
         return (
-            <Table column_titles={["", "Uploading", "Size", "Buyers", "Observers"]}>
+            <Table column_titles={["", "UPLOADING", "SIZE", "BUYERS", "OBSERVERS"]}>
                 { this.getRenderedContextMenu() }
                 { this.getRenderedTorrentRows() }
             </Table>
@@ -94,22 +94,26 @@ class TorrentsTable extends Component {
 
     getRenderedTorrentRows() {
 
-        return (this.props.torrents.map((t) => { return this.getRenderedTorrentRow(t) }))
+        return (this.props.torrents.map((t, index) => { return this.getRenderedTorrentRow(t, index % 2 === 0) }))
     }
 
-    getRenderedTorrentRow(t) {
+    getRenderedTorrentRow(t, isEven) {
 
         var toolbarProps = {
             onOpenFolderClicked : () => { t.openFolder() },
             onMoreClicked : (e) => { this.toolbarMoreButtonClicked(e, t) }
         }
 
+        let backgroundColor = isEven ? 'hsla(0, 0%, 93%, 1)' : 'white'
+
         return (
             <TorrentRow key={t.infoHash}
                         torrent={t}
                         toolbarVisibilityStatus = {this.getToolbarVisibilityTypeForTorrent(t)}
                         toolbarProps={toolbarProps}
-                        store={this.props.store} />
+                        store={this.props.store}
+                        backgroundColor={backgroundColor}
+            />
         )
     }
 

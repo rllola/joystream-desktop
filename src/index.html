@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Joystream</title>
+    <title>JoyStream</title>
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css" />
 
     <!-- temporary, move into components later -->
@@ -13,15 +13,16 @@
     <link rel="stylesheet" type="text/scss" href="styles/toolbar.scss" />
     <link rel="stylesheet" type="text/scss" href="styles/context-menu.scss" />
     <link rel="stylesheet" type="text/scss" href="styles/doorbell.scss" />
-    <link rel="stylesheet" type="text/scss" href="styles/loading-scene.scss" />
     <link rel="stylesheet" type="text/scss" href="styles/downloading.scss" />
-    <link rel="stylesheet" type="text/scss" href="styles/uploading.scss" />
 
   </head>
   <body>
 
     <div id="root">
     </div>
+
+    <!-- Main applictaion in React -->
+    <script type="application/javascript" src="index.js" charset="utf-8"></script>
 
     <!-- Show all the logs in the Developper tool console -->
     <script type="application/javascript">localStorage.debug = null</script>
@@ -30,8 +31,23 @@
     <script>window.Popper = require('popper.js')</script>
     <script type="application/javascript" src="../node_modules/bootstrap/dist/js/bootstrap.js"></script>
 
+
     <!-- Main applictaion in React -->
     <script type="application/javascript" src="index.js" charset="utf-8"></script>
+
+    <!-- Doorbell -->
+    <script type="text/javascript">
+        window.doorbellOptions = {
+            appKey: 'Z8RYHGIQeb7QeVtJD1HLn0fMZlhQgPovzorgfutn8gnCuLfTP8t2d3LnybV2Ow1s'
+        };
+        (function(w, d, t) {
+            var hasLoaded = false;
+            function l() { if (hasLoaded) { return; } hasLoaded = true; window.doorbellOptions.windowLoaded = true; var g = d.createElement(t);g.id = 'doorbellScript';g.type = 'text/javascript';g.async = true;g.src = 'https://embed.doorbell.io/button/7029?t='+(new Date().getTime());(d.getElementsByTagName('head')[0]||d.getElementsByTagName('body')[0]).appendChild(g); }
+            if (w.attachEvent) { w.attachEvent('onload', l); } else if (w.addEventListener) { w.addEventListener('load', l, false); } else { l(); }
+            if (d.readyState == 'complete') { l(); }
+        }(window, document, 'script'));
+    </script>
+
 
   </body>
 </html>

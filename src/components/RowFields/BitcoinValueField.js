@@ -5,13 +5,40 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {Field} from './../Table'
-import BitcoinConvert from  '../../components/BitcoinConvert'
+import {getCompactBitcoinUnits} from './../../common'
+
+function getStyles(props) {
+
+    return {
+        container : {
+            display : 'flex',
+            alignItems: 'flex-end'
+        },
+        value :  {
+            display: 'flex',
+            justifyContent: 'flex-end',
+            fontWeight : 'bold',
+        },
+        unit: {
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginLeft: '4px',
+            fontSize: '14px'
+        }
+    }
+}
 
 const BitcoinValueField = (props) => {
 
+    let styles = getStyles(props)
+    let representation = getCompactBitcoinUnits(props.satoshis)
+
     return (
         <Field>
-            <BitcoinConvert satoshis={props.satoshis} />
+            <div style={styles.container}>
+                <span style={styles.value}>{representation.value}</span>
+                <span style={styles.unit}>{representation.unit}</span>
+            </div>
         </Field>
     )
 }

@@ -16,7 +16,10 @@ function getStyles(props, state) {
     let rootColor
     let contentColor
 
-    if(props.selected) {
+    if(props.disabled) {
+        rootColor = props.rootColors.disabled
+        contentColor = props.contentColors.disabled
+    } else if(props.selected) {
         rootColor = props.rootColors.selected
         contentColor = props.contentColors.selected
     } else {
@@ -35,13 +38,28 @@ function getStyles(props, state) {
     return {
 
         root : Object.assign({
+            position: 'relative', // needed to absolute position countContainer
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width : '120px',
-            height: '80px',
+            width : '110px',
+            //height: '80px',
             backgroundColor: rootColor,
+            //borderBottom : '2px solid ' + ,
         }, props.style),
+
+        countContainer : {
+            display : 'none', // disabling this for now, failed attempt
+            position : 'absolute',
+            left : '60px',
+            top : '10px',
+            backgroundColor: 'hsl(198, 8%, 83%)',
+            borderRadius: '2px',
+            fontSize: '10px',
+            fontWeight: 'bold',
+            paddingLeft: '2px',
+            paddingRight: '4px',
+        },
 
         contentContainer : {
             display: 'flex',
@@ -59,7 +77,7 @@ function getStyles(props, state) {
             top: '0px',
             right: '0px',
             fontWeight: '500',
-            fontSize: '12px',
+            fontSize: '10px',
             width: '24px',
             height: '24px',
             borderRadius: '50%',
@@ -77,15 +95,16 @@ function getStyles(props, state) {
         title : {
             display : props.title ? 'block' : 'none',
             color: contentColor,
-            fontSize: '10px',
+            fontSize: '11px',
             fontWeight: 'bold',
             padding: '0px',
             paddingLeft: '8px',
             paddingRight: '8px',
-            borderRadius: '100px',
+            //borderRadius: '100px',
             backgroundColor : 'none',
             cursor: 'default',
-            marginTop: '5px'
+            marginTop: '10px',
+            textTransform : 'uppercase'
         }
     }
 }
@@ -99,11 +118,15 @@ class Button extends Component {
     }
 
     handleMouseEnter = () => {
-        this.setState({hover : true})
+
+        if(!this.props.disabled)
+            this.setState({hover : true})
     }
 
     handleMouseLeave = () => {
-        this.setState({hover : false})
+
+        if(!this.props.disabled)
+            this.setState({hover : false})
     }
 
     render() {
@@ -115,6 +138,10 @@ class Button extends Component {
                  onMouseEnter={this.handleMouseEnter}
                  onMouseLeave={this.handleMouseLeave}
                  onClick={this.props.onClick}>
+
+                <div style={style.countContainer}>
+                    123
+                </div>
 
                 <div style={style.contentContainer}>
 

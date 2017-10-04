@@ -319,6 +319,7 @@ class ApplicationStore {
     this._handlers.acceptTorrentFileWasInvalid()
   }
 
+
   retryPickingTorrentFile() {
       this._handlers.retryPickingTorrentFile()
   }

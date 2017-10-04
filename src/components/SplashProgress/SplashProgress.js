@@ -47,7 +47,8 @@ function getStyles(props) {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: 'center',
-            height : "100%" // quick hack
+            height : "100%", // quick hack
+            width : "100%"
         },
         centeredContainer : {
             width : '900px', //'600px'

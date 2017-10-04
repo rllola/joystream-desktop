@@ -26,6 +26,26 @@ if (process.env.NODE_ENV === 'development') {
     MobxReactDevTools = require('mobx-react-devtools').default
 }
 
+var UI_CONSTANTS = {
+    primaryColor : '#496daf',
+    labelTextHighlightColor : 'hsl(219, 41%, 42%)',
+    darkPrimaryColor : 'hsla(219, 41%, 37%, 1)',
+    darkestPrimaryColor : 'hsla(219, 41%, 26%, 1)',
+    higlightColor : 'hsl(218, 41%, 30%)'
+}
+
+function getStyles(props) {
+
+    return {
+        innerRoot : {
+            height: '100%',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+        }
+    }
+}
+
 @observer
 class Application extends Component {
 
@@ -35,26 +55,49 @@ class Application extends Component {
 
     render () {
 
+        let styles = getStyles(this.props)
+
         return (
             <MuiThemeProvider>
-                <div className="app-container">
+                <div style={styles.innerRoot}>
 
-                  {this.props.store.isPlaying ? this.renderVideoPlayer () : this.renderActiveScene()}
+                    {
+                            this.props.store.isPlaying
+                        ?
+                            this.renderVideoPlayer()
+                        :
+                            this.renderActiveScene()
+                    }
 
                     <StatusBar show={this.props.store.torrentsBeingLoaded.length > 0}
-                               bottom={true}>
+                               bottom={true}
+                    >
                         <ProgressStatusPanel title={'Loading torrents'}
                                              percentageProgress={this.props.store.startingTorrentCheckingProgressPercentage}
                         />
+
                     </StatusBar>
 
-                    {process.env.NODE_ENV === 'development' ? <div><MobxReactDevTools/></div> : null}
+                    {
+                            process.env.NODE_ENV === 'development'
+                        ?
+                            <div><MobxReactDevTools/></div>
+                        :
+                            null
+                    }
+
                 </div>
             </MuiThemeProvider>
         )
     }
 
     renderActiveScene() {
+
+        let middleSectionColorProps = {
+            middleSectionBaseColor : UI_CONSTANTS.primaryColor,
+            middleSectionDarkBaseColor : UI_CONSTANTS.darkPrimaryColor,
+            middleSectionHighlightColor :UI_CONSTANTS.higlightColor
+        }
 
         switch(this.props.store.activeScene) {
 
@@ -68,32 +111,31 @@ class Application extends Component {
             case Scene.Downloading:
                 return <NavigationFrame app={this.props.store}>
                             <Downloading torrents={this.props.store.torrentsDownloading}
-                                         revenue={this.props.store.totalSpent}
+                                         spending={this.props.store.totalSpent}
                                          downloadSpeed={this.props.store.totalDownloadSpeed}
                                          onStartDownloadClicked={() => {this.props.store.startDownloadWithTorrentFileFromFilePicker()}}
                                          onStartDownloadDrop={(files) => {this.props.store.startDownloadWithTorrentFileFromDragAndDrop(files)}}
                                          state={this.props.store.state}
                                          torrentsBeingLoaded={this.props.store.torrentsBeingLoaded}
                                          store={this.props.store}
+                                         {...middleSectionColorProps}
                             />
                         </NavigationFrame>
 
             case Scene.Uploading:
 
                 return <NavigationFrame app={this.props.store}>
-                          <Seeding torrents={this.props.store.torrentsUploading}
-                                   revenue={this.props.store.totalRevenue}
-                                   uploadSpeed={this.props.store.totalUploadSpeed}
-                                   onStartUploadCliked={() => { this.props.store.startTorrentUploadFlow() }}
-                                   store={this.props.store}
+
+                          <Seeding store={this.props.store}
+                                   {...middleSectionColorProps}
                           />
                         </NavigationFrame>
 
             case Scene.Completed:
 
                 return <NavigationFrame app={this.props.store}>
-                            <Completed torrents={this.props.store.torrentsCompleted}
-                                       store={this.props.store}
+                            <Completed store={this.props.store}
+                                       {...middleSectionColorProps}
                             />
                         </NavigationFrame>
 
@@ -120,9 +162,18 @@ Application.propTypes = {
 
 const NavigationFrame = observer((props) => {
 
+    let style = {
+        display: 'flex',
+        flexDirection: 'column',
+        flexGrow: 1
+    }
+
     return (
-        <div className="navigation-frame-container">
-            <ApplicationHeader app={props.app}/>
+        <div style={style}>
+            <ApplicationHeader app={props.app}
+                               height={'90px'}
+                               accentColor={UI_CONSTANTS.primaryColor}
+                                />
             {props.children}
         </div>
     )

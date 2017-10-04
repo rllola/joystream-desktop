@@ -32,7 +32,8 @@ class TorrentRow extends Component {
     render(props) {
 
         return (
-            <Row className={this.props.toolbarVisibilityStatus == ToolbarVisibilityType.OnHover ? "row-managed-toolbar-visiblity" : ""}>
+            <Row className={this.props.toolbarVisibilityStatus == ToolbarVisibilityType.OnHover ? "row-managed-toolbar-visiblity" : ""}
+                 backgroundColor={this.props.backgroundColor}>
                 <NameField name={this.props.torrent.name} />
                 <StatusField paused={this.props.torrent.canStart} />
                 <BytesPerSecondField bytes={this.props.torrent.uploadSpeed} />
@@ -50,7 +51,7 @@ class TorrentRow extends Component {
         return (
             this.props.toolbarVisibilityStatus != ToolbarVisibilityType.Hidden
             ?
-            <AbsolutePositionChildren left={-250} top={-20}>
+            <AbsolutePositionChildren left={-250} top={3}>
                 <TorrentToolbar {...this.props.toolbarProps} torrent={this.props.torrent} store={this.props.store} />
             </AbsolutePositionChildren>
             :
