@@ -38,6 +38,7 @@ function getStyles(props, state) {
     return {
 
         root : Object.assign({
+            position: 'relative', // needed to absolute position countContainer
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -46,6 +47,19 @@ function getStyles(props, state) {
             backgroundColor: rootColor,
             //borderBottom : '2px solid ' + ,
         }, props.style),
+
+        countContainer : {
+            display : 'none', // disabling this for now, failed attempt
+            position : 'absolute',
+            left : '60px',
+            top : '10px',
+            backgroundColor: 'hsl(198, 8%, 83%)',
+            borderRadius: '2px',
+            fontSize: '10px',
+            fontWeight: 'bold',
+            paddingLeft: '2px',
+            paddingRight: '4px',
+        },
 
         contentContainer : {
             display: 'flex',
@@ -124,6 +138,10 @@ class Button extends Component {
                  onMouseEnter={this.handleMouseEnter}
                  onMouseLeave={this.handleMouseLeave}
                  onClick={this.props.onClick}>
+
+                <div style={style.countContainer}>
+                    123
+                </div>
 
                 <div style={style.contentContainer}>
 
