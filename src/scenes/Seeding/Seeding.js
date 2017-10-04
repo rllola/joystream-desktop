@@ -47,7 +47,7 @@ const Seeding = (props) => {
                 <Toolbar>
 
                     <ToolbarButton title="Start uploading"
-                                   onClick={props.store.startUpload}
+                                   onClick={props.store.startTorrentUploadFlow}
                         //iconNode={<AddTorrentIcon/>}
                     />
 
