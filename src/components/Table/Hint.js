@@ -12,7 +12,6 @@ function getStyles(props) {
             //border: '4px solid hsla(0, 0%, 93%, 1)',
             backgroundColor: 'hsla(0, 0%, 93%, 1)',
             fontSize: '30px',
-            fontWeight: 'bold',
             color: 'hsla(0, 0%, 70%, 1)',
             margin: 'auto',
             borderRadius: '50px'
