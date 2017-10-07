@@ -18,8 +18,8 @@ const ApplicationStore = require('./ApplicationStore').default
 const Common = require('./Statemachine/Common')
 
 const bcoin = require('bcoin')
-
 const assert = require('assert')
+const process = require('process')
 
 
 class Application extends EventEmitter {
@@ -194,6 +194,8 @@ class ApplicationStatemachineClient {
 
   constructor (applicationStore) {
     this.store = applicationStore
+
+    this.forceOnboardingFlow = process.env.FORCE_ONBOARDING
 
     this.factories = {
       spvnode: factory(SPVNode),

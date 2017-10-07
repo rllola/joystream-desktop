@@ -5,11 +5,7 @@ const BaseMachine = require('../../../BaseMachine')
 const OnCompletedScene = require('./OnCompletedScene')
 const OnDownloadingScene = require('./OnDownloadingScene')
 const OnUploadingScene = require('./OnUploadingScene')
-const Scene = require('../../Scene')
 
-import { SINTEL_ON_BOARDING_TORRENT } from '../../../../constants'
-import { updateLatestVersionRunned } from '../../onboarding'
-import { addTorrent, prepareTorrentParams} from '../Common'
 
 var Started = new BaseMachine({
     namespace: "Started",
@@ -35,25 +31,6 @@ var Started = new BaseMachine({
 
           torrentFinishedDownloading: function (client, infoHash) {
               torrentFinishedInBackground(client, infoHash)
-          }
-      },
-      OnBoarding: {
-          onBoardingFinished: function (client) {
-
-            updateLatestVersionRunned()
-
-            var settings
-
-            try {
-              settings = prepareTorrentParams(client, SINTEL_ON_BOARDING_TORRENT)
-            } catch (error) {
-              console.error('Initialization of on boarding torrent file failed : ', error)
-              return
-            }
-
-            addTorrent(client, settings)
-
-            this.go(client, 'OnDownloadingScene')
           }
       }
     }
