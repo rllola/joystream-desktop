@@ -47,7 +47,7 @@ function getStyles(props, state) {
         height : 'none',
         border : 'none',
         borderRadius : '15px',
-        borderBottom : borderBottomWidth + ' solid hsl(' + hsColorPart + ', 20%)',
+        borderBottom : borderBottomWidth + ' solid hsl(' + hsColorPart + ', 45%)',
         backgroundColor : backgroundColor,
         fontFamily: 'Arial',
         fontWeight: 'bold',
