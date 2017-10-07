@@ -29,9 +29,25 @@ var Starting = new BaseMachine({
             client.config.logLevel,
             client.directories.walletPath())
 
-          client.services.session = client.factories.session({
-            port: client.config.bitTorrentPort || process.env.LIBTORRENT_PORT
-          })
+          // default session settings
+          var sessionSettings = {
+            // network port libtorrent session will open a listening socket on
+            port: 0,
+            // Assisted Peer Discovery (APD)
+            assistedPeerDiscovery: true
+          }
+
+          // Configuration overrides default setting
+          if ('bitTorrentPort' in client.config) {
+            sessionSettings.port = client.config.bitTorrentPort
+          }
+
+          // Configuration overrides default setting
+          if ('assistedPeerDiscovery' in client.config) {
+            sessionSettings.assistedPeerDiscovery = client.config.assistedPeerDiscovery
+          }
+
+          client.services.session = client.factories.session(sessionSettings)
 
           client.services.torrentUpdateInterval = setInterval(() => {
             client.services.session.postTorrentUpdates()
