@@ -14,7 +14,7 @@ const StartPaidDownloadingSection = observer((props) => {
     let className
     let onClick
 
-    if(props.torrent.canStartPaidDownloading) {
+    if(props.torrent.canStartPaidDownloading && props.store.unconfirmedBalance > 0) {
         className = "start_paid_downloading"
         onClick = () => { props.torrent.startPaidDownload() }
     } else {

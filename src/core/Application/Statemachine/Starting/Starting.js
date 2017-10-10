@@ -29,6 +29,10 @@ var Starting = new BaseMachine({
             client.config.logLevel,
             client.directories.walletPath())
 
+          client.services.spvnode.on('synced', function (height) {
+            client.processStateMachineInput('spvChainFullySynced', height)
+          })
+
           // default session settings
           var sessionSettings = {
             // network port libtorrent session will open a listening socket on

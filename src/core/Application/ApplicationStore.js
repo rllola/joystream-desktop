@@ -58,6 +58,11 @@ class ApplicationStore {
    */
   @observable torrentWithBadSavePathDuringStartUploadFlow
 
+  /**
+   * {Boolean} Blockchain has fully synced
+   */
+  @observable spvChainSynced
+
   constructor (state,
                torrents,
                numberCompletedInBackground,
@@ -77,6 +82,8 @@ class ApplicationStore {
 
     this.setStartUploadingTorrentFile(null)
     this.setTorrentWithBadSavePathDuringStartUploadFlow(null)
+
+    this.setSpvChainSynced(false)
 
     // callbacks to make on user actions
     // (provided by the core application, which will submit them to statemachine as inputs)
@@ -121,6 +128,12 @@ class ApplicationStore {
   @action.bound
   setTorrentWithBadSavePathDuringStartUploadFlow(torrentStore) {
     this.torrentWithBadSavePathDuringStartUploadFlow = torrentStore
+  }
+
+  @action.bound
+  setSpvChainSynced (synced) {
+    console.log('ChainSynced =', synced)
+    this.spvChainSynced = synced
   }
 
   /// UI values

@@ -139,9 +139,8 @@ class TorrentTable extends Component {
     }
 
     getRenderedTorrentRow(t, isEven) {
-
         var toolbarProps = {
-            canSpeedup : t.canStartPaidDownloading,
+            canSpeedup : () => { return this.props.store.unconfirmedBalance > 0 ? t.canStartPaidDownloading : false },
             onSpeedupClicked : () => { t.startBuying() },
             onOpenFolderClicked : () => { t.openFolder() },
             onMoreClicked : (e) => { this.toolbarMoreButtonClicked(e, t) }

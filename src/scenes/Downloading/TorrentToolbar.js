@@ -20,7 +20,7 @@ const TorrentToolbar = observer((props) => {
     return (
         <Toolbar>
             <PlaySection torrent={props.torrent} />
-            <StartPaidDownloadingSection torrent={props.torrent}/>
+            <StartPaidDownloadingSection torrent={props.torrent} store={props.store}/>
             <ToggleStatusSection torrent={props.torrent}/>
             {/** <ChangeBuyerTermsSection torrent={props.torrent}/> **/}
             <RemoveSection torrent={props.torrent} store={props.store}/>

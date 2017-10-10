@@ -48,6 +48,10 @@ var ApplicationStateMachine = new BaseMachine({
 
           // Initiate stopping
           this.handle(client, 'stop')
+      },
+
+      spvChainFullySynced: function (client, height) {
+        client.store.setSpvChainSynced(true)
       }
     },
 
@@ -111,6 +115,10 @@ var ApplicationStateMachine = new BaseMachine({
 
       removeTorrent: function (client, infoHash, deleteData) {
         Common.removeTorrent(client, infoHash, deleteData)
+      },
+
+      spvChainFullySynced: function (client, height) {
+        client.store.setSpvChainSynced(true)
       }
     },
 

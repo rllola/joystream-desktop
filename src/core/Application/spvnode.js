@@ -1,9 +1,12 @@
 const bcoin = require('bcoin')
 const assert = require('assert')
+import { EventEmitter } from 'events'
 
-class SPVNode {
+class SPVNode extends EventEmitter {
 
   constructor (network, logLevel, walletPrefix) {
+    super()
+
     this.walletPrefix = walletPrefix
     this.network = network
     this.logLevel = logLevel
@@ -37,6 +40,10 @@ class SPVNode {
 
     // Disable http/rpc - to avoid any port conflict issues. Also more secure option
     node.http = null
+
+    node.chain.on('full', () => {
+      this.emit('synced', node.chain.height)
+    })
 
     return node
   }
@@ -77,6 +84,7 @@ class SPVNode {
     this.node.stopSync()
     return this.node.disconnect()
   }
+
   getWallet (id = 'primary') {
     return this.node.plugins.walletdb.get(id)
   }
