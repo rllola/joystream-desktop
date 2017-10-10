@@ -18,7 +18,7 @@ import ApplicationHeaderScenarios from './ApplicationHeader'
 import Onboarding from './Onboarding'
 import ControllableApplicationStatusBar from './ApplicationStatusBar'
 
-import UpdaterUi from './Updater'
+import UpdaterFlow, {UpdaterLauncher} from './Updater'
 import ControllableFullScreenDialog from './FullScreenDialog'
 import ElevatedAutoLitButtonScenarios from './ElevatedAutoLitButton'
 
@@ -36,12 +36,6 @@ const ComponentWithStoreProp = (component, props) => {
         ) **/
 
     }
-}
-
-const updaterProps = {
-  store: {
-    state: 'waiting-to-start-download'
-  }
 }
 
 const App = (props) => {
@@ -68,6 +62,7 @@ const App = (props) => {
                         <Link to="start_downloading_flow"> <RaisedButton label="Start Downloading Flow" style={style} /> </Link>
                         <Link to="application_header"> <RaisedButton label="Application Header" style={style} /> </Link>
                         <Link to="auto_updater"> <RaisedButton label="AutoUpdater Window" style={style} /> </Link>
+                        <Link to="update_launcher"> <RaisedButton label="Separate autoUpdater Window" style={style} /> </Link>
                         <Link to="full_screen_dialog"> <RaisedButton label="Full screen dialog" style={style} /> </Link>
                         <Link to="elevated_auto_lit_button"> <RaisedButton label="Elevated auto lit button" style={style} /> </Link>
                         <Link to="onboarding"> <RaisedButton label="Onboarding" style={style} /> </Link>
@@ -85,7 +80,8 @@ const App = (props) => {
                         <Route path="/stream" component={StreamScenario} />
                         <Route path="/start_downloading_flow" component={ComponentWithStoreProp(StartDownloadingFlowScenarios, props)} />
                         <Route path="/application_header" component={ComponentWithStoreProp(ApplicationHeaderScenarios, props)} />
-                        <Route path="/auto_updater" component={ComponentWithStoreProp(UpdaterUi, updaterProps)} />
+                        <Route path="/auto_updater" component={UpdaterFlow} />
+                        <Route path="/update_launcher" component={UpdaterLauncher} />
                         <Route path="/full_screen_dialog" component={ControllableFullScreenDialog} />
                         <Route path="/elevated_auto_lit_button" component={ElevatedAutoLitButtonScenarios} />
                         <Route path="/start_downloading_flow" component={StartDownloadingFlowScenarios} />
