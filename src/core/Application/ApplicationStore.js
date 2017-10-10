@@ -63,6 +63,16 @@ class ApplicationStore {
    */
   @observable spvChainSynced
 
+  /**
+   * {Number} Blockchain sync progress percet number between 0 and 1
+   */
+  @observable spvChainSyncProgress
+
+  /**
+   * {Number} Current blockchain sync height
+   */
+  @observable spvChainHeight
+
   constructor (state,
                torrents,
                numberCompletedInBackground,
@@ -84,6 +94,8 @@ class ApplicationStore {
     this.setTorrentWithBadSavePathDuringStartUploadFlow(null)
 
     this.setSpvChainSynced(false)
+    this.setSpvChainSyncProgress(0)
+    this.setSpvChainHeight(0)
 
     // callbacks to make on user actions
     // (provided by the core application, which will submit them to statemachine as inputs)
@@ -134,6 +146,18 @@ class ApplicationStore {
   setSpvChainSynced (synced) {
     console.log('ChainSynced =', synced)
     this.spvChainSynced = synced
+  }
+
+  @action.bound
+  setSpvChainSyncProgress (progress) {
+    this.spvChainSyncProgress = (progress * 100).toFixed(2) + '%'
+    console.log('Sync Progress:', this.spvChainSyncProgress)
+    console.log('Sync Height:', this.spvChainHeight)
+  }
+
+  @action.bound
+  setSpvChainHeight (height) {
+    this.spvChainHeight = height
   }
 
   /// UI values

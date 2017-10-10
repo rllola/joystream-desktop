@@ -42,7 +42,16 @@ class SPVNode extends EventEmitter {
     node.http = null
 
     node.chain.on('full', () => {
+      this.emit('syncProgress', 1)
       this.emit('synced', node.chain.height)
+    })
+
+    node.chain.on('block', (block, entry) => {
+      if (this.chain.total % 100 === 0) {
+        this.emit('syncProgress', node.chain.getProgress(), node.chain.tip.height)
+      }
+      // node.pool.x?  what do peers report as the current tip of their longest chain?
+      // it is sent in the version message when we connect to them
     })
 
     return node

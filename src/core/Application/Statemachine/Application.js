@@ -52,6 +52,12 @@ var ApplicationStateMachine = new BaseMachine({
 
       spvChainFullySynced: function (client, height) {
         client.store.setSpvChainSynced(true)
+        client.store.setSpvChainHeight(height)
+      },
+
+      syncProgressUpdated: function (client, progress, height) {
+        client.store.setSpvChainSyncProgress(progress)
+        client.store.setSpvChainHeight(height)
       }
     },
 
@@ -119,6 +125,12 @@ var ApplicationStateMachine = new BaseMachine({
 
       spvChainFullySynced: function (client, height) {
         client.store.setSpvChainSynced(true)
+        client.store.setSpvChainHeight(height)
+      },
+
+      syncProgressUpdated: function (client, progress, height) {
+        client.store.setSpvChainSyncProgress(progress)
+        client.store.setSpvChainHeight(height)
       }
     },
 
