@@ -14,11 +14,11 @@ let updaterWindow = null
 function createWindow () {
   // Create the updater browser window.
   updaterWindow = new BrowserWindow({
-    width: 400,
-    height: 200,
+    width: 466,
+    height: 353,
     fullscreen: false,
     resizable: false,
-    frame: true,
+    frame: false,
     show: false
   })
 
