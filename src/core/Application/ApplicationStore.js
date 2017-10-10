@@ -144,15 +144,13 @@ class ApplicationStore {
 
   @action.bound
   setSpvChainSynced (synced) {
-    console.log('ChainSynced =', synced)
     this.spvChainSynced = synced
   }
 
   @action.bound
   setSpvChainSyncProgress (progress) {
-    this.spvChainSyncProgress = (progress * 100).toFixed(2) + '%'
-    console.log('Sync Progress:', this.spvChainSyncProgress)
-    console.log('Sync Height:', this.spvChainHeight)
+    this.spvChainSyncProgress = progress
+    console.log('SPV Chain Sync Progress:', (progress * 100).toFixed(2) + '%')
   }
 
   @action.bound
