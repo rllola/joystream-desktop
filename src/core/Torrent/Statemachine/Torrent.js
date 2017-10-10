@@ -201,17 +201,16 @@ function deepInitialStateFromActiveState(stateString) {
             else
                 assert(false, assertMsg)
 
-        } /**
-          else if(states[2] == "Paid") {
+        } else if(states[2] == "Paid") {
 
-            if(states[3] == "Started")
-                return DeepInitialState.DOWNLOADING.PAID.STARTED
-            else if(states[3] == "Stopped")
-                return DeepInitialState.DOWNLOADING.PAID.STOPPED
-            else
-                assert(false, assertMsg)
+            /**
+             * If we are paying, we will just go to unpaid
+             * started mode. Starting in paid mode is not allowed.
+             */
 
-        } */
+            return DeepInitialState.DOWNLOADING.UNPAID.STARTED
+            
+        }
         else
             assert(false, assertMsg)
 
