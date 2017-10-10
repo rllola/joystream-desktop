@@ -5,60 +5,46 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 
-const ButtonLightingLevels = {
-    normal : '60%',
-    hover : '50%',
-    pressed : '40%'
-}
+function getButtonFaceLighting(buttonState, props) {
 
-const BottomBorderWidth = {
-    normal : '3px',
-    pressed : '2px'
-}
-
-function getButtonFaceLighting(buttonState) {
-
-    if(buttonState.pressed)
-        return ButtonLightingLevels.pressed
-    else if(buttonState.hover)
-        return ButtonLightingLevels.hover
+    if(buttonState.pressed && props.lightingLevels.length > 2)
+        return props.lightingLevels[2]
+    else if(buttonState.hover && props.lightingLevels.length > 1)
+        return props.lightingLevels[1]
     else
-        return ButtonLightingLevels.normal
+        return props.lightingLevels[0]
 }
 
-function getBottomBorderWidth(buttonState) {
+function getBottomBorderWidth(buttonState, props) {
 
-    if(buttonState.pressed)
-        return BottomBorderWidth.pressed
+    if(buttonState.pressed && props.elevationLevels.length > 1)
+        return props.elevationLevels[1]
     else
-        return BottomBorderWidth.normal
+        return props.elevationLevels[0]
 }
 
 function getStyles(props, state) {
 
     let hsColorPart = props.hue + ',' + props.saturation + '%'
-    let backgroundColor = 'hsl(' + hsColorPart + ', ' + getButtonFaceLighting(state) + ')'
-    let borderBottomWidth = getBottomBorderWidth(state)
+    let backgroundColor = 'hsl(' + hsColorPart + ', ' + getButtonFaceLighting(state, props) + '%)'
+    let borderBottomWidth = getBottomBorderWidth(state, props)
 
     let style = {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
         height : 'none',
         border : 'none',
         borderRadius : '15px',
-        borderBottom : borderBottomWidth + ' solid hsl(' + hsColorPart + ', 45%)',
+        borderBottom : borderBottomWidth + 'px solid hsl(' + hsColorPart + ', ' + props.borderShadowLightingLevel + '%)',
         backgroundColor : backgroundColor,
         fontFamily: 'Arial',
         fontWeight: 'bold',
         fontSize: '28px',
         color: 'white',
-        padding : '16px',
-        paddingLeft : '30px',
-        paddingRight : '30px',
+        height: props.height + 'px',
+        width: props.width + 'px'
     }
 
-    //merge style with props.style
+    // Add final override user styles
+    Object.assign(style, props.style)
 
     return {
 
@@ -82,7 +68,7 @@ class ElevatedAutoLitButton extends Component {
     }
 
     handleMouseLeave = (e) => {
-        this.setState({hover : false})
+        this.setState({hover : false, pressed : false})
     }
 
     handleMouseDown = (e) => {
@@ -117,12 +103,35 @@ ElevatedAutoLitButton.propTypes = {
     onClick : PropTypes.func.isRequired,
     hue: PropTypes.number.isRequired,
     saturation: PropTypes.number.isRequired,
-    style : PropTypes.object
+
+    /**
+     * Three percentage numbers [0, 100]
+     * representing the lightning level for
+     * Normal/Hover/Pressed button states
+     */
+    lightingLevels: PropTypes.array,
+
+    /**
+     * Two numbers, pixels of bottom border
+     * of button in normal and pressed state.
+     */
+    elevationLevels: PropTypes.array,
+
+    borderShadowLightingLevel : PropTypes.number,
+    height : PropTypes.number.isRequired,
+    width : PropTypes.number.isRequired,
+
+
+    style : PropTypes.object,
+
 }
 
 ElevatedAutoLitButton.defaultProps = {
     hue: 0,
     saturation:0,
+    lightingLevels: [60, 50, 40],
+    elevationLevels: [3, 2],
+    borderShadowLightingLevel: 25 //  45%
 }
 
 export default ElevatedAutoLitButton
