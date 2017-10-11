@@ -91,7 +91,8 @@ const ApplicationHeader = observer((props) => {
                 />
 
                 <CommunityButton
-                    onClick={() => { console.log("click: hello 2") }}
+                    selected={props.app.activeScene === Scene.Community}
+                    onClick={() => { props.app.moveToScene(Scene.Community) }}
                     style={style.button}
                     {...buttonColorProps}
                 />

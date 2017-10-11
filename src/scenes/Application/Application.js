@@ -18,6 +18,7 @@ import TerminatingScene, {TerminatingState} from '../Terminating'
 import Downloading from '../Downloading'
 import Seeding from '../Seeding'
 import Completed from '../Completed'
+import Community from '../Community'
 import ApplicationHeader from './components/ApplicationHeader'
 //import Wallet from '../Wallet'
 
@@ -136,6 +137,14 @@ class Application extends Component {
                 return <NavigationFrame app={this.props.store}>
                             <Completed store={this.props.store}
                                        {...middleSectionColorProps}
+                            />
+                        </NavigationFrame>
+
+            case Scene.Community:
+
+                return <NavigationFrame app={this.props.store}>
+                            <Community store={this.props.store}
+                                       backgroundColor={UI_CONSTANTS.primaryColor}
                             />
                         </NavigationFrame>
 
