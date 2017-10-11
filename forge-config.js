@@ -63,7 +63,7 @@ module.exports = {
   "electronWinstallerConfig": {
     "name": "Joystream",
     "setupIcon": "src/assets/icons/appicon_128x128.ico",
-    "loadingGif": "src/assets/img/win32_installer_splash.png",
+    "loadingGif": "src/assets/img/win_installer_splash.png",
     "certificateFile": getSigningCertFilePath(),
     "certificatePassword": getSigningCertPassword()
   },
