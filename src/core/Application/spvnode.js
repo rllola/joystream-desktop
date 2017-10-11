@@ -47,7 +47,7 @@ class SPVNode extends EventEmitter {
     })
 
     node.chain.on('block', (block, entry) => {
-      if (this.chain.total % 100 === 0) {
+      if (node.chain.total % 2000 === 0) {
         this.emit('syncProgress', node.chain.getProgress(), node.chain.tip.height)
       }
       // node.pool.x?  what do peers report as the current tip of their longest chain?
