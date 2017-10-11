@@ -152,6 +152,12 @@ var Loading = new BaseMachine({
         CheckingPartialDownload: {
 
             checkFinished: function (client) {
+                // If the saved initial state was stopped pause the torrent now after
+                // checking files completes
+                if (Common.isStopped(client.deepInitialState)) {
+                  client.torrent.handle.pause()
+                }
+
                 // By default, extension torrent plugins are constructed with
                 // TorrentPlugin::LibtorrentInteraction::None:
                 // - No events interrupted, except on_extended events for this plugin.
