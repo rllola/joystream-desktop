@@ -22,7 +22,11 @@ var LoadingTorrents = new BaseMachine({
           // Read all torrents from database
           var torrents = await client.services.db.getAll('torrents')
         } catch (err) {
-          client.processStateMachineInput('completedLoadingTorrents')
+
+          console.log(err)
+
+          // Commenting this out, since all handlers seem to have been commented out
+          //client.processStateMachineInput('completedLoadingTorrents')
           return
         }
 
@@ -30,7 +34,6 @@ var LoadingTorrents = new BaseMachine({
       },
 
       gotTorrents: function (client, savedTorrents) {
-
 
         // Create core torrent objects and stores, initialize with loading settings,
         // and prepare torrent add parameters
@@ -44,8 +47,10 @@ var LoadingTorrents = new BaseMachine({
 
         })
 
-        // øøø
+        // After adding all torrents, get started right away, we
+        // have skipped waiting for all 'torrentLoaded' inputs from all torrents we loaded
         this.go(client, '../../Started')
+
       },
 
       torrentLoaded: function (client) {

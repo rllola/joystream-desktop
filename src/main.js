@@ -98,6 +98,14 @@ ipcMain.on('power-save-blocker', (event, arg) => {
 
 function createWindow () {
 
+    if (isDev) {
+
+        // Enable live reloading : Needs to happen prior to `new BrowserWindow`
+        // https://github.com/electron/electron-compile/blob/master/README.md
+        enableLiveReload({strategy: 'react-hmr'})
+        enableLiveReload({strategy: 'react-hmr'})
+    }
+
   // Create the browser window.
   win = new BrowserWindow({
       width: 1200,
@@ -108,10 +116,6 @@ function createWindow () {
   })
 
   if (isDev) {
-
-    // Enable live reloading
-    // https://github.com/electron/electron-compile/blob/master/README.md
-    enableLiveReload({strategy: 'react-hmr'})
 
     // Open the DevTools.
     win.webContents.openDevTools()

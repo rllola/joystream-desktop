@@ -18,8 +18,8 @@ const ApplicationStore = require('./ApplicationStore').default
 const Common = require('./Statemachine/Common')
 
 const bcoin = require('bcoin')
-
 const assert = require('assert')
+const process = require('process')
 
 
 class Application extends EventEmitter {
@@ -50,8 +50,10 @@ class Application extends EventEmitter {
       chooseSavePathButtonClicked : this.chooseSavePathButtonClicked.bind(this),
       useTorrentFilePathButtonClicked : this.useTorrentFilePathButtonClicked.bind(this),
       keepDownloadingClicked: this.keepDownloadingClicked.bind(this),
-      dropDownloadClicked: this.dropDownloadClicked.bind(this)
+      dropDownloadClicked: this.dropDownloadClicked.bind(this),
 
+      /// Onboarding scene
+      onBoardingFinished: this.onBoardingFinished.bind(this)
     })
 
     var client = new ApplicationStatemachineClient(this.store)
@@ -173,6 +175,12 @@ class Application extends EventEmitter {
     this._process('dropDownloadClicked')
   }
 
+  //// Onboarding flow
+
+  onBoardingFinished () {
+    this._process('onBoardingFinished')
+  }
+
 }
 
 // Create a maker function from a class or constructor function using 'new'
@@ -186,6 +194,8 @@ class ApplicationStatemachineClient {
 
   constructor (applicationStore) {
     this.store = applicationStore
+
+    this.forceOnboardingFlow = process.env.FORCE_ONBOARDING
 
     this.factories = {
       spvnode: factory(SPVNode),

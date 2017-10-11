@@ -15,7 +15,8 @@ import {
     PublicButton } from './Buttons'
 
 import Scene from '../../../../core/Application/Scene'
-
+import {OnboardingStore} from '../../../../core'
+import {ExplainerTip} from '../../../Onboarding'
 /**
  * ApplicationHeader
  */
@@ -124,6 +125,25 @@ const ApplicationHeader = observer((props) => {
                     {...buttonColorProps}
                 />
 
+                {
+                    props.app.onboardingStore &&
+                    props.app.onboardingStore.state === OnboardingStore.State.DisabledFeaturesExplanation
+                        ?
+                        <ExplainerTip title="To be enabled"
+                                      explainerTop={60}
+                                      explainerLeft={-430}
+                                      circleTop={30}
+                                      circleLeft={-240}
+                                      zIndex={2}
+                                      buttonTitle="Ok"
+                                      buttonClick={() => { props.app.onboardingStore.disabledFeaturesExplanationAccepted() }} >
+                            The wallet, live, new and publish tabs are disabled for now, they will be enabled as we roll out these features. Stay tuned for updates!
+
+                        </ExplainerTip>
+                        :
+                        null
+                }
+
             </ButtonGroup>
 
             <div style={style.spacer}></div>
@@ -135,7 +155,26 @@ const ApplicationHeader = observer((props) => {
                           backgroundColor={props.baseColor}
                           balanceColor={props.balanceColor}
                           subtitleColor={props.faceColor}
-            />
+            >
+                {
+                    props.app.onboardingStore &&
+                    props.app.onboardingStore.state === OnboardingStore.State.BalanceExplanation
+                    ?
+                        <ExplainerTip title="Your testnet balance"
+                                      explainerTop={10}
+                                      explainerLeft={-300}
+                                      circleTop={-20}
+                                      circleLeft={0}
+                                      zIndex={2}
+                                      buttonTitle="Ok"
+                                      buttonClick={() => { props.app.onboardingStore.balanceExplanationAccepted() }} >
+                            We are sending you free <span style={{fontWeight : 'bold'}}>testnet</span> coins promptly, and your unconfirmed balance is visible here.
+                        </ExplainerTip>
+                    :
+                        null
+                }
+                <div></div>
+            </BalancePanel>
 
         </Header>
     )
@@ -159,7 +198,7 @@ ApplicationHeader.defaultProps = {
     baseColor : '#1c262b',
     attentionColor : '#1c262b', // '#7d8b91',
 
-    notificationColor : '#70c989', //'#c52578',
+    notificationColor : '#c9302c', //'#c52578',
     balanceColor : 'white',
     faceColor : '#7d8b91',
     separatorColor : '#61647d',

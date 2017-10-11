@@ -19,7 +19,7 @@ import Downloading from '../Downloading'
 import Seeding from '../Seeding'
 import Completed from '../Completed'
 import ApplicationHeader from './components/ApplicationHeader'
-//import Wallet from '../Wallet'
+import {WelcomeScreen, DepartureScreen} from '../Onboarding'
 
 let MobxReactDevTools
 if (process.env.NODE_ENV === 'development') {
@@ -60,6 +60,9 @@ class Application extends Component {
         return (
             <MuiThemeProvider>
                 <div style={styles.innerRoot}>
+
+                    <WelcomeScreen store={this.props.store} />
+                    <DepartureScreen store={this.props.store} />
 
                     {
                             this.props.store.isPlaying

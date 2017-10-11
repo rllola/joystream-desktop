@@ -5,7 +5,7 @@ const BaseMachine = require('../../../BaseMachine')
 const OnCompletedScene = require('./OnCompletedScene')
 const OnDownloadingScene = require('./OnDownloadingScene')
 const OnUploadingScene = require('./OnUploadingScene')
-const Scene = require('../../Scene')
+
 
 var Started = new BaseMachine({
     namespace: "Started",
@@ -37,7 +37,7 @@ var Started = new BaseMachine({
 })
 
 function torrentFinishedInBackground(client, infoHash) {
-    
+
     // Since we not on the Completed scene,
     // we increment the background completion count
     client.store.setNumberCompletedInBackground(client.store.numberCompletedInBackground + 1)

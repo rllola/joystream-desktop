@@ -73,6 +73,11 @@ class ApplicationStore {
    */
   @observable spvChainHeight
 
+  /*
+   * {OnboardingStore} Store for onboarding state
+   */
+  @observable onboardingStore
+
   constructor (state,
                torrents,
                numberCompletedInBackground,
@@ -90,8 +95,11 @@ class ApplicationStore {
     this.setRevenue(revenue)
     this.setSpending(spending)
 
+    // Temporary default setting, since changing constuctor signature is
+    // currntly an annoyance
     this.setStartUploadingTorrentFile(null)
     this.setTorrentWithBadSavePathDuringStartUploadFlow(null)
+    this.setOnboardingStore(null)
 
     this.setSpvChainSynced(false)
     this.setSpvChainSyncProgress(0)
@@ -156,6 +164,11 @@ class ApplicationStore {
   @action.bound
   setSpvChainHeight (height) {
     this.spvChainHeight = height
+  }
+
+  @action.bound
+  setOnboardingStore(store) {
+    this.onboardingStore = store
   }
 
   /// UI values
@@ -354,7 +367,6 @@ class ApplicationStore {
     this._handlers.acceptTorrentFileWasInvalid()
   }
 
-
   retryPickingTorrentFile() {
       this._handlers.retryPickingTorrentFile()
   }
@@ -397,6 +409,12 @@ class ApplicationStore {
 
   dropDownloadClicked() {
     this._handlers.dropDownloadClicked()
+
+  }
+
+  // On Boarding
+  onBoardingFinished () {
+    this._handlers.onBoardingFinished()
   }
 
 }
