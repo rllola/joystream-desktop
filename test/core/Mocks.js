@@ -51,6 +51,10 @@ MockTorrentHandle.prototype.torrentFile = function () {
   return new MockTorrentInfo(this._fixture)
 }
 
+MockTorrentHandle.prototype.pause = function () {
+  
+}
+
 /// MockTorrentStatus
 
 function MockTorrentStatus(fixture) {

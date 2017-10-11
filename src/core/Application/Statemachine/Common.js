@@ -74,7 +74,9 @@ function addTorrent(client, settings) {
     if (resumeData) params.resumeData = resumeData
 
     // Whether torrent should be added in (libtorrent) paused mode from the get go
-    let addAsPaused = TorrentCommon.isStopped(settings.deepInitialState)
+    // We always add it in non-paused mode to make sure torrent completes checking files and
+    // finish loading in the state machine
+    let addAsPaused = false
 
     // Automanagement: We never want this, as our state machine should explicitly control
     // pause/resume behaviour torrents for now.
@@ -87,7 +89,10 @@ function addTorrent(client, settings) {
     // set param flags - auto_managed/paused
     params.flags = {
         paused: addAsPaused,
-        auto_managed: autoManaged
+        auto_managed: autoManaged,
+
+        // make sure our settings override resume data (paused and auto managed flags)
+        override_resume_data: true
     }
 
     client.services.session.addTorrent(params, function (err, torrent) {
