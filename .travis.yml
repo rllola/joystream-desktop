@@ -30,7 +30,7 @@ before_install:
 install:
   - npm install -g electron-forge
   # make sure to install same version as electron in package.json to test version which will be published
-  - npm install -g electron-prebuilt-compile@1.6.4
+  - npm install -g electron-prebuilt-compile@1.6.14
   - npm install -g electron-rebuild
 
 before_script:
