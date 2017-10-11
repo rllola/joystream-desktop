@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import {observer } from 'mobx-react'
 import {Header} from '../../../../components/Header'
 import ButtonGroup from './ButtonGroup'
-import BalancePanel from './BalancePanel'
+import BalancePanel from './WalletPanel'
 import {
     UploadButton,
     DowloadButton,
@@ -151,8 +151,7 @@ const ApplicationHeader = observer((props) => {
 
             <div style={style.seperator}></div>
 
-            <BalancePanel unconfirmedBalance={props.app.unconfirmedBalance}
-                          confirmedBalance={props.app.confirmedBalance}
+            <BalancePanel applicationStore={props.app}
                           backgroundColor={props.baseColor}
                           balanceColor={props.balanceColor}
                           subtitleColor={props.faceColor}
