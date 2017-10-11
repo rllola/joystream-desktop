@@ -21,6 +21,10 @@ var OnDownloadingScene = new BaseMachine({
         this.go(client, '../OnUploadingScene')
       },
 
+      community_scene_selected: function (client) {
+        this.go(client, '../OnCommunityScene')
+      },
+
       startDownloadWithTorrentFileFromFilePicker: function (client) {
 
         // Allow user to pick a torrent file

@@ -5,7 +5,9 @@ const BaseMachine = require('../../../BaseMachine')
 const OnCompletedScene = require('./OnCompletedScene')
 const OnDownloadingScene = require('./OnDownloadingScene')
 const OnUploadingScene = require('./OnUploadingScene')
-const Scene = require('../../Scene')
+const constants = require('../../../../constants')
+
+const open = require('open')
 
 var Started = new BaseMachine({
     namespace: "Started",
@@ -32,7 +34,36 @@ var Started = new BaseMachine({
           torrentFinishedDownloading: function (client, infoHash) {
               torrentFinishedInBackground(client, infoHash)
           }
+      },
+
+      OnCommunityScene: {
+
+          completed_scene_selected: function (client) {
+              this.transition(client, 'OnCompletedScene')
+          },
+
+          downloading_scene_selected: function (client) {
+              this.transition(client, 'OnDownloadingScene')
+          },
+
+          uploading_scene_selected: function (client) {
+              this.transition(client, 'OnUploadingScene')
+          },
+
+          telegramClicked: function (client) {
+              open(constants.TELEGRAM_URL)
+          },
+
+          slackClicked: function (client) {
+              open(constants.SLACK_URL)
+          },
+
+          redditClicked: function (client) {
+              open(constants.REDDIT_URL)
+          }
+
       }
+
     }
 })
 
