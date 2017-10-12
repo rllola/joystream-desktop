@@ -65,7 +65,7 @@ var Starting = new BaseMachine({
           }, constants.POST_TORRENT_UPDATES_INTERVAL)
 
           // Setup electron-config store
-          client.applicationSettings = client.factories.applicationSettings
+          client.applicationSettings = client.factories.applicationSettings()
 
           // Get a function to call for openning the database store
           client.services.openDatabase = client.factories.db(client.directories.databasePath())
