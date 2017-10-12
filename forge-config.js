@@ -87,7 +87,7 @@ module.exports = {
       path: '/Applications'
     },
     {
-      x: 250,
+      x: 220,
       y: 350,
       type: 'file',
       path: path.resolve(process.cwd(), 'out/Joystream-darwin-x64/Joystream.app')
