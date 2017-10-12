@@ -116,7 +116,7 @@ var Torrent = new BaseMachine({
               // Disable save power blocker
               electron.ipcRenderer.send('power-save-blocker', {enable:false})
 
-              Common.hideDoorbell()
+              Common.showDoorbell()
 
               client.store.setIsPlaying(null)
             },
@@ -209,7 +209,7 @@ function deepInitialStateFromActiveState(stateString) {
              */
 
             return DeepInitialState.DOWNLOADING.UNPAID.STARTED
-            
+
         }
         else
             assert(false, assertMsg)
