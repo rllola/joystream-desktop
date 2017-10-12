@@ -34,8 +34,7 @@ class VideoPlayer extends Component {
     }
 
     const videoStyle = {
-      minHeight: '100%',
-      height: 'auto',
+      height: '100%',
       width: '100%'
     }
 

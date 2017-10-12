@@ -60,23 +60,8 @@ ipcMain.on('main-window-channel', (event, arg) => {
 ipcMain.on('set-bounds', (event, arg) => {
     // verify if window exist and if we are not already in fullscreen
     if (win && !win.isFullScreen()) {
-      let bounds = {
-        contentBounds: true,
-        x: null,
-        y: null,
-        width: arg.width,
-        height: arg.height
-      }
-
-      // Will get the primary screen of the user
-      const scr = electron.screen.getPrimaryDisplay()
-
-      // always start in center
-      bounds.x = Math.round(scr.workArea.x + (scr.workArea.width / 2) - (bounds.width / 2))
-      bounds.y = Math.round(scr.workArea.y + (scr.workArea.height / 2) - (bounds.height / 2))
-
       // Set the new window size
-      win.setBounds(bounds)
+      win.setContentSize(arg.width, arg.height)
   }
 })
 
@@ -111,8 +96,8 @@ function createWindow () {
       width: 1200,
       height: 800,
       minHeight: 500,
-      minWidth: 1200
-      , frame: true
+      minWidth: 1200,
+      frame: true
   })
 
   if (isDev) {
