@@ -121,6 +121,12 @@ function createWindow () {
     win.webContents.openDevTools()
 
   } else {
+    // Dev console when running packged/installed app
+    if (process.env.NODE_ENV === 'development') {
+      // Open the DevTools.
+      win.webContents.openDevTools()
+    }
+
     // Handle squirrel event. Avoid calling for updates when install
     if(require('electron-squirrel-startup')) {
       console.log('Squirrel events handle')
