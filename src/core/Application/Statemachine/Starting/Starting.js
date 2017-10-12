@@ -5,7 +5,7 @@
 const BaseMachine = require('../../../BaseMachine')
 const LoadingTorrents = require('./LoadingTorrents')
 const constants = require('../../../../constants')
-const ApplicationSettings = require('../../../ApplicationSettings').ApplicationSettings
+
 const OnboardingStore = require('../../../OnboardingStore')
 const packageFile = require('../../../../../package.json')
 
@@ -65,7 +65,7 @@ var Starting = new BaseMachine({
           }, constants.POST_TORRENT_UPDATES_INTERVAL)
 
           // Setup electron-config store
-          client.applicationSettings = new ApplicationSettings()
+          client.applicationSettings = client.factories.applicationSettings
 
           // Get a function to call for openning the database store
           client.services.openDatabase = client.factories.db(client.directories.databasePath())

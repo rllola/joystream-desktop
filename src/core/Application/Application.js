@@ -5,6 +5,7 @@ const SPVNode = require('./spvnode')
 const Session = require('joystream-node').Session
 const faucet = require('./faucet')
 
+const ApplicationSettings = require('../ApplicationSettings').default
 const TorrentsStorage = require('../../db').default
 const Torrent = require('../Torrent/Torrent').default
 const TorrentStore = require('../Torrent/TorrentStore').default
@@ -201,6 +202,8 @@ class ApplicationStatemachineClient {
       spvnode: factory(SPVNode),
 
       directories: factory(Directories),
+
+      applicationSettings: factory(ApplicationSettings),
 
       session: factory(Session),
 

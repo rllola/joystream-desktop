@@ -16,7 +16,7 @@ var ControlledPromise = require('./controlled_promise')
 import ASM from '../../../src/core/Application/Statemachine'
 
 describe('Application Statemachine', function () {
-  let client = NewMockedClient()
+  let client = NewMockedClient(false)
 
   function handle (...args) {
     ASM.queuedHandle(client, ...args)
@@ -136,8 +136,16 @@ describe('Application Statemachine', function () {
   })
 })
 
-function NewMockedClient () {
+function NewMockedClient (isFirstTimeRun) {
   let client = {}
+
+  client.applicationSettings = {
+      isFirstTimeRun : sinon.spy(function() {
+        return isFirstTimeRun
+      }),
+      setIsFirstTimeRun : sinon.spy(),
+      setLastVersionOfAppRun : sinon.spy()
+  }
 
   client.processStateMachineInput = function (...args) {
     ASM.queuedHandle(client, ...args)
@@ -242,6 +250,8 @@ function NewMockedClient () {
   store.torrentAdded = function (torrent) {
 
   }
+
+  store.setOnboardingStore = sinon.spy()
 
   store.setNumberCompletedInBackground = sinon.spy()
 
