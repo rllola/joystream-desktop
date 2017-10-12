@@ -1,6 +1,10 @@
 import path from 'path'
 import os from 'os'
 
+export const TELEGRAM_URL = "http://www.telegram.com/JoyStream"
+export const SLACK_URL = "http://slack.joystream.co"
+export const REDDIT_URL = "http://reddit.com/r/JoyStream"
+
 export const POST_TORRENT_UPDATES_INTERVAL = 3000
 export const AUTO_UPDATE_BASE_URL ='https://download.joystream.co:7070/update/'
 export const SINTEL_ON_BOARDING_TORRENT = path.join(__dirname, '..', 'assets', 'torrents', path.sep) + 'sintel.torrent'

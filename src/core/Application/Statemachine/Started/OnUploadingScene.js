@@ -15,11 +15,17 @@ var OnUploadingScene = new BaseMachine({
     initialState: 'idle',
     states: {
         idle: {
+
             downloading_scene_selected: function (client) {
                 this.go(client, '../OnDownloadingScene')
             },
+
             completed_scene_selected: function (client) {
                 this.go(client, '../OnCompletedScene')
+            },
+
+            community_scene_selected: function (client) {
+                this.go(client, '../OnCommunityScene')
             },
 
             startTorrentUploadFlow : function (client) {

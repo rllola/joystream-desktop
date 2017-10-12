@@ -184,6 +184,8 @@ class ApplicationStore {
       return Scene.Downloading
     else if (this.state.startsWith('Started.OnUploadingScene'))
       return Scene.Uploading
+    else if(this.state.startsWith('Started.OnCommunityScene'))
+      return Scene.Community
     else if (this.state.startsWith('Starting')) // Notice that 'Starting.LoadingTorrents' is covered above
       return Scene.Loading
     else if (this.state.startsWith('Stopping'))
@@ -415,6 +417,20 @@ class ApplicationStore {
   // On Boarding
   onBoardingFinished () {
     this._handlers.onBoardingFinished()
+  }
+
+  /// Community scene
+
+  telegramClicked() {
+    this._handlers.telegramClicked()
+  }
+
+  slackClicked() {
+    this._handlers.slackClicked()
+  }
+
+  redditClicked() {
+    this._handlers.redditClicked()
   }
 
 }
