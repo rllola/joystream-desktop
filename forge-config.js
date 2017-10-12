@@ -63,7 +63,7 @@ module.exports = {
   "electronWinstallerConfig": {
     "name": "Joystream",
     "setupIcon": "src/assets/icons/appicon_128x128.ico",
-    "loadingGif": "src/assets/img/win_installer_splash.png",
+    "loadingGif": "src/assets/img/windows-installer-screen.png",
     "certificateFile": getSigningCertFilePath(),
     "certificatePassword": getSigningCertPassword()
   },
@@ -75,8 +75,9 @@ module.exports = {
     "bin" : "Joystream"
   },
   "electronInstallerDMG": {
-    "background":"src/assets/img/osx_dmg_installer_background.png",
+    "background":"src/assets/img/osx-installer-screen.png",
     "icon": "src/assets/icons/appicon_128x128.png",
+    "icon-size": 128,
     "format": "UDZO",
     "contents": [
     {
