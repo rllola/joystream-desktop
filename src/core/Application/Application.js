@@ -5,7 +5,7 @@ const SPVNode = require('./spvnode')
 const Session = require('joystream-node').Session
 const faucet = require('./faucet')
 
-const ApplicationSettings = require('../ApplicationSettings').default
+const ApplicationSettings = require('../ApplicationSettings').ApplicationSettings
 const TorrentsStorage = require('../../db').default
 const Torrent = require('../Torrent/Torrent').default
 const TorrentStore = require('../Torrent/TorrentStore').default
