@@ -18,7 +18,7 @@ import Downloading from '../Downloading'
 import Seeding from '../Seeding'
 import Completed from '../Completed'
 import Community from '../Community'
-import ApplicationHeader from './components/ApplicationHeader'
+
 //import Wallet from '../Wallet'
 import {WelcomeScreen, DepartureScreen} from '../OnBoarding'
 
