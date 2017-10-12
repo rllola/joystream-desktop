@@ -3,12 +3,11 @@ import { Provider, observer } from 'mobx-react'
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-import Header from '../../components/Header'
-import StatusBar,{ProgressStatusPanel} from '../../components/StatusBar'
 import Scene from '../../core/Application/Scene'
 
 // Components
-//import ApplicationHeader from './components/ApplicationHeader'
+import ApplicationHeader from './components/ApplicationHeader'
+import ApplicationStatusBar from './components/ApplicationStatusBar'
 import VideoPlayer from '../../components/VideoPlayer'
 
 // Our scenes
@@ -18,7 +17,6 @@ import TerminatingScene, {TerminatingState} from '../Terminating'
 import Downloading from '../Downloading'
 import Seeding from '../Seeding'
 import Completed from '../Completed'
-import ApplicationHeader from './components/ApplicationHeader'
 import {WelcomeScreen, DepartureScreen} from '../OnBoarding'
 
 let MobxReactDevTools
@@ -64,6 +62,8 @@ class Application extends Component {
                     <WelcomeScreen store={this.props.store} />
                     <DepartureScreen store={this.props.store} />
 
+                    <ApplicationStatusBar store={this.props.store} />
+
                     {
                             this.props.store.isPlaying
                         ?
@@ -71,15 +71,6 @@ class Application extends Component {
                         :
                             this.renderActiveScene()
                     }
-
-                    <StatusBar show={this.props.store.torrentsBeingLoaded.length > 0}
-                               bottom={true}
-                    >
-                        <ProgressStatusPanel title={'Loading torrents'}
-                                             percentageProgress={this.props.store.startingTorrentCheckingProgressPercentage}
-                        />
-
-                    </StatusBar>
 
                     {
                             process.env.NODE_ENV === 'development'

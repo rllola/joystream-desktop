@@ -10,23 +10,35 @@ const StatusBar = (props) => {
     if(!props.show)
         return null
 
-    let style = {
-        zIndex : 1,
-        display : 'fixed',
-        position: 'absolute',
-        width: '100%',
-        backgroundColor : '#ffc521',
-        borderTop : '1px solid #eab214'
+    let styles = {
+        root : {
+            zIndex: 1000,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'absolute',
+            width: '100%',
+
+            //borderTop : '1px solid #eab214'
+        },
+
+        statusContainer: {
+            borderRadius: '4px 4px 0px 0px',
+            //width: '100%',
+            overflow: 'hidden'
+        }
     }
 
     if(props.bottom)
-        style.bottom = '0px'
+        styles.root.bottom = '0px'
     else
-        style.top = '0px'
+        styles.root.top = '0px'
 
     return (
-        <div style={style}>
-            {props.children}
+        <div style={styles.root}>
+            <div style={styles.statusContainer}>
+                {props.children}
+            </div>
         </div>
     )
 
