@@ -98,6 +98,14 @@ ipcMain.on('power-save-blocker', (event, arg) => {
 
 function createWindow () {
 
+    if (isDev) {
+
+        // Enable live reloading : Needs to happen prior to `new BrowserWindow`
+        // https://github.com/electron/electron-compile/blob/master/README.md
+        enableLiveReload({strategy: 'react-hmr'})
+        enableLiveReload({strategy: 'react-hmr'})
+    }
+
   // Create the browser window.
   win = new BrowserWindow({
       width: 1200,
@@ -109,14 +117,16 @@ function createWindow () {
 
   if (isDev) {
 
-    // Enable live reloading
-    // https://github.com/electron/electron-compile/blob/master/README.md
-    enableLiveReload({strategy: 'react-hmr'})
-
     // Open the DevTools.
     win.webContents.openDevTools()
 
   } else {
+    // Dev console when running packged/installed app
+    if (process.env.NODE_ENV === 'development') {
+      // Open the DevTools.
+      win.webContents.openDevTools()
+    }
+
     // Handle squirrel event. Avoid calling for updates when install
     if(require('electron-squirrel-startup')) {
       console.log('Squirrel events handle')

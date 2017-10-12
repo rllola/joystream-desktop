@@ -60,6 +60,7 @@ class BalancePanel extends Component {
                     <span style={style.units}>{representation.unit}</span>
                 </div>
                 <div style={style.subtitle}>{balanceText}</div>
+                {this.props.children}
             </div>
         )
     }

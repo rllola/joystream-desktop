@@ -3,16 +3,13 @@
  */
 
 const BaseMachine = require('../../BaseMachine')
-
 const Starting = require('./Starting/Starting')
 const Started = require('./Started/Started')
 const Stopping = require('./Stopping/Stopping')
-
-const Common = require('./Common')
-
 const TorrentInfo = require('joystream-node').TorrentInfo
-
+const Common = require('./Common')
 const Doorbell = require('../doorbell')
+const exampleTorrents = require('../../../constants').EXAMPLE_TORRENTS
 
 var ApplicationStateMachine = new BaseMachine({
   namespace: 'Application',
@@ -35,19 +32,16 @@ var ApplicationStateMachine = new BaseMachine({
     Starting: {
       _child: Starting,
 
-      //stop: allow user to cancel startup process / client.abortStarting = true
-      //in each state of the starting machine before transitioning to next step it can
-      //check this bool
+      /**
+       * We prevent stopping of any kind while starting up, for now.
+       * In the future, allow user to cancel startup process / client.abortStarting = true
+       * in each state of the starting machine before transitioning to next step it can
+       * check this bool
+       */
 
+      // Block any window unloading
       onBeforeUnloadMainWindow: function(client, event) {
-
-          // We are initiating stop, so block window closing for the moment,
-          // the main process will later trigger a second close request when we are in
-          // `NotStarted`, which which we dont block.
-          event.returnValue = false
-
-          // Initiate stopping
-          this.handle(client, 'stop')
+          blockMainWindowUnload(event)
       },
 
       spvChainFullySynced: function (client, height) {
@@ -83,13 +77,7 @@ var ApplicationStateMachine = new BaseMachine({
 
       onBeforeUnloadMainWindow: function(client, event) {
 
-          // We are initiating stop, so block window closing for the moment,
-          // the main process will later trigger a second close request when we are in
-          // `NotStarted`, which which we dont block.
-          event.returnValue = false
-
-          // Initiate stopping
-          this.handle(client, 'stop')
+          beginStopping(this, client, event)
       },
 
       torrentWaitingForMissingBuyerTerms: function (client, torrent) {
@@ -131,7 +119,33 @@ var ApplicationStateMachine = new BaseMachine({
       syncProgressUpdated: function (client, progress, height) {
         client.store.setSpvChainSyncProgress(progress)
         client.store.setSpvChainHeight(height)
+      },
+
+      addExampleTorrents: function (client) {
+
+          for (var i = 0; i < exampleTorrents.length; i++) {
+
+              // Load torrent file
+              let torrentFileName = exampleTorrents[i]
+
+              let torrentInfo
+
+              try {
+                  torrentInfo = new TorrentInfo(torrentFileName)
+              } catch (e) {
+                  console.log('Failed to load torrent file: ' + torrentFileName)
+                  console.log(e)
+                  continue
+              }
+
+              let settings = Common.getStartingDownloadSettings(torrentInfo, client.directories.defaultSavePath())
+
+              // and start adding torrent
+              Common.addTorrent(client, settings)
+          }
+
       }
+
     },
 
     Stopping: {
@@ -146,5 +160,29 @@ var ApplicationStateMachine = new BaseMachine({
     }
   }
 })
+
+function beginStopping(machine, client, event) {
+
+    blockMainWindowUnload(event)
+
+    // When onboarding is enabled,
+    if(client.onboardingStore) {
+
+      // we display shutdown message
+      client.onboardingStore.displayShutdownMessage()
+
+    } else // Directly initiate stopping
+        machine.handle(client, 'stop')
+
+}
+
+function blockMainWindowUnload(event) {
+
+    // We are initiating stop, so block window closing for the moment,
+    // the main process will later trigger a second close request when we are in
+    // `NotStarted` by calling electron.app.quit in response to IPC from
+    // this renderes process about sucessful stopping, which which we don't block.
+    event.returnValue = false
+}
 
 module.exports = ApplicationStateMachine

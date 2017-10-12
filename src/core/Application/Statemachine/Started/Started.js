@@ -68,7 +68,7 @@ var Started = new BaseMachine({
 })
 
 function torrentFinishedInBackground(client, infoHash) {
-    
+
     // Since we not on the Completed scene,
     // we increment the background completion count
     client.store.setNumberCompletedInBackground(client.store.numberCompletedInBackground + 1)

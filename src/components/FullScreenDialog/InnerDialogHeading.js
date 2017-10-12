@@ -13,7 +13,8 @@ function getStyles(props) {
             flexDirection : 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            height: '100%'
+            height: '100%',
+            width: '100%'
         },
         innerRoot : {
             display : 'flex',
