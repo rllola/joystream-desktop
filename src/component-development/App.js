@@ -16,6 +16,7 @@ import Completed from './completed'
 import StartDownloadingFlowScenarios from './startDownloadingFlow'
 import ApplicationHeaderScenarios from './ApplicationHeader'
 import Onboarding from './Onboarding'
+import ControllableApplicationStatusBar from './ApplicationStatusBar'
 
 import UpdaterUi from './Updater'
 import ControllableFullScreenDialog from './FullScreenDialog'
@@ -70,6 +71,7 @@ const App = (props) => {
                         <Link to="full_screen_dialog"> <RaisedButton label="Full screen dialog" style={style} /> </Link>
                         <Link to="elevated_auto_lit_button"> <RaisedButton label="Elevated auto lit button" style={style} /> </Link>
                         <Link to="onboarding"> <RaisedButton label="Onboarding" style={style} /> </Link>
+                        <Link to="application_status_bar"> <RaisedButton label="ApplicationStatusBar" style={style} /> </Link>
 
                         <hr/>
 
@@ -89,6 +91,7 @@ const App = (props) => {
                         <Route path="/start_downloading_flow" component={StartDownloadingFlowScenarios} />
                         <Route path="/application_header" component={ApplicationHeaderScenarios} />
                         <Route path="/onboarding" component={Onboarding} />
+                        <Route path="/application_status_bar" component={ControllableApplicationStatusBar} />
 
                     </div>
                 </HashRouter>
