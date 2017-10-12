@@ -19,7 +19,7 @@ import Downloading from '../Downloading'
 import Seeding from '../Seeding'
 import Completed from '../Completed'
 import ApplicationHeader from './components/ApplicationHeader'
-import {WelcomeScreen, DepartureScreen} from '../Onboarding'
+import {WelcomeScreen, DepartureScreen} from '../OnBoarding'
 
 let MobxReactDevTools
 if (process.env.NODE_ENV === 'development') {

@@ -16,7 +16,7 @@ import {
 
 import Scene from '../../../../core/Application/Scene'
 import {OnboardingStore} from '../../../../core'
-import {ExplainerTip} from '../../../Onboarding'
+import {ExplainerTip} from '../../../OnBoarding'
 /**
  * ApplicationHeader
  */
