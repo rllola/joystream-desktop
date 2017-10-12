@@ -41,7 +41,7 @@ var OnDownloadingScene = new BaseMachine({
             return
 
         // Try to start download based on torrent file name
-        startDownload(this, client, files[0])
+        startDownload(this, client, files[0].path)
 
       },
 
