@@ -7,6 +7,8 @@ import PropTypes from 'prop-types'
 import LinearProgress from 'material-ui/LinearProgress'
 import SvgIcon from 'material-ui/SvgIcon'
 
+
+// Replace later after rebase
 const JoyStreamIcon = (props) => {
 
     let style = {
@@ -37,7 +39,7 @@ const JoyStreamIcon = (props) => {
 
 const Icon = (props) => {
 
-    let firstFill = 'hsla(200, 21%, 31%, 1)'
+    let firstFill = 'hsla(201, 22%, 70%, 1)'
     let secondFill = firstFill
 
     if(props.color) {
@@ -74,22 +76,23 @@ function getStyles(props) {
             alignItems: 'center'
         },
         icon : {
-            height : '110px',
-            width : '110px'
+            height : '90px',
+            width : '90px'
         },
         linearProgress : {
-            marginTop : '35px',
-            height : '6px',
+            marginTop : '50px',
+            height : '8px',
             borderRadius : '50px',
-            backgroundColor : 'hsla(200, 21%, 31%, 1)'
+            backgroundColor : 'hsla(200, 21%, 31%, 1)',
+            //border: '1px solid hsla(201, 22%, 70%, 1)'
         },
         progressText : {
             fontFamily : 'Arial',
             fontSize : '14px',
-            //fontWeight : 'bold',
+            fontWeight : 'bold',
             color : 'hsla(200, 21%, 31%, 1)',
             textAlign : 'center',
-            marginTop : '20px'
+            marginTop : '50px'
         }
     }
 }
@@ -105,7 +108,7 @@ const SplashProgress = (props) => {
 
                 { /** <Icon style={styles.icon}/> **/ }
 
-                <JoyStreamIcon style={styles.icon}/>
+                 <JoyStreamIcon style={styles.icon}/>
 
                 <LinearProgress mode="determinate"
                                 color={'hsla(201, 22%, 70%, 1)'}

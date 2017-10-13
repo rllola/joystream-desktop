@@ -95,9 +95,10 @@ function createWindow () {
   win = new BrowserWindow({
       width: 1200,
       height: 800,
-      minHeight: 500,
+      minHeight: 700,
       minWidth: 1200,
-      frame: true
+      frame: true,
+      backgroundColor: 'rgb(28, 38, 43)'
   })
 
   if (isDev) {
@@ -106,11 +107,9 @@ function createWindow () {
     win.webContents.openDevTools()
 
   } else {
-    // Dev console when running packged/installed app
-    if (process.env.NODE_ENV === 'development') {
-      // Open the DevTools.
-      win.webContents.openDevTools()
-    }
+
+    // Maximize window
+    win.maximize()
 
     // Handle squirrel event. Avoid calling for updates when install
     if(require('electron-squirrel-startup')) {
