@@ -98,8 +98,17 @@ function createWindow () {
       minHeight: 700,
       minWidth: 1200,
       frame: true,
-      backgroundColor: '#1C262B' // same as rgb(28, 38, 43)
+      backgroundColor: '#1C262B', // same as rgb(28, 38, 43)
+      show : true
   })
+
+  /**
+  // Delay actually showing window until we are ready to show
+  // https://github.com/electron/electron/blob/master/docs/api/browser-window.md#showing-window-gracefully
+  win.once('ready-to-show', () => {
+    win.show()
+  })
+  */
 
   if (isDev) {
 
