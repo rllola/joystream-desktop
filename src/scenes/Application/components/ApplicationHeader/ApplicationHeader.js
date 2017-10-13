@@ -173,8 +173,7 @@ const ApplicationHeader = observer((props) => {
                     :
                         null
                 }
-                <div></div>
-            </BalancePanel>
+            </WalletPanel>
 
         </Header>
     )
