@@ -98,7 +98,7 @@ function createWindow () {
       minHeight: 700,
       minWidth: 1200,
       frame: true,
-      backgroundColor: 'rgb(28, 38, 43)'
+      backgroundColor: '#1C262B' // same as rgb(28, 38, 43)
   })
 
   if (isDev) {

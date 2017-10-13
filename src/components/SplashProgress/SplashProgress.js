@@ -60,7 +60,7 @@ const Icon = (props) => {
 function getStyles(props) {
 
     return {
-        root : {
+        root : Object.assign({
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
@@ -68,7 +68,7 @@ function getStyles(props) {
             height : "100%", // quick hack
             width : "100%",
             backgroundColor: 'rgb(28, 38, 43)'
-        },
+        }, props.style),
         centeredContainer : {
             display : 'flex',
             width : '400px',
@@ -102,7 +102,7 @@ const SplashProgress = (props) => {
     let styles = getStyles(props)
 
     return (
-        <div style={styles.root}>
+        <div style={styles.root} className={props.className ? props.className : ''} >
 
             <div style={styles.centeredContainer}>
 
@@ -129,7 +129,9 @@ const SplashProgress = (props) => {
 
 SplashProgress.propTypes = {
     progressPercentage : PropTypes.number.isRequired,
-    progressText : PropTypes.string.isRequired
+    progressText : PropTypes.string.isRequired,
+    className : PropTypes.string,
+    style : PropTypes.object
 }
 
 export default SplashProgress
