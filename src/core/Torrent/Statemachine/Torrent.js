@@ -7,7 +7,7 @@ var Active = require('./Active')
 var Common = require('./Common')
 var DeepInitialState = require('./DeepInitialState')
 var electron = require('electron')
-
+const assert = require('assert')
 const {shell} = require('electron')
 
 var Torrent = new BaseMachine({
