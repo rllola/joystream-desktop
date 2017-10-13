@@ -122,6 +122,10 @@ function createWindow () {
 
   if (isDev) {
 
+    // Add Devtron to chrome dev tool
+    // https://electron.atom.io/devtron/
+    require('devtron').install()
+
     // Open the DevTools.
     win.webContents.openDevTools()
 
