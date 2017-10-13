@@ -40,7 +40,6 @@ class TorrentRow extends Component {
                 <BitcoinValueField satoshis={this.props.torrent.sellerPrice}/>
                 <BitcoinValueField satoshis={this.props.torrent.totalRevenue}/>
                 <PeerCountField count={this.props.torrent.numberOfBuyers} />
-                <PeerCountField count={this.props.torrent.numberOfSellers} />
                 { this.getRenderedToolbar() }
             </Row>
         )
