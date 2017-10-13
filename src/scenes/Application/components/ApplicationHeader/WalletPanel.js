@@ -144,6 +144,7 @@ const WalletPanel = observer((props) => {
                     />
 
             }
+            {props.children}
         </div>
     )
 })

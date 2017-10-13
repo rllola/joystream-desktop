@@ -50,7 +50,7 @@ class Button extends Component {
             color: 'white',
             fontSize: '20px',
             fontWeight: 'bold',
-            borderBottom: '3px solid hsla(120, 39%, 40%, 1)'
+            //borderBottom: '3px solid hsla(120, 39%, 40%, 1)'
             //textShadow: '1px 1px hsla(120, 39%, 42%, 1)'
         }
 
@@ -65,6 +65,52 @@ class Button extends Component {
         )
 
     }
+}
+
+const Section = (props) => {
+
+    let styles = {
+        root : {
+            display : 'flex',
+            flexDirection : 'column'
+        },
+        title : {
+            fontWeight : 'bold',
+            color : '#656565'
+        },
+        body : {
+
+        }
+    }
+
+    return (
+        <div style={styles.root}>
+            <div style={styles.title}>{props.title}</div>
+            <div> {props.text}</div>
+        </div>
+    )
+}
+
+Section.propTypes = {
+    title : PropTypes.node.isRequired,
+    text : PropTypes.node.isRequired
+}
+
+const SectionSpacer = (props) => {
+
+    let styles = {
+        root : {
+            height : props.height
+        }
+    }
+
+    return (
+        <div style={styles.root}></div>
+    )
+}
+
+SectionSpacer.propTypes = {
+    height : PropTypes.string.isRequired
 }
 
 const ExplainerTip = (props) => {
@@ -94,7 +140,7 @@ const ExplainerTip = (props) => {
             paddingLeft: '30px',
             paddingRight: '30px',
             fontSize: '20px',
-            width: '380px',
+            //width: '380px',
             fontFamily: 'Helvetica',
             fontWeight: 100,
             paddingTop: '10px',
@@ -149,3 +195,7 @@ ExplainerTip.propTypes = {
 }
 
 export default ExplainerTip
+export {
+    Section,
+    SectionSpacer
+}
