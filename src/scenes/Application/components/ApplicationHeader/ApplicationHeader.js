@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import {observer } from 'mobx-react'
 import {Header} from '../../../../components/Header'
 import ButtonGroup from './ButtonGroup'
-import BalancePanel from './BalancePanel'
+import WalletPanel from './WalletPanel'
 import {
     UploadButton,
     DowloadButton,
@@ -16,7 +16,8 @@ import {
 
 import Scene from '../../../../core/Application/Scene'
 import {OnboardingStore} from '../../../../core'
-import {ExplainerTip} from '../../../OnBoarding'
+//import {ExplainerTip} from '../../../OnBoarding'
+import ExplainerTip, {Section, SectionSpacer} from '../../../OnBoarding/ExplainerTip'
 /**
  * ApplicationHeader
  */
@@ -151,8 +152,7 @@ const ApplicationHeader = observer((props) => {
 
             <div style={style.seperator}></div>
 
-            <BalancePanel unconfirmedBalance={props.app.unconfirmedBalance}
-                          confirmedBalance={props.app.confirmedBalance}
+            <WalletPanel applicationStore={props.app}
                           backgroundColor={props.baseColor}
                           balanceColor={props.balanceColor}
                           subtitleColor={props.faceColor}
@@ -161,21 +161,39 @@ const ApplicationHeader = observer((props) => {
                     props.app.onboardingStore &&
                     props.app.onboardingStore.state === OnboardingStore.State.BalanceExplanation
                     ?
-                        <ExplainerTip title="Your testnet balance"
-                                      explainerTop={10}
-                                      explainerLeft={-300}
-                                      circleTop={-20}
-                                      circleLeft={0}
+                        <ExplainerTip title="Your wallet"
+                                      explainerTop={30}
+                                      explainerLeft={-450}
+                                      circleTop={-10}
+                                      circleLeft={-85}
                                       zIndex={2}
                                       buttonTitle="Ok"
                                       buttonClick={() => { props.app.onboardingStore.balanceExplanationAccepted() }} >
-                            We are sending you free <span style={{fontWeight : 'bold'}}>testnet</span> coins promptly, and your unconfirmed balance is visible here.
+                            <div style={{ width : '400px'}}>
+
+                                <Section title={"Synchronization"}
+                                         text={<div>
+                                             Please wait for the initial synchronization to complete, no spending is possible before this is complete.
+                                             It may take up to <span style={{fontWeight : 'bold'}}>30 minutes</span> depending on your connection speed.
+
+                                         </div>
+                                         } />
+
+                                <SectionSpacer height={'20px'} />
+
+                                <Section title="Testnet coins"
+                                         text={
+                                            <div>
+                                                We are sending you free <span style={{fontWeight : 'bold'}}>testnet</span> coins promptly, and your unconfirmed balance is visible here.
+                                            </div>
+                                         }
+                                />
+                            </div>
                         </ExplainerTip>
                     :
                         null
                 }
-                <div></div>
-            </BalancePanel>
+            </WalletPanel>
 
         </Header>
     )
