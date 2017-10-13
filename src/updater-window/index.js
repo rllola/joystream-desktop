@@ -7,9 +7,11 @@ import 'babel-polyfill'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+
 import UpdaterWindow from './components'
 import UpdaterStore from './UpdaterStore.js'
-import pjson from '../../../package.json'
+import pjson from '../../package.json'
 
 var store = new UpdaterStore()
 
@@ -57,13 +59,15 @@ ipcRenderer.on('auto-updater-channel', function (event, command, arg) {
 })
 
 ReactDOM.render(
-  <UpdaterWindow store={store}
-                 installedVersionString={pjson.version}
-                 onUseOldVersionClicked={() => { window.close() }}
-                 onUpdateClicked={downloadUpdate}
-                 onInstallClicked={quitAndInstall}
-                 onErrorCloseClicked={() => { window.close() }}
-  />,
+    <MuiThemeProvider>
+      <UpdaterWindow store={store}
+                     installedVersionString={pjson.version}
+                     onUseOldVersionClicked={() => { window.close() }}
+                     onUpdateClicked={downloadUpdate}
+                     onInstallClicked={quitAndInstall}
+                     onErrorCloseClicked={() => { window.close() }}
+      />
+    </MuiThemeProvider>,
   document.getElementById('root'))
 
 // Prevent window closing while downloading an update unless main app is exiting
