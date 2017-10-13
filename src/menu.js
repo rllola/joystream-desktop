@@ -1,16 +1,16 @@
 
 const template = [
   {
+    label: 'View',
+    submenu: [
+      {role: 'toggledevtools'}
+    ]
+  },
+  {
     role: 'window',
     submenu: [
       {role: 'minimize'},
       {role: 'close'}
-    ]
-  },
-  {
-    label: 'View',
-    submenu: [
-      {role: 'toggledevtools'}
     ]
   },
   {
