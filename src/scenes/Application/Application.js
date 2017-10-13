@@ -22,6 +22,7 @@ import Seeding from '../Seeding'
 import Completed from '../Completed'
 import Community from '../Community'
 import VideoPlayerScene from '../VideoPlayer'
+import isDev from 'electron-is-dev'
 
 // import Wallet from '../Wallet'
 import { WelcomeScreen, DepartureScreen } from '../OnBoarding'

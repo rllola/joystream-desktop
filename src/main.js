@@ -1,10 +1,11 @@
 const electron = require('electron')
-const {app, BrowserWindow, ipcMain, crashReporter} = require('electron')
+const {app, BrowserWindow, ipcMain, crashReporter, Menu} = require('electron')
 const path = require('path')
 const url = require('url')
 const isDev = require('electron-is-dev')
 const updater = require('./updater')
 const protocol = require('./protocol')
+const {template} = require('./menu')
 
 import {enableLiveReload} from 'electron-compile'
 
@@ -13,6 +14,9 @@ import {enableLiveReload} from 'electron-compile'
 // be closed automatically when the JavaScript object is garbage collected.
 let win = null
 
+// Set Menu application from menu.js
+const menu = Menu.buildFromTemplate(template)
+Menu.setApplicationMenu(menu)
 
 // This method makes your application a Single Instance Application -
 // instead of allowing multiple instances of your app to run,
@@ -47,7 +51,7 @@ if (shouldQuit) {
 // Listen to broadcast channel from main window
 ipcMain.on('main-window-channel', (event, arg) => {
 
-    if(arg == 'user-closed-app') {
+    if(arg === 'user-closed-app') {
 
         // Exit application
         updater.quit()
@@ -122,13 +126,11 @@ function createWindow () {
     win.webContents.openDevTools()
 
   } else {
-
     // Maximize window
     win.maximize()
 
     // Handle squirrel event. Avoid calling for updates when install
     if(require('electron-squirrel-startup')) {
-      console.log('Squirrel events handle')
       app.quit()
       // Hack because app.quit() is not immediate
       process.exit(0)
