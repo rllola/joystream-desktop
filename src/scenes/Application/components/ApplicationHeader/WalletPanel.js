@@ -35,6 +35,7 @@ function getStyles(props) {
     }
 }
 
+@observer
 class BalancePanel extends Component {
 
     // We need state here, in order to control visibility
