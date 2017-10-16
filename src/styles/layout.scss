@@ -13,6 +13,7 @@
   }
   input, button, textarea, :focus {
       outline: none; // You should add some other style for :focus to help UX/a11y
+      -webkit-app-region: no-drag;
   }
 
   .app-container {
