@@ -6,6 +6,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import TerminatingState from './TerminatingState'
 import SplashProgress from '../../components/SplashProgress'
+import FullScreenContainer from '../../components/FullScreenContainer'
 
 function progressTextFromTerminatingState(state) {
 
@@ -44,19 +45,30 @@ function progressTextFromTerminatingState(state) {
 
 const TerminatingScene = (props) => {
 
-    let text = progressTextFromTerminatingState(props.terminatingState)
-    let percentage = 100 * (props.terminatingState + 1) / (Object.keys(TerminatingState).length)
+    let style = {
+        opacity : 0
+    }
+
+    let text = props.show ? progressTextFromTerminatingState(props.terminatingState) : ''
+    let percentage = props.show ? 100 * (props.terminatingState + 1) / (Object.keys(TerminatingState).length) : 0
 
     return (
-        <SplashProgress progressText={text}
-                        progressPercentage={percentage}
-        />
-
+        <FullScreenContainer className={props.show ? 'fadein' : ''}
+                             style={style}>
+            <SplashProgress progressText={text}
+                            progressPercentage={percentage}
+            />
+        </FullScreenContainer>
     )
 }
 
 TerminatingScene.propTypes = {
+    show : PropTypes.bool.isRequired,
     terminatingState : PropTypes.oneOf(Object.values(TerminatingState)),
+}
+
+TerminatingScene.defaultProps = {
+    show : true
 }
 
 export default TerminatingScene

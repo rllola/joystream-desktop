@@ -35,4 +35,32 @@
   -webkit-font-smoothing: antialiased;
 }
 
-//
+.fadein {
+  -webkit-animation: fadeinFrames 2s; /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadeinFrames 2s; /* Firefox < 16 */
+  -ms-animation: fadeinFrames 2s; /* Internet Explorer */
+  -o-animation: fadeinFrames 2s; /* Opera < 12.1 */
+  animation: fadeinFrames 2s;
+  animation-fill-mode: forwards; // Hold last keyframe when done
+}
+
+@keyframes fadeinFrames {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+// Fadeout
+
+.fadeout {
+  -webkit-animation: fadeoutFrames 2s; /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadeoutFrames 2s; /* Firefox < 16 */
+  -ms-animation: fadeoutFrames 2s; /* Internet Explorer */
+  -o-animation: fadeoutFrames 2s; /* Opera < 12.1 */
+  animation: fadeoutFrames 2s;
+  animation-fill-mode: forwards; // Hold last keyframe when done
+}
+
+@keyframes fadeoutFrames {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}

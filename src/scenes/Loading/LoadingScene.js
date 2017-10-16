@@ -6,6 +6,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import LoadingState from './LoadingState'
 import SplashProgress from '../../components/SplashProgress'
+import FullScreenContainer from '../../components/FullScreenContainer'
 
 function progressTextFromLoadingState(state) {
 
@@ -43,20 +44,27 @@ function progressTextFromLoadingState(state) {
 
 const LoadingScene = (props) => {
 
-    let text = progressTextFromLoadingState(props.loadingState)
-    let percentage = 100 * (props.loadingState + 1) / (Object.keys(LoadingState).length)
+    let text = props.show ? progressTextFromLoadingState(props.loadingState) : ''
+    let percentage = props.show ? 100 * (props.loadingState + 1) / (Object.keys(LoadingState).length) : 0
 
     return (
-        <SplashProgress progressText={text}
-                        progressPercentage={percentage}
-        />
+        <FullScreenContainer className={!props.show ? 'fadeout' : ''}>
+            <SplashProgress progressText={text}
+                            progressPercentage={percentage}
 
+            />
+        </FullScreenContainer>
     )
 
 }
 
 LoadingScene.propTypes = {
+    show : PropTypes.bool.isRequired,
     loadingState : PropTypes.oneOf(Object.values(LoadingState)),
+}
+
+LoadingScene.defaultProps = {
+    show : true
 }
 
 export default LoadingScene
