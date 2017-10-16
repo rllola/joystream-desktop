@@ -65,7 +65,7 @@ const DialogBody = (props) => {
 
 DialogBody.propTypes = {
     title : PropTypes.node.isRequired,
-    message : PropTypes.node.isRequired
+    message : PropTypes.node
 }
 
 const ButtonGroup = (props) => {

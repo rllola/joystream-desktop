@@ -35,6 +35,14 @@ function createWindow () {
     // when you should delete the corresponding element.
     updaterWindow = null
   })
+
+  /**
+   * For debugging purposes, uncomment this and
+   * run `checkForUpdates()` in primary window.
+   */
+  // Open the DevTools
+  updaterWindow.webContents.openDevTools()
+  updaterWindow.show()
 }
 
 function quit () {

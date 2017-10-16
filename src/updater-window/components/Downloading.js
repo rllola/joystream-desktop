@@ -6,40 +6,24 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import CircularProgress from 'material-ui/CircularProgress'
 
-const Downloading = (props) => {
+import DialogBody,  {
+    VerticalSpacer
+} from './DialogBody'
 
-    let styles = {
-        root: {
-            display : 'flex',
-            flexDirection: 'column',
-            alignItems : 'center',
-            justifyContent: 'center'
-        },
-        title : {
-            fontSize: '32px',
-            color: 'white',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            paddingTop: '54px',
-            paddingBottom: '30px'
-        }
-    }
+const Downloading = (props) => {
 
     return (
 
-        <div style={styles.root}>
+        <DialogBody title="Downloading update">
 
-            <div style={styles.title}>
-                Downloading update
-            </div>
+            <VerticalSpacer height="30px"/>
 
             <CircularProgress size={100}
                               thickness={5}
                               color={'#ffffff'}
             />
 
-        </div>
-
+        </DialogBody>
     )
 }
 
