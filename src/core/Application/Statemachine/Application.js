@@ -10,6 +10,7 @@ const TorrentInfo = require('joystream-node').TorrentInfo
 const Common = require('./Common')
 const Doorbell = require('../doorbell')
 const exampleTorrents = require('../../../constants').EXAMPLE_TORRENTS
+const fs = require('fs')
 
 var ApplicationStateMachine = new BaseMachine({
   namespace: 'Application',
@@ -131,7 +132,8 @@ var ApplicationStateMachine = new BaseMachine({
               let torrentInfo
 
               try {
-                  torrentInfo = new TorrentInfo(torrentFileName)
+                  const data = fs.readFileSync(torrentFileName)
+                  torrentInfo = new TorrentInfo(data)
               } catch (e) {
                   console.log('Failed to load torrent file: ' + torrentFileName)
                   console.log(e)
