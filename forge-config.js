@@ -10,6 +10,8 @@
  }
 */
 
+var path = require('path')
+
 // Return a local file path to the location of the cert (PEX format)
 function getSigningCertFilePath () {
   return process.env['ELECTRON_FORGE_ELECTRON_WINSTALLER_CONFIG_CERTIFICATE_FILE']
@@ -62,7 +64,7 @@ module.exports = {
   "electronWinstallerConfig": {
     "name": "Joystream",
     "setupIcon": "src/assets/icons/appicon_128x128.ico",
-    "loadingGif": "src/assets/img/main_logo.png",
+    "loadingGif": "src/assets/img/windows-installer-screen.png",
     "certificateFile": getSigningCertFilePath(),
     "certificatePassword": getSigningCertPassword()
   },
@@ -74,9 +76,23 @@ module.exports = {
     "bin" : "Joystream"
   },
   "electronInstallerDMG": {
-    "background":"src/assets/img/main_logo.png",
+    "background":"src/assets/img/osx-installer-screen.png",
     "icon": "src/assets/icons/appicon_128x128.png",
-    "format": "UDZO"
+    "icon-size": 128,
+    "format": "UDZO",
+    "contents": [
+    {
+      x: 700,
+      y: 350,
+      type: 'link',
+      path: '/Applications'
+    },
+    {
+      x: 220,
+      y: 350,
+      type: 'file',
+      path: path.resolve(process.cwd(), 'out/Joystream-darwin-x64/Joystream.app')
+    }]
   },
   "github_repository": {
     "owner": "JoyStream",
