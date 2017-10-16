@@ -151,3 +151,36 @@ function createWindow () {
     win = null
   })
 }
+
+/**
+ * Component development app code
+ */
+
+let separateUpdateWindow = null
+
+// Listen for async message from renderer process
+ipcMain.on('component-development', (event, arg) => {
+
+    console.log(arg)
+
+    if(arg === 'open-updater-window') {
+
+        // Create the updater browser window.
+        separateUpdateWindow = new BrowserWindow({
+            width: 466,
+            height: 353,
+            fullscreen: false,
+            resizable: false,
+            frame: false,
+            show: true
+        })
+
+        separateUpdateWindow.loadURL(url.format({
+            pathname: path.join(__dirname, 'component-development/Updater/window.html'),
+            protocol: 'file:',
+            slashes: true
+        }))
+
+    }
+
+});

@@ -7,12 +7,17 @@ import 'babel-polyfill'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import Updater from './updater-ui.js'
-import UpdaterStore from './updater-store.js'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+
+import UpdaterWindow from './components'
+import UpdaterStore from './UpdaterStore.js'
+import pjson from '../../package.json'
 
 var store = new UpdaterStore()
 
 var blockClosingWindow = true
+
+// NB: These should be in store really...
 
 function checkForUpdate () {
   store.setState('checking')
@@ -36,6 +41,7 @@ ipcRenderer.on('auto-updater-channel', function (event, command, arg) {
       blockClosingWindow = false
       break
     case 'update-available':
+      store.setMostRecentVersion(arg) // releaseName
       store.setState('waiting-to-start-download')
       break
     case 'no-update-available':
@@ -53,10 +59,15 @@ ipcRenderer.on('auto-updater-channel', function (event, command, arg) {
 })
 
 ReactDOM.render(
-  <Updater store={store}
-    checkForUpdate={checkForUpdate}
-    downloadUpdate={downloadUpdate}
-    quitAndInstall={quitAndInstall} />,
+    <MuiThemeProvider>
+      <UpdaterWindow store={store}
+                     installedVersionString={pjson.version}
+                     onUseOldVersionClicked={() => { window.close() }}
+                     onUpdateClicked={downloadUpdate}
+                     onInstallClicked={quitAndInstall}
+                     onErrorCloseClicked={() => { window.close() }}
+      />
+    </MuiThemeProvider>,
   document.getElementById('root'))
 
 // Prevent window closing while downloading an update unless main app is exiting

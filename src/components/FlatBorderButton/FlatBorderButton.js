@@ -1,5 +1,5 @@
 /**
- * Created by bedeho on 02/10/17.
+ * Created by bedeho on 09/10/2017.
  */
 
 import React, {Component} from 'react'
@@ -15,32 +15,22 @@ function getButtonFaceLighting(buttonState, props) {
         return props.lightingLevels[0]
 }
 
-function getBottomBorderWidth(buttonState, props) {
-
-    if(buttonState.pressed && props.elevationLevels.length > 1)
-        return props.elevationLevels[1]
-    else
-        return props.elevationLevels[0]
-}
 
 function getStyles(props, state) {
 
     let hsColorPart = props.hue + ',' + props.saturation + '%'
-    let backgroundColor = 'hsl(' + hsColorPart + ', ' + getButtonFaceLighting(state, props) + '%)'
-    let borderBottomWidth = getBottomBorderWidth(state, props)
+    let color = 'hsl(' + hsColorPart + ', ' + getButtonFaceLighting(state, props) + '%)'
 
     let style = {
-        height : 'none',
-        border : 'none',
-        borderRadius : '15px',
-        borderBottom : borderBottomWidth + 'px solid hsl(' + hsColorPart + ', ' + props.borderShadowLightingLevel + '%)',
-        backgroundColor : backgroundColor,
+        border : props.borderWidth + 'px solid ' + color,
+        color: color,
+        borderRadius : '8px',
+        backgroundColor : props.backgroundColor,
         fontFamily: 'Arial',
         fontWeight: 'bold',
-        fontSize: '28px',
-        color: 'white',
+        fontSize: '22px',
         height: props.height + 'px',
-        width: props.width + 'px'
+        width: props.width + 'px',
     }
 
     // Add final override user styles
@@ -52,7 +42,7 @@ function getStyles(props, state) {
     }
 }
 
-class ElevatedAutoLitButton extends Component {
+class FlatBorderButton extends Component {
 
     constructor(props) {
         super(props)
@@ -91,18 +81,21 @@ class ElevatedAutoLitButton extends Component {
                     onMouseDown={this.handleMouseDown}
                     onMouseUp={this.handleMouseUp}>
                 {this.props.title}
-                {this.props.children}
             </button>
         )
 
     }
 }
 
-ElevatedAutoLitButton.propTypes = {
+FlatBorderButton.propTypes = {
     title : PropTypes.node.isRequired,
     onClick : PropTypes.func.isRequired,
     hue: PropTypes.number.isRequired,
     saturation: PropTypes.number.isRequired,
+    borderWidth: PropTypes.number,
+    backgroundColor: PropTypes.string.isRequired,
+    height : PropTypes.number.isRequired,
+    width : PropTypes.number.isRequired,
 
     /**
      * Three percentage numbers [0, 100]
@@ -111,27 +104,15 @@ ElevatedAutoLitButton.propTypes = {
      */
     lightingLevels: PropTypes.array,
 
-    /**
-     * Two numbers, pixels of bottom border
-     * of button in normal and pressed state.
-     */
-    elevationLevels: PropTypes.array,
-
-    borderShadowLightingLevel : PropTypes.number,
-    height : PropTypes.number.isRequired,
-    width : PropTypes.number.isRequired,
-
-
     style : PropTypes.object,
-
 }
 
-ElevatedAutoLitButton.defaultProps = {
+FlatBorderButton.defaultProps = {
     hue: 0,
-    saturation:0,
+    saturation : 0,
+    borderWidth : 3,
     lightingLevels: [60, 50, 40],
-    elevationLevels: [3, 2],
-    borderShadowLightingLevel: 25 //  45%
+
 }
 
-export default ElevatedAutoLitButton
+export default FlatBorderButton
