@@ -7,8 +7,8 @@
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
-    "component-development": "COMPONENT_DEVELOPMENT_MODE=True NODE_ENV=development electron-forge start",
-    "force-onboarding": "FORCE_ONBOARDING=True NODE_ENV=development electron-forge start",
+    "component-development": "env COMPONENT_DEVELOPMENT_MODE=True NODE_ENV=development electron-forge start",
+    "force-onboarding": "env FORCE_ONBOARDING=True NODE_ENV=development electron-forge start",
     "test": "xvfb-maybe electron-mocha renderer --recursive ./test",
     "package": "electron-forge package",
     "make": "electron-forge make"
