@@ -21,5 +21,4 @@ security import ./osx-application.p12 -k $KEYCHAIN_FILE -P $OSX_CERT_PASSWORD -T
 security import ./osx-installer.p12 -k $KEYCHAIN_FILE -P $OSX_CERT_PASSWORD -T /usr/bin/codesign
 
 # remove certs
-rm $OSX_CERT_BASE_URL/osx-application.p12
-rm $OSX_CERT_BASE_URL/osx-installer.p12
+rm -fr *.p12
