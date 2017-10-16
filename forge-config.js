@@ -49,7 +49,8 @@ module.exports = {
       ".gitignore",
       ".travis",
       "appveyor.yml",
-      "README.md"
+      "README.md",
+      "deploy_scripts"
     ],
     "overwrite": true,
     "appCategoryType": "public.app-category.utilities",
