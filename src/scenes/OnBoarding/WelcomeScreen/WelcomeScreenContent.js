@@ -69,22 +69,22 @@ const WelcomeScreenContent = (props) => {
             <div style={styles.container}>
 
                 <div style={styles.subtitle}>
-                    We suggest you try out these four pieces of content.
+                    Try out these of creative commons movies from the Blender Foundation.
                 </div>
 
                 <div style={styles.exampleContainer}>
 
-                    <ExampleTorrent title={"Big Buck Bunny"}
-                                    byteSize={1024*1024*264}
-                                    imageSrc="../src/assets/img/exampleTorrents/big-buck-bunny.jpg"
+                    <ExampleTorrent title={"Sintel"}
+                                    byteSize={1024*1024*123}
+                                    imageSrc="../src/assets/img/exampleTorrents/sintel.jpg"
                                     {...imageDimensionProps}
                     />
 
                     <ExampleSpacer />
 
-                    <ExampleTorrent title={"Sintel"}
-                                    byteSize={1024*1024*123}
-                                    imageSrc="../src/assets/img/exampleTorrents/sintel.jpg"
+                    <ExampleTorrent title={"Glass half full"}
+                                    byteSize={1024*1024*26}
+                                    imageSrc="../src/assets/img/exampleTorrents/glass-half-full.jpg"
                                     {...imageDimensionProps}
                     />
 
@@ -96,13 +96,35 @@ const WelcomeScreenContent = (props) => {
                                     {...imageDimensionProps}
                     />
 
-                    <ExampleSpacer />
+                    {
+                        /**
+                         * DISABLED
 
-                    <ExampleTorrent title={"Tears of Steel"}
-                                    byteSize={1024*1024*545}
-                                    imageSrc="../src/assets/img/exampleTorrents/tears-of-steel.jpg"
-                                    {...imageDimensionProps}
-                    />
+                        <ExampleTorrent title={"Big Buck Bunny"}
+                            byteSize={1024*1024*264}
+                            imageSrc="../src/assets/img/exampleTorrents/big-buck-bunny.jpg"
+                            {...imageDimensionProps}
+                        />
+
+                        <ExampleSpacer />
+
+                        <ExampleTorrent title={"Elephants Dream"}
+                            byteSize={1024*1024*425}
+                            imageSrc="../src/assets/img/exampleTorrents/elephants-dream.jpg"
+                            {...imageDimensionProps}
+                        />
+
+                        <ExampleSpacer />
+
+                        <ExampleTorrent title={"Tears of Steel"}
+                             byteSize={1024*1024*545}
+                             imageSrc="../src/assets/img/exampleTorrents/tears-of-steel.jpg"
+                             {...imageDimensionProps}
+                        />
+
+
+                         **/
+                    }
 
                 </div>
 

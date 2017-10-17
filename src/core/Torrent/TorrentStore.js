@@ -349,7 +349,7 @@ class TorrentStore {
           let fileExtension = fileName.split('.').pop()
 
           // Need a list of all the video extensions that render-media suport.
-          if (fileExtension === 'mp4' || fileExtension === 'wbm' || fileExtension === 'mkv') {
+          if (fileExtension === 'mp4' || fileExtension === 'wbm' || fileExtension === 'mkv' || fileExtension === 'avi' || fileExtension === 'webm') {
             playableIndexfiles.push(i)
           }
         }
