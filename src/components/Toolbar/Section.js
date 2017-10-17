@@ -15,9 +15,9 @@ const Section = (props) =>  {
              onClick={props.onClick ? props.onClick : null}
              data-tip data-for={props.className}>
             {props.tooltip ? <ReactTooltip id={props.className}
-                                           position='top'
+                                           place='top'
                                            effect='solid'
-                                           className="button-section-tooltip"> {props.tooltip} </ReactTooltip> : null }
+                                           className="torrent_table_toolbar_tooltip"> {props.tooltip} </ReactTooltip> : null }
             {props.children}
         </div>
     )

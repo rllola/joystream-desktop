@@ -1,6 +1,7 @@
 import { observable, action, computed } from 'mobx'
 import electron from 'electron'
 import { BEPSupportStatus } from 'joystream-node'
+import StartPaidDownloadViability from '../../core/Torrent/StartPaidDownloadViability'
 
 class TorrentStore {
 
@@ -60,7 +61,7 @@ class TorrentStore {
     @observable numberOfNormalPeers
     @observable numberOfSeeders
 
-    @observable suitableSellers
+    @observable startPaidDownloadViability
 
     constructor (torrent,
                  infoHash,
@@ -78,7 +79,7 @@ class TorrentStore {
                  numberOfObservers,
                  numberOfNormalPeers,
                  numberOfSeeders,
-                 suitableSellers,
+                 startPaidDownloadViability,
                  sellerPrice,
                  sellerRevenue,
                  buyerPrice,
@@ -100,7 +101,7 @@ class TorrentStore {
         this.numberOfObservers = numberOfObservers ? numberOfObservers : 0
         this.numberOfNormalPeers = numberOfNormalPeers ? numberOfNormalPeers : 0
         this.numberOfSeeders = numberOfSeeders ? numberOfSeeders : 0
-        this.suitableSellers = suitableSellers ? suitableSellers : []
+        this.startPaidDownloadViability = startPaidDownloadViability ? startPaidDownloadViability : new StartPaidDownloadViability.NoJoyStreamPeerConnections()
         this.sellerPrice = sellerPrice ? sellerPrice : 0
         this.sellerRevenue = sellerRevenue ? sellerRevenue : new Map()
         this.buyerPrice = buyerPrice ? buyerPrice : 0
@@ -244,8 +245,8 @@ class TorrentStore {
     }
 
     @action.bound
-    setSuitableSellers (suitableSellers) {
-        this.suitableSellers = suitableSellers
+    setStartPaidDownloadViability (startPaidDownloadViability) {
+        this.startPaidDownloadViability = startPaidDownloadViability
     }
 
     @action.bound
@@ -321,10 +322,13 @@ class TorrentStore {
         return this.state.startsWith("Active.FinishedDownloading.Uploading.Started")
     }
 
+    /**
+     * Discontinued for now
     @computed get canStartPaidDownloading() {
         return this.state.startsWith("Active.DownloadIncomplete.Unpaid.Started.ReadyForStartPaidDownloadAttempt") &&
                 this.suitableSellers != null
     }
+    */
 
     @computed get hasStartedPaidDownloading() {
         return this.state.startsWith("Active.DownloadIncomplete.Paid.Started")

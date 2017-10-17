@@ -77,6 +77,7 @@ function getBalanceUnits(unconfirmedBalance, balanceUnits) {
 }
 
 import LinearProgress from 'material-ui/LinearProgress'
+import CircularProgress from 'material-ui/CircularProgress'
 
 const SynchronizationProgressPanel = observer((props) => {
 
@@ -88,10 +89,14 @@ const SynchronizationProgressPanel = observer((props) => {
             justifyContent: 'center',
             width: '170px'
         },
+        circularProgress : {
+          marginBottom : '10px'
+        },
         progress : {
-            height : '5px',
+            //height : '5px',
             marginBottom : '6px',
-            backgroundColor : props.subtitleColor
+            backgroundColor : props.subtitleColor,
+            overflow: 'hidden'
         },
         subtitle : {
             color: props.subtitleColor,
@@ -101,15 +106,22 @@ const SynchronizationProgressPanel = observer((props) => {
         }
     }
 
-    let mode = props.applicationStore.spvChainSyncProgress < 0.1 ? 'indeterminate' : 'determinate'
+    let mode = 'determinate' //props.applicationStore.spvChainSyncProgress < 0.1 ? 'indeterminate' : 'determinate'
 
     return (
         <div style={styles.root}>
+
+            <CircularProgress color={props.subtitleColor}
+                              size={20}
+                              style={styles.circularProgress}
+            />
+
             <LinearProgress color={props.balanceColor}
                             value={100*props.applicationStore.spvChainSyncProgress}
                             style={styles.progress}
                             mode={mode}
             />
+
             <div style={styles.subtitle}> SYNCHRONIZING WALLET</div>
         </div>
     )
