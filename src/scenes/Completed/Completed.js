@@ -29,7 +29,7 @@ function getStyles(props) {
 
 }
 
-const Completed = (props) => {
+const Completed = observer((props) => {
 
     let styles = getStyles(props)
 
@@ -80,7 +80,7 @@ const Completed = (props) => {
 
         </div>
     )
-}
+})
 
 Completed.propTypes = {
     store : PropTypes.object.isRequired,
