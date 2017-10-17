@@ -27,7 +27,7 @@ class TorrentRow extends Component {
             <Row className={this.props.toolbarVisibilityStatus == ToolbarVisibilityType.OnHover ? "row-managed-toolbar-visiblity" : ""}
                  backgroundColor={this.props.backgroundColor}>
                 <NameField name={this.props.torrent.name}/>
-                <IsUploading uploading={this.props.torrent.canBeginUploading}/>
+                <IsUploading uploading={this.props.torrent.canEndUploading}/>
                 <BytesField bytes={this.props.torrent.totalSize}/>
                 <PeerCountField count={this.props.torrent.numberOfBuyers} />
                 { this.getRenderedToolbar() }

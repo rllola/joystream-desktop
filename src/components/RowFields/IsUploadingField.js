@@ -13,9 +13,9 @@ const IsUploadingField = (props) => {
             {
                 props.uploading
                     ?
-                <span className="label inactive-label">NO</span>
-                    :
                 <span className="label paused-label">YES</span>
+                    :
+                <span className="label inactive-label">NO</span>
             }
         </Field>
     )
