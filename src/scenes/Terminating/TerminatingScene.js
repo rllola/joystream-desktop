@@ -53,8 +53,8 @@ const TerminatingScene = (props) => {
     let percentage = props.show ? 100 * (props.terminatingState + 1) / (Object.keys(TerminatingState).length) : 0
 
     return (
-        <FullScreenContainer className={props.show ? 'fadein' : ''}
-                             style={style}>
+        <FullScreenContainer
+                             > { /** Dropping fadein: className={props.show ? 'fadein' : ''} style={style} **/ }
             <SplashProgress progressText={text}
                             progressPercentage={percentage}
             />

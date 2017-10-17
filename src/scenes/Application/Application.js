@@ -62,15 +62,6 @@ class Application extends Component {
             <MuiThemeProvider>
                 <div style={styles.innerRoot}>
 
-                    { /* Loading and terminating scenes */ }
-
-                    <LoadingScene show={this.props.store.activeScene === Scene.Loading}
-                                  loadingState={applicationStateToLoadingState(this.props.store.state)}/>
-
-                    <TerminatingScene show={this.props.store.activeScene === Scene.ShuttingDown}
-                                      terminatingState={applicationStateToTerminatingState(this.props.store.state)}
-                                      terminatingTorrentsProgressValue={100*(this.props.store.torrentTerminatingProgress/this.props.store.torrentsToTerminate)} />
-
                     { /* Onboarding scenes */ }
 
                     <WelcomeScreen store={this.props.store} />
@@ -111,11 +102,11 @@ class Application extends Component {
 
             case Scene.NotStarted:
                 return <NotStartedScene />
-/**
+
             case Scene.Loading:
 
-                return <LoadingScene loadingState={applicationStateToLoadingState(this.props.store.state)}/>
-*/
+                return <LoadingScene show={this.props.store.activeScene === Scene.Loading}
+                                     loadingState={applicationStateToLoadingState(this.props.store.state)}/>
             case Scene.Downloading:
                 return <NavigationFrame app={this.props.store}>
                             <Downloading torrents={this.props.store.torrentsDownloading}
@@ -154,12 +145,13 @@ class Application extends Component {
                                        backgroundColor={UI_CONSTANTS.primaryColor}
                             />
                         </NavigationFrame>
-/**
+
             case Scene.ShuttingDown:
 
-                return <TerminatingScene terminatingState={applicationStateToTerminatingState(this.props.store.state)}
+                return <TerminatingScene show={this.props.store.activeScene === Scene.ShuttingDown}
+                                         terminatingState={applicationStateToTerminatingState(this.props.store.state)}
                                          terminatingTorrentsProgressValue={100*(this.props.store.torrentTerminatingProgress/this.props.store.torrentsToTerminate)} />
- */
+
             default:
                 return null
         }
