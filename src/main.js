@@ -131,6 +131,11 @@ function createWindow () {
     win.webContents.once("did-frame-finish-load", function (event) {
       updater.init()
     })
+
+    if (process.env.NODE_ENV === 'development') {
+      // Open the DevTools.
+      win.webContents.openDevTools()
+    }
   }
 
 
