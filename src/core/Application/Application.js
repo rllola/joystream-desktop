@@ -324,23 +324,14 @@ class ApplicationStatemachineClient {
       outputs: outputs,
       rate: contractFeeRate
     }).then((transaction) => {
-      console.log('Contract TX:', transaction.toString('hex'))
+      console.log('Contract TX:', transaction.toRaw().toString('hex'))
       console.log('Contract TX ID:', transaction.txid())
       return transaction.toRaw()
     })
   }
 
   broadcastRawTransaction (tx) {
-    const txId = tx.txid()
-
-    console.log('sending raw TX:', tx.toString('hex'))
-    console.log('TX ID:', txId)
-
-    this.services.spvnode.sendTx(tx).then(function () {
-      console.log('Broadcasting TX successful', txId)
-    }).catch(function (err) {
-      console.error('Error Broadcasting TX', txId, err)
-    })
+    this.services.spvnode.sendTx(tx)
   }
 
   getWalletBalance (callback = () => {}) {
