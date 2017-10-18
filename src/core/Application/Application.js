@@ -325,13 +325,13 @@ class ApplicationStatemachineClient {
       rate: contractFeeRate
     }).then((transaction) => {
       console.log('Contract TX:', transaction.toString('hex'))
-      console.log('Contract TX ID:', transaction.id())
+      console.log('Contract TX ID:', transaction.txid())
       return transaction.toRaw()
     })
   }
 
   broadcastRawTransaction (tx) {
-    const txId = tx.id()
+    const txId = tx.txid()
 
     console.log('sending raw TX:', tx.toString('hex'))
     console.log('TX ID:', txId)
