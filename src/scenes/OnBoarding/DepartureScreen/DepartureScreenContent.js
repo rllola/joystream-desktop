@@ -84,6 +84,8 @@ const DepartureScreenContent = (props) => {
                                            onClick={() => { props.onboardingStore.shutDownMessageAccepted() }}
                                            hue={212}
                                            saturation={100}
+                                           height={70}
+                                           width={350}
                     />
 
                 </div>
