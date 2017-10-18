@@ -107,6 +107,7 @@ class SPVNode extends EventEmitter {
     if (!(tx instanceof bcoin.primitives.TX)) {
       tx = bcoin.primitives.TX.fromRaw(tx)
     }
+
     return this.node.broadcast(tx)
   }
 }
