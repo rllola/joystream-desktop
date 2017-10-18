@@ -132,7 +132,7 @@ function createWindow () {
       updater.init()
     })
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.OPEN_DEVTOOLS) {
       // Open the DevTools.
       win.webContents.openDevTools()
     }
