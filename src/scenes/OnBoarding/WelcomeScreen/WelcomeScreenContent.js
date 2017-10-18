@@ -142,6 +142,8 @@ const WelcomeScreenContent = (props) => {
                                            onClick={() => { props.onboardingStore.acceptAddingExampleTorrents() }}
                                            hue={212}
                                            saturation={100}
+                                           height={70}
+                                           width={200}
                     />
 
                 </div>
