@@ -17,6 +17,7 @@ import Toolbar, {
     ToggleStatusSection} from '../../components/Toolbar'
 
 const TorrentToolbar = observer((props) => {
+
     return (
         <Toolbar>
             <PlaySection torrent={props.torrent} />

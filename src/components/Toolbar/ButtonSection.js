@@ -12,7 +12,9 @@ const ButtonSection = (props) => {
 
     return (
         <Section onClick={props.onClick} className={props.className} tooltip={props.tooltip}>
-            <div className="button"></div>
+            <div className="button">
+                {props.children}
+            </div>
         </Section>
     )
 
