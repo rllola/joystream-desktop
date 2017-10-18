@@ -198,7 +198,7 @@ function getStartingUploadSettings(torrentInfo, defaultSavePath) {
 
 function getStandardBuyerTerms() {
     return {
-        maxPrice: 50,
+        maxPrice: 20,
         maxLock: 5,
         minNumberOfSellers: 1,
         maxContractFeePerKb: 2000
@@ -207,7 +207,7 @@ function getStandardBuyerTerms() {
 
 function getStandardSellerTerms() {
     return {
-        minPrice: 50,
+        minPrice: 20,
         minLock: 1,
         maxNumberOfSellers: 5,
         minContractFeePerKb: 2000,
