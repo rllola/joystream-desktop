@@ -98,8 +98,11 @@ var Torrent = new BaseMachine({
             },
 
             lastPaymentReceived: function (client, alert) {
-
-                if (!alert.settlementTx) return
+                if (!alert.settlementTx) {
+                  // A settlement transaction is only created if it is worthwile
+                  console.log('Last Payment Received: No Settlement will be made')
+                  return
+                }
 
                 client.broadcastRawTransaction(alert.settlementTx)
             },
@@ -146,10 +149,13 @@ var Torrent = new BaseMachine({
             },
 
             lastPaymentReceived: function (client, alert) {
+              if (!alert.settlementTx) {
+                // A settlement transaction is only created if it is worthwile
+                console.log('Last Payment Received: No Settlement will be made')
+                return
+              }
 
-                if (!alert.settlementTx) return
-
-                client.broadcastRawTransaction(alert.settlementTx)
+              client.broadcastRawTransaction(alert.settlementTx)
             }
         },
 
