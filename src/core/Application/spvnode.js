@@ -108,6 +108,9 @@ class SPVNode extends EventEmitter {
       tx = bcoin.primitives.TX.fromRaw(tx)
     }
 
+    console.log('spvnode: sending raw TX:', tx.toRaw().toString('hex'))
+    console.log('spvnode: TX ID:', tx.txid())
+
     return this.node.broadcast(tx)
   }
 }
