@@ -293,6 +293,10 @@ TorrentStatemachineClient.prototype.makeSignedContract = function(contractOutput
     })
 }
 
+TorrentStatemachineClient.prototype.contractSigningFailed = function (err) {
+  LOG_ERROR("makeSignedContract", err)
+}
+
 TorrentStatemachineClient.prototype.generateContractPrivateKey = function() {
 
     return this._privateKeyGenerator()
@@ -334,7 +338,7 @@ TorrentStatemachineClient.prototype.broadcastRawTransaction = function (tx) {
 function LOG_ERROR(source, err) {
 
     if(err)
-        console.log(source,": Error found in callback:", err)
+        console.error(source,": Error found in callback:", err)
 }
 
 export default Torrent
