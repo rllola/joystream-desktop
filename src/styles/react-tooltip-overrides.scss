@@ -3,4 +3,9 @@
 .torrent_table_start_paid_downloading_badge_tooltip {
   padding: 2px 10px !important;
   color:white !important;
+  background-color: #f18732 !important;
+}
+
+.torrent_table_start_paid_downloading_badge_tooltip::after {
+  border-bottom-color: #f18732 !important;
 }
