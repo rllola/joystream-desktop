@@ -9,9 +9,6 @@ import {ipcRenderer} from 'electron'
 // babel-polyfill for generator (async/await)
 import 'babel-polyfill'
 
-import os from 'os'
-import path from 'path'
-//import Config from 'electron-config'
 const isDev = require('electron-is-dev')
 
 // React
@@ -61,12 +58,7 @@ if (module.hot) {
 
 render(application.store)
 
-//const config = new Config()
-var config = {
-  appDirectory: path.join(os.homedir(), 'joystream'),
-  network: 'testnet',
-  //logLevel: 'info'
-}
+var config = require('./config')
 
 application.start(config)
 
@@ -83,4 +75,9 @@ window.onbeforeunload = function(e) {
     application.onBeforeUnloadMainWindow(e)
 
     return
+}
+
+// Hook this up to a menu item
+function checkForUpdates () {
+  ipcRenderer.send('auto-updater-channel', 'init')
 }

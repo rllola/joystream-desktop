@@ -3,26 +3,48 @@ import { Provider, observer } from 'mobx-react'
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-import Header from '../../components/Header'
-import StatusBar,{ProgressStatusPanel} from '../../components/StatusBar'
 import Scene from '../../core/Application/Scene'
 
 // Components
-//import Sidebar from './components/Sidebar'
+import ApplicationHeader from './components/ApplicationHeader'
+import ApplicationStatusBar from './components/ApplicationStatusBar'
 import VideoPlayer from '../../components/VideoPlayer'
 
 // Our scenes
 import NotStartedScene from '../NotStarted'
-import Loading, {LoadingState} from '../Loading/LoadingScene'
-import Terminating, {TerminatingState} from '../Terminating'
+import LoadingScene, {LoadingState} from '../Loading'
+import TerminatingScene, {TerminatingState} from '../Terminating'
 import Downloading from '../Downloading'
 import Seeding from '../Seeding'
 import Completed from '../Completed'
+import Community from '../Community'
+
 //import Wallet from '../Wallet'
+import {WelcomeScreen, DepartureScreen} from '../OnBoarding'
 
 let MobxReactDevTools
 if (process.env.NODE_ENV === 'development') {
     MobxReactDevTools = require('mobx-react-devtools').default
+}
+
+var UI_CONSTANTS = {
+    primaryColor : '#496daf',
+    labelTextHighlightColor : 'hsl(219, 41%, 42%)',
+    darkPrimaryColor : 'hsla(219, 41%, 37%, 1)',
+    darkestPrimaryColor : 'hsla(219, 41%, 26%, 1)',
+    higlightColor : 'hsl(218, 41%, 30%)'
+}
+
+function getStyles(props) {
+
+    return {
+        innerRoot : {
+            height: '100%',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+        }
+    }
 }
 
 @observer
@@ -34,26 +56,47 @@ class Application extends Component {
 
     render () {
 
+        let styles = getStyles(this.props)
+
         return (
             <MuiThemeProvider>
-                <div className="app-container">
+                <div style={styles.innerRoot}>
 
-                  {this.props.store.isPlaying ? this.renderVideoPlayer () : this.renderActiveScene()}
+                    { /* Onboarding scenes */ }
 
-                    <StatusBar show={this.props.store.torrentsBeingLoaded > 0}
-                               bottom={true}>
-                        <ProgressStatusPanel title={'Loading torrents'}
-                                             percentageProgress={this.props.store.startingTorrentCheckingProgressPercentage}
-                        />
-                    </StatusBar>
+                    <WelcomeScreen store={this.props.store} />
+                    <DepartureScreen store={this.props.store} />
 
-                    {process.env.NODE_ENV === 'development' ? <div><MobxReactDevTools/></div> : null}
+                    <ApplicationStatusBar store={this.props.store} />
+
+                    {
+                            this.props.store.isPlaying
+                        ?
+                            this.renderVideoPlayer()
+                        :
+                            this.renderActiveScene()
+                    }
+
+                    {
+                            process.env.NODE_ENV === 'development'
+                        ?
+                            <div><MobxReactDevTools/></div>
+                        :
+                            null
+                    }
+
                 </div>
             </MuiThemeProvider>
         )
     }
 
     renderActiveScene() {
+
+        let middleSectionColorProps = {
+            middleSectionBaseColor : UI_CONSTANTS.primaryColor,
+            middleSectionDarkBaseColor : UI_CONSTANTS.darkPrimaryColor,
+            middleSectionHighlightColor :UI_CONSTANTS.higlightColor
+        }
 
         switch(this.props.store.activeScene) {
 
@@ -62,43 +105,55 @@ class Application extends Component {
 
             case Scene.Loading:
 
-                return <Loading loadingState={applicationStateToLoadingState(this.props.store.state)}/>
-
+                return <LoadingScene show={this.props.store.activeScene === Scene.Loading}
+                                     loadingState={applicationStateToLoadingState(this.props.store.state)}/>
             case Scene.Downloading:
                 return <NavigationFrame app={this.props.store}>
                             <Downloading torrents={this.props.store.torrentsDownloading}
-                                         revenue={this.props.store.spending}
+                                         spending={this.props.store.totalSpent}
                                          downloadSpeed={this.props.store.totalDownloadSpeed}
-                                         onStartDownloadClicked={() => {this.props.store.startDownload()}}
+                                         onStartDownloadClicked={() => {this.props.store.startDownloadWithTorrentFileFromFilePicker()}}
+                                         onStartDownloadDrop={(files) => {this.props.store.startDownloadWithTorrentFileFromDragAndDrop(files)}}
                                          state={this.props.store.state}
                                          torrentsBeingLoaded={this.props.store.torrentsBeingLoaded}
                                          store={this.props.store}
+                                         {...middleSectionColorProps}
                             />
                         </NavigationFrame>
 
             case Scene.Uploading:
 
                 return <NavigationFrame app={this.props.store}>
-                          <Seeding torrents={this.props.store.torrentsUploading}
-                                   revenue={this.props.store.revenue}
-                                   uploadSpeed={this.props.store.totalUploadSpeed}
-                                   onStartUploadCliked={() => {console.log(" start uploading clicked")}}
-                                   store={this.props.store}
+
+                          <Seeding store={this.props.store}
+                                   {...middleSectionColorProps}
                           />
                         </NavigationFrame>
 
             case Scene.Completed:
 
                 return <NavigationFrame app={this.props.store}>
-                            <Completed torrents={this.props.store.torrentsCompleted}
-                                       store={this.props.store}
+                            <Completed store={this.props.store}
+                                       {...middleSectionColorProps}
+                            />
+                        </NavigationFrame>
+
+            case Scene.Community:
+
+                return <NavigationFrame app={this.props.store}>
+                            <Community store={this.props.store}
+                                       backgroundColor={UI_CONSTANTS.primaryColor}
                             />
                         </NavigationFrame>
 
             case Scene.ShuttingDown:
 
-                return <Terminating terminatingState={applicationStateToTerminatingState(this.props.store.state)}
-                                    terminatingTorrentsProgressValue={100*(this.props.store.torrentTerminatingProgress/this.props.store.torrentsToTerminate)} />
+                return <TerminatingScene show={this.props.store.activeScene === Scene.ShuttingDown}
+                                         terminatingState={applicationStateToTerminatingState(this.props.store.state)}
+                                         terminatingTorrentsProgressValue={100*(this.props.store.torrentTerminatingProgress/this.props.store.torrentsToTerminate)} />
+
+            default:
+                return null
         }
     }
 
@@ -118,9 +173,18 @@ Application.propTypes = {
 
 const NavigationFrame = observer((props) => {
 
+    let style = {
+        display: 'flex',
+        flexDirection: 'column',
+        flexGrow: 1
+    }
+
     return (
-        <div className="navigation-frame-container">
-            <Header app={props.app}/>
+        <div style={style}>
+            <ApplicationHeader app={props.app}
+                               height={'90px'}
+                               accentColor={UI_CONSTANTS.primaryColor}
+                                />
             {props.children}
         </div>
     )
@@ -130,15 +194,15 @@ function applicationStateToLoadingState(s) {
 
     let loadingState
 
-    if(s == "Starting.InitializingResources" || s == "Starting.NotStarted")
+    if(s === "Starting.uninitialized" || s === "Starting.InitializingResources" || s === "Starting.NotStarted")
         loadingState = LoadingState.InitializingResources
-    else if(s== "Starting.initializingApplicationDatabase")
+    else if(s === "Starting.initializingApplicationDatabase")
         loadingState = LoadingState.OpeningApplicationDatabase
-    else if(s== "Starting.InitialializingSpvNode")
+    else if(s === "Starting.InitialializingSpvNode")
         loadingState = LoadingState.InitializingSPVNode
-    else if(s == "Starting.OpeningWallet")
+    else if(s === "Starting.OpeningWallet")
         loadingState = LoadingState.OpeningWallet
-    else if(s == "Starting.ConnectingToBitcoinP2PNetwork")
+    else if(s === "Starting.ConnectingToBitcoinP2PNetwork")
         loadingState = LoadingState.ConnectingToBitcoinP2PNetwork
     else if(s.startsWith("Starting.LoadingTorrents"))
         loadingState = LoadingState.LoadingTorrents
@@ -150,17 +214,17 @@ function applicationStateToTerminatingState(s) {
 
     let terminatingState
 
-    if(s == "Stopping.TerminatingTorrents" || s == "Stopping.SavingTorrentsToDatabase" || s == "Stopping.uninitialized")
+    if(s === "Stopping.TerminatingTorrents" || s === "Stopping.SavingTorrentsToDatabase" || s === "Stopping.uninitialized")
         terminatingState = TerminatingState.TerminatingTorrents
-    else if(s == "Stopping.DisconnectingFromBitcoinNetwork")
+    else if(s === "Stopping.DisconnectingFromBitcoinNetwork")
         terminatingState = TerminatingState.DisconnectingFromBitcoinNetwork
-    else if(s == "Stopping.ClosingWallet")
+    else if(s === "Stopping.ClosingWallet")
         terminatingState = TerminatingState.ClosingWallet
-    else if(s == "Stopping.StoppingSpvNode")
+    else if(s === "Stopping.StoppingSpvNode")
         terminatingState = TerminatingState.StoppingSpvNode
-    else if(s == "Stopping.ClosingApplicationDatabase")
+    else if(s === "Stopping.ClosingApplicationDatabase")
         terminatingState = TerminatingState.ClosingApplicationDatabase
-    else if(s == "Stopping.ClearingResources")
+    else if(s === "Stopping.ClearingResources")
         terminatingState = TerminatingState.ClearingResources
 
     return terminatingState

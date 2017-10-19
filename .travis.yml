@@ -1,5 +1,5 @@
 dist: trusty
-sudo: required
+sudo: false
 language: node_js
 node_js:
   - "7"
@@ -16,31 +16,47 @@ addons:
   apt:
     packages:
     - rpm
-before_script:
-  - if [ "$TRAVIS_OS_NAME" = linux ]; then export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start; fi
+    - fakeroot
+
 before_install:
-  # 2016-10: Apple doesn't include openssl any more because of security
-  # problems openssl had. Manually specify path to includes/libs.
-  - if [ "$TRAVIS_OS_NAME" = osx ]; then brew install openssl; fi
-  - if [ "$TRAVIS_OS_NAME" = osx ]; then export CPPFLAGS="-I/usr/local/opt/openssl/include"; fi
-  - if [ "$TRAVIS_OS_NAME" = osx ]; then export LDFLAGS="-L/usr/local/opt/openssl/lib"; fi
-  - pip install conan
+    # 2016-10: Apple doesn't include openssl any more because of security
+    # problems openssl had. Manually specify path to includes/libs.
+  - if [[ "$TRAVIS_OS_NAME" = osx ]]; then
+      rvm install ruby-2.3.3;
+      rvm --default use 2.3.3;
+      brew install openssl;
+      export CPPFLAGS="-I/usr/local/opt/openssl/include";
+      export LDFLAGS="-L/usr/local/opt/openssl/lib";
+    fi
+  # Install pip
+  - if [ "$TRAVIS_OS_NAME" = osx ]; then pip install conan; else pip install --user conan; fi
   - conan remote add joystream https://conan.joystream.co:9300 True
   - conan user travis -p trav444 -r=joystream
 install:
   - npm install -g electron-forge
   # make sure to install same version as electron in package.json to test version which will be published
-  - npm install -g electron-prebuilt-compile@1.6.4
+  - npm install -g electron-prebuilt-compile@1.6.14
   - npm install -g electron-rebuild
+
+before_script:
+  # fix for electron-mocha unit tests to work
+  - if [ "$TRAVIS_OS_NAME" = linux ]; then export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start; fi
+
+script:
   - npm install
   - mkdir ~/.electron-gyp
   - ln -s $HOME/.conan $HOME/.electron-gyp/.conan
+  # Fix so python can find conan modules when its running under electron-rebuild env
+  - if [ "$TRAVIS_OS_NAME" = linux ]; then ln -s $HOME/.local $HOME/.electron-gyp/.local; fi
   # rebuild native addons for electron - unit tests use electron-mocha
   - electron-rebuild
-script:
   - npm test
 
 before_deploy:
+  - if [ "$TRAVIS_OS_NAME" = osx ]; then ./deploy_scripts/travis/add-osx-certs.sh; fi
+
+after_deploy:
+  - if [ "$TRAVIS_OS_NAME" = osx ]; then ./deploy_scripts/travis/remove-osx-certs.sh; fi
 
 deploy:
   provider: script
@@ -48,4 +64,4 @@ deploy:
   script: electron-forge publish
   on:
     branch:
-      - master
+      - release*

@@ -8,7 +8,18 @@ import {Field} from './../Table'
 import LinearProgress from 'material-ui/LinearProgress'
 
 const ProgressIndicator = (props) => {
-    return <LinearProgress color="#55C855" style={{  height : 15, borderRadius: 10000}} mode="determinate" value={props.progress} min={0} max={100}/>
+
+    let style = {
+        height : '15px',
+        borderRadius: 10000,
+        backgroundColor : 'rgba(84, 187, 135, 0.5)'
+    }
+
+    return <LinearProgress color="#54bb87"
+                           style={style}
+                           mode="determinate"
+                           value={props.progress}
+    />
 }
 
 ProgressIndicator.propTypes = {

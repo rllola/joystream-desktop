@@ -2,11 +2,10 @@
  * Created by bedeho on 12/06/17.
  */
 
-const dialog = require('electron').remote.dialog
 const BaseMachine = require('../../../../BaseMachine')
-const TorrentStatemachine = require('../../../../Torrent/Statemachine')
-const TorrentInfo = require('joystream-node').TorrentInfo
 const Common = require('./../../Common')
+
+const TorrentInfo = require('joystream-node').TorrentInfo
 
 var OnDownloadingScene = new BaseMachine({
   initialState: 'idle',
@@ -22,146 +21,31 @@ var OnDownloadingScene = new BaseMachine({
         this.go(client, '../OnUploadingScene')
       },
 
-      startDownload: function(client) {
+      community_scene_selected: function (client) {
+        this.go(client, '../OnCommunityScene')
+      },
 
-          // this._defaultTorrentFileSourceLocation
+      startDownloadWithTorrentFileFromFilePicker: function (client) {
 
-          // Allow user to pick a torrent file
-          var filesPicked = dialog.showOpenDialog({
-              title : "Pick torrent file",
-              defaultPath: client._defaultTorrentFileSourceLocation,
-              filters: [
-                  {name: 'Torrent file', extensions: ['torrent']},
-                  {name: 'All Files', extensions: ['*']}
-              ],
-              properties: ['openFile']}
-          )
+        // Allow user to pick a torrent file
+        var filesPicked = Common.showNativeTorrentFilePickerDialog()
 
-          // If the user did no pick any files, then we are done
-          if(!filesPicked || filesPicked.length == 0)
-              return
+        // If the user did no pick any files, then we are done
+        if(!filesPicked || filesPicked.length == 0)
+            return
 
-          // Get torrent file name picked
-          var torrentFile = filesPicked[0]
+        startDownload(this, client, filesPicked[0])
 
-          // Load torrent file
-          let torrentInfo
+      },
 
-          try {
-              torrentInfo = new TorrentInfo(torrentFile)
-          } catch(e) {
+      startDownloadWithTorrentFileFromDragAndDrop: function (client, files) {
 
-              console.log(e)
+        // If the user did no pick any files, then we are done
+        if(!files || files.length == 0)
+            return
 
-              // <Set error_code on store also perhaps?>
-
-              this.transition(client, 'TorrentFileWasInvalid')
-              return
-          }
-
-          const infoHash = torrentInfo.infoHash()
-
-          // Make sure torrent is not already added
-          if(client.torrents.has(infoHash)) {
-
-              this.transition(client, 'TorrentAlreadyAdded')
-              return
-          }
-
-          // NB: Get from settings data store of some sort
-          let terms = Common.getStandardbuyerTerms()
-
-          // Create settings
-          let settings = {
-              infoHash : infoHash,
-              metadata : torrentInfo,
-              resumeData : null,
-              name: torrentInfo.name() || infoHash,
-              savePath: client.directories.defaultSavePath(),
-              deepInitialState: TorrentStatemachine.DeepInitialState.DOWNLOADING.UNPAID.STARTED,
-              extensionSettings : {
-                  buyerTerms: terms
-              }
-          }
-
-          Common.addTorrent(client, settings)
-
-          /**
-
-          // Create torrent
-          let torrentStore = client.factories.torrentStore(infoHash,
-                                                                '',
-                                                                0,
-                                                                0,
-                                                                0,
-                                                                0,
-                                                                0,
-                                                                0,
-                                                                '',
-                                                                0,
-                                                                0,
-                                                                0,
-                                                                0,
-                                                                [])
-          client.store.torrentAdded(torrentStore)
-
-          // Create torrent object and hold on to it
-          let torrent = client.factories.torrent(torrentStore)
-
-          //
-          torrent.on('transition', function({transition, state}) {
-
-              if(state.startsWith('Active.FinishedDownloading.Passive'))
-                  client.processStateMachineInput('torrentFinishedDownloading', infoHash)
-
-          })
-
-          client.torrents.set(infoHash, torrent)
-
-          // Assign core torrent as action handler
-          torrentStore.setTorrent(torrent)
-
-          /// Add torrent to libtorrent session
-
-          // Default parameters
-          let addParams = {
-              ti: torrentInfo,
-              name: torrentInfo.name() || infoHash,
-              savePath: client.directories.defaultSavePath(),
-              flags: {
-                  paused: true,
-                  auto_managed: false
-              }
-          }
-
-          // Add to session
-          client.services.session.addTorrent(addParams, (err, t) => {
-
-              torrent.addTorrentResult(err, t)
-
-              // NB: Move this processing
-              torrent.on('lastPaymentReceived', function (alert) {
-                  client.processStateMachineInput('lastPaymentReceived', alert)
-              })
-          })
-
-          /// Start loading torrent
-
-
-
-          torrent.startLoading(
-              infoHash,
-              addParams.name,
-              addParams.savePath,
-              null, // no resume data
-              torrentInfo,
-              TorrentStatemachine.DeepInitialState.DOWNLOADING.UNPAID.STARTED,
-              {
-                  buyerTerms: terms
-              }
-          )
-
-           */
+        // Try to start download based on torrent file name
+        startDownload(this, client, files[0].path)
 
       },
 
@@ -173,6 +57,16 @@ var OnDownloadingScene = new BaseMachine({
 
             // Go back to idle
             this.transition(client, 'idle')
+        },
+
+        retryPickingTorrentFile : function (client) {
+
+            this.transition(client, 'idle')
+
+            // Try to start download again
+            // HACK
+            this.handle(client, 'startDownloadWithTorrentFileFromFilePicker')
+
         }
     },
 
@@ -186,6 +80,32 @@ var OnDownloadingScene = new BaseMachine({
     }
   }
 })
+
+function startDownload(machine, client, torrentFile) {
+
+    // Get torrent file name picked
+    let torrentInfo
+
+    try {
+        torrentInfo = new TorrentInfo(torrentFile)
+    } catch(e) {
+        machine.transition(client, 'TorrentFileWasInvalid')
+        return
+    }
+
+    // Make sure torrent is not already added
+    if(client.torrents.has(torrentInfo.infoHash())) {
+        machine.transition(client, 'TorrentAlreadyAdded')
+        return
+    }
+
+    // otherwise, get new settings
+    let settings = Common.getStartingDownloadSettings(torrentInfo, client.directories.defaultSavePath())
+
+    // and start adding torrent
+    Common.addTorrent(client, settings)
+
+}
 
 
 module.exports = OnDownloadingScene

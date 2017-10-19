@@ -1,14 +1,13 @@
 /**
  * Created by bedeho on 13/06/17.
  */
-import File from '../../../utils/File'
 var BaseMachine = require('../../BaseMachine')
 var Loading = require('./Loading/Loading')
 var Active = require('./Active')
 var Common = require('./Common')
 var DeepInitialState = require('./DeepInitialState')
 var electron = require('electron')
-
+const assert = require('assert')
 const {shell} = require('electron')
 
 var Torrent = new BaseMachine({
@@ -99,18 +98,13 @@ var Torrent = new BaseMachine({
             },
 
             lastPaymentReceived: function (client, alert) {
+                if (!alert.settlementTx) {
+                  // A settlement transaction is only created if it is worthwile
+                  console.log('Last Payment Received: No Settlement will be made')
+                  return
+                }
 
-                if (!alert.settlementTx) return
-
-                console.log('Introduce tx broadcasting on torrent machine')
-
-                //client.broadcastRawTransaction(alert.settlementTx)
-            },
-            play: function (client, fileIndex) {
-
-              var file = new File(client.torrent, fileIndex)
-
-              client.store.setIsPlaying(file)
+                client.broadcastRawTransaction(alert.settlementTx)
             },
             close: function (client) {
 
@@ -121,9 +115,11 @@ var Torrent = new BaseMachine({
               // restore original bounds
               // Should not be hardcoded (TODO)
               electron.ipcRenderer.send('set-bounds', bounds)
-              
+
               // Disable save power blocker
               electron.ipcRenderer.send('power-save-blocker', {enable:false})
+
+              Common.showDoorbell()
 
               client.store.setIsPlaying(null)
             },
@@ -153,12 +149,13 @@ var Torrent = new BaseMachine({
             },
 
             lastPaymentReceived: function (client, alert) {
+              if (!alert.settlementTx) {
+                // A settlement transaction is only created if it is worthwile
+                console.log('Last Payment Received: No Settlement will be made')
+                return
+              }
 
-                if (!alert.settlementTx) return
-
-                console.log('Introduce tx broadcasting on torrent machine')
-
-                //client.broadcastRawTransaction(alert.settlementTx)
+              client.broadcastRawTransaction(alert.settlementTx)
             }
         },
 
@@ -210,17 +207,16 @@ function deepInitialStateFromActiveState(stateString) {
             else
                 assert(false, assertMsg)
 
-        } /**
-          else if(states[2] == "Paid") {
+        } else if(states[2] == "Paid") {
 
-            if(states[3] == "Started")
-                return DeepInitialState.DOWNLOADING.PAID.STARTED
-            else if(states[3] == "Stopped")
-                return DeepInitialState.DOWNLOADING.PAID.STOPPED
-            else
-                assert(false, assertMsg)
+            /**
+             * If we are paying, we will just go to unpaid
+             * started mode. Starting in paid mode is not allowed.
+             */
 
-        } */
+            return DeepInitialState.DOWNLOADING.UNPAID.STARTED
+
+        }
         else
             assert(false, assertMsg)
 

@@ -1,17 +1,16 @@
 /**
  * Created by bedeho on 11/06/17.
  */
- import path from 'path'
 
 const BaseMachine = require('../../BaseMachine')
-
 const Starting = require('./Starting/Starting')
 const Started = require('./Started/Started')
 const Stopping = require('./Stopping/Stopping')
-
-const {shell} = require('electron')
-
 const TorrentInfo = require('joystream-node').TorrentInfo
+const Common = require('./Common')
+const Doorbell = require('../doorbell')
+const exampleTorrents = require('../../../constants').EXAMPLE_TORRENTS
+const fs = require('fs')
 
 var ApplicationStateMachine = new BaseMachine({
   namespace: 'Application',
@@ -34,19 +33,26 @@ var ApplicationStateMachine = new BaseMachine({
     Starting: {
       _child: Starting,
 
-      //stop: allow user to cancel startup process / client.abortStarting = true
-      //in each state of the starting machine before transitioning to next step it can
-      //check this bool
+      /**
+       * We prevent stopping of any kind while starting up, for now.
+       * In the future, allow user to cancel startup process / client.abortStarting = true
+       * in each state of the starting machine before transitioning to next step it can
+       * check this bool
+       */
 
+      // Block any window unloading
       onBeforeUnloadMainWindow: function(client, event) {
+          blockMainWindowUnload(event)
+      },
 
-          // We are initiating stop, so block window closing for the moment,
-          // the main process will later trigger a second close request when we are in
-          // `NotStarted`, which which we dont block.
-          event.returnValue = false
+      spvChainFullySynced: function (client, height) {
+        client.store.setSpvChainSynced(true)
+        client.store.setSpvChainHeight(height)
+      },
 
-          // Initiate stopping
-          this.handle(client, 'stop')
+      syncProgressUpdated: function (client, progress, height) {
+        client.store.setSpvChainSyncProgress(progress)
+        client.store.setSpvChainHeight(height)
       }
     },
 
@@ -56,10 +62,14 @@ var ApplicationStateMachine = new BaseMachine({
       _onEnter: function (client) {
         // listen for changes in wallet balance
         client.services.wallet.on('balance', (balance) => {
-          client.processStateMachineInput('walletBalanceChanged', balance)
+          client.processStateMachineInput('walletBalanceUpdated', balance)
         })
 
-        client.processStateMachineInput('checkIfWalletNeedsRefill')
+        client.getWalletBalance(function (balance) {
+          client.processStateMachineInput('walletBalanceUpdated', balance)
+        })
+
+        Doorbell.loadDoorbell()
       },
 
       stop: function (client) {
@@ -68,101 +78,76 @@ var ApplicationStateMachine = new BaseMachine({
 
       onBeforeUnloadMainWindow: function(client, event) {
 
-          // We are initiating stop, so block window closing for the moment,
-          // the main process will later trigger a second close request when we are in
-          // `NotStarted`, which which we dont block.
-          event.returnValue = false
-
-          // Initiate stopping
-          this.handle(client, 'stop')
+          beginStopping(this, client, event)
       },
 
       torrentWaitingForMissingBuyerTerms: function (client, torrent) {
 
           // Standard buyer terms
           // NB: Get from settings data store of some sort
-          let terms = Common.getStandardbuyerTerms()
+          let terms = Common.getStandardBuyerTerms()
 
           // change name
           torrent.updateBuyerTerms(terms)
       },
 
-      checkIfWalletNeedsRefill: async function (client, balance) {
-        if (client.services.spvnode.network !== 'testnet') return
-        if (!client.services.testnetFaucet) return
+      walletBalanceUpdated: function (client, balance) {
+        // Update UI
+        client.store.setUnconfirmedBalance(balance.unconfirmed)
+        client.store.setConfirmedBalance(balance.confirmed)
 
-        if (!balance) {
-          // Check balance on startup
-          try {
-            balance = await client.services.wallet.getBalance()
-          } catch (err) {
-            return
-          }
+        // Automatically request testnet coins
+        if (balance.unconfirmed < 25000) {
+          client.topUpWalletFromFaucet(function (err) {
+            if (err) {
+              console.log('Faucet:', err)
+            } else {
+              console.log('Faucet: Request accepted')
+            }
+          })
         }
-
-        client.processStateMachineInput('topUpWalletFromFaucet', balance.unconfirmed)
-      },
-
-      topUpWalletFromFaucet: function (client, balance) {
-        if (!client.services.testnetFaucet) return
-
-        // Only top up if we are running low
-        if (balance > 25000) {
-          return
-        }
-
-        var address = client.services.wallet.getAddress()
-
-        console.log('Faucet: Requesting some testnet coins...')
-
-        client.services.testnetFaucet.getCoins(address.toString(), function (err) {
-          if (err) {
-            console.log('Faucet:', err)
-          } else {
-            console.log('Faucet: Received testnet coins')
-          }
-        })
-      },
-
-      walletBalanceChanged: function (client, balance) {
-        client.processStateMachineInput('checkIfWalletNeedsRefill', balance)
       },
 
       removeTorrent: function (client, infoHash, deleteData) {
-        var fullPath
-        var torrent = client.torrents.get(infoHash)
+        Common.removeTorrent(client, infoHash, deleteData)
+      },
 
-        if (deleteData) {
-          // retrieve path before deleting
-          var torrentInfo = torrent._client.getTorrentInfo()
-          var name = torrentInfo.name()
-          var savePath = torrent._client.getSavePath()
-          fullPath = path.join(savePath, name, path.sep)
-        }
+      spvChainFullySynced: function (client, height) {
+        client.store.setSpvChainSynced(true)
+        client.store.setSpvChainHeight(height)
+      },
 
-        torrent.terminate()
+      syncProgressUpdated: function (client, progress, height) {
+        client.store.setSpvChainSyncProgress(progress)
+        client.store.setSpvChainHeight(height)
+      },
 
-        // Remove the torrent from the session
-        client.services.session.removeTorrent(infoHash, function () {
+      addExampleTorrents: function (client) {
 
-        })
+          for (var i = 0; i < exampleTorrents.length; i++) {
 
-        // Remove the torrent from the db
-        client.services.db.remove('torrents', infoHash).then(() => {
+              // Load torrent file
+              let torrentFileName = exampleTorrents[i]
 
-        })
+              let torrentInfo
 
-        // Delete torrent from the client map
-        client.torrents.delete(infoHash)
+              try {
+                  const data = fs.readFileSync(torrentFileName)
+                  torrentInfo = new TorrentInfo(data)
+              } catch (e) {
+                  console.log('Failed to load torrent file: ' + torrentFileName)
+                  console.log(e)
+                  continue
+              }
 
-        // Remove the torrent from the applicationStore
-        client.store.torrentRemoved(infoHash)
-        
-        // If deleteData we want to remove the folder/file
-        if (fullPath && deleteData) {
-          shell.moveItemToTrash(fullPath)
-        }
+              let settings = Common.getStartingDownloadSettings(torrentInfo, client.directories.defaultSavePath())
+
+              // and start adding torrent
+              Common.addTorrent(client, settings)
+          }
+
       }
+
     },
 
     Stopping: {
@@ -177,5 +162,29 @@ var ApplicationStateMachine = new BaseMachine({
     }
   }
 })
+
+function beginStopping(machine, client, event) {
+
+    blockMainWindowUnload(event)
+
+    // When onboarding is enabled,
+    if(client.onboardingStore) {
+
+      // we display shutdown message
+      client.onboardingStore.displayShutdownMessage()
+
+    } else // Directly initiate stopping
+        machine.handle(client, 'stop')
+
+}
+
+function blockMainWindowUnload(event) {
+
+    // We are initiating stop, so block window closing for the moment,
+    // the main process will later trigger a second close request when we are in
+    // `NotStarted` by calling electron.app.quit in response to IPC from
+    // this renderes process about sucessful stopping, which which we don't block.
+    event.returnValue = false
+}
 
 module.exports = ApplicationStateMachine

@@ -5,6 +5,7 @@ const SPVNode = require('./spvnode')
 const Session = require('joystream-node').Session
 const faucet = require('./faucet')
 
+const ApplicationSettings = require('../ApplicationSettings').ApplicationSettings
 const TorrentsStorage = require('../../db').default
 const Torrent = require('../Torrent/Torrent').default
 const TorrentStore = require('../Torrent/TorrentStore').default
@@ -18,8 +19,8 @@ const ApplicationStore = require('./ApplicationStore').default
 const Common = require('./Statemachine/Common')
 
 const bcoin = require('bcoin')
-
 const assert = require('assert')
+const process = require('process')
 
 
 class Application extends EventEmitter {
@@ -34,9 +35,31 @@ class Application extends EventEmitter {
     {
       removeTorrent: this.removeTorrent.bind(this),
       moveToScene: this.moveToScene.bind(this),
-      startDownload: this.startDownload.bind(this),
+      startDownloadWithTorrentFileFromFilePicker: this.startDownloadWithTorrentFileFromFilePicker.bind(this),
+      startDownloadWithTorrentFileFromDragAndDrop: this.startDownloadWithTorrentFileFromDragAndDrop.bind(this),
+
       acceptTorrentWasAlreadyAdded: this.acceptTorrentWasAlreadyAdded.bind(this),
-      acceptTorrentFileWasInvalid: this.acceptTorrentFileWasInvalid.bind(this)
+      acceptTorrentFileWasInvalid: this.acceptTorrentFileWasInvalid.bind(this),
+      retryPickingTorrentFile: this.retryPickingTorrentFile.bind(this),
+
+      /// Uploading scene
+      startTorrentUploadFlow: this.startTorrentUploadFlow.bind(this),
+      startTorrentUploadFlowWithTorrentFile: this.startTorrentUploadFlowWithTorrentFile.bind(this),
+      exitStartUploadingFlow: this.exitStartUploadingFlow.bind(this),
+      hasTorrentFile: this.hasTorrentFile.bind(this),
+      hasRawContent: this.hasRawContent.bind(this),
+      chooseSavePathButtonClicked : this.chooseSavePathButtonClicked.bind(this),
+      useTorrentFilePathButtonClicked : this.useTorrentFilePathButtonClicked.bind(this),
+      keepDownloadingClicked: this.keepDownloadingClicked.bind(this),
+      dropDownloadClicked: this.dropDownloadClicked.bind(this),
+
+      // Community scene
+      telegramClicked: this.telegramClicked.bind(this),
+      slackClicked: this.slackClicked.bind(this),
+      redditClicked: this.redditClicked.bind(this),
+
+      /// Onboarding scene
+      onBoardingFinished: this.onBoardingFinished.bind(this)
     })
 
     var client = new ApplicationStatemachineClient(this.store)
@@ -73,6 +96,7 @@ class Application extends EventEmitter {
     if (s === Scene.Downloading) return this._process('downloading_scene_selected')
     if (s === Scene.Uploading) return this._process('uploading_scene_selected')
     if (s === Scene.Completed) return this._process('completed_scene_selected')
+    if (s === Scene.Community) return this._process('community_scene_selected')
   }
 
   start (config) {
@@ -93,8 +117,16 @@ class Application extends EventEmitter {
     this._process('onBeforeUnloadMainWindow', event)
   }
 
-  startDownload() {
-    this._process('startDownload')
+  removeTorrent (infoHash, deleteData) {
+      this._process('removeTorrent', infoHash, deleteData)
+  }
+
+  startDownloadWithTorrentFileFromFilePicker() {
+    this._process('startDownloadWithTorrentFileFromFilePicker')
+  }
+
+  startDownloadWithTorrentFileFromDragAndDrop(files) {
+    this._process('startDownloadWithTorrentFileFromDragAndDrop', files)
   }
 
   acceptTorrentWasAlreadyAdded() {
@@ -105,9 +137,71 @@ class Application extends EventEmitter {
     this._process('acceptTorrentFileWasInvalid')
   }
 
-  removeTorrent (infoHash, deleteData) {
-    this._process('removeTorrent', infoHash, deleteData)
+  retryPickingTorrentFile() {
+      this._process('retryPickingTorrentFile')
   }
+
+  /// Uploading scene
+
+  startTorrentUploadFlow() {
+    this._process('startTorrentUploadFlow')
+  }
+
+  startTorrentUploadFlowWithTorrentFile(torrentFile) {
+    this._process('startTorrentUploadFlowWithTorrentFile', torrentFile)
+  }
+
+  //// Start upload flow
+
+  exitStartUploadingFlow() {
+    this._process('exitStartUploadingFlow')
+  }
+
+  hasTorrentFile() {
+    this._process('hasTorrentFile')
+  }
+
+  hasRawContent() {
+    this._process('hasRawContent')
+
+  }
+
+  chooseSavePathButtonClicked() {
+    this._process('chooseSavePathButtonClicked')
+  }
+
+  useTorrentFilePathButtonClicked() {
+    this._process('useTorrentFilePathButtonClicked')
+  }
+
+  keepDownloadingClicked() {
+    this._process('keepDownloadingClicked')
+  }
+
+  dropDownloadClicked() {
+    this._process('dropDownloadClicked')
+  }
+
+  /// Community scene
+
+  telegramClicked() {
+    this._process('telegramClicked')
+  }
+
+  slackClicked() {
+    this._process('slackClicked')
+  }
+
+  redditClicked() {
+    this._process('redditClicked')
+  }
+
+  //// Onboarding flow
+
+  onBoardingFinished () {
+    this._process('onBoardingFinished')
+  }
+
 }
 
 // Create a maker function from a class or constructor function using 'new'
@@ -122,10 +216,14 @@ class ApplicationStatemachineClient {
   constructor (applicationStore) {
     this.store = applicationStore
 
+    this.forceOnboardingFlow = process.env.FORCE_ONBOARDING
+
     this.factories = {
       spvnode: factory(SPVNode),
 
       directories: factory(Directories),
+
+      applicationSettings: factory(ApplicationSettings),
 
       session: factory(Session),
 
@@ -134,6 +232,7 @@ class ApplicationStatemachineClient {
       },
 
       torrentStore: (infoHash,
+                     savePath,
                      state,
                      progress,
                      totalSize,
@@ -146,9 +245,15 @@ class ApplicationStatemachineClient {
                      numberOfSellers,
                      numberOfObservers,
                      numberOfNormalPeers,
-                     suitableSellers) => {
+                     numberOfSeeders,
+                     startPaidDownloadViability,
+                     sellerPrice,
+                     sellerRevenue,
+                     buyerPrice,
+                     buyerSpent) => {
         return new TorrentStore(null,
                                 infoHash,
+                                savePath,
                                 state,
                                 progress,
                                 totalSize,
@@ -161,7 +266,12 @@ class ApplicationStatemachineClient {
                                 numberOfSellers,
                                 numberOfObservers,
                                 numberOfNormalPeers,
-                                suitableSellers)
+                                numberOfSeeders,
+                                startPaidDownloadViability,
+                                sellerPrice,
+                                sellerRevenue,
+                                buyerPrice,
+                                buyerSpent)
       },
 
       // Return a Torrent with generators bound to application statemachine to access the wallet
@@ -170,7 +280,8 @@ class ApplicationStatemachineClient {
             this.privateKeyGenerator.bind(this),
             this.pubKeyHashGenerator.bind(this),
             this.contractGenerator.bind(this),
-            Common.getStandardSellerTerms)
+            Common.getStandardSellerTerms,
+            this.broadcastRawTransaction.bind(this))
       },
 
       testnetFaucet: function () { return faucet }
@@ -213,12 +324,31 @@ class ApplicationStatemachineClient {
       outputs: outputs,
       rate: contractFeeRate
     }).then((transaction) => {
+      console.log('Contract TX:', transaction.toRaw().toString('hex'))
+      console.log('Contract TX ID:', transaction.txid())
       return transaction.toRaw()
     })
   }
 
   broadcastRawTransaction (tx) {
     this.services.spvnode.sendTx(tx)
+  }
+
+  getWalletBalance (callback = () => {}) {
+    this.services.wallet.getBalance().then((balance) => {
+      callback(balance)
+    })
+  }
+
+  topUpWalletFromFaucet (callback = () => {}) {
+    if (this.services.spvnode.network !== 'testnet') return
+    if (!this.services.testnetFaucet) return
+
+    var address = this.services.wallet.getAddress()
+
+    console.log('Faucet: Requesting some testnet coins...')
+
+    this.services.testnetFaucet.getCoins(address.toString(), callback)
   }
 }
 

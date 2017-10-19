@@ -1,5 +1,7 @@
 import { observable, action, computed } from 'mobx'
 import electron from 'electron'
+import { BEPSupportStatus } from 'joystream-node'
+import StartPaidDownloadViability from '../../core/Torrent/StartPaidDownloadViability'
 
 class TorrentStore {
 
@@ -8,10 +10,23 @@ class TorrentStore {
     @observable progress
     @observable totalSize
 
+    /**
+     * {String} Path where torrent data is saved and or read from
+     */
+    @observable savePath
+
     // Is playing video/audio
     @observable isPlaying = null
 
-    @observable sellerPrice = 0
+    // Seller minimum price for this torrent
+    @observable sellerPrice
+    // Map of revenue per connection (using pid as a key)
+    @observable sellerRevenue
+
+    // Buyer max price for this torrent
+    @observable buyerPrice
+    // Map of total spent per connection (using pid as a key)
+    @observable buyerSpent
 
     /**
      * libtorrent::torrent_status::total_done
@@ -46,10 +61,11 @@ class TorrentStore {
     @observable numberOfNormalPeers
     @observable numberOfSeeders
 
-    @observable suitableSellers
+    @observable startPaidDownloadViability
 
     constructor (torrent,
                  infoHash,
+                 savePath,
                  state,
                  progress,
                  totalSize,
@@ -63,10 +79,15 @@ class TorrentStore {
                  numberOfObservers,
                  numberOfNormalPeers,
                  numberOfSeeders,
-                 suitableSellers) {
+                 startPaidDownloadViability,
+                 sellerPrice,
+                 sellerRevenue,
+                 buyerPrice,
+                 buyerSpent) {
 
         this._torrent = torrent
         this.infoHash = infoHash
+        this.savePath = savePath
         this.state = state
         this.progress = progress ? progress : 0
         this.totalSize = totalSize ? totalSize : 0
@@ -80,11 +101,21 @@ class TorrentStore {
         this.numberOfObservers = numberOfObservers ? numberOfObservers : 0
         this.numberOfNormalPeers = numberOfNormalPeers ? numberOfNormalPeers : 0
         this.numberOfSeeders = numberOfSeeders ? numberOfSeeders : 0
-        this.suitableSellers = suitableSellers ? suitableSellers : []
+        this.startPaidDownloadViability = startPaidDownloadViability ? startPaidDownloadViability : new StartPaidDownloadViability.NoJoyStreamPeerConnections()
+        this.sellerPrice = sellerPrice ? sellerPrice : 0
+        this.sellerRevenue = sellerRevenue ? sellerRevenue : new Map()
+        this.buyerPrice = buyerPrice ? buyerPrice : 0
+        this.buyerSpent = buyerSpent ? buyerSpent : new Map()
+
     }
 
     setTorrent(torrent) {
         this._torrent = torrent
+    }
+
+    @action.bound
+    setSavePath(savePath) {
+        this.savePath = savePath
     }
 
     @action.bound
@@ -160,16 +191,16 @@ class TorrentStore {
         let normals = 0
 
         // Iterate peers and determine type
-        for(var i in this.peers) {
+        for(var i in peers) {
 
             // Get status
-            var s = statuses[i]
+            var s = peers[i]._client.status
 
-            if(s.peerBitSwaprBEPSupportStatus != BEPSupportStatus.supported) {
+            if(s.peerBitSwaprBEPSupportStatus !== BEPSupportStatus.supported) {
                 normals++
             } else if(s.connection) {
 
-                var announced = s.connnection.announcedModeAndTermsFromPeer
+                var announced = s.connection.announcedModeAndTermsFromPeer
 
                 if(announced.buyer)
                     buyers++
@@ -214,8 +245,8 @@ class TorrentStore {
     }
 
     @action.bound
-    setSuitableSellers (suitableSellers) {
-        this.suitableSellers = suitableSellers
+    setStartPaidDownloadViability (startPaidDownloadViability) {
+        this.startPaidDownloadViability = startPaidDownloadViability
     }
 
     @action.bound
@@ -231,6 +262,21 @@ class TorrentStore {
     @action.bound
     setSellerPrice (sellerTerms) {
       this.sellerPrice = sellerTerms.minPrice
+    }
+
+    @action.bound
+    setSellerRevenue (pid, amountPaid) {
+        this.sellerRevenue.set(pid, amountPaid)
+    }
+
+    @action.bound
+    setBuyerPrice (buyerTerms) {
+      this.buyerPrice = buyerTerms.maxPrice
+    }
+
+    @action.bound
+    setBuyerSpent (pid, amountPaid) {
+        this.buyerSpent.set(pid, amountPaid)
     }
 
     /// Scene selector
@@ -276,10 +322,16 @@ class TorrentStore {
         return this.state.startsWith("Active.FinishedDownloading.Uploading.Started")
     }
 
+    /**
+     * Discontinued for now
     @computed get canStartPaidDownloading() {
         return this.state.startsWith("Active.DownloadIncomplete.Unpaid.Started.ReadyForStartPaidDownloadAttempt") &&
                 this.suitableSellers != null
+    }
+    */
 
+    @computed get hasStartedPaidDownloading() {
+        return this.state.startsWith("Active.DownloadIncomplete.Paid.Started")
     }
 
     @computed get canStop() {
@@ -301,13 +353,30 @@ class TorrentStore {
           let fileExtension = fileName.split('.').pop()
 
           // Need a list of all the video extensions that render-media suport.
-          if (fileExtension === 'mp4' || fileExtension === 'wbm' || fileExtension === 'mkv') {
+          if (fileExtension === 'mp4' || fileExtension === 'wbm' || fileExtension === 'mkv' || fileExtension === 'avi' || fileExtension === 'webm') {
             playableIndexfiles.push(i)
           }
         }
 
         return playableIndexfiles
     }
+
+    @computed get totalRevenue() {
+        var sum = 0
+        this.sellerRevenue.forEach(function (value, key, map) {
+            sum += value
+        })
+        return sum
+    }
+
+    @computed get totalSpent() {
+        var sum = 0
+        this.buyerSpent.forEach(function (value, key, map) {
+            sum += value
+        })
+        return sum
+    }
+
 
     /// User actions
 

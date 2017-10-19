@@ -13,7 +13,7 @@ import { NameField,
          BitcoinValueField,
          PeerCountField} from  '../../components/RowFields'
 import TorrentToolbar from './TorrentToolbar'
-import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
+import AbsolutePositionChildren from '../../components/AbsolutePositionChildren/AbsolutePositionChildren'
 import ToolbarVisibilityType from '../../utils/ToolbarVisibilityState'
 
 @observer
@@ -32,14 +32,14 @@ class TorrentRow extends Component {
     render(props) {
 
         return (
-            <Row className={this.props.toolbarVisibilityStatus == ToolbarVisibilityType.OnHover ? "row-managed-toolbar-visiblity" : ""}>
+            <Row className={this.props.toolbarVisibilityStatus == ToolbarVisibilityType.OnHover ? "row-managed-toolbar-visiblity" : ""}
+                 backgroundColor={this.props.backgroundColor}>
                 <NameField name={this.props.torrent.name} />
                 <StatusField paused={this.props.torrent.canStart} />
                 <BytesPerSecondField bytes={this.props.torrent.uploadSpeed} />
                 <BitcoinValueField satoshis={this.props.torrent.sellerPrice}/>
-                <BitcoinValueField satoshis={0}/>
+                <BitcoinValueField satoshis={this.props.torrent.totalRevenue}/>
                 <PeerCountField count={this.props.torrent.numberOfBuyers} />
-                <PeerCountField count={this.props.torrent.numberOfSellers} />
                 { this.getRenderedToolbar() }
             </Row>
         )
@@ -50,7 +50,7 @@ class TorrentRow extends Component {
         return (
             this.props.toolbarVisibilityStatus != ToolbarVisibilityType.Hidden
             ?
-            <AbsolutePositionChildren left={-250} top={-20}>
+            <AbsolutePositionChildren left={-250} top={3}>
                 <TorrentToolbar {...this.props.toolbarProps} torrent={this.props.torrent} store={this.props.store} />
             </AbsolutePositionChildren>
             :

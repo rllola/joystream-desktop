@@ -44,6 +44,12 @@ var Loading = new BaseMachine({
                     // Update store when status changes
                     torrent.on('status_update', (status) => {
                         client.store.setStatus(status)
+
+                        // Workaround used in place of finished alert not being reliable due to a bug
+                        // in libtorrent
+                        if (status.state === TorrentState.finished || status.state === TorrentState.seeding) {
+                          client.processStateMachineInput('downloadFinished')
+                        }
                     })
 
                     // This alert is generated when a torrent switches from being a downloader to a seed.
@@ -66,6 +72,10 @@ var Loading = new BaseMachine({
                       client.processStateMachineInput('processSellerTermsUpdated', alert.terms)
                     })
 
+                    torrent.on('buyerTermsUpdated', function (alert) {
+                      client.processStateMachineInput('processBuyerTermsUpdated', alert.terms)
+                    })
+
                     torrent.on('uploadStarted', function (alert) {
                       client.processStateMachineInput('uploadStarted', alert)
                     })
@@ -77,6 +87,27 @@ var Loading = new BaseMachine({
                     torrent.on('lastPaymentReceived', function (alert) {
                         client.processStateMachineInput('lastPaymentReceived', alert)
                     })
+
+                    torrent.on('validPaymentReceived', function (alert) {
+                      client.processStateMachineInput('processValidPaymentReceived', alert)
+                    })
+
+                    torrent.on('sentPayment', function (alert) {
+                      client.processStateMachineInput('processSentPayment', alert)
+                    })
+
+                    torrent.on('downloadStarted', function (alert) {
+                      client.processStateMachineInput('paidDownloadInitiationCompleted', alert)
+                    })
+
+                    // DO we have new peers
+                    /* torrent.on('dhtGetPeersReply', function (peers) {
+                      for (var i in peers) {
+                        console.log(peers[i])
+                        torrent.connectPeer(peers[i])
+                      }
+                      console.log(peers)
+                    }) */
 
                     // If we don´t have metadata, wait for it
                     if(client.metadata && client.metadata.isValid()) {
@@ -121,6 +152,12 @@ var Loading = new BaseMachine({
         CheckingPartialDownload: {
 
             checkFinished: function (client) {
+                // If the saved initial state was stopped pause the torrent now after
+                // checking files completes
+                if (Common.isStopped(client.deepInitialState)) {
+                  client.torrent.handle.pause()
+                }
+
                 // By default, extension torrent plugins are constructed with
                 // TorrentPlugin::LibtorrentInteraction::None:
                 // - No events interrupted, except on_extended events for this plugin.
@@ -208,14 +245,18 @@ var Loading = new BaseMachine({
 
 function goToDeepInitialState(machine, client) {
 
+    let deepInitialState = client.deepInitialState
+
     // Path to active substate we need to transition to
     var path = relativePathFromDeepInitialState(client.deepInitialState)
 
     // Transition to active state
     machine.go(client, path)
 
-    // Drop temprorary storage of inital state we want to load to
+    // Drop temporary storage of inital state we want to load to
     delete client.deepInitialState
+
+    machine.emit('loaded', client, deepInitialState)
 }
 
 function relativePathFromDeepInitialState(s) {

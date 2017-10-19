@@ -6,6 +6,9 @@ const BaseMachine = require('../../../BaseMachine')
 const LoadingTorrents = require('./LoadingTorrents')
 const constants = require('../../../../constants')
 
+const OnboardingStore = require('../../../OnboardingStore')
+const packageFile = require('../../../../../package.json')
+
 var Starting = new BaseMachine({
   namespace: 'Starting',
   initializeMachine : function (options) {
@@ -29,13 +32,40 @@ var Starting = new BaseMachine({
             client.config.logLevel,
             client.directories.walletPath())
 
-          client.services.session = client.factories.session({
-            port: client.config.bitTorrentPort || process.env.LIBTORRENT_PORT
+          client.services.spvnode.on('synced', function (height) {
+            client.processStateMachineInput('spvChainFullySynced', height)
           })
+
+          client.services.spvnode.on('syncProgress', function (progress, height) {
+            client.processStateMachineInput('syncProgressUpdated', progress, height)
+          })
+
+          // default session settings
+          var sessionSettings = {
+            // network port libtorrent session will open a listening socket on
+            port: 0,
+            // Assisted Peer Discovery (APD)
+            assistedPeerDiscovery: true
+          }
+
+          // Configuration overrides default setting
+          if ('bitTorrentPort' in client.config) {
+            sessionSettings.port = client.config.bitTorrentPort
+          }
+
+          // Configuration overrides default setting
+          if ('assistedPeerDiscovery' in client.config) {
+            sessionSettings.assistedPeerDiscovery = client.config.assistedPeerDiscovery
+          }
+
+          client.services.session = client.factories.session(sessionSettings)
 
           client.services.torrentUpdateInterval = setInterval(() => {
             client.services.session.postTorrentUpdates()
           }, constants.POST_TORRENT_UPDATES_INTERVAL)
+
+          // Setup electron-config store
+          client.applicationSettings = client.factories.applicationSettings()
 
           // Get a function to call for openning the database store
           client.services.openDatabase = client.factories.db(client.directories.databasePath())
@@ -129,7 +159,35 @@ var Starting = new BaseMachine({
         client.processStateMachineInput('connectingToBitcoinP2PNetworkSuccess')
       },
       connectingToBitcoinP2PNetworkSuccess: function (client) {
-        this.go(client, 'LoadingTorrents/AddingTorrents')
+
+        // Version migration
+        migrate(packageFile.version, client.applicationSettings)
+
+        // If we are running for the first time
+        if(client.forceOnboardingFlow || client.applicationSettings.isFirstTimeRun()) {
+
+          // Mark us as now having run
+          client.applicationSettings.setIsFirstTimeRun(false)
+
+          // Create onboarding store
+          client.onboardingStore = new OnboardingStore(
+              OnboardingStore.State.WelcomeScreen,
+              () => { client.processStateMachineInput('addExampleTorrents') },
+              () => { client.processStateMachineInput('stop')}
+          )
+
+          // Make it available on the application store
+          client.store.setOnboardingStore(client.onboardingStore)
+
+          // Start
+          this.go(client, '../Started')
+
+        } else {
+
+            // Normal start and add torrents
+            this.go(client, 'LoadingTorrents/AddingTorrents')
+        }
+
       },
       connectingToBitcoinP2PNetworkFailure: function (client, err) {
         client.reportError(err)
@@ -144,6 +202,7 @@ var Starting = new BaseMachine({
       _reset: 'uninitialized',
 
       /**
+      // NO LONGER IN USE, WE DONT WAIT FOR ALL TO BE COMPLETED
       // When all torrent state machines have entered into final loaded state (so they are renderable)
       completedLoadingTorrents: function (client) {
         this.go(client, '../Started')
@@ -153,5 +212,41 @@ var Starting = new BaseMachine({
     }
   }
 })
+
+/**
+ * Does all the migration work between all valid pairs of versions
+ * @param currentVersion
+ * @param applicationSettings
+ */
+function migrate(currentVersion, applicationSettings) {
+
+  // Update the last version of the app that was run
+  applicationSettings.setLastVersionOfAppRun(currentVersion)
+
+  // Other magical migration stuff
+
+}
+
+/**
+// Tell if we are running a new major version of the application
+function isAMajorUpdate () {
+
+    let latestVersionRunned = store.get('latestVersionRunned')
+    let currentVersionRunning = pjson.version
+
+    if (isRunningForTheFirstTime) return true
+    if (vc.lt(latestVersionRunned, currentVersionRunning)) {
+
+        let v1 = currentVersionRunning.split('.')
+        let v2 = latestVersionRunned.split('.')
+
+        if (v1[0] > v2[0] || v1[1] > v2[1]) {
+            return true
+        }
+
+        return false
+    }
+}
+*/
 
 module.exports = Starting

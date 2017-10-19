@@ -17,11 +17,17 @@ util.inherits(Torrent, EventEmitter)
  * @param session
  * @constructor
  */
-function Torrent(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator, getStandardSellerTerms) {
+function Torrent(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator, getStandardSellerTerms, broadcastRawTransaction) {
 
     EventEmitter.call(this)
 
-    this._client = new TorrentStatemachineClient(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator, getStandardSellerTerms)
+    this._client = new TorrentStatemachineClient(
+      store,
+      privateKeyGenerator,
+      publicKeyHashGenerator,
+      contractGenerator,
+      getStandardSellerTerms,
+      broadcastRawTransaction)
 
     // Set initial state of store
     store.setState(TorrentStatemachine.compositeState(this._client))
@@ -52,7 +58,31 @@ function Torrent(store, privateKeyGenerator, publicKeyHashGenerator, contractGen
         //  - 'Loading.WaitingForMissingBuyerTerms'
         //  - Terminated: emit event with payload client.deepInitialState
 
+        //console.log(data.fromState + ' -> ' + data.toState)
     })
+
+
+    // Relay convenience signal about loading event
+    // ****** This is hack in two ways ******
+    // 1) Due to machinajs not being able to properly propagate
+    // child signals when used in BehavioralFSM mode, we have to dig inside state hierearchy
+    // and grab the child state object to listen to.
+    // 2) Due to machinajs state machine reorging their child structuer after their first
+    // usage, we have to conditionally detect where signal is emitted.
+
+    let source =
+        TorrentStatemachine.states.Loading._child.on
+            ?
+        TorrentStatemachine.states.Loading._child
+            :
+        TorrentStatemachine.states.Loading._child.instance
+
+    source.on('loaded', (client, deepInitialState) => {
+
+        if(client === this._client)
+            this.emit('loaded', deepInitialState)
+    })
+
 }
 
 /**
@@ -133,12 +163,13 @@ Torrent.prototype.remove = function (deleteData) {
 /// TorrentStateMachineClient
 /// Holds state and external messaging implementations for a (behavoural machinajs) Torrent state machine instance
 
-function TorrentStatemachineClient(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator, getStandardSellerTerms) {
+function TorrentStatemachineClient(store, privateKeyGenerator, publicKeyHashGenerator, contractGenerator, getStandardSellerTerms, broadcastRawTransaction) {
     this.store = store
     this._privateKeyGenerator = privateKeyGenerator
     this._publicKeyHashGenerator = publicKeyHashGenerator
     this._contractGenerator = contractGenerator
     this._getStandardSellerTerms = getStandardSellerTerms
+    this._broadcastRawTransaction = broadcastRawTransaction
 }
 
 TorrentStatemachineClient.prototype.processStateMachineInput = function (...args) {
@@ -262,6 +293,10 @@ TorrentStatemachineClient.prototype.makeSignedContract = function(contractOutput
     })
 }
 
+TorrentStatemachineClient.prototype.contractSigningFailed = function (err) {
+  LOG_ERROR("makeSignedContract", err)
+}
+
 TorrentStatemachineClient.prototype.generateContractPrivateKey = function() {
 
     return this._privateKeyGenerator()
@@ -296,10 +331,14 @@ TorrentStatemachineClient.prototype.getFiles = function() {
   // Get the files
 }
 
+TorrentStatemachineClient.prototype.broadcastRawTransaction = function (tx) {
+  return this._broadcastRawTransaction(tx)
+}
+
 function LOG_ERROR(source, err) {
 
     if(err)
-        console.log(source,": Error found in callback:", err)
+        console.error(source,": Error found in callback:", err)
 }
 
 export default Torrent

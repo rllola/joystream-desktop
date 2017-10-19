@@ -15,6 +15,7 @@ function MockTorrentStore() {
     this.setSuitableSellers = sinon.spy()
     this.setTorrentFiles = sinon.spy()
     this.setSellerPrice = sinon.spy()
+    this.setStartPaidDownloadViability = sinon.spy()
 }
 
 /// MockTorrent
@@ -49,6 +50,10 @@ MockTorrentHandle.prototype.status = function () {
 
 MockTorrentHandle.prototype.torrentFile = function () {
   return new MockTorrentInfo(this._fixture)
+}
+
+MockTorrentHandle.prototype.pause = function () {
+
 }
 
 /// MockTorrentStatus

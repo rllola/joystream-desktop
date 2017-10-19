@@ -1,9 +1,12 @@
 const bcoin = require('bcoin')
 const assert = require('assert')
+import { EventEmitter } from 'events'
 
-class SPVNode {
+class SPVNode extends EventEmitter {
 
   constructor (network, logLevel, walletPrefix) {
+    super()
+
     this.walletPrefix = walletPrefix
     this.network = network
     this.logLevel = logLevel
@@ -37,6 +40,19 @@ class SPVNode {
 
     // Disable http/rpc - to avoid any port conflict issues. Also more secure option
     node.http = null
+
+    node.chain.on('full', () => {
+      this.emit('syncProgress', 1)
+      this.emit('synced', node.chain.height)
+    })
+
+    node.chain.on('block', (block, entry) => {
+      if (node.chain.total % 2000 === 0) {
+        this.emit('syncProgress', node.chain.getProgress(), node.chain.tip.height)
+      }
+      // node.pool.x?  what do peers report as the current tip of their longest chain?
+      // it is sent in the version message when we connect to them
+    })
 
     return node
   }
@@ -77,6 +93,7 @@ class SPVNode {
     this.node.stopSync()
     return this.node.disconnect()
   }
+
   getWallet (id = 'primary') {
     return this.node.plugins.walletdb.get(id)
   }
@@ -90,6 +107,10 @@ class SPVNode {
     if (!(tx instanceof bcoin.primitives.TX)) {
       tx = bcoin.primitives.TX.fromRaw(tx)
     }
+
+    console.log('spvnode: sending raw TX:', tx.toRaw().toString('hex'))
+    console.log('spvnode: TX ID:', tx.txid())
+
     return this.node.broadcast(tx)
   }
 }

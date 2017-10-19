@@ -4,85 +4,69 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import {
-    Step,
-    Stepper,
-    StepLabel,
-    StepContent,
-} from 'material-ui/Stepper'
-import LinearProgress from 'material-ui/LinearProgress'
+import LoadingState from './LoadingState'
+import SplashProgress from '../../components/SplashProgress'
+import FullScreenContainer from '../../components/FullScreenContainer'
 
-// Move this into the ?
-// which step can fail?
-// which needs richer state?
-var LoadingState = {
-    InitializingResources : 0,
-    OpeningApplicationDatabase : 1,
-    InitializingSPVNode : 2,
-    OpeningWallet : 3,
-    ConnectingToBitcoinP2PNetwork : 4,
-    LoadingTorrents : 5
-}
+function progressTextFromLoadingState(state) {
 
-// initializing_resources => (create) dirs, spv, session
-// (open)/initializing_application_database =>
-// initializeSpvNode
-// opening_wallet
-// connecting_to_bitcoin_p2p_network
+    let text = null
 
+    switch(state) {
 
-const LoadingProgressIndicator = (props) => {
+        case LoadingState.InitializingResources:
+            text = 'Starting database, wallet and BitTorrent node'
+            break
 
-  return (
-      <Stepper
-      activeStep={props.loadingState}
-      orientation="vertical"
-      connector={null}>
-          <Step>
-              <StepLabel>Initializing resources</StepLabel>
-          </Step>
-          <Step>
-              <StepLabel>Opening application database</StepLabel>
-          </Step>
-          <Step>
-              <StepLabel>Initializing Bitcoin SPV node</StepLabel>
-          </Step>
-          <Step>
-              <StepLabel>Opening wallet</StepLabel>
-          </Step>
-          <Step>
-              <StepLabel>Connecting to Bitcoin peer network</StepLabel>
-          </Step>
-          {
-              /*
-              <Step>
-                  <StepLabel>Loading torrents</StepLabel>
-                  <StepContent>
-                      <LinearProgress mode="determinate" value={props.loadingTorrentsProgressValue}/>
-                  </StepContent>
-              </Step>
-                */
-          }
-      </Stepper>
-  )
+        case LoadingState.OpeningApplicationDatabase:
+            text = 'Opening the application database'
+            break
+
+        case LoadingState.InitializingSPVNode:
+            text = 'Initializing SPV node'
+            break
+
+        case LoadingState.OpeningWallet:
+            text = 'Opening wallet'
+            break
+
+        case LoadingState.ConnectingToBitcoinP2PNetwork:
+            text = 'Connecting to Bitcoin peer network'
+            break
+
+        case LoadingState.LoadingTorrents:
+            text = 'Loading torrents'
+            break
+    }
+
+    return text
 }
 
 const LoadingScene = (props) => {
 
+    let text = props.show ? progressTextFromLoadingState(props.loadingState) : ''
+    let percentage = props.show ? 100 * (props.loadingState + 1) / (Object.keys(LoadingState).length) : 0
+
+
+
     return (
-      <div className="LoadingScene">
-        <div className="CenterPiece">
-            <h1>logo</h1>
-            <LoadingProgressIndicator {...props}/>
-        </div>
-      </div>
+        <FullScreenContainer> { /** Dropping fadeout: className={!props.show ? 'fadeout' : ''} **/}
+            <SplashProgress progressText={text}
+                            progressPercentage={percentage}
+
+            />
+        </FullScreenContainer>
     )
+
 }
 
 LoadingScene.propTypes = {
+    show : PropTypes.bool.isRequired,
     loadingState : PropTypes.oneOf(Object.values(LoadingState)),
-    loadingTorrentsProgressValue : PropTypes.number
 }
 
-export {LoadingState}
+LoadingScene.defaultProps = {
+    show : true
+}
+
 export default LoadingScene

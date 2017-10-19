@@ -3,16 +3,14 @@
  */
 
 import React, { Component } from 'react'
-import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
-import Table from '../../components/Table'
+import Table, {Hint} from '../../components/Table'
 import TorrentRow from './TorrentRow'
-import TorrentToolbar from './TorrentToolbar'
 import TorrentContextMenu from './TorrentContextMenu'
 import ToolbarVisibilityType from '../../utils/ToolbarVisibilityState'
-import StartSeedingHint from './components/StartSeedingHint'
-import AbsolutePositionChildren from '../../common/AbsolutePositionChildren'
+import {AbsolutePositionChildren} from '../../common'
+import Dropzone from 'react-dropzone'
 
 import { contextMenuHiddenState, contextMenuVisibleState, contextMenuRect } from '../../utils/ContextMenuHelper'
 
@@ -77,11 +75,20 @@ class TorrentsTable extends Component {
 
     render() {
 
+        var dropZoneStyle = {
+            display: 'flex',
+            flexDirection: 'column',
+            flexGrow: 1,
+            borderStyle:'none'
+        }
+
         return (
-            <Table column_titles={["", "State", "Speed", "Price", "Revenue", "Buyers", "Sellers"]}>
-                { this.getRenderedContextMenu() }
-                { this.getRenderedTorrentRows() }
-            </Table>
+            <Dropzone disableClick style={dropZoneStyle} onDrop={(files) => { this.props.store.startTorrentUploadFlowWithTorrentFile(files) }}>
+                <Table column_titles={["", "STATE", "SPEED", "PRICE", "REVENUE", "BUYERS"]}>
+                    { this.getRenderedContextMenu() }
+                    { this.getRenderedTorrentRows() }
+                </Table>
+            </Dropzone>
         )
     }
 
@@ -115,25 +122,28 @@ class TorrentsTable extends Component {
         return (
             this.props.torrents.length == 0
             ?
-            <StartSeedingHint key={0}/>
+            <Hint title="Drop torrent file here to start uploading" key={0}/>
             :
-            this.props.torrents.map((t) => { return this.getRenderedTorrentRow(t) })
+            this.props.torrents.map((t, index) => { return this.getRenderedTorrentRow(t, index % 2 === 0) })
         )
     }
 
-    getRenderedTorrentRow(t) {
+    getRenderedTorrentRow(t, isEven) {
 
         var toolbarProps = {
             onOpenFolderClicked : () => { t.openFolder() },
             onMoreClicked : (e) => { this.toolbarMoreButtonClicked(e, t) }
         }
 
+        let backgroundColor = isEven ? 'hsla(0, 0%, 93%, 1)' : 'white'
+
         return (
             <TorrentRow key={t.infoHash}
                         torrent={t}
                         toolbarVisibilityStatus = {this.getToolbarVisibilityTypeForTorrent(t)}
                         toolbarProps={toolbarProps}
-                        store={this.props.store} />
+                        store={this.props.store}
+                        backgroundColor={backgroundColor}/>
         )
     }
 

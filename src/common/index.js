@@ -2,9 +2,18 @@
  * Created by bedeho on 30/05/17.
  */
 
-import {getCompactBitcoinUnits, getCompactBitcoinUnitString} from './common'
-import AbsolutePositionChildren from './AbsolutePositionChildren'
+import {
+        getCompactBitcoinUnits,
+        getCompactBitcoinUnitsString,
+        convenientHumanizeDuration,
+        convenientBytes,
+        standardHumanizeDurationOptions
+} from './common'
 
-export {getCompactBitcoinUnits,
-        getCompactBitcoinUnitString,
-        AbsolutePositionChildren}
+export {
+        getCompactBitcoinUnits,
+        getCompactBitcoinUnitsString,
+        convenientBytes,
+        convenientHumanizeDuration,
+        standardHumanizeDurationOptions
+}

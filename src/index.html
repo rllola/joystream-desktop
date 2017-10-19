@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Joystream</title>
+    <title>JoyStream</title>
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css" />
 
     <!-- temporary, move into components later -->
@@ -12,10 +12,11 @@
     <link rel="stylesheet" type="text/scss" href="styles/table.scss" />
     <link rel="stylesheet" type="text/scss" href="styles/toolbar.scss" />
     <link rel="stylesheet" type="text/scss" href="styles/context-menu.scss" />
-
+    <link rel="stylesheet" type="text/scss" href="styles/doorbell.scss" />
     <link rel="stylesheet" type="text/scss" href="styles/loading-scene.scss" />
+    <link rel="stylesheet" type="text/scss" href="styles/onboarding.scss" />
     <link rel="stylesheet" type="text/scss" href="styles/downloading.scss" />
-    <link rel="stylesheet" type="text/scss" href="styles/uploading.scss" />
+    <link rel="stylesheet" type="text/scss" href="styles/react-tooltip-overrides.scss" />
 
   </head>
   <body>
@@ -23,14 +24,15 @@
     <div id="root">
     </div>
 
+    <!-- Main applictaion in React -->
+    <script type="application/javascript" src="index.js" charset="utf-8"></script>
+
     <!-- Show all the logs in the Developper tool console -->
     <script type="application/javascript">localStorage.debug = null</script>
     <script>window.$ = window.jQuery = require('jquery')</script>
     <script>window.Tether = require('tether')</script>
+    <script>window.Popper = require('popper.js')</script>
     <script type="application/javascript" src="../node_modules/bootstrap/dist/js/bootstrap.js"></script>
-
-    <!-- Main applictaion in React -->
-    <script type="application/javascript" src="index.js" charset="utf-8"></script>
 
   </body>
 </html>

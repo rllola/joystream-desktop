@@ -7,6 +7,8 @@ var Common = require('../../../Common')
 var ConnectionInnerState = require('joystream-node').ConnectionInnerState
 var commitmentToOutput = require('joystream-node').paymentChannel.commitmentToOutput
 
+var StartPaidDownloadViability = require('../../../../StartPaidDownloadViability')
+
 var Started = new BaseMachine({
 
     initialState: "Uninitialized",
@@ -19,11 +21,13 @@ var Started = new BaseMachine({
 
             _onEnter : function(client) {
 
-                // We reset suitable sellers set, since
+                // We reset viability,since
                 // we have not been handling `processPeerPluginsStatuses`
-                // by calling filterSuitableSellers in an any other state.
-                client.store.setSuitableSellers(null)
-                client.suitableSellers = null
+                // by calling `computeStartPaidDownloadViability` in an any other state.
+                let defaultViability = new StartPaidDownloadViability.NoJoyStreamPeerConnections()
+
+                client.store.setStartPaidDownloadViability(defaultViability)
+                client.viability = defaultViability
 
             },
 
@@ -41,24 +45,33 @@ var Started = new BaseMachine({
                 client.updateBuyerTerms(buyerTerms)
             },
 
+            processSentPayment  : function (client, alert) {
+              client.store.setBuyerSpent(alert.pid, alert.totalAmountPaid)
+            },
+
+            processBuyerTermsUpdated: function (client, terms) {
+                client.store.setBuyerPrice(terms)
+            },
+
             processPeerPluginStatuses: function(client, statuses) {
+
                 // Update peer list
                 Common.processPeerPluginStatuses(client, statuses)
 
                 // Figure out if there are suitable sellers in sufficient amount
-                let suitableSellers = filterSuitableSellers(statuses, client.buyerTerms.minNumberOfSellers)
+                let viability = computeStartPaidDownloadViability(statuses, client.buyerTerms.minNumberOfSellers)
 
                 // Update store
-                client.store.setSuitableSellers(suitableSellers)
+                client.store.setStartPaidDownloadViability(viability)
 
-                // and store on client
-                client.suitableSellers = suitableSellers
+                // Store on client, we have to keep around, since we dont keep status around
+                client.viability = viability
             },
 
             startPaidDownload : function (client) {
 
                 // Check that we can actually start
-                if(!client.suitableSellers)
+                if(!(client.viability instanceof StartPaidDownloadViability.Viable))
                     return
 
                 let peerComparer = function (sellerA, sellerB) {
@@ -68,7 +81,7 @@ var Started = new BaseMachine({
                 }
 
                 // Sort suitable sellers using `peerComparer` function
-                var sortedSellers = client.suitableSellers.sellers.sort(peerComparer)
+                var sortedSellers = client.viability.suitableAndJoined.sort(peerComparer)
 
                 // Pick actual sellers to use
                 var pickedSellers = sortedSellers.slice(0, client.buyerTerms.minNumberOfSellers)
@@ -163,9 +176,10 @@ var Started = new BaseMachine({
 
             // NB: We don't handleSequence peer plugin statuses
 
-            paidDownloadInitiationCompleted : function (client, err, res) {
+            paidDownloadInitiationCompleted : function (client, alert) {
 
-                if (err) {
+              // NB: Joystream alert never throw error. Need to be added in extension-cpp
+                if (alert.error) {
 
                     // Tell user about failure
                     client.paidDownloadInitiationFailed(err)
@@ -183,31 +197,66 @@ var Started = new BaseMachine({
 
 })
 
-function filterSuitableSellers(statuses, minimumNumber) {
+function computeStartPaidDownloadViability(statuses, minimumNumber) {
 
-    var sellers = []
+    // Statuses for:
 
+    // all JoyStream peers
+    var joyStreamPeers = []
+
+    // all JoyStream seller mode peers
+    var sellerPeers = []
+
+    // all JoyStream (seller mode peers) invited, including
+    var invited = []
+
+    // all joined sellers
+    var joined = []
+
+    // Classify our peers w.r.t. starting a paid download
     for(var i in statuses) {
 
         var s = statuses[i]
 
-        // Check that connection with peer is in the right state,
-        // which also implies that terms are compatible
-        if(s.connection && s.connection.innerState === ConnectionInnerState.PreparingContract)
-            sellers.push(s)
-    }
+        // If its a joystream peer
+        if(s.connection) {
 
-    if(sellers.length < minimumNumber)
-        return null
-    else {
+            // then keep hold on to it
+            joyStreamPeers.push(s)
 
-        var estimate = 0
+            // If its a seller
+            if(s.connection.announcedModeAndTermsFromPeer.seller) {
 
-        return {
-            sellers: sellers,
-            estimate: estimate
+                // then hold on to it
+                sellerPeers.push(s)
+
+                // If seller has been invited
+                if(s.connection.innerState === ConnectionInnerState.WaitingForSellerToJoin ||
+                    s.connection.innerState === ConnectionInnerState.PreparingContract) {
+
+                    // then hold on to it
+                    invited.push(s)
+
+                    // Check if seller actually joined
+                    if(s.connection.innerState === ConnectionInnerState.PreparingContract)
+                        joined.push(s)
+                }
+            }
+
         }
+
     }
+
+    if(joyStreamPeers.length === 0)
+        return new StartPaidDownloadViability.NoJoyStreamPeerConnections()
+    else if(sellerPeers.length === 0)
+        return new StartPaidDownloadViability.NoSellersAmongJoyStreamPeers(joyStreamPeers)
+    else if(invited.length < minimumNumber)
+        return new StartPaidDownloadViability.InSufficientNumberOfSellersInvited(invited)
+    else if(joined.length < minimumNumber)
+        return new StartPaidDownloadViability.InSufficientNumberOfSellersHaveJoined(joined, invited)
+    else // NB: Later add estimate here using same peer selection logic found in startPaidDownload input above
+        return new StartPaidDownloadViability.Viable(joined, 0)
 }
 
 module.exports = Started

@@ -2,13 +2,18 @@
  * Created by bedeho on 15/05/17.
  */
 
+import btcConvert from 'bitcoin-convert'
+import bytes from 'bytes'
+import humanizeDuration from 'humanize-duration'
 
+/**
 const BitcoinUnit = {
     BTC : 0,
     mBTC : 1,
     uBTC : 2,
-    Satoshi : 3
+    Satoshis : 3
 }
+
 
 class BitcoinQuantity {
 
@@ -35,61 +40,232 @@ class BitcoinQuantity {
         // compact in what sense?
     }
 }
+ */
 
 /**
  * Most compact Bitcoin unit string for given representation
  *
  * Comment: yes, this is quite hacky, but couldn´ find
  * a suitable thing for it, replace in the future.
- *
- * @param quantity
- * @param units
  */
-function getCompactBitcoinUnits (quantity, units) {
-
+function getCompactBitcoinUnits(satoshis) {
+    
+    let value = 0
+    let unit = null
+    
+    switch (Math.ceil(Math.log(satoshis + 1) / Math.LN10)) {
+        case 1:
+        case 2:
+            value = satoshis
+            unit = 'sat'
+            break
+        case 3:
+        case 4:
+        case 5:
+            if (satoshis % 100 === 0) {
+                value = btcConvert(satoshis, 'Satoshi', 'μBTC')
+            } else {
+                value = btcConvert(satoshis, 'Satoshi', 'μBTC').toFixed(2)
+            }
+            unit = 'bits' //'μBTC'
+            break
+        case 6:
+        case 7:
+        case 8:
+            if (satoshis % 100000 === 0) {
+                value = btcConvert(satoshis, 'Satoshi', 'mBTC')
+            } else {
+                value = btcConvert(satoshis, 'Satoshi', 'mBTC').toFixed(2)
+            }
+            unit = 'mBTC'
+            break
+        default:
+            if (satoshis % 100000000 === 0) {
+                value = btcConvert(satoshis, 'Satoshi', 'BTC')
+            } else {
+                value = btcConvert(satoshis, 'Satoshi', 'BTC').toFixed(2)
+            }
+            unit = 'BTC'
+            break
+    }
+    
     return {
-        quantity : quantity,
-        units : units
+        value : value,
+        unit : unit
     }
-
-    /**
-
-    if(!(Number.isInteger(quantity) && quantity >= 0))
-        throw Error('Quantity must be non-negative integer')
-
-    var result = {
-        number : quantity,
-        units : units
-    }
-
-    supported_units = btcConvert.units()
-
-
-    var length_of_shortest_representation = "" + toNumber
-    for(u in supporter_units) {
-
-        var num = btcConvert (quantity, units, u, 'Number')
-        var num_as_string = "" + num
-
-        if(num_as_string.length < length_of_shortest_representation) {
-
-        }
-    }
-
-    // no match ?
-    // throw
-
-    return result
-     */
 }
 
-function getCompactBitcoinUnitString(quantity, units) {
+function getCompactBitcoinUnitsString(satoshis) {
 
     // Find most compact representation
-    var result = compactBitcoinUnits(quantity, units)
+    var result = compactBitcoinUnits(satoshis)
 
     // Convert to string and return
-    return result.quantity + " " + result.units
+    return result.value + " " + result.units
 }
 
-export {getCompactBitcoinUnits, getCompactBitcoinUnitString}
+/**
+ * Wrapper for bytes package, which gives units and value
+ * separately, as a result the unitSeparator option key is no
+ * longer supported
+ *
+ * @param value
+ * @param options
+ */
+function convenientBytes(value, options) {
+
+    let splittingToken = '?'
+
+    options = options || {}
+
+    options.unitSeparator = splittingToken
+
+    let representation = bytes(value, options)
+
+    let array = representation.split(splittingToken)
+
+    return {
+        value : array[0],
+        unit : array[1]
+    }
+}
+
+/**
+ *
+ * @param language
+ * @returns {{round: boolean, units: [string,string,string,string,string,string], language: string, languages: {shortEn: {y: languages.shortEn.y, mo: languages.shortEn.mo, w: languages.shortEn.w, d: languages.shortEn.d, h: languages.shortEn.h, m: languages.shortEn.m, s: languages.shortEn.s, ms: languages.shortEn.ms}}}}
+ */
+function standardHumanizeDurationOptions(language) {
+
+    // language ?
+
+    return {
+        round: true,
+        units: ['y', 'mo', 'w', 'd', 'h', 'm'],
+        language: 'shortEn',
+        languages: {
+            shortEn: {
+                y: function() { return 'y' },
+                mo: function() { return 'mo' },
+                w: function() { return 'w' },
+                d: function() { return 'd' },
+                h: function() { return 'h' },
+                m: function() { return 'm' },
+                s: function() { return 's' },
+                ms: function() { return 'ms' },
+            }
+        }
+    }
+}
+
+/**
+ *
+ * @param seconds
+ * @param options
+ * @returns {Array}
+ */
+function convenientHumanizeDuration(seconds, options) {
+
+    var delimiter = '-'
+    let valueUnitDelimiter = '?'
+
+    options = options || {}
+    options.spacer = valueUnitDelimiter // String to display between each value and unit.
+    options.delimiter = delimiter
+
+    // Factor out humanizer setup, instead get humanizer injected or something
+    let totalMilliseconds = seconds * 1000
+    var FullHumanizedString = humanizeDuration(totalMilliseconds, options)
+
+    // Trim off anything beyond second unit
+    var humanizedTokens = FullHumanizedString.split(delimiter)
+
+    var ETA = []
+
+    // split up each duration component into a value and unit component
+    for(var i = 0;i < humanizedTokens.length;i++) {
+
+        let array = humanizedTokens[i].split(valueUnitDelimiter)
+
+        ETA.push({
+            value: array[0],
+            unit: array[1]
+        })
+    }
+
+    return ETA
+}
+
+/**
+ * Validates non-negative integers
+ * @param n
+
+function isNonNegativeInteger(n) {
+    return Number.isInteger(n) && n >= 0
+}
+
+
+ * Human readable ETA for download of given number of bytes
+ * at a given rate.
+ *
+ * @param bytes {Number} Total number of bytes to be downloaded
+ * @param bytes_per_second {Numbre} Byte rate, per second, at which bytes are downloaded
+ * @param max_tokens {Number} Maximum number of tokens to be used in humanized string
+ */
+
+
+/**
+ *
+function convenientHumanizeDuration(seconds) {
+
+    var delimiter = '-'
+    let valueUnitDelimiter = '?'
+
+    // Factor out humanizer setup, instead get humanizer injected or something
+    var FullHumanizedETAString = humanizeDuration(total_ms, {
+        spacer: valueUnitDelimiter, // String to display between each value and unit.
+        delimiter: delimiter, //
+        round: true,
+        units: ['y', 'mo', 'w', 'd', 'h', 'm'],
+        language: 'shortEn',
+        languages: {
+            shortEn: {
+                y: function() { return 'y' },
+                mo: function() { return 'mo' },
+                w: function() { return 'w' },
+                d: function() { return 'd' },
+                h: function() { return 'h' },
+                m: function() { return 'm' },
+                s: function() { return 's' },
+                ms: function() { return 'ms' },
+            }
+        }
+    })
+
+    // Trim off anything beyond second unit
+    var humanizedTokens = FullHumanizedETAString.split(delimiter)
+
+    var ETA = []
+
+    // split up each duration component into a value and unit component
+    for(var i = 0;i < Math.min(max_tokens, humanizedTokens.length);i++) {
+
+        let array = humanizedTokens[i].split(valueUnitDelimiter)
+
+        ETA.push({
+            value: array[0],
+            unit: array[1]
+        })
+    }
+
+    return ETA
+}
+ */
+
+export {
+    getCompactBitcoinUnits,
+    getCompactBitcoinUnitsString,
+    convenientBytes,
+    convenientHumanizeDuration,
+    standardHumanizeDurationOptions
+}

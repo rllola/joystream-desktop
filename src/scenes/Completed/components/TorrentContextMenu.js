@@ -29,7 +29,6 @@ TorrentContextMenu.propTypes = {
     onRemoveClicked : PropTypes.func.isRequired,
     onRemoveAndDeleteDataClicked : PropTypes.func.isRequired,
     numberOfBuyers : PropTypes.number.isRequired,
-    numberOfSellers : PropTypes.number.isRequired,
     numberOfObservers : PropTypes.number.isRequired,
     numberOfNormalPeers : PropTypes.number.isRequired
 }

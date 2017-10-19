@@ -8,7 +8,7 @@ import TorrentToolbar from './TorrentToolbar'
 import TorrentContextMenu from './TorrentContextMenu'
 import ToolbarVisibilityType from '../../../utils/ToolbarVisibilityState'
 
-import AbsolutePositionChildren from '../../../common/AbsolutePositionChildren'
+import AbsolutePositionChildren from '../../../components/AbsolutePositionChildren/AbsolutePositionChildren'
 
 import { contextMenuHiddenState, contextMenuVisibleState, contextMenuRect } from '../../../utils/ContextMenuHelper'
 
@@ -65,7 +65,7 @@ class TorrentsTable extends Component {
     render() {
 
         return (
-            <Table column_titles={["", "Uploading", "Size", "Buyers", "Sellers", "Observers"]}>
+            <Table column_titles={["", "UPLOADING", "SIZE", "BUYERS"]}>
                 { this.getRenderedContextMenu() }
                 { this.getRenderedTorrentRows() }
             </Table>
@@ -84,7 +84,6 @@ class TorrentsTable extends Component {
                                     onRemoveClicked = {() => {this.state.contextMenu.torrent.remove(); this.hideContextMenu()}}
                                     onRemoveAndDeleteDataClicked = {() => {this.state.contextMenu.torrent.removeAndDeleteData(); this.hideContextMenu()}}
                                     numberOfBuyers = {this.state.contextMenu.torrent.numberOfBuyers}
-                                    numberOfSellers = {this.state.contextMenu.torrent.numberOfSellers}
                                     numberOfObservers = {this.state.contextMenu.torrent.numberOfObservers}
                                     numberOfNormalPeers = {this.state.contextMenu.torrent.numberOfNormalPeers}/>
             </AbsolutePositionChildren>
@@ -95,22 +94,26 @@ class TorrentsTable extends Component {
 
     getRenderedTorrentRows() {
 
-        return (this.props.torrents.map((t) => { return this.getRenderedTorrentRow(t) }))
+        return (this.props.torrents.map((t, index) => { return this.getRenderedTorrentRow(t, index % 2 === 0) }))
     }
 
-    getRenderedTorrentRow(t) {
+    getRenderedTorrentRow(t, isEven) {
 
         var toolbarProps = {
             onOpenFolderClicked : () => { t.openFolder() },
             onMoreClicked : (e) => { this.toolbarMoreButtonClicked(e, t) }
         }
 
+        let backgroundColor = isEven ? 'hsla(0, 0%, 93%, 1)' : 'white'
+
         return (
             <TorrentRow key={t.infoHash}
                         torrent={t}
                         toolbarVisibilityStatus = {this.getToolbarVisibilityTypeForTorrent(t)}
                         toolbarProps={toolbarProps}
-                        store={this.props.store} />
+                        store={this.props.store}
+                        backgroundColor={backgroundColor}
+            />
         )
     }
 

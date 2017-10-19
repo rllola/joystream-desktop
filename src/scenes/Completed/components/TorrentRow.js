@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import { Field, Row } from  '../../../components/Table'
 import { NameField, BytesField, IsUploading, PeerCountField} from '../../../components/RowFields'
 import TorrentToolbar from './TorrentToolbar'
-import AbsolutePositionChildren from '../../../common/AbsolutePositionChildren'
+import AbsolutePositionChildren from '../../../components/AbsolutePositionChildren/AbsolutePositionChildren'
 import ToolbarVisibilityType from '../../../utils/ToolbarVisibilityState'
 
 @observer
@@ -24,13 +24,12 @@ class TorrentRow extends Component {
     render(props) {
 
         return (
-            <Row className={this.props.toolbarVisibilityStatus == ToolbarVisibilityType.OnHover ? "row-managed-toolbar-visiblity" : ""}>
+            <Row className={this.props.toolbarVisibilityStatus == ToolbarVisibilityType.OnHover ? "row-managed-toolbar-visiblity" : ""}
+                 backgroundColor={this.props.backgroundColor}>
                 <NameField name={this.props.torrent.name}/>
-                <IsUploading uploading={this.props.torrent.canBeginUploading}/>
+                <IsUploading uploading={this.props.torrent.canEndUploading}/>
                 <BytesField bytes={this.props.torrent.totalSize}/>
                 <PeerCountField count={this.props.torrent.numberOfBuyers} />
-                <PeerCountField count={this.props.torrent.numberOfSellers} />
-                <PeerCountField count={this.props.torrent.numberOfObservers} />
                 { this.getRenderedToolbar() }
             </Row>
         )
@@ -41,7 +40,7 @@ class TorrentRow extends Component {
         return (
             this.props.toolbarVisibilityStatus != ToolbarVisibilityType.Hidden
             ?
-            <AbsolutePositionChildren left={-250} top={-20}>
+            <AbsolutePositionChildren left={-250} top={3}>
                 <TorrentToolbar {...this.props.toolbarProps} torrent={this.props.torrent} store={this.props.store} />
             </AbsolutePositionChildren>
             :

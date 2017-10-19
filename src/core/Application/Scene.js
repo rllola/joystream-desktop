@@ -9,7 +9,8 @@ var Scene = {
   Downloading : 2,
   Uploading : 3,
   Completed : 4,
-  ShuttingDown: 5
+  ShuttingDown: 5,
+  Community: 6
 }
 
 module.exports = Scene

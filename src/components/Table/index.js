@@ -5,7 +5,7 @@
 import Table from './Table'
 import Field, {ObserverField} from './Field'
 import Row from './Row'
+import Hint from './Hint'
 
 export default Table
-export {Field, ObserverField}
-export {Row}
+export {Field, ObserverField, Row, Hint}

@@ -1,5 +1,5 @@
 const electron = require('electron')
-const {app, BrowserWindow, ipcMain} = require('electron')
+const {app, BrowserWindow, ipcMain, crashReporter} = require('electron')
 const path = require('path')
 const url = require('url')
 const isDev = require('electron-is-dev')
@@ -49,6 +49,7 @@ ipcMain.on('main-window-channel', (event, arg) => {
     if(arg == 'user-closed-app') {
 
         // Exit application
+        updater.quit()
         app.quit()
     }
 
@@ -59,23 +60,8 @@ ipcMain.on('main-window-channel', (event, arg) => {
 ipcMain.on('set-bounds', (event, arg) => {
     // verify if window exist and if we are not already in fullscreen
     if (win && !win.isFullScreen()) {
-      let bounds = {
-        contentBounds: true,
-        x: null,
-        y: null,
-        width: arg.width,
-        height: arg.height
-      }
-
-      // Will get the primary screen of the user
-      const scr = electron.screen.getPrimaryDisplay()
-
-      // always start in center
-      bounds.x = Math.round(scr.workArea.x + (scr.workArea.width / 2) - (bounds.width / 2))
-      bounds.y = Math.round(scr.workArea.y + (scr.workArea.height / 2) - (bounds.height / 2))
-
       // Set the new window size
-      win.setBounds(bounds)
+      win.setContentSize(arg.width, arg.height)
   }
 })
 
@@ -97,21 +83,43 @@ ipcMain.on('power-save-blocker', (event, arg) => {
 
 function createWindow () {
 
+    if (isDev) {
+
+        // Enable live reloading : Needs to happen prior to `new BrowserWindow`
+        // https://github.com/electron/electron-compile/blob/master/README.md
+        enableLiveReload({strategy: 'react-hmr'})
+        enableLiveReload({strategy: 'react-hmr'})
+    }
+
   // Create the browser window.
   win = new BrowserWindow({
       width: 1200,
       height: 800,
-      minHeight: 500,
-      minWidth: 1200
+      minHeight: 700,
+      minWidth: 1200,
+      frame: true,
+      backgroundColor: '#1C262B', // same as rgb(28, 38, 43)
+      show : true
   })
 
+  /**
+  // Delay actually showing window until we are ready to show
+  // https://github.com/electron/electron/blob/master/docs/api/browser-window.md#showing-window-gracefully
+  win.once('ready-to-show', () => {
+    win.show()
+  })
+  */
+
   if (isDev) {
-    // Enable live reloading
-    // https://github.com/electron/electron-compile/blob/master/README.md
-    enableLiveReload({strategy: 'react-hmr'})
+
     // Open the DevTools.
     win.webContents.openDevTools()
+
   } else {
+
+    // Maximize window
+    win.maximize()
+
     // Handle squirrel event. Avoid calling for updates when install
     if(require('electron-squirrel-startup')) {
       console.log('Squirrel events handle')
@@ -123,6 +131,11 @@ function createWindow () {
     win.webContents.once("did-frame-finish-load", function (event) {
       updater.init()
     })
+
+    if (process.env.OPEN_DEVTOOLS) {
+      // Open the DevTools.
+      win.webContents.openDevTools()
+    }
   }
 
 
@@ -136,6 +149,13 @@ function createWindow () {
     slashes: true
   }))
 
+  crashReporter.start({
+    productName: "JoyStream",
+    companyName: "joystream",
+    submitURL: "https://joystream.sp.backtrace.io:6098/post?format=minidump&token=55e469c9e2258e7fd1b47a8ebd4bdc4ddc16b7521b18d3c34941fe186f660ca8",
+    uploadToServer: true
+  })
+
   // Emitted when the window is closed.
   win.on('closed', () => {
     // Dereference the window object, usually you would store windows
@@ -144,3 +164,36 @@ function createWindow () {
     win = null
   })
 }
+
+/**
+ * Component development app code
+ */
+
+let separateUpdateWindow = null
+
+// Listen for async message from renderer process
+ipcMain.on('component-development', (event, arg) => {
+
+    console.log(arg)
+
+    if(arg === 'open-updater-window') {
+
+        // Create the updater browser window.
+        separateUpdateWindow = new BrowserWindow({
+            width: 466,
+            height: 353,
+            fullscreen: false,
+            resizable: false,
+            frame: false,
+            show: true
+        })
+
+        separateUpdateWindow.loadURL(url.format({
+            pathname: path.join(__dirname, 'component-development/Updater/window.html'),
+            protocol: 'file:',
+            slashes: true
+        }))
+
+    }
+
+});
