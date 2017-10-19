@@ -30,7 +30,6 @@ function getStyles(props, state) {
     let borderBottomWidth = getBottomBorderWidth(state, props)
 
     let style = {
-        height : 'none',
         border : 'none',
         borderRadius : '15px',
         borderBottom : borderBottomWidth + 'px solid hsl(' + hsColorPart + ', ' + props.borderShadowLightingLevel + '%)',
@@ -39,8 +38,20 @@ function getStyles(props, state) {
         fontWeight: 'bold',
         fontSize: '28px',
         color: 'white',
-        height: props.height + 'px',
-        width: props.width + 'px'
+    }
+
+    if(props.height)
+        style.height = props.height + 'px'
+    else {
+        style.paddingLeft = '35px'
+        style.paddingRight = '35px'
+    }
+
+    if(props.width)
+        style.width = props.width + 'px'
+    else {
+        style.paddingTop = '20px'
+        style.paddingBottom = '20px'
     }
 
     // Add final override user styles
@@ -118,8 +129,8 @@ ElevatedAutoLitButton.propTypes = {
     elevationLevels: PropTypes.array,
 
     borderShadowLightingLevel : PropTypes.number,
-    height : PropTypes.number.isRequired,
-    width : PropTypes.number.isRequired,
+    height : PropTypes.number,
+    width : PropTypes.number,
 
 
     style : PropTypes.object,
