@@ -1,9 +1,10 @@
 const electron = require('electron')
-const {app, BrowserWindow, ipcMain, crashReporter} = require('electron')
+const {app, BrowserWindow, ipcMain, protocol, crashReporter} = require('electron')
 const path = require('path')
 const url = require('url')
 const isDev = require('electron-is-dev')
 const updater = require('./updater')
+const protocol = require('./protocol')
 
 import {enableLiveReload} from 'electron-compile'
 
@@ -84,6 +85,8 @@ ipcMain.on('power-save-blocker', (event, arg) => {
 })
 
 function createWindow () {
+
+    protocol.init()
 
     if (isDev) {
 
@@ -177,8 +180,6 @@ let separateUpdateWindow = null
 
 // Listen for async message from renderer process
 ipcMain.on('component-development', (event, arg) => {
-
-    console.log(arg)
 
     if(arg === 'open-updater-window') {
 
