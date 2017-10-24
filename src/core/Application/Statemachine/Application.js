@@ -53,6 +53,10 @@ var ApplicationStateMachine = new BaseMachine({
       syncProgressUpdated: function (client, progress, height) {
         client.store.setSpvChainSyncProgress(progress)
         client.store.setSpvChainHeight(height)
+      },
+
+      spvChainReset: function (client) {
+        client.store.setSpvChainSynced(false)
       }
     },
 
@@ -120,6 +124,10 @@ var ApplicationStateMachine = new BaseMachine({
       syncProgressUpdated: function (client, progress, height) {
         client.store.setSpvChainSyncProgress(progress)
         client.store.setSpvChainHeight(height)
+      },
+
+      spvChainReset: function (client) {
+        client.store.setSpvChainSynced(false)
       },
 
       addExampleTorrents: function (client) {

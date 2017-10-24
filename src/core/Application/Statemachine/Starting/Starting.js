@@ -40,6 +40,10 @@ var Starting = new BaseMachine({
             client.processStateMachineInput('syncProgressUpdated', progress, height)
           })
 
+          client.services.spvnode.on('reset', function () {
+            client.processStateMachineInput('spvChainReset')
+          })
+
           // default session settings
           var sessionSettings = {
             // network port libtorrent session will open a listening socket on

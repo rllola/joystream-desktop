@@ -76,6 +76,10 @@ class SPVNode extends EventEmitter {
       this.emit('synced', node.chain.height)
     })
 
+    node.chain.on('reset', () => {
+      this.emit('reset')
+    })
+
     node.chain.on('block', (block, entry) => {
       if (node.chain.total % 2000 === 0) {
         this.emit('syncProgress', node.chain.getProgress(), node.chain.tip.height)
