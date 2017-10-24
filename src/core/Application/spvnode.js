@@ -2,6 +2,37 @@ const bcoin = require('bcoin')
 const assert = require('assert')
 import { EventEmitter } from 'events'
 
+function overrideBcoinPoolHandleTxInv (pool) {
+  // bcoin's "co-routine" library
+  var co = bcoin.co
+
+  // We are choosing to only override the instance method rather than the prototype
+  pool.handleTXInv = co(function * handleTXInv (peer, hashes) {
+
+    // Make sure we only do this for spvnodes
+    assert(pool.options.spv)
+
+    // Override bcoin pool normal behaviour in spv mode => Allow handling of incoming tx to mempool during syncing
+    // This allows us to immedetialy start using unconfirmed balances and reflect it in the wallet
+    // The consequence is that if the tx is mined into a block we will not learn about it until after
+    // syncing completes.
+
+    // As far as I can tell this does not lower the security of the spvnode, because
+    // the validation performed on the incoming tx is no different than if an spvchain
+    // is fully synced. (extensive validation is done by the mempool, spvnode doesn't have an instance of a mempool)
+
+    assert(hashes.length > 0)
+
+    // bcoin's implementation
+    // if (this.syncing && !this.chain.synced) {
+    //    return
+    // }
+
+    // Queues a `getdata` request to be sent. Checks tx existence before requesting.
+    pool.ensureTX(peer, hashes)
+  })
+}
+
 class SPVNode extends EventEmitter {
 
   constructor (network, logLevel, walletPrefix) {
@@ -18,8 +49,7 @@ class SPVNode extends EventEmitter {
     const o = {
       prefix: this.walletPrefix,
       db: 'leveldb',
-      network: this.network || 'testnet',
-      requestMempool: true
+      network: this.network || 'testnet'
     }
 
     // Add a logger if log level is specified
@@ -53,6 +83,10 @@ class SPVNode extends EventEmitter {
       // node.pool.x?  what do peers report as the current tip of their longest chain?
       // it is sent in the version message when we connect to them
     })
+
+    // Ask for the mempool after syncing is done
+    // node.pool.network.requestMempool = true
+    overrideBcoinPoolHandleTxInv(node.pool)
 
     return node
   }
@@ -100,6 +134,10 @@ class SPVNode extends EventEmitter {
 
   async connect () {
     await this.node.connect()
+
+    // Request the mempool as soon as we connect?
+    // this.node.pool.sendMempool()
+
     this.node.startSync()
   }
 
