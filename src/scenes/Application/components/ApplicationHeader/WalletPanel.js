@@ -51,7 +51,7 @@ class BalancePanel extends Component {
         let style = getStyles(this.props)
 
         let representation = getCompactBitcoinUnits(this.props.applicationStore.unconfirmedBalance)
-        let balanceText = "UNCONFIRMED BALANCE"
+        let balanceText = "BALANCE"
 
         return (
             <div style={style.root}>
@@ -139,18 +139,20 @@ const WalletPanel = observer((props) => {
         }
     }
 
+    /*
+     * Commented out synching indicator
+    {
+     props.applicationStore.spvChainSynced ? null
+     : <SynchronizationProgressPanel applicationStore={props.applicationStore}
+                                     balanceColor={props.balanceColor}
+                                     subtitleColor={props.subtitleColor} />
+     } */
+
     return (
         <div style={styles.root}>
                 <BalancePanel applicationStore={props.applicationStore}
                       balanceColor={props.balanceColor}
                       subtitleColor={props.subtitleColor} />
-            /* {
-                props.applicationStore.spvChainSynced ? null
-                : <SynchronizationProgressPanel applicationStore={props.applicationStore}
-                                                balanceColor={props.balanceColor}
-                                                subtitleColor={props.subtitleColor} />
-
-             } */
             {props.children}
         </div>
     )
