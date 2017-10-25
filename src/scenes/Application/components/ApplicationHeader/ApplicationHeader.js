@@ -170,24 +170,15 @@ const ApplicationHeader = observer((props) => {
                                       buttonTitle="Ok"
                                       buttonClick={() => { props.app.onboardingStore.balanceExplanationAccepted() }} >
                             <div style={{ width : '400px'}}>
-
-                                <Section title={"Synchronization"}
-                                         text={<div>
-                                             Please wait for the initial synchronization to complete, no spending is possible before this is complete.
-                                             It may take up to <span style={{fontWeight : 'bold'}}>30 minutes</span> depending on your connection speed.
-
-                                         </div>
-                                         } />
-
-                                <SectionSpacer height={'20px'} />
-
                                 <Section title="Testnet coins"
                                          text={
                                             <div>
                                                 We are sending you free <span style={{fontWeight : 'bold'}}>testnet</span> coins promptly, and your unconfirmed balance is visible here.
+                                                Once you see a balance in your wallet you will be able to do paid speedups on torrents.
                                             </div>
                                          }
                                 />
+                                <SectionSpacer height={'20px'} />
                             </div>
                         </ExplainerTip>
                     :

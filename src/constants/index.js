@@ -2,7 +2,7 @@ import path from 'path'
 import os from 'os'
 
 export const TELEGRAM_URL = "https://t.me/joinchat/CNyeUxHD9H56m3e_44hXIA"
-export const SLACK_URL = "http://slack.joystream.co"
+export const SLACK_URL = "http://slack.joystream.co:3000/"
 export const REDDIT_URL = "http://reddit.com/r/JoyStream"
 
 export const POST_TORRENT_UPDATES_INTERVAL = 3000
