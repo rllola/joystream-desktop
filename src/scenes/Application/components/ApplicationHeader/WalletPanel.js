@@ -141,21 +141,16 @@ const WalletPanel = observer((props) => {
 
     return (
         <div style={styles.root}>
-            {
-                props.applicationStore.spvChainSynced
-                ?
-                    <BalancePanel applicationStore={props.applicationStore}
-                                  balanceColor={props.balanceColor}
-                                  subtitleColor={props.subtitleColor}
-                    />
-                :
-                    <SynchronizationProgressPanel applicationStore={props.applicationStore}
-                                                  balanceColor={props.balanceColor}
-                                                  subtitleColor={props.subtitleColor}
+                <BalancePanel applicationStore={props.applicationStore}
+                      balanceColor={props.balanceColor}
+                      subtitleColor={props.subtitleColor} />
+            /* {
+                props.applicationStore.spvChainSynced ? null
+                : <SynchronizationProgressPanel applicationStore={props.applicationStore}
+                                                balanceColor={props.balanceColor}
+                                                subtitleColor={props.subtitleColor} />
 
-                    />
-
-            }
+             } */
             {props.children}
         </div>
     )
