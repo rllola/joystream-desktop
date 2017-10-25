@@ -144,13 +144,13 @@ const WalletPanel = observer((props) => {
                 <BalancePanel applicationStore={props.applicationStore}
                       balanceColor={props.balanceColor}
                       subtitleColor={props.subtitleColor} />
-            {
+            /* {
                 props.applicationStore.spvChainSynced ? null
                 : <SynchronizationProgressPanel applicationStore={props.applicationStore}
                                                 balanceColor={props.balanceColor}
                                                 subtitleColor={props.subtitleColor} />
 
-            }
+             } */
             {props.children}
         </div>
     )
