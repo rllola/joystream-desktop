@@ -141,20 +141,13 @@ const Community = (props) => {
                     <TelegramSvgIcon />
                 </IconButton>
 
-                {
-                    /** Disabled until slack onboarding works
+                <div style={styles.iconSpacer}></div>
 
-                    <div style={styles.iconSpacer}></div>
-
-                    < IconButton iconStyle={styles.svgIcon}
-                    style={styles.iconButton}
-                    onClick={() => { props.store.slackClicked()}}>
-                    <SlackIcon />
-                    </IconButton>
-
-                     */
-
-                }
+                < IconButton iconStyle={styles.svgIcon}
+                style={styles.iconButton}
+                onClick={() => { props.store.slackClicked()}}>
+                <SlackIcon />
+                </IconButton>
 
                 <div style={styles.iconSpacer}> </div>
 
