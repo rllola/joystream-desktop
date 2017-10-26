@@ -74,6 +74,7 @@ module.exports = {
     "categories": [
       "Utility"
     ],
+    "mimeType": ["application/x-bittorrent", "x-scheme-handler/magnet"],
     "bin" : "Joystream"
   },
   "electronInstallerDMG": {
