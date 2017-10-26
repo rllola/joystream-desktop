@@ -158,6 +158,10 @@ var ApplicationStateMachine = new BaseMachine({
               Common.addTorrent(client, settings)
           }
 
+      },
+
+      startDownloadWithTorrentFileFromMagnetUri: function (client) {
+        console.log('Add magnet URI collected from the magnet protocol')
       }
 
     },

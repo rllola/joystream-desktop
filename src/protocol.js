@@ -3,26 +3,24 @@ const { protocol } = require('electron')
 /**
  * Register the protocol handlers.
  **/
-function init() {
+function init () {
+  console.log('Init protocol !!')
 
   /**
   * Instruction when a protocol called the application.
-  * NOTE: What is the difference bewteen register and intercept ?
+  * NOTE: So we can do something like 'joystream://<info_hash>'
   */
-  protocol.registerStringProtocol('magnet', (request, callback) => {
-    console.log(request)
-  }, (error) => {
-    if (error) console.error('Failed to register protocol')
-  })
-
+  protocol.registerStringProtocol('joystream', protocolCallback, protocolError)
 }
 
-function protocolMagnetCallback (request, callback) {
+function protocolCallback (request, callback) {
   console.log(request)
+
+  callback({data: request.url})
 }
 
-function protocolMagnetError () {
+function protocolError (error) {
   if (error) console.error('Failed to register protocol')
 }
 
-exports.default = { init }
+export { init }

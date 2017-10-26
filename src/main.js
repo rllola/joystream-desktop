@@ -1,5 +1,5 @@
 const electron = require('electron')
-const {app, BrowserWindow, ipcMain, protocol, crashReporter} = require('electron')
+const {app, BrowserWindow, ipcMain, crashReporter} = require('electron')
 const path = require('path')
 const url = require('url')
 const isDev = require('electron-is-dev')
@@ -86,6 +86,7 @@ ipcMain.on('power-save-blocker', (event, arg) => {
 
 function createWindow () {
 
+    // Not really usefull for now :)
     protocol.init()
 
     if (isDev) {

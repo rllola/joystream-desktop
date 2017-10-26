@@ -7,6 +7,7 @@
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
+    "start-magnet": "electron-forge start -- magnet:?xt=urn:btih:6a9759bffd5c0af65319979fb7832189f4f3c35d&dn=sintel.mp4",
     "component-development": "env COMPONENT_DEVELOPMENT_MODE=True NODE_ENV=development electron-forge start",
     "force-onboarding": "env FORCE_ONBOARDING=True NODE_ENV=development electron-forge start",
     "test": "xvfb-maybe electron-mocha renderer --recursive ./test",
