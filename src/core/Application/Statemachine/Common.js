@@ -5,6 +5,8 @@
 //const TorrentState = require('joystream-node').TorrentState
 const TorrentInfo = require('joystream-node').TorrentInfo
 const assert = require('assert')
+const magnet = require('magnet-uri')
+const isDev = require('electron-is-dev')
 import {remote} from 'electron'
 import path from 'path'
 const {shell} = require('electron')
@@ -51,7 +53,9 @@ function addTorrent(client, settings) {
     })
 
     // settings.metadata has to be a TorrentInfo object
-    assert(settings.metadata instanceof TorrentInfo)
+    if (settings.metadata) {
+      assert(settings.metadata instanceof TorrentInfo)
+    }
 
     if (settings.resumeData) {
         var resumeData = Buffer.from(settings.resumeData, 'base64')
@@ -144,6 +148,32 @@ function removeTorrent(client, infoHash, deleteData) {
 
 }
 
+function isMagnetUri (stringToCheck) {
+  if (stringToCheck) {
+    return stringToCheck.startsWith('magnet')
+  }
+  return false
+}
+
+function hasMagnetUri () {
+
+  let magnetLink = null
+
+  if (isDev) {
+    // Get the magnet link if exist
+    if (isMagnetUri(remote.process.argv[2])) {
+      magnetLink = remote.process.argv[2]
+    }
+  } else {
+    // Get the magnet link if exist
+    if (isMagnetUri(remote.process.argv[1])) {
+      magnetLink = remote.process.argv[1]
+    }
+  }
+
+  return magnetLink
+}
+
 function showNativeTorrentFilePickerDialog () {
 
     return remote.dialog.showOpenDialog({
@@ -154,6 +184,24 @@ function showNativeTorrentFilePickerDialog () {
         ],
         properties: ['openFile']}
     )
+}
+
+function getSettingsFromMagnetUri (magnetUri, defaultSavePath) {
+
+    let terms = getStandardBuyerTerms()
+    var parsed = magnet.decode(magnetUri)
+
+    return {
+        infoHash: parsed.infoHash,
+        url: magnetUri,
+        resumeData : null,
+        savePath: defaultSavePath,
+        name: parsed.infoHash,
+        deepInitialState: TorrentStatemachine.DeepInitialState.DOWNLOADING.UNPAID.STARTED,
+        extensionSettings : {
+            buyerTerms: terms
+        }
+    }
 }
 
 function getStartingDownloadSettings(torrentInfo, defaultSavePath) {
@@ -220,7 +268,9 @@ export {
     getStandardSellerTerms,
     addTorrent,
     removeTorrent,
+    hasMagnetUri,
     showNativeTorrentFilePickerDialog,
+    getSettingsFromMagnetUri,
     getStartingDownloadSettings,
     getStartingUploadSettings
 }

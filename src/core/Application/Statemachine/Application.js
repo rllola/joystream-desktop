@@ -74,6 +74,12 @@ var ApplicationStateMachine = new BaseMachine({
         })
 
         Doorbell.load()
+
+        // Do we have queued torrent that need to be loaded ?
+        let magnetUri = Common.hasMagnetUri()
+        if (magnetUri) {
+          client.processStateMachineInput('startDownloadWithTorrentFileFromMagnetUri', magnetUri)
+        }
       },
 
       stop: function (client) {
@@ -160,8 +166,13 @@ var ApplicationStateMachine = new BaseMachine({
 
       },
 
-      startDownloadWithTorrentFileFromMagnetUri: function (client) {
+      startDownloadWithTorrentFileFromMagnetUri: function (client, magnetUri) {
         console.log('Add magnet URI collected from the magnet protocol')
+
+        let settings = Common.getSettingsFromMagnetUri(magnetUri, client.directories.defaultSavePath())
+
+        Common.addTorrent(client, settings)
+
       }
 
     },

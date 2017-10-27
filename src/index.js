@@ -4,7 +4,7 @@ process.env.BCOIN_NO_NATIVE = '1'
 
 // Disable workers which are not available in electron
 require('bcoin').set({ useWorkers: false })
-import {ipcRenderer, webFrame, remote} from 'electron'
+import {ipcRenderer, webFrame} from 'electron'
 
 // babel-polyfill for generator (async/await)
 import 'babel-polyfill'
@@ -29,28 +29,13 @@ injectTapEventPlugin()
 
 const application = new Application()
 
-function isMagnetUri (stringToCheck) {
-  if (stringToCheck) {
-    return stringToCheck.startsWith('magnet')
-  }
-  return false
-}
-
 function render (store) {
-
-  console.log(remote.process.argv)
 
   // NB: We have to re-require Application every time, or else this won't work
   const ApplicationScene = require('./scenes/Application').default
 
   if (isDev) {
     const AppContainer = require('react-hot-loader').AppContainer
-
-    // Get the magnet link if exist
-    if (isMagnetUri(process.argv[2])) {
-      let magnetLink = process.argv[2]
-
-    }
 
     ReactDOM.render(
       <AppContainer>
@@ -60,11 +45,6 @@ function render (store) {
       document.getElementById('root')
     )
   } else {
-
-    // Get the magnet link if exist
-    if (isMagnetUri(process.argv[1])) {
-      let magnetLink = process.argv[1]
-    }
 
     ReactDOM.render(
       <ApplicationScene store={store} />,
