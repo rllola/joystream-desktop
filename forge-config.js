@@ -63,7 +63,10 @@ module.exports = {
   },
   "electronWinstallerConfig": {
     "name": "Joystream",
+    //The ICO file to use as the icon for the generated Setup.exe
     "setupIcon": "src/assets/appicon/icon.ico",
+    // ICO file to use as the application icon (displayed in Control Panel > Programs and Features). Defaults to the Atom icon.
+    "iconUrl": "https://download.joystream.co/appicon/icon.ico",
     "loadingGif": "src/assets/img/windows-installer-screen.png",
     "certificateFile": getSigningCertFilePath(),
     "certificatePassword": getSigningCertPassword()
