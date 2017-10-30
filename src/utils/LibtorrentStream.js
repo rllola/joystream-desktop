@@ -1,4 +1,5 @@
 import { Readable } from 'stream'
+import assert from 'assert'
 
 // Libtorrent highest piece priority value.
 const HIGH_PRIORITY = 7
@@ -35,6 +36,8 @@ const NORMAL_PRIORITY = 4
      this.fileSize = fileStorage.fileSize(fileIndex)
      this.fileOffset = fileStorage.fileOffset(fileIndex)
 
+     this._numberOfPieces = torrentInfo.numPieces()
+
      var start = (opts && opts.start) || 0
      var end = (opts && opts.end && opts.end < this.fileSize)
        ? opts.end
@@ -47,6 +50,8 @@ const NORMAL_PRIORITY = 4
 
      // The current piece needed
      this._piece = this._startPiece
+
+     assert(this._piece < this._numberOfPieces)
 
      // The offset in the current piece requested. Might bee needed when seeking
      // in the video and asking for bytes that doesn't specificaly correspond with a
@@ -75,6 +80,12 @@ const NORMAL_PRIORITY = 4
    _getCriticalPieces (index, criticalLength) {
      for ( var i = 0; i < criticalLength; i++ ) {
        var nextCriticalPiece = index + i
+
+       // make sure we are within valid range of pieces
+       if (nextCriticalPiece >= this._numberOfPieces) {
+         return
+       }
+
        if (!this._torrent.handle.havePiece(nextCriticalPiece)) {
          this._torrent.handle.piecePriority(nextCriticalPiece, HIGH_PRIORITY)
          this._prioritizedPieces.push(nextCriticalPiece)
@@ -113,8 +124,7 @@ const NORMAL_PRIORITY = 4
        // Push the data to the stream
        this.push(piece.buffer)
 
-       // We have transfered the all file.
-       if (this._missing === 0) {
+       if (this._missing === 0 || this._piece >= this._numberOfPieces) {
          // "Passing chunk as null signals the end of the stream (EOF), after which no more data can be written."
          this.push(null)
        }
@@ -124,7 +134,7 @@ const NORMAL_PRIORITY = 4
    // `size` is optional.
   _read (size) {
     // We don't have no more piece to read...
-    if (this._missing === 0) return
+    if (this._missing === 0 || this._piece >= this._numberOfPieces) return
     if (!this._torrent.handle.havePiece(this._piece)) {
       // Get the next pieces quickly to avoid waiting for the next frame.
       this._getCriticalPieces(this._piece, this._criticalLength)
