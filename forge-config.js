@@ -42,7 +42,7 @@ module.exports = {
   },
   "electronPackagerConfig": {
     "asar": true,
-    "icon": "src/assets/icons/appicon_128x128",
+    "icon": "src/assets/appicon/icon",
     "protocol": [
       "joystream",
       "magnet"
@@ -63,13 +63,16 @@ module.exports = {
   },
   "electronWinstallerConfig": {
     "name": "Joystream",
-    "setupIcon": "src/assets/icons/appicon_128x128.ico",
+    //The ICO file to use as the icon for the generated Setup.exe
+    "setupIcon": "src/assets/appicon/icon.ico",
+    // ICO file to use as the application icon (displayed in Control Panel > Programs and Features). Defaults to the Atom icon.
+    "iconUrl": "https://download.joystream.co/appicon/icon.ico",
     "loadingGif": "src/assets/img/windows-installer-screen.png",
     "certificateFile": getSigningCertFilePath(),
     "certificatePassword": getSigningCertPassword()
   },
   "electronInstallerDebian": {
-    "icon": "src/assets/icons/appicon_128x128.png",
+    "icon": "src/assets/appicon/icon.png",
     "categories": [
       "Utility"
     ],
@@ -77,7 +80,7 @@ module.exports = {
   },
   "electronInstallerDMG": {
     "background":"src/assets/img/osx-installer-screen.png",
-    "icon": "src/assets/icons/appicon_128x128.png",
+    "icon": "src/assets/appicon/icon.png",
     "icon-size": 128,
     "format": "UDZO",
     "contents": [
