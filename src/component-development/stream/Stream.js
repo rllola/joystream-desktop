@@ -1,17 +1,37 @@
 import React, { Component } from 'react'
-import { Session, TorrentInfo, TorrentState } from 'joystream-node'
 import {ScenarioContainer} from '../common'
-import os from 'os'
-import path from 'path'
-import VideoPlayer from '../../components/VideoPlayer'
+import VideoPlayer, {TorrentStreamProgress} from '../../components/VideoPlayer'
 
-class StreamScenario extends Component {
+var MediaPlayerStore = require('../../core/MediaPlayerStore')
+var TorrentStore = require('../../core/Torrent/TorrentStore').default
+
+class StreamScenarios extends Component {
+
   constructor () {
     super()
 
     this.state = {
-      videoPlayer: false
+      videoPlayer: false,
+      mediaPlayerStore : new MediaPlayerStore(MediaPlayerStore.MEDIA_SOURCE_TYPE.STREAMING_TORRENT,
+          new TorrentStore(
+              null,
+              null,
+              null,
+              null,
+              'Active.DownloadIncomplete',
+              null,
+              null,
+              1024*78,
+              1024*3),
+          {},
+          10,
+          false,
+          () => { console.log('mediaPlayerWindowSizeFetcher')},
+          () => { console.log('mediaPlayerWindowSizeUpdater')},
+          () => { console.log('powerSavingBlocker')},
+          () => { console.log('showDoorbellWidget')})
     }
+
   }
 
   handleClick (event) {
@@ -33,22 +53,33 @@ class StreamScenario extends Component {
       height: '100%'
     }
 
+    let styles = {
+        streamProgressContainer : {
+            marginTop : '20px',
+            height : '600px',
+            display : 'flex',
+            alignItems : 'center',
+            justifyContent : 'center',
+            backgroundColor : 'black'
+        }
+    }
+
     return (
       <div>
           <ScenarioContainer title="Stream" subtitle="stream sintel video">
-            <div style={blockStyle} >
-              <h1>Some scenes here</h1>
-              <br/>
-              <br/>
-              <button onClick={this.handleClick.bind(this)}>Play</button>
-              {this.state.videoPlayer ? <VideoPlayer closeVideoPlayer={this.handleClose.bind(this)} /> : null}
-              <br/>
-              <br/>
-            </div>
+              <div style={blockStyle}>
+                  <button onClick={this.handleClick.bind(this)}>Play</button>
+                  {this.state.videoPlayer ? <VideoPlayer closeVideoPlayer={this.handleClose.bind(this)}/> : null}
+              </div>
           </ScenarioContainer>
+
+          <div style={styles.streamProgressContainer}>
+              <TorrentStreamProgress mediaPlayerStore={this.state.mediaPlayerStore} />
+          </div>
       </div>
     )
   }
+
 }
 
-export default StreamScenario
+export default StreamScenarios

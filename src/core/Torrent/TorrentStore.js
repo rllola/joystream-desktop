@@ -1,7 +1,7 @@
 import { observable, action, computed } from 'mobx'
-import electron from 'electron'
 import { BEPSupportStatus } from 'joystream-node'
-import StartPaidDownloadViability from '../../core/Torrent/StartPaidDownloadViability'
+import ViabilityOfPaidDownloadInSwarm from './ViabilityOfPaidDownloadingSwarm'
+import ViabilityOfPaidDownloadingTorrent from './ViabilityOfPaidDownloadingTorrent'
 
 class TorrentStore {
 
@@ -15,8 +15,11 @@ class TorrentStore {
      */
     @observable savePath
 
-    // Is playing video/audio
-    @observable isPlaying = null
+    /**
+     * **Temporary, needs be moved onto a pure view store later**
+     * {MediaPlayer} Store for currently active streamer on this torrent
+     */
+    @observable activeMediaPlayerStore
 
     // Seller minimum price for this torrent
     @observable sellerPrice
@@ -61,9 +64,10 @@ class TorrentStore {
     @observable numberOfNormalPeers
     @observable numberOfSeeders
 
-    @observable startPaidDownloadViability
+    @observable viabilityOfPaidDownloadInSwarm
 
-    constructor (torrent,
+    constructor (applicationStore,
+                 torrent,
                  infoHash,
                  savePath,
                  state,
@@ -79,12 +83,13 @@ class TorrentStore {
                  numberOfObservers,
                  numberOfNormalPeers,
                  numberOfSeeders,
-                 startPaidDownloadViability,
+                 viabilityOfPaidDownloadInSwarm,
                  sellerPrice,
                  sellerRevenue,
                  buyerPrice,
                  buyerSpent) {
 
+        this._applicationStore = applicationStore
         this._torrent = torrent
         this.infoHash = infoHash
         this.savePath = savePath
@@ -101,7 +106,7 @@ class TorrentStore {
         this.numberOfObservers = numberOfObservers ? numberOfObservers : 0
         this.numberOfNormalPeers = numberOfNormalPeers ? numberOfNormalPeers : 0
         this.numberOfSeeders = numberOfSeeders ? numberOfSeeders : 0
-        this.startPaidDownloadViability = startPaidDownloadViability ? startPaidDownloadViability : new StartPaidDownloadViability.NoJoyStreamPeerConnections()
+        this.viabilityOfPaidDownloadInSwarm = viabilityOfPaidDownloadInSwarm ? viabilityOfPaidDownloadInSwarm : new ViabilityOfPaidDownloadInSwarm.NoJoyStreamPeerConnections()
         this.sellerPrice = sellerPrice ? sellerPrice : 0
         this.sellerRevenue = sellerRevenue ? sellerRevenue : new Map()
         this.buyerPrice = buyerPrice ? buyerPrice : 0
@@ -245,13 +250,13 @@ class TorrentStore {
     }
 
     @action.bound
-    setStartPaidDownloadViability (startPaidDownloadViability) {
-        this.startPaidDownloadViability = startPaidDownloadViability
+    setViabilityOfPaidDownloadInSwarm (viabilityOfPaidDownloadInSwarm) {
+        this.viabilityOfPaidDownloadInSwarm = viabilityOfPaidDownloadInSwarm
     }
 
     @action.bound
-    setIsPlaying (playableFile) {
-      this.isPlaying = playableFile
+    setActiveMediaPlayerStore (activeMediaPlayerStore) {
+      this.activeMediaPlayerStore = activeMediaPlayerStore
     }
 
     @action.bound
@@ -377,6 +382,27 @@ class TorrentStore {
         return sum
     }
 
+    @computed get
+    viabilityOfPaidDownloadingTorrent() {
+
+        if(this.state.startsWith("Active.DownloadIncomplete.Unpaid.Stopped"))
+            return new ViabilityOfPaidDownloadingTorrent.Stopped()
+        else if(this.state.startsWith("Active.DownloadIncomplete.Paid"))
+            return new ViabilityOfPaidDownloadingTorrent.AlreadyStarted()
+        else if(!(this.viabilityOfPaidDownloadInSwarm instanceof ViabilityOfPaidDownloadInSwarm.Viable))
+            return new ViabilityOfPaidDownloadingTorrent.InViable(this.viabilityOfPaidDownloadInSwarm)
+        else {
+
+            // Here it must be that swarm is viable, by
+            // test in prior step
+
+            if(this._applicationStore.unconfirmedBalance == 0) // <== fix later to be a more complex constraint
+                return new ViabilityOfPaidDownloadingTorrent.InsufficientFunds(this.viabilityOfPaidDownloadInSwarm.estimate, this._applicationStore.unconfirmedBalance)
+            else
+                return new ViabilityOfPaidDownloadingTorrent.CanStart(this.viabilityOfPaidDownloadInSwarm.suitableAndJoined, this.viabilityOfPaidDownloadInSwarm.estimate)
+        }
+
+    }
 
     /// User actions
 
@@ -408,17 +434,6 @@ class TorrentStore {
         this._torrent.play(fileIndex)
     }
 
-    close () {
-        this._torrent.close()
-    }
-
-    // Will be triggered when the metadata of the video will be loaded
-    onLoadedMetadata (event) {
-      // Modify size here ?
-      electron.ipcRenderer.send('set-bounds', {width: event.target.videoWidth, height: event.target.videoHeight})
-      // enable power save blocker because we are watching a video
-      electron.ipcRenderer.send('power-save-blocker', {enable:true})
-    }
 }
 
 export default TorrentStore

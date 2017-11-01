@@ -1,3 +1,3 @@
-import StreamScenario from './Stream'
+import StreamScenarios from './Stream'
 
-export default StreamScenario
+export default StreamScenarios

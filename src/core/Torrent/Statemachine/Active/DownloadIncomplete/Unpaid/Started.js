@@ -7,7 +7,7 @@ var Common = require('../../../Common')
 var ConnectionInnerState = require('joystream-node').ConnectionInnerState
 var commitmentToOutput = require('joystream-node').paymentChannel.commitmentToOutput
 
-var StartPaidDownloadViability = require('../../../../StartPaidDownloadViability')
+var ViabilityOfPaidDownloadInSwarm = require('../../../../ViabilityOfPaidDownloadingSwarm')
 
 var Started = new BaseMachine({
 
@@ -21,13 +21,13 @@ var Started = new BaseMachine({
 
             _onEnter : function(client) {
 
-                // We reset viability,since
+                // We reset swarmViability,since
                 // we have not been handling `processPeerPluginsStatuses`
-                // by calling `computeStartPaidDownloadViability` in an any other state.
-                let defaultViability = new StartPaidDownloadViability.NoJoyStreamPeerConnections()
+                // by calling `computeViabilityOfPaidDownloadInSwarm` in an any other state.
+                let defaultViability = new ViabilityOfPaidDownloadInSwarm.NoJoyStreamPeerConnections()
 
-                client.store.setStartPaidDownloadViability(defaultViability)
-                client.viability = defaultViability
+                client.store.setViabilityOfPaidDownloadInSwarm(defaultViability)
+                client.swarmViability = defaultViability
 
             },
 
@@ -59,19 +59,19 @@ var Started = new BaseMachine({
                 Common.processPeerPluginStatuses(client, statuses)
 
                 // Figure out if there are suitable sellers in sufficient amount
-                let viability = computeStartPaidDownloadViability(statuses, client.buyerTerms.minNumberOfSellers)
+                let viability = computeViabilityOfPaidDownloadInSwarm(statuses, client.buyerTerms.minNumberOfSellers)
 
                 // Update store
-                client.store.setStartPaidDownloadViability(viability)
+                client.store.setViabilityOfPaidDownloadInSwarm(viability)
 
                 // Store on client, we have to keep around, since we dont keep status around
-                client.viability = viability
+                client.swarmViability = viability
             },
 
             startPaidDownload : function (client) {
 
                 // Check that we can actually start
-                if(!(client.viability instanceof StartPaidDownloadViability.Viable))
+                if(!(client.swarmViability instanceof ViabilityOfPaidDownloadInSwarm.Viable))
                     return
 
                 let peerComparer = function (sellerA, sellerB) {
@@ -81,7 +81,7 @@ var Started = new BaseMachine({
                 }
 
                 // Sort suitable sellers using `peerComparer` function
-                var sortedSellers = client.viability.suitableAndJoined.sort(peerComparer)
+                var sortedSellers = client.swarmViability.suitableAndJoined.sort(peerComparer)
 
                 // Pick actual sellers to use
                 var pickedSellers = sortedSellers.slice(0, client.buyerTerms.minNumberOfSellers)
@@ -197,7 +197,7 @@ var Started = new BaseMachine({
 
 })
 
-function computeStartPaidDownloadViability(statuses, minimumNumber) {
+function computeViabilityOfPaidDownloadInSwarm(statuses, minimumNumber) {
 
     // Statuses for:
 
@@ -248,15 +248,15 @@ function computeStartPaidDownloadViability(statuses, minimumNumber) {
     }
 
     if(joyStreamPeers.length === 0)
-        return new StartPaidDownloadViability.NoJoyStreamPeerConnections()
+        return new ViabilityOfPaidDownloadInSwarm.NoJoyStreamPeerConnections()
     else if(sellerPeers.length === 0)
-        return new StartPaidDownloadViability.NoSellersAmongJoyStreamPeers(joyStreamPeers)
+        return new ViabilityOfPaidDownloadInSwarm.NoSellersAmongJoyStreamPeers(joyStreamPeers)
     else if(invited.length < minimumNumber)
-        return new StartPaidDownloadViability.InSufficientNumberOfSellersInvited(invited)
+        return new ViabilityOfPaidDownloadInSwarm.InSufficientNumberOfSellersInvited(invited)
     else if(joined.length < minimumNumber)
-        return new StartPaidDownloadViability.InSufficientNumberOfSellersHaveJoined(joined, invited)
+        return new ViabilityOfPaidDownloadInSwarm.InSufficientNumberOfSellersHaveJoined(joined, invited)
     else // NB: Later add estimate here using same peer selection logic found in startPaidDownload input above
-        return new StartPaidDownloadViability.Viable(joined, 0)
+        return new ViabilityOfPaidDownloadInSwarm.Viable(joined, 0)
 }
 
 module.exports = Started

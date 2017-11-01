@@ -72,5 +72,3 @@ function render() {
         document.getElementById('root')
     )
 }
-
-window.render = render
