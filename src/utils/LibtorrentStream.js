@@ -39,6 +39,12 @@ const NORMAL_PRIORITY = 4
      const numberOfPieces = torrentInfo.numPieces()
 
      var start = (opts && opts.start) || 0
+
+     if (start >= this.fileSize || start < 0) {
+       // show we do this.push(null) to indicate EOF  instead of throwing?
+       throw new Error('start position out of range of file')
+     }
+
      // end byte is one past the end of the stream - it is used to calculate the number of bytes
      // that remain to be fetched
      var end = (opts && opts.end && opts.end < this.fileSize)
