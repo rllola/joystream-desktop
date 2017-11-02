@@ -39,8 +39,10 @@ const NORMAL_PRIORITY = 4
      const numberOfPieces = torrentInfo.numPieces()
 
      var start = (opts && opts.start) || 0
+     // end byte is one past the end of the stream - it is used to calculate the number of bytes
+     // that remain to be fetched
      var end = (opts && opts.end && opts.end < this.fileSize)
-       ? opts.end
+       ? opts.end + 1
        : this.fileSize
 
      var pieceLength = this.pieceLength
@@ -63,7 +65,7 @@ const NORMAL_PRIORITY = 4
      // Piece that has has high priority
      this._prioritizedPieces = []
 
-     this._missing = end - start + 1
+     this._missing = end - start
 
      // Should adapt itself to avoid latency
      this._criticalLength = Math.min((1024 * 1024 / pieceLength) | 0, 2) // Took from webtorrent
@@ -120,7 +122,10 @@ const NORMAL_PRIORITY = 4
          piece.buffer = piece.buffer.slice(0, this._missing)
        }
        this._missing -= piece.buffer.length
-       this._piece += 1
+
+       if (this._missing > 0) {
+         this._piece += 1
+       }
 
        // Push the data to the stream
        this.push(piece.buffer)
