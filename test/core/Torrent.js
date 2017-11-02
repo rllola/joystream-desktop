@@ -438,6 +438,7 @@ MockClient.prototype.resetSpies = function() {
     this.updateSellerTerms.reset()
     this.updateBuyerTerms.reset()
     this.updatePeerPluginStatus.reset()
+    this.getStandardSellerTerms.reset()
 }
 
 function fixtureToStartLoadingInput(fix, torrentInfo) {
