@@ -3,6 +3,9 @@
   * Improved media player
     - Paid boosting from player
     - Fix playing video near end of stream
-  * Bug Fixes - Connectivity Issues in protocol_session and extension
+    - Shows download speed and downloaded data as progress indicators
+  * Bug Fixes - Connectivity issues in protocol_session and extension
   * Use new JoyStream Logo
+  * Fix logo bug on Mac OSX
+
 
