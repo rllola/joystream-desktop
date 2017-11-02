@@ -72,24 +72,8 @@ function isStopped(s) {
         s == DeepInitialState.DOWNLOADING.UNPAID.STOPPED
 }
 
-function hideDoorbell () {
-  var doorbellButton = document.getElementById('doorbell-button')
-  if (doorbellButton) {
-    doorbellButton.style.display = 'none'
-  }
-}
-
-function showDoorbell () {
-  var doorbellButton = document.getElementById('doorbell-button')
-  if (doorbellButton) {
-    doorbellButton.style.display = 'block'
-  }
-}
-
 module.exports.processPeerPluginStatuses = processPeerPluginStatuses
 module.exports.isUploading = isUploading
 module.exports.isPassive = isPassive
 module.exports.isDownloading = isDownloading
 module.exports.isStopped = isStopped
-module.exports.hideDoorbell = hideDoorbell
-module.exports.showDoorbell = showDoorbell

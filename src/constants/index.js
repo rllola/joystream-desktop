@@ -33,3 +33,11 @@ export const EXAMPLE_TORRENTS = [
 // Not used - just keeping them here as hint to use in future
 //export const DEFAULT_TORRENT_FILE_SOURCE_LOCATION = os.homedir()
 //export const DEFAULT_SAVE_PATH= path.join(os.homedir(), 'joystream', 'download', path.sep)
+
+export const UI_CONSTANTS = {
+    primaryColor : '#496daf',
+    labelTextHighlightColor : 'hsl(219, 41%, 42%)',
+    darkPrimaryColor : 'hsla(219, 41%, 37%, 1)',
+    darkestPrimaryColor : 'hsla(219, 41%, 26%, 1)',
+    higlightColor : 'hsl(218, 41%, 30%)'
+}

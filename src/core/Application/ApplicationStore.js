@@ -296,12 +296,12 @@ class ApplicationStore {
     },0)
   }
 
-
   @computed get
-  isPlaying () {
+  activeMediaPlayerStore () {
+
     for ( var i = 0; i < this.torrents.length; i++) {
-      if (this.torrents[i].isPlaying !== null) {
-        return this.torrents[i]
+      if (this.torrents[i].activeMediaPlayerStore) {
+        return this.torrents[i].activeMediaPlayerStore
       }
     }
     return null

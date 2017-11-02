@@ -8,7 +8,7 @@ const Started = require('./Started/Started')
 const Stopping = require('./Stopping/Stopping')
 const TorrentInfo = require('joystream-node').TorrentInfo
 const Common = require('./Common')
-const Doorbell = require('../doorbell')
+const Doorbell = require('../../Doorbell')
 const exampleTorrents = require('../../../constants').EXAMPLE_TORRENTS
 const fs = require('fs')
 
@@ -73,10 +73,14 @@ var ApplicationStateMachine = new BaseMachine({
           client.processStateMachineInput('walletBalanceUpdated', balance)
         })
 
-        Doorbell.loadDoorbell()
+        Doorbell.load()
       },
 
       stop: function (client) {
+
+        // Hide prior to shut down
+        Doorbell.hide()
+
         this.go(client, 'Stopping/TerminatingTorrents')
       },
 

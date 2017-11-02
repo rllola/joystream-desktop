@@ -6,8 +6,10 @@ var BaseMachine = require('../../../BaseMachine')
 var DownloadIncomplete = require('./DownloadIncomplete')
 var FinishedDownloading = require('./FinishedDownloading')
 var Common = require('../Common')
+var Doorbell = require('../../../Doorbell')
 
-import File from '../../../../utils/File'
+var File = require('../../../../utils/File').default
+var MediaPlayerStore = require('../../../MediaPlayerStore')
 
 var Active = new BaseMachine({
 
@@ -29,11 +31,7 @@ var Active = new BaseMachine({
 
             play: function (client, fileIndex) {
 
-              var file = new File(client.torrent, fileIndex, false)
-
-              Common.hideDoorbell()
-
-              client.store.setIsPlaying(file)
+                startMediaPlayer(client, fileIndex, false)
             },
         },
 
@@ -42,14 +40,56 @@ var Active = new BaseMachine({
 
             play: function (client, fileIndex) {
 
-              var file = new File(client.torrent, fileIndex, true)
-
-              Common.hideDoorbell()
-
-              client.store.setIsPlaying(file)
+                startMediaPlayer(client, fileIndex, true)
             },
         }
     }
 })
+
+function startMediaPlayer(client, fileIndex, completed) {
+
+    var file = new File(client.torrent, fileIndex, completed)
+
+    // Hide feedback in player
+    Doorbell.hide()
+
+    console.log('startMediaPlayer')
+
+    // Create store for player
+    let mediaSourceType = completed ? MediaPlayerStore.MEDIA_SOURCE_TYPE.DISK : MediaPlayerStore.MEDIA_SOURCE_TYPE.STREAMING_TORRENT
+    const loadedSecondsRequiredForPlayback = 10
+    let autoPlay = true
+
+    let store = new MediaPlayerStore(mediaSourceType,
+                                    client.store,
+                                    file,
+                                    loadedSecondsRequiredForPlayback,
+                                    autoPlay,
+                                    mediaPlayerWindowSizeFetcher,
+                                    mediaPlayerWindowSizeUpdater,
+                                    powerSavingBlocker,
+                                    showDoorbellWidget)
+
+    // and set on torrent store
+    client.store.setActiveMediaPlayerStore(store)
+}
+
+var electron = require('electron')
+
+function mediaPlayerWindowSizeFetcher() {
+    return { width : window.innerWidth, height : window.innerHeight}
+}
+
+function mediaPlayerWindowSizeUpdater(bounds) {
+    electron.ipcRenderer.send('set-bounds', bounds)
+}
+
+function powerSavingBlocker(enable) {
+    electron.ipcRenderer.send('power-save-blocker', {enable: enable})
+}
+
+function showDoorbellWidget() {
+    Doorbell.show()
+}
 
 module.exports = Active

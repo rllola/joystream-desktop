@@ -58,10 +58,12 @@ ipcMain.on('main-window-channel', (event, arg) => {
 // Listen if we need to modify window size to fit video or going back to
 // application size
 ipcMain.on('set-bounds', (event, arg) => {
+
     // verify if window exist and if we are not already in fullscreen
     if (win && !win.isFullScreen()) {
+
       // Set the new window size
-      win.setContentSize(arg.width, arg.height)
+      win.setContentSize(arg.width, arg.height, true) // animate on Mac
   }
 })
 
@@ -84,6 +86,8 @@ ipcMain.on('power-save-blocker', (event, arg) => {
 function createWindow () {
 
     if (isDev) {
+
+        console.log('2xenableLiveReload')
 
         // Enable live reloading : Needs to happen prior to `new BrowserWindow`
         // https://github.com/electron/electron-compile/blob/master/README.md
