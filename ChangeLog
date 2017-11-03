@@ -1,0 +1,11 @@
+0.5.2 release - Thursday November 2nd 2017
+
+  * Improved media player
+    - Paid boosting from player
+    - Fix playing video near end of stream
+    - Shows download speed and downloaded data as progress indicators
+  * Bug Fixes - Connectivity issues in protocol_session and extension
+  * Use new JoyStream Logo
+  * Fix logo bug on Mac OSX
+
+

@@ -26,7 +26,7 @@ import VideoPlayerScene from '../VideoPlayer'
 //import Wallet from '../Wallet'
 import {WelcomeScreen, DepartureScreen} from '../OnBoarding'
 
-let MobxReactDevTools = require('mobx-react-devtools').default
+let MobxReactDevTools = isDev ? require('mobx-react-devtools').default : null
 
 function getStyles(props) {
 
