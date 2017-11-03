@@ -251,7 +251,8 @@ class ApplicationStatemachineClient {
                      sellerRevenue,
                      buyerPrice,
                      buyerSpent) => {
-        return new TorrentStore(null,
+        return new TorrentStore(applicationStore,
+                                null,
                                 infoHash,
                                 savePath,
                                 state,

@@ -6,7 +6,8 @@ var Loading = require('./Loading/Loading')
 var Active = require('./Active')
 var Common = require('./Common')
 var DeepInitialState = require('./DeepInitialState')
-var electron = require('electron')
+var Doorbell = require('../../Doorbell')
+
 const assert = require('assert')
 const {shell} = require('electron')
 
@@ -105,23 +106,6 @@ var Torrent = new BaseMachine({
                 }
 
                 client.broadcastRawTransaction(alert.settlementTx)
-            },
-            close: function (client) {
-
-              let bounds = {
-                width: 1024,
-                height: 800
-              }
-              // restore original bounds
-              // Should not be hardcoded (TODO)
-              electron.ipcRenderer.send('set-bounds', bounds)
-
-              // Disable save power blocker
-              electron.ipcRenderer.send('power-save-blocker', {enable:false})
-
-              Common.showDoorbell()
-
-              client.store.setIsPlaying(null)
             },
             openFolder: function (client) {
               shell.openItem(client.getSavePath())

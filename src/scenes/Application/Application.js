@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Provider, observer } from 'mobx-react'
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+const isDev = require('electron-is-dev')
 
 import Scene from '../../core/Application/Scene'
 
@@ -9,6 +10,8 @@ import Scene from '../../core/Application/Scene'
 import ApplicationHeader from './components/ApplicationHeader'
 import ApplicationStatusBar from './components/ApplicationStatusBar'
 import VideoPlayer from '../../components/VideoPlayer'
+
+import {UI_CONSTANTS} from '../../constants'
 
 // Our scenes
 import NotStartedScene from '../NotStarted'
@@ -18,22 +21,12 @@ import Downloading from '../Downloading'
 import Seeding from '../Seeding'
 import Completed from '../Completed'
 import Community from '../Community'
+import VideoPlayerScene from '../VideoPlayer'
 
 //import Wallet from '../Wallet'
 import {WelcomeScreen, DepartureScreen} from '../OnBoarding'
 
-let MobxReactDevTools
-if (process.env.NODE_ENV === 'development') {
-    MobxReactDevTools = require('mobx-react-devtools').default
-}
-
-var UI_CONSTANTS = {
-    primaryColor : '#496daf',
-    labelTextHighlightColor : 'hsl(219, 41%, 42%)',
-    darkPrimaryColor : 'hsla(219, 41%, 37%, 1)',
-    darkestPrimaryColor : 'hsla(219, 41%, 26%, 1)',
-    higlightColor : 'hsl(218, 41%, 30%)'
-}
+let MobxReactDevTools = isDev ? require('mobx-react-devtools').default : null
 
 function getStyles(props) {
 
@@ -60,32 +53,30 @@ class Application extends Component {
 
         return (
             <MuiThemeProvider>
-                <div style={styles.innerRoot}>
+                <Provider uiConstantsStore={UI_CONSTANTS}>
+                    <div style={styles.innerRoot}>
 
-                    { /* Onboarding scenes */ }
+                        { /* Onboarding scenes */ }
 
-                    <WelcomeScreen store={this.props.store} />
-                    <DepartureScreen store={this.props.store} />
+                        <WelcomeScreen store={this.props.store} />
+                        <DepartureScreen store={this.props.store} />
 
-                    <ApplicationStatusBar store={this.props.store} />
+                        <ApplicationStatusBar store={this.props.store} />
 
-                    {
-                            this.props.store.isPlaying
-                        ?
-                            this.renderVideoPlayer()
-                        :
-                            this.renderActiveScene()
-                    }
+                        <VideoPlayerScene store={this.props.store}/>
 
-                    {
-                            process.env.NODE_ENV === 'development'
-                        ?
-                            <div><MobxReactDevTools/></div>
-                        :
-                            null
-                    }
+                        { this.renderActiveScene() }
 
-                </div>
+                        {
+                                isDev
+                            ?
+                                <div><MobxReactDevTools/></div>
+                            :
+                                null
+                        }
+
+                    </div>
+                </Provider>
             </MuiThemeProvider>
         )
     }
@@ -155,15 +146,6 @@ class Application extends Component {
             default:
                 return null
         }
-    }
-
-    renderVideoPlayer () {
-
-      if (this.props.store.isPlaying) {
-        return (
-          <VideoPlayer file={this.props.store.isPlaying.isPlaying} torrent={this.props.store.isPlaying._torrent} />
-        )
-      }
     }
 }
 

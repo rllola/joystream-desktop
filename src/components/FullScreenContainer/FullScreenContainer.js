@@ -9,6 +9,7 @@ function getStyles(props) {
 
     return {
         root : Object.assign({
+            display : props.show ? 'block' : 'none',
             position: 'absolute',
             left: '0px',
             top: '0px',
@@ -35,8 +36,13 @@ const FullScreenContainer = (props) => {
 }
 
 FullScreenContainer.propTypes = {
+    show : PropTypes.bool,
     className : PropTypes.string,
     style : PropTypes.object
+}
+
+FullScreenContainer.defaultProps = {
+    show : true
 }
 
 export default FullScreenContainer

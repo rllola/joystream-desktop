@@ -1,4 +1,5 @@
 import { Readable } from 'stream'
+import assert from 'assert'
 
 // Libtorrent highest piece priority value.
 const HIGH_PRIORITY = 7
@@ -35,15 +36,29 @@ const NORMAL_PRIORITY = 4
      this.fileSize = fileStorage.fileSize(fileIndex)
      this.fileOffset = fileStorage.fileOffset(fileIndex)
 
+     const numberOfPieces = torrentInfo.numPieces()
+
      var start = (opts && opts.start) || 0
+
+     if (start >= this.fileSize || start < 0) {
+       // show we do this.push(null) to indicate EOF  instead of throwing?
+       throw new Error('start position out of range of file')
+     }
+
+     // end byte is one past the end of the stream - it is used to calculate the number of bytes
+     // that remain to be fetched
      var end = (opts && opts.end && opts.end < this.fileSize)
-       ? opts.end
+       ? opts.end + 1
        : this.fileSize
 
      var pieceLength = this.pieceLength
 
      this._startPiece = (start + this.fileOffset) / pieceLength | 0
      this._endPiece = (end + this.fileOffset) / pieceLength | 0
+
+     if (this._startPiece >= numberOfPieces || this._endPiece >= numberOfPieces) {
+       throw new Error('start or end piece out of range')
+     }
 
      // The current piece needed
      this._piece = this._startPiece
@@ -56,7 +71,8 @@ const NORMAL_PRIORITY = 4
      // Piece that has has high priority
      this._prioritizedPieces = []
 
-     this._missing = end - start + 1
+     this._missing = end - start
+
      // Should adapt itself to avoid latency
      this._criticalLength = Math.min((1024 * 1024 / pieceLength) | 0, 2) // Took from webtorrent
 
@@ -72,12 +88,16 @@ const NORMAL_PRIORITY = 4
     * @param {Integer} index : starting index that need hight priority
     * @param {Integer} criticalLength : numbers of pieces that need high priority
     */
-   _getCriticalPieces (index, criticalLength) {
-     for ( var i = 0; i < criticalLength; i++ ) {
-       var nextCriticalPiece = index + i
-       if (!this._torrent.handle.havePiece(nextCriticalPiece)) {
-         this._torrent.handle.piecePriority(nextCriticalPiece, HIGH_PRIORITY)
-         this._prioritizedPieces.push(nextCriticalPiece)
+   _getCriticalPieces (first) {
+     assert (first >= this._startPiece)
+     assert (first <= this._endPiece)
+
+     const last = first + Math.min(this._endPiece - first, this._criticalLength)
+
+     for (var i = first; i <= last; i++) {
+       if (!this._torrent.handle.havePiece(i)) {
+         this._torrent.handle.piecePriority(i, HIGH_PRIORITY)
+         this._prioritizedPieces.push(i)
        }
      }
    }
@@ -108,12 +128,14 @@ const NORMAL_PRIORITY = 4
          piece.buffer = piece.buffer.slice(0, this._missing)
        }
        this._missing -= piece.buffer.length
-       this._piece += 1
+
+       if (this._missing > 0) {
+         this._piece += 1
+       }
 
        // Push the data to the stream
        this.push(piece.buffer)
 
-       // We have transfered the all file.
        if (this._missing === 0) {
          // "Passing chunk as null signals the end of the stream (EOF), after which no more data can be written."
          this.push(null)

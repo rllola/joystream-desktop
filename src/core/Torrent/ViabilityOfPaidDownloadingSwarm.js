@@ -2,7 +2,9 @@
  * Created by bedeho on 14/10/2017.
  */
 
-//
+// We need to group all the inviable states, to support deeper
+// semantics in higher layers
+
 /**
  * There are no connections with peers having (a suitable version) of the JoyStream extension protocol
  * @constructor

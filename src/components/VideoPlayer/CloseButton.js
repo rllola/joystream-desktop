@@ -17,12 +17,12 @@ const CloseButton = observer((props) => {
   const onClick = () => { props.torrent.close() }
 
   return (
-    <a style={closeStyle} onClick={onClick}></a>
+    <a style={closeStyle} onClick={props.onClick}></a>
   )
 })
 
 CloseButton.propTypes = {
-    torrent : PropTypes.object.isRequired, // TorrentStore really
+    onClick : PropTypes.func.isRequired
 }
 
 export default CloseButton

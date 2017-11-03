@@ -10,7 +10,7 @@ import AlertDialog from './AlertDialog'
 import Downloading from './downloading'
 import LoadingSceneScenarios from './loading'
 import TerminatingSceneScenarios from './terminating'
-import StreamScenario from './stream'
+import StreamScenarios from './stream'
 import Seeding from './seeding'
 import Completed from './completed'
 import StartDownloadingFlowScenarios from './startDownloadingFlow'
@@ -77,7 +77,7 @@ const App = (props) => {
                         <Route path="/downloading" component={Downloading} />
                         <Route path="/completed" component={Completed}/>
                         <Route path="/seeding" component={Seeding}/>
-                        <Route path="/stream" component={StreamScenario} />
+                        <Route path="/stream" component={StreamScenarios} />
                         <Route path="/start_downloading_flow" component={ComponentWithStoreProp(StartDownloadingFlowScenarios, props)} />
                         <Route path="/application_header" component={ComponentWithStoreProp(ApplicationHeaderScenarios, props)} />
                         <Route path="/auto_updater" component={UpdaterFlow} />
