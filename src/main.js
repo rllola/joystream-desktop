@@ -73,8 +73,6 @@ ipcMain.on('set-bounds', (event, arg) => {
 ipcMain.on('power-save-blocker', (event, arg) => {
     const {enable, disable} = require('./power-save-blocker')
 
-    console.log(arg)
-
     if (arg.enable) {
       // Enable blocker
       enable()

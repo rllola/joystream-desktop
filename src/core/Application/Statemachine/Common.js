@@ -61,6 +61,7 @@ function addTorrent(client, settings) {
         var resumeData = Buffer.from(settings.resumeData, 'base64')
     }
 
+    // TODO: Need to have the settings.url handle here because settings.metadata is actually null.
     coreTorrent.startLoading(infoHash, settings.name, settings.savePath, resumeData, settings.metadata, settings.deepInitialState, settings.extensionSettings)
 
     client.torrents.set(infoHash, coreTorrent)
@@ -70,7 +71,8 @@ function addTorrent(client, settings) {
     let params = {
         name: settings.name,
         savePath: settings.savePath,
-        ti: settings.metadata
+        ti: settings.metadata,
+        url: settings.url
     }
 
     // joystream-node decoder doesn't correctly check if resumeData propery is undefined, it only checks
