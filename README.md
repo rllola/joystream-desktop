@@ -2,6 +2,8 @@
 
 This is the main JoyStream cross platform (electron) desktop application, which currently works on Windows, OSX and Linux/Debian distros.
 
+![screenshot](https://imgur.com/a/NSp7H)
+
 ## License
 
 FOSS - License ?
