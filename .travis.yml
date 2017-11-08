@@ -31,7 +31,6 @@ before_install:
   # Install pip
   - if [ "$TRAVIS_OS_NAME" = osx ]; then pip install conan; else pip install --user conan; fi
   - conan remote add joystream https://conan.joystream.co:9300 True
-  - conan user travis -p trav444 -r=joystream
 install:
 
 
