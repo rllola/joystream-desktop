@@ -420,21 +420,6 @@ class ApplicationStore {
   onBoardingFinished () {
     this._handlers.onBoardingFinished()
   }
-
-  /// Community scene
-
-  telegramClicked() {
-    this._handlers.telegramClicked()
-  }
-
-  slackClicked() {
-    this._handlers.slackClicked()
-  }
-
-  redditClicked() {
-    this._handlers.redditClicked()
-  }
-
 }
 
 export default ApplicationStore
