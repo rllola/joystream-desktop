@@ -11,9 +11,6 @@ var OnCompletedScene = new BaseMachine({
 
       _onEnter : function (client) {
 
-        // Since we are going to the Completed scene,
-        // we mark all as no longer completed in the background
-        client.store.setNumberCompletedInBackground(0)
       },
 
       downloading_scene_selected: function (client) {

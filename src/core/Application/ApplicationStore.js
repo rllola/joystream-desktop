@@ -18,12 +18,6 @@ class ApplicationStore {
   @observable newTorrentBeingAdded = null
 
   /**
-   * {Number} Number of torrents completed while the
-   * user was not on the Completed scene.
-   */
-  @observable numberCompletedInBackground
-
-  /**
    * {Number} Number of unconfirmed satoshies in wallet
    */
   @observable unconfirmedBalance
@@ -78,7 +72,6 @@ class ApplicationStore {
 
   constructor (state,
                torrents,
-               numberCompletedInBackground,
                unconfirmedBalance,
                confirmedBalance,
                revenue,
@@ -87,7 +80,6 @@ class ApplicationStore {
 
     this.setState(state)
     this.torrents = torrents
-    this.setNumberCompletedInBackground(numberCompletedInBackground)
     this.setUnconfirmedBalance(unconfirmedBalance)
     this.setConfirmedBalance(confirmedBalance)
     this.setRevenue(revenue)
@@ -111,11 +103,6 @@ class ApplicationStore {
   @action.bound
   setState (state) {
     this.state = state
-  }
-
-  @action.bound
-  setNumberCompletedInBackground(numberCompletedInBackground) {
-      this.numberCompletedInBackground = numberCompletedInBackground
   }
 
   @action.bound

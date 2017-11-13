@@ -31,7 +31,7 @@ class Application extends EventEmitter {
 
 
     // Properly initilize later!
-    this.store = new ApplicationStore("", [], 0, 0, 0, 0, 0,
+    this.store = new ApplicationStore("", [], 0, 0, 0, 0,
     // handlers
     {
       removeTorrent: this.removeTorrent.bind(this),
@@ -199,6 +199,8 @@ class ApplicationStatemachineClient {
     this.store = applicationStore
 
     this.forceOnboardingFlow = process.env.FORCE_ONBOARDING
+
+    this.eventEmitter = new EventEmitter()
 
     this.factories = {
       spvnode: factory(SPVNode),

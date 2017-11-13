@@ -14,7 +14,15 @@ class UiStore {
    */
   @observable numberCompletedInBackground
 
-  constructor (numberCompletedInBackground = 0) {
+  constructor (applicationEvent, numberCompletedInBackground = 0) {
+    // We need applicatioStore to listen to event
+    this.applicationEvent = applicationEvent
+
+    // set listeners
+
+    this.applicationEvent.on('torrentFinished', this._torrentFinished.bind(this))
+
+    // observable initialization
     this.numberCompletedInBackground = numberCompletedInBackground
     this.scene = Scene.NotStarted
   }
@@ -22,6 +30,16 @@ class UiStore {
   @action.bound
   setNumberCompletedInBackground (numberCompletedInBackground) {
     this.numberCompletedInBackground = numberCompletedInBackground
+  }
+
+  resetNumberCompletedInBackgroundCounter () {
+    this.setNumberCompletedInBackground(0)
+  }
+
+  _torrentFinished () {
+    if ( scene !== Scene.Completed) {
+      this.setNumberCompletedInBackground(this.numberCompletedInBackground + 1)
+    }
   }
 
 }
