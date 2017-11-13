@@ -5,9 +5,7 @@ const BaseMachine = require('../../../BaseMachine')
 const OnCompletedScene = require('./OnCompletedScene')
 const OnDownloadingScene = require('./OnDownloadingScene')
 const OnUploadingScene = require('./OnUploadingScene')
-const constants = require('../../../../constants')
 
-const open = require('open')
 
 var Started = new BaseMachine({
     namespace: "Started",
@@ -48,18 +46,6 @@ var Started = new BaseMachine({
 
           uploading_scene_selected: function (client) {
               this.transition(client, 'OnUploadingScene')
-          },
-
-          telegramClicked: function (client) {
-              open(constants.TELEGRAM_URL)
-          },
-
-          slackClicked: function (client) {
-              open(constants.SLACK_URL)
-          },
-
-          redditClicked: function (client) {
-              open(constants.REDDIT_URL)
           }
 
       }

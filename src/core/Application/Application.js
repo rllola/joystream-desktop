@@ -54,11 +54,6 @@ class Application extends EventEmitter {
       keepDownloadingClicked: this.keepDownloadingClicked.bind(this),
       dropDownloadClicked: this.dropDownloadClicked.bind(this),
 
-      // Community scene
-      telegramClicked: this.telegramClicked.bind(this),
-      slackClicked: this.slackClicked.bind(this),
-      redditClicked: this.redditClicked.bind(this),
-
       /// Onboarding scene
       onBoardingFinished: this.onBoardingFinished.bind(this)
     })
@@ -181,20 +176,6 @@ class Application extends EventEmitter {
 
   dropDownloadClicked() {
     this._process('dropDownloadClicked')
-  }
-
-  /// Community scene
-
-  telegramClicked() {
-    this._process('telegramClicked')
-  }
-
-  slackClicked() {
-    this._process('slackClicked')
-  }
-
-  redditClicked() {
-    this._process('redditClicked')
   }
 
   //// Onboarding flow
