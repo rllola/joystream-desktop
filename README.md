@@ -32,7 +32,7 @@ Follow [instruction in node-gyp readme](https://github.com/nodejs/node-gyp) for 
 Configuring conan:
 ```
 # Add JoyStream conan repository
-conan remote add joystream https://conan.joystream.co:9300 True
+conan remote add joystream https://api.bintray.com/conan/joystream/joystream True
 
 # Configure electron-rebuild to play nice with conan (see notes at end)
 mkdir ~/.electron-gyp
