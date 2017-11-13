@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { Provider, observer } from 'mobx-react'
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-const isDev = require('electron-is-dev')
 
 import Scene from '../../core/Scene'
 import State from '../../core/State'
