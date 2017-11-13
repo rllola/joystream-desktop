@@ -2,8 +2,6 @@
 
 import {observable, action, runInAction, computed} from 'mobx'
 
-import Scene from './Scene'
-
 class ApplicationStore {
 
   /**

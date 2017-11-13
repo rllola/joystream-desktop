@@ -1,4 +1,5 @@
 import { observable, action } from 'mobx'
+import Scene from './Scene'
 
 class UiStore {
 
@@ -15,6 +16,7 @@ class UiStore {
 
   constructor (numberCompletedInBackground = 0) {
     this.numberCompletedInBackground = numberCompletedInBackground
+    this.scene = Scene.NotStarted
   }
 
   @action.bound
