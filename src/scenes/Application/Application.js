@@ -9,7 +9,6 @@ import Scene from '../../core/Application/Scene'
 // Components
 import ApplicationHeader from './components/ApplicationHeader'
 import ApplicationStatusBar from './components/ApplicationStatusBar'
-import VideoPlayer from '../../components/VideoPlayer'
 
 import {UI_CONSTANTS} from '../../constants'
 

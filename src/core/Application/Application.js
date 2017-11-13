@@ -22,6 +22,7 @@ const bcoin = require('bcoin')
 const assert = require('assert')
 const process = require('process')
 
+import UiStore from './UiStore'
 
 class Application extends EventEmitter {
 
