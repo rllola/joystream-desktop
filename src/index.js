@@ -29,7 +29,7 @@ var injectTapEventPlugin = require('react-tap-event-plugin')
 injectTapEventPlugin()
 
 const application = new Application()
-const uiStore = new UiStore(application.client.eventEmitter)
+const uiStore = new UiStore(application.store)
 
 function render (store, uiStore) {
 

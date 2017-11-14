@@ -14,13 +14,12 @@ class UiStore {
    */
   @observable numberCompletedInBackground
 
-  constructor (applicationEvent, numberCompletedInBackground = 0) {
+  constructor (applicationStore, numberCompletedInBackground = 0) {
     // We need applicatioStore to listen to event
-    this.applicationEvent = applicationEvent
+    this.applicationStore = applicationStore
 
     // set listeners
-
-    this.applicationEvent.on('torrentFinished', this._torrentFinished.bind(this))
+    //this.applicationStore.on('torrentFinished', this._torrentFinished.bind(this))
 
     // observable initialization
     this.numberCompletedInBackground = numberCompletedInBackground

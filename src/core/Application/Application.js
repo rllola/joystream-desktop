@@ -10,7 +10,7 @@ const TorrentsStorage = require('../../db').default
 const Torrent = require('../Torrent/Torrent').default
 const TorrentStore = require('../Torrent/TorrentStore').default
 const DeepInitialState = require('../Torrent/Statemachine/Common').DeepInitialState
-const Scene = require('./Scene')
+const Scene = require('../Scene')
 
 const EventEmitter = require('events').EventEmitter
 const Statemachine = require('./Statemachine')
@@ -22,7 +22,7 @@ const bcoin = require('bcoin')
 const assert = require('assert')
 const process = require('process')
 
-import UiStore from './UiStore'
+import UiStore from '../UiStore'
 
 class Application extends EventEmitter {
 
