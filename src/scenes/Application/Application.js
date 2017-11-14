@@ -75,14 +75,14 @@ class Application extends Component {
       middleSectionHighlightColor: UI_CONSTANTS.higlightColor
     }
 
-    switch (this.props.store.activeScene) {
+    switch (this.props.uiStore.scene) {
       case Scene.NotStarted:
         return <NotStartedScene />
 
       case Scene.Loading:
         return (
           <LoadingScene
-            show={this.props.store.activeScene === Scene.Loading}
+            show={this.props.uiStore.scene === Scene.Loading}
             loadingState={applicationStateToLoadingState(this.props.store.state)} />
         )
 
@@ -132,7 +132,7 @@ class Application extends Component {
       case Scene.ShuttingDown:
         return (
           <TerminatingScene
-            show={this.props.store.activeScene === Scene.ShuttingDown}
+            show={this.props.store.uiStore === Scene.ShuttingDown}
             terminatingState={applicationStateToTerminatingState(this.props.store.state)}
             terminatingTorrentsProgressValue={getTerminatingTorrentsProgressValue(this.props.store.torrentTerminatingProgress, this.props.store.torrentsToTerminate)} />
         )
@@ -162,7 +162,7 @@ function applicationStateToLoadingState (s) {
     loadingState = LoadingState.ConnectingToBitcoinP2PNetwork
   else if (s.startsWith('Starting.LoadingTorrents'))
     loadingState = LoadingState.LoadingTorrents
-    
+
   return loadingState
 }
 
