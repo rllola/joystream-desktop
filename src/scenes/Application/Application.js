@@ -120,7 +120,7 @@ class Application extends Component {
 
       case State.Started:
         return (
-          <NavigationFrame app={this.props.store}>
+          <NavigationFrame app={this.props.store} uiStore={this.props.uiStore}>
             { this.renderActiveScene() }
           </NavigationFrame>
         )
