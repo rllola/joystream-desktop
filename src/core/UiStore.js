@@ -42,20 +42,6 @@ class UiStore {
     this.scene = scene
   }
 
-  moveToScene (nextScene) {
-    if (nextScene === 'Downloading') {
-      this.setScene(Scene.Downloading)
-    } else if ( nextScene === 'Uploading' ) {
-      this.setScene(Scene.Uploading)
-    } else if ( nextScene === 'Completed' ) {
-      this.setScene(Scene.Completed)
-    } else if ( nextScene === 'Community' ) {
-      this.setScene(Scene.Community)
-    } else {
-      assert(false)
-    }
-  }
-
   resetNumberCompletedInBackgroundCounter () {
     this.setNumberCompletedInBackground(0)
   }

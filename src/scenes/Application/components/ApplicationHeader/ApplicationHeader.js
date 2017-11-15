@@ -67,27 +67,27 @@ const ApplicationHeader = observer((props) => {
       <ButtonGroup separatorColor={props.separatorColor}>
 
         <DowloadButton
-          selected={props.app.activeScene === Scene.Downloading}
-          onClick={() => { props.app.moveToScene(Scene.Downloading) }}
+          selected={props.uiStore.scene === Scene.Downloading}
+          onClick={() => { props.uiStore.setScene(Scene.Downloading) }}
           style={style.button}
           {...buttonColorProps} />
 
         <UploadButton
-          selected={props.app.activeScene === Scene.Uploading}
-          onClick={() => { props.app.moveToScene(Scene.Uploading) }}
+          selected={props.uiStore.scene === Scene.Uploading}
+          onClick={() => { props.uiStore.setScene(Scene.Uploading) }}
           style={style.button}
           {...buttonColorProps} />
 
         <FinishedButton
-          selected={props.app.activeScene === Scene.Completed}
-          notificationCount={props.app.numberCompletedInBackground}
-          onClick={() => { props.app.moveToScene(Scene.Completed) }}
+          selected={props.uiStore.scene === Scene.Completed}
+          notificationCount={props.uiStore.numberCompletedInBackground}
+          onClick={() => { props.uiStore.setScene(Scene.Completed) }}
           style={style.button}
           {...buttonColorProps} />
 
         <CommunityButton
-          selected={props.app.activeScene === Scene.Community}
-          onClick={() => { props.app.moveToScene(Scene.Community) }}
+          selected={props.uiStore.scene === Scene.Community}
+          onClick={() => { props.uiStore.setScene(Scene.Community) }}
           style={style.button}
           {...buttonColorProps} />
 
