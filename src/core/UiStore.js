@@ -1,10 +1,11 @@
-import { observable, action } from 'mobx'
+import { observable, action, computed } from 'mobx'
+import State from './State'
 import Scene from './Scene'
 
 class UiStore {
 
   /**
-   * {String} Name of the current scene
+   * {Number} Current scene
    */
   @observable scene
 
@@ -14,17 +15,21 @@ class UiStore {
    */
   @observable numberCompletedInBackground
 
+  /**
+   * {Store} Mobx store for the application
+   */
+  @observable applicationStore
+
   constructor (applicationStore, numberCompletedInBackground = 0) {
     // We need applicatioStore to listen to event
     this.applicationStore = applicationStore
 
     // set listeners
     //this.applicationStore.on('torrentFinished', this._torrentFinished.bind(this))
-    this.applicationStore.on('stateChanged', this._updateState.bind(this, state))
 
     // observable initialization
     this.numberCompletedInBackground = numberCompletedInBackground
-    this.scene = Scene.NotStarted
+    this.scene = Scene.Downloading
   }
 
   @action.bound
@@ -41,11 +46,6 @@ class UiStore {
       this.setNumberCompletedInBackground(this.numberCompletedInBackground + 1)
     }
   }
-
-  _updateState (state) {
-    console.log(state)
-  }
-
 }
 
 export default UiStore

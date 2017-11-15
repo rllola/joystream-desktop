@@ -14,7 +14,7 @@ import {
     NewButton,
     PublicButton } from './Buttons'
 
-import Scene from '../../../../core/Application/Scene'
+import Scene from '../../../../core/Scene'
 import {OnboardingStore} from '../../../../core'
 //import {ExplainerTip} from '../../../OnBoarding'
 import ExplainerTip, {Section, SectionSpacer} from '../../../OnBoarding/ExplainerTip'

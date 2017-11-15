@@ -1,6 +1,8 @@
 // Application mobx store
 
 import {observable, action, runInAction, computed} from 'mobx'
+import State from '../State'
+import Scene from '../Scene'
 
 class ApplicationStore {
 
@@ -160,7 +162,7 @@ class ApplicationStore {
 
   /// UI values
 
-  @computed get
+  /*@computed get
   activeScene () {
 
     if (!this.state)
@@ -179,6 +181,21 @@ class ApplicationStore {
       return Scene.ShuttingDown
     else if (this.state.startsWith('NotStarted'))
       return Scene.NotStarted
+
+  }*/
+
+  @computed get
+  currentState () {
+    if (!this.state)
+      return State.NotStarted
+    else if (this.state.startsWith('Started'))
+      return State.Started
+    else if (this.state.startsWith('Starting'))
+      return State.Loading
+    else if (this.state.startsWith('Stopping'))
+      return State.ShuttingDown
+    else if (this.state.startsWith('NotStarted'))
+      return State.NotStarted
 
   }
 

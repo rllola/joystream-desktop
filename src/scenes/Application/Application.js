@@ -4,7 +4,8 @@ import { Provider, observer } from 'mobx-react'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 const isDev = require('electron-is-dev')
 
-import Scene from '../../core/Application/Scene'
+import Scene from '../../core/Scene'
+import State from '../../core/State'
 
 // Components
 import NavigationFrame from './components/NavigationFrame'
@@ -56,7 +57,7 @@ class Application extends Component {
 
             <VideoPlayerScene store={this.props.store} />
 
-            { this.renderActiveScene() }
+            { this.renderActiveState() }
 
             { isDev
               ? <div><MobxReactDevTools /></div>
@@ -76,63 +77,58 @@ class Application extends Component {
     }
 
     switch (this.props.uiStore.scene) {
-      case Scene.NotStarted:
+      case Scene.Downloading:
+        return <Downloading
+          torrents={this.props.store.torrentsDownloading}
+          spending={this.props.store.totalSpent}
+          downloadSpeed={this.props.store.totalDownloadSpeed}
+          onStartDownloadClicked={() => { this.props.store.startDownloadWithTorrentFileFromFilePicker() }}
+          onStartDownloadDrop={(files) => { this.props.store.startDownloadWithTorrentFileFromDragAndDrop(files) }}
+          state={this.props.store.state}
+          torrentsBeingLoaded={this.props.store.torrentsBeingLoaded}
+          store={this.props.store}
+          {...middleSectionColorProps} />
+
+      case Scene.Uploading:
+        return <Seeding
+          store={this.props.store}
+          {...middleSectionColorProps} />
+
+      case Scene.Completed:
+        return <Completed
+          store={this.props.store}
+          {...middleSectionColorProps} />
+
+      case Scene.Community:
+        return <Community
+          store={this.props.store}
+          backgroundColor={UI_CONSTANTS.primaryColor} />
+    }
+  }
+
+  renderActiveState () {
+    switch (this.props.store.currentState) {
+      case State.NotStarted:
         return <NotStartedScene />
 
-      case Scene.Loading:
+      case State.Loading:
         return (
           <LoadingScene
-            show={this.props.uiStore.scene === Scene.Loading}
+            show
             loadingState={applicationStateToLoadingState(this.props.store.state)} />
         )
 
-      case Scene.Downloading:
+      case State.Started:
         return (
           <NavigationFrame app={this.props.store}>
-            <Downloading
-              torrents={this.props.store.torrentsDownloading}
-              spending={this.props.store.totalSpent}
-              downloadSpeed={this.props.store.totalDownloadSpeed}
-              onStartDownloadClicked={() => { this.props.store.startDownloadWithTorrentFileFromFilePicker() }}
-              onStartDownloadDrop={(files) => { this.props.store.startDownloadWithTorrentFileFromDragAndDrop(files) }}
-              state={this.props.store.state}
-              torrentsBeingLoaded={this.props.store.torrentsBeingLoaded}
-              store={this.props.store}
-              {...middleSectionColorProps} />
+            { this.renderActiveScene() }
           </NavigationFrame>
         )
 
-      case Scene.Uploading:
-        return (
-          <NavigationFrame app={this.props.store}>
-            <Seeding
-              store={this.props.store}
-              {...middleSectionColorProps} />
-          </NavigationFrame>
-        )
-
-      case Scene.Completed:
-        return (
-          <NavigationFrame app={this.props.store}>
-            <Completed
-              store={this.props.store}
-              {...middleSectionColorProps} />
-          </NavigationFrame>
-        )
-
-      case Scene.Community:
-        return (
-          <NavigationFrame app={this.props.store}>
-            <Community
-              store={this.props.store}
-              backgroundColor={UI_CONSTANTS.primaryColor} />
-          </NavigationFrame>
-        )
-
-      case Scene.ShuttingDown:
+      case State.ShuttingDown:
         return (
           <TerminatingScene
-            show={this.props.store.uiStore === Scene.ShuttingDown}
+            show
             terminatingState={applicationStateToTerminatingState(this.props.store.state)}
             terminatingTorrentsProgressValue={getTerminatingTorrentsProgressValue(this.props.store.torrentTerminatingProgress, this.props.store.torrentsToTerminate)} />
         )
