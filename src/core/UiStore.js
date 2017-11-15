@@ -1,5 +1,4 @@
-import { observable, action, computed } from 'mobx'
-import State from './State'
+import { observable, action } from 'mobx'
 import Scene from './Scene'
 
 class UiStore {
@@ -48,7 +47,7 @@ class UiStore {
   }
 
   _torrentFinished () {
-    if (this.cene !== Scene.Completed) {
+    if (this.scene !== Scene.Completed) {
       this.setNumberCompletedInBackground(this.numberCompletedInBackground + 1)
     }
   }
