@@ -25,7 +25,8 @@ class UiStore {
     this.applicationStore = applicationStore
 
     // set listeners
-    //this.applicationStore.on('torrentFinished', this._torrentFinished.bind(this))
+    //console.log(this.applicationStore)
+    this.applicationStore.on('torrentFinished', this._torrentFinished.bind(this))
 
     // observable initialization
     this.numberCompletedInBackground = numberCompletedInBackground
@@ -47,7 +48,7 @@ class UiStore {
   }
 
   _torrentFinished () {
-    if ( scene !== Scene.Completed) {
+    if ( this.cene !== Scene.Completed) {
       this.setNumberCompletedInBackground(this.numberCompletedInBackground + 1)
     }
   }

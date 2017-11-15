@@ -48,6 +48,8 @@ function addTorrent(client, settings) {
     // When torrent has completed downloading
     coreTorrent.on('enter-Active.FinishedDownloading.Passive', function (data) {
         client.processStateMachineInput('torrentFinishedDownloading', infoHash)
+        console.log(client.store)
+        client.store.emit('torrentFinished')
     })
 
     // settings.metadata has to be a TorrentInfo object

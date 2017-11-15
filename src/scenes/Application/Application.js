@@ -97,6 +97,7 @@ class Application extends Component {
       case Scene.Completed:
         return <Completed
           store={this.props.store}
+          uiStore={this.props.uiStore}
           {...middleSectionColorProps} />
 
       case Scene.Community:

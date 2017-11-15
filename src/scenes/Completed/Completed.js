@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 import {
@@ -21,42 +21,47 @@ function getStyles (props) {
   }
 }
 
-const Completed = observer((props) => {
-  let styles = getStyles(props)
-
-  let labelColorProps = {
-    backgroundColorLeft: props.middleSectionDarkBaseColor,
-    backgroundColorRight: props.middleSectionHighlightColor
+@observer
+class Completed extends Component {
+  componentWillMount () {
+    this.props.uiStore.resetNumberCompletedInBackgroundCounter()
   }
 
-  return (
-    <div style={styles.root}>
-      <MiddleSection backgroundColor={props.middleSectionBaseColor}>
+  render () {
+    let styles = getStyles(this.props)
+    let labelColorProps = {
+      backgroundColorLeft: this.props.middleSectionDarkBaseColor,
+      backgroundColorRight: this.props.middleSectionHighlightColor
+    }
+    return (
+      <div style={styles.root}>
+        <MiddleSection backgroundColor={this.props.middleSectionBaseColor}>
 
-        <MaxFlexSpacer />
+          <MaxFlexSpacer />
 
-        <LabelContainer>
-          <TorrentCountLabel
-            count={props.store.torrentsCompleted.length}
-            {...labelColorProps} />
+          <LabelContainer>
+            <TorrentCountLabel
+              count={this.props.store.torrentsCompleted.length}
+              {...labelColorProps} />
 
-          <CurrencyLabel
-            labelText={'SPENDING'}
-            satoshies={props.store.totalSpent}
-            {...labelColorProps} />
+            <CurrencyLabel
+              labelText={'SPENDING'}
+              satoshies={this.props.store.totalSpent}
+              {...labelColorProps} />
 
-          <CurrencyLabel
-            labelText={'REVENUE'}
-            satoshies={props.store.totalRevenue}
-            {...labelColorProps} />
-        </LabelContainer>
-      </MiddleSection>
+            <CurrencyLabel
+              labelText={'REVENUE'}
+              satoshies={this.props.store.totalRevenue}
+              {...labelColorProps} />
+          </LabelContainer>
+        </MiddleSection>
 
-      <TorrentTable torrents={props.store.torrentsCompleted} store={props.store} />
+        <TorrentTable torrents={this.props.store.torrentsCompleted} store={this.props.store} />
 
-    </div>
-  )
-})
+      </div>
+    )
+  }
+}
 
 Completed.propTypes = {
   store: PropTypes.object.isRequired,

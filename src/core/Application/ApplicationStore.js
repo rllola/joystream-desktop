@@ -1,10 +1,9 @@
 // Application mobx store
-
-import {observable, action, runInAction, computed} from 'mobx'
+import { observable, action, computed } from 'mobx'
+import { EventEmitter } from 'events'
 import State from '../State'
-import Scene from '../Scene'
 
-class ApplicationStore {
+class ApplicationStore extends EventEmitter {
 
   /**
    * {String} Composite state description for application state machine
@@ -79,6 +78,7 @@ class ApplicationStore {
                revenue,
                spending,
                handlers) {
+    super()
 
     this.setState(state)
     this.torrents = torrents
