@@ -66,9 +66,9 @@ class ApplicationStore extends EventEmitter {
   @observable spvChainHeight
 
   /*
-   * {OnboardingStore} Store for onboarding state
+   * {Boolean} First time running the appliction
    */
-  @observable onboardingStore
+  @observable firstTimeRunning = false
 
   constructor (state,
                torrents,
@@ -90,7 +90,6 @@ class ApplicationStore extends EventEmitter {
     // currntly an annoyance
     this.setStartUploadingTorrentFile(null)
     this.setTorrentWithBadSavePathDuringStartUploadFlow(null)
-    this.setOnboardingStore(null)
 
     this.setSpvChainSynced(false)
     this.setSpvChainSyncProgress(0)
@@ -154,8 +153,8 @@ class ApplicationStore extends EventEmitter {
   }
 
   @action.bound
-  setOnboardingStore (store) {
-    this.onboardingStore = store
+  setFirstTimeRunning (firstTimeRunning) {
+    this.firstTimeRunning = firstTimeRunning
   }
 
   // UI values

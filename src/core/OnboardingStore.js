@@ -28,8 +28,9 @@ class OnboardingStore {
    * @param addExampleTorrentsCallback {Function}
    * @param shutDownMessageAcceptedCallback {Function}
    */
-  constructor (state, addExampleTorrentsCallback, shutDownMessageAcceptedCallback) {
+  constructor (state, applicationStore, addExampleTorrentsCallback, shutDownMessageAcceptedCallback) {
     this.state = state
+    this.appplicationStore = applicationStore
 
     this._addExampleTorrentsCallback = addExampleTorrentsCallback
     this._shutDownMessageAcceptedCallback = shutDownMessageAcceptedCallback

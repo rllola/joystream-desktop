@@ -5,8 +5,6 @@
 const BaseMachine = require('../../../BaseMachine')
 const LoadingTorrents = require('./LoadingTorrents')
 const constants = require('../../../../constants')
-
-const OnboardingStore = require('../../../OnboardingStore')
 const packageFile = require('../../../../../package.json')
 
 var Starting = new BaseMachine({
@@ -164,6 +162,8 @@ var Starting = new BaseMachine({
       },
       connectingToBitcoinP2PNetworkSuccess: function (client) {
 
+        // Does this need to happen inside the state machine ?
+
         // Version migration
         migrate(packageFile.version, client.applicationSettings)
 
@@ -174,14 +174,14 @@ var Starting = new BaseMachine({
           client.applicationSettings.setIsFirstTimeRun(false)
 
           // Create onboarding store
-          client.onboardingStore = new OnboardingStore(
+          /*client.onboardingStore = new OnboardingStore(
               OnboardingStore.State.WelcomeScreen,
               () => { client.processStateMachineInput('addExampleTorrents') },
               () => { client.processStateMachineInput('stop')}
-          )
+          )*/
 
           // Make it available on the application store
-          client.store.setOnboardingStore(client.onboardingStore)
+          client.store.setFirstTimeRunning(true)
 
           // Start
           this.go(client, '../Started')

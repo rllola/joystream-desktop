@@ -17,6 +17,7 @@ import ReactDOM from 'react-dom'
 
 import Application from './core/Application'
 import UiStore from './core/UiStore'
+import OnBoardingStore from './core/OnBoardingStore'
 
 /**
  * Some components use react-tap-event-plugin to listen for touch events because onClick is not
@@ -30,8 +31,9 @@ injectTapEventPlugin()
 
 const application = new Application()
 const uiStore = new UiStore(application.store)
+const onBoardingStore = new OnBoardingStore(application.store)
 
-function render (store, uiStore) {
+function render (store, uiStore, onBoardingStore) {
 
   // NB: We have to re-require Application every time, or else this won't work
   const ApplicationScene = require('./scenes/Application').default
@@ -41,24 +43,24 @@ function render (store, uiStore) {
 
     ReactDOM.render(
       <AppContainer>
-        <ApplicationScene store={store} uiStore={uiStore} />
+        <ApplicationScene store={store} uiStore={uiStore} onBoardingStore={onBoardingStore} />
       </AppContainer>
       ,
       document.getElementById('root')
     )
   } else {
     ReactDOM.render(
-      <ApplicationScene store={store} />,
+      <ApplicationScene store={store} uiStore={uiStore} onBoardingStore={onBoardingStore} />,
       document.getElementById('root')
     )
   }
 }
 
 if (module.hot) {
-  module.hot.accept(render.bind(null, application.store, uiStore))
+  module.hot.accept(render.bind(null, application.store, uiStore, onBoardingStore))
 }
 
-render(application.store, uiStore)
+render(application.store, uiStore, onBoardingStore)
 
 var config = require('./config')
 
