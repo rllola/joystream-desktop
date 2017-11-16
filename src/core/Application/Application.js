@@ -10,7 +10,7 @@ const TorrentsStorage = require('../../db').default
 const Torrent = require('../Torrent/Torrent').default
 const TorrentStore = require('../Torrent/TorrentStore').default
 const DeepInitialState = require('../Torrent/Statemachine/Common').DeepInitialState
-const Scene = require('./Scene')
+const Scene = require('../Scene')
 
 const EventEmitter = require('events').EventEmitter
 const Statemachine = require('./Statemachine')
@@ -22,6 +22,7 @@ const bcoin = require('bcoin')
 const assert = require('assert')
 const process = require('process')
 
+import UiStore from '../UiStore'
 
 class Application extends EventEmitter {
 
@@ -30,7 +31,7 @@ class Application extends EventEmitter {
 
 
     // Properly initilize later!
-    this.store = new ApplicationStore("", [], 0, 0, 0, 0, 0,
+    this.store = new ApplicationStore("", [], 0, 0, 0, 0,
     // handlers
     {
       removeTorrent: this.removeTorrent.bind(this),
@@ -52,11 +53,6 @@ class Application extends EventEmitter {
       useTorrentFilePathButtonClicked : this.useTorrentFilePathButtonClicked.bind(this),
       keepDownloadingClicked: this.keepDownloadingClicked.bind(this),
       dropDownloadClicked: this.dropDownloadClicked.bind(this),
-
-      // Community scene
-      telegramClicked: this.telegramClicked.bind(this),
-      slackClicked: this.slackClicked.bind(this),
-      redditClicked: this.redditClicked.bind(this),
 
       /// Onboarding scene
       onBoardingFinished: this.onBoardingFinished.bind(this)
@@ -182,20 +178,6 @@ class Application extends EventEmitter {
     this._process('dropDownloadClicked')
   }
 
-  /// Community scene
-
-  telegramClicked() {
-    this._process('telegramClicked')
-  }
-
-  slackClicked() {
-    this._process('slackClicked')
-  }
-
-  redditClicked() {
-    this._process('redditClicked')
-  }
-
   //// Onboarding flow
 
   onBoardingFinished () {
@@ -217,6 +199,8 @@ class ApplicationStatemachineClient {
     this.store = applicationStore
 
     this.forceOnboardingFlow = process.env.FORCE_ONBOARDING
+
+    this.eventEmitter = new EventEmitter()
 
     this.factories = {
       spvnode: factory(SPVNode),
