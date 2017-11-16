@@ -17,7 +17,7 @@ import ReactDOM from 'react-dom'
 
 import Application from './core/Application'
 import UiStore from './core/UiStore'
-import OnBoardingStore from './core/OnBoardingStore'
+import OnBoardingStore from './core/OnboardingStore'
 
 /**
  * Some components use react-tap-event-plugin to listen for touch events because onClick is not
@@ -31,7 +31,8 @@ injectTapEventPlugin()
 
 const application = new Application()
 const uiStore = new UiStore(application.store)
-const onBoardingStore = new OnBoardingStore(application.store)
+const onBoardingStore = new OnBoardingStore(application.store,
+  () => { application.stop() })
 
 function render (store, uiStore, onBoardingStore) {
 
@@ -75,8 +76,14 @@ application.start(config)
 // be triggered yet another time
 window.onbeforeunload = function(e) {
 
-    // Tell state machine
-    application.onBeforeUnloadMainWindow(e)
+    if (application.store.firstTimeRunning) {
+      // Showing onBoarding departure screen if we have the on boarding
+      onBoardingStore.displayShutdownMessage()
+    } else  {
+      // Tell state machine
+      application.onBeforeUnloadMainWindow(e)
+    }
+
 
     return
 }

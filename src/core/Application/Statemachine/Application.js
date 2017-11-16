@@ -179,14 +179,8 @@ function beginStopping(machine, client, event) {
 
     blockMainWindowUnload(event)
 
-    // When onboarding is enabled,
-    if(client.onboardingStore) {
-
-      // we display shutdown message
-      client.onboardingStore.displayShutdownMessage()
-
-    } else // Directly initiate stopping
-        machine.handle(client, 'stop')
+    // Directly initiate stopping
+    machine.handle(client, 'stop')
 
 }
 

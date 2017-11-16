@@ -13,7 +13,6 @@ import DepartureScreenContent from './DepartureScreenContent'
 const DepartureScreen = observer((props) => {
 
     return (
-        props.store.firstTimeRunning &&
         props.onBoardingStore.state === OnboardingStore.State.DepartureScreen
             ?
             <FullScreenContainer>
@@ -26,7 +25,6 @@ const DepartureScreen = observer((props) => {
 })
 
 DepartureScreen.propTypes = {
-  store : PropTypes.object.isRequired,
   onBoardingStore: PropTypes.object.isRequired
 }
 

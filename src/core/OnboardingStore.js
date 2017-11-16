@@ -28,11 +28,10 @@ class OnboardingStore {
    * @param addExampleTorrentsCallback {Function}
    * @param shutDownMessageAcceptedCallback {Function}
    */
-  constructor (state, applicationStore, addExampleTorrentsCallback, shutDownMessageAcceptedCallback) {
+  constructor (applicationStore, shutDownMessageAcceptedCallback, state = OnboardingState.WelcomeScreen) {
     this.state = state
     this.appplicationStore = applicationStore
 
-    this._addExampleTorrentsCallback = addExampleTorrentsCallback
     this._shutDownMessageAcceptedCallback = shutDownMessageAcceptedCallback
   }
 
@@ -56,7 +55,8 @@ class OnboardingStore {
   acceptAddingExampleTorrents () {
     if (this.state === OnboardingState.WelcomeScreen) {
       // Notify application core about user request
-      this._addExampleTorrentsCallback()
+      // this._addExampleTorrentsCallback()
+      console.log('Add Torrents using applicationStore !')
 
       this.setState(OnboardingState.BalanceExplanation)
     }
