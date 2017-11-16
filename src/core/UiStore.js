@@ -16,6 +16,7 @@ class UiStore {
 
   /**
    * {Store} Mobx store for the application
+   * NOTE: Do we need to have it as an obsrevable ? I don't think so.
    */
   @observable applicationStore
 
@@ -24,7 +25,10 @@ class UiStore {
     this.applicationStore = applicationStore
 
     // set listeners
-    // TEMPORARY
+    /* TEMPORARY
+    * We should not listen for applicationStore event but for all the torrents
+    * independently
+    */
     this.applicationStore.on('torrentFinished', this._torrentFinished.bind(this))
 
     // observable initialization
