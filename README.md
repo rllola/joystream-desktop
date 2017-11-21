@@ -6,7 +6,8 @@ This is the main JoyStream cross platform (electron) desktop application, which 
 
 ## License
 
-FOSS - License ?
+JoyStream Desktop is released under the terms of the MIT license.
+See [LICENSE](LICENSE) for more information.
 
 ## Disclaimer
 
