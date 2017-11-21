@@ -318,6 +318,11 @@ class ApplicationStore extends EventEmitter {
     this._handlers.removeTorrent(infoHash, deleteData)
   }
 
+  // Add a torrent to the session with a torrent file
+  addTorrentFile (torrentFileName) {
+    this._handlers.addTorrentFile(torrentFileName)
+  }
+
   //  Changing Scenes
   moveToScene (destinationScene) {
     this._handlers.moveToScene(destinationScene)

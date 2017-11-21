@@ -35,6 +35,7 @@ class Application extends EventEmitter {
     // handlers
     {
       removeTorrent: this.removeTorrent.bind(this),
+      addTorrentFile: this.addTorrentFile.bind(this),
       moveToScene: this.moveToScene.bind(this),
       startDownloadWithTorrentFileFromFilePicker: this.startDownloadWithTorrentFileFromFilePicker.bind(this),
       startDownloadWithTorrentFileFromDragAndDrop: this.startDownloadWithTorrentFileFromDragAndDrop.bind(this),
@@ -115,6 +116,10 @@ class Application extends EventEmitter {
 
   removeTorrent (infoHash, deleteData) {
       this._process('removeTorrent', infoHash, deleteData)
+  }
+
+  addTorrentFile (torrentFileName) {
+      this._process('addTorrentFile', torrentFileName)
   }
 
   startDownloadWithTorrentFileFromFilePicker() {

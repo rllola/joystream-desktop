@@ -3,6 +3,7 @@
  */
 
 import { observable, action } from 'mobx'
+import { EXAMPLE_TORRENTS } from '../constants'
 
 const OnboardingState = {
   WelcomeScreen: 0,
@@ -24,13 +25,13 @@ class OnboardingStore {
 
   /**
    * Constructor
-   * @param state {OnboardingState} State of onboarding flow
-   * @param addExampleTorrentsCallback {Function}
+   * @param applicationStore
    * @param shutDownMessageAcceptedCallback {Function}
+   * @param state {OnboardingState} State of onboarding flow (optional)
    */
   constructor (applicationStore, shutDownMessageAcceptedCallback, state = OnboardingState.WelcomeScreen) {
     this.state = state
-    this.appplicationStore = applicationStore
+    this.applicationStore = applicationStore
 
     this._shutDownMessageAcceptedCallback = shutDownMessageAcceptedCallback
   }
@@ -54,9 +55,13 @@ class OnboardingStore {
   @action.bound
   acceptAddingExampleTorrents () {
     if (this.state === OnboardingState.WelcomeScreen) {
-      // Notify application core about user request
-      // this._addExampleTorrentsCallback()
-      console.log('Add Torrents using applicationStore !')
+      for (var i = 0; i < EXAMPLE_TORRENTS.length; i++) {
+        // Get Torrent file name
+        let torrentFileName = EXAMPLE_TORRENTS[i]
+
+        // Add torrent file to sessions throught application store
+        this.applicationStore.addTorrentFile(torrentFileName)
+      }
 
       this.setState(OnboardingState.BalanceExplanation)
     }
