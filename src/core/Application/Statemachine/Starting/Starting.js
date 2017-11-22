@@ -167,30 +167,9 @@ var Starting = new BaseMachine({
         // Version migration
         migrate(packageFile.version, client.applicationSettings)
 
-        // If we are running for the first time
-        if(client.forceOnboardingFlow || client.applicationSettings.isFirstTimeRun()) {
 
-          // Mark us as now having run
-          client.applicationSettings.setIsFirstTimeRun(false)
-
-          // Create onboarding store
-          /*client.onboardingStore = new OnboardingStore(
-              OnboardingStore.State.WelcomeScreen,
-              () => { client.processStateMachineInput('addExampleTorrents') },
-              () => { client.processStateMachineInput('stop')}
-          )*/
-
-          // Make it available on the application store
-          client.store.setFirstTimeRunning(true)
-
-          // Start
-          this.go(client, '../Started')
-
-        } else {
-
-            // Normal start and add torrents
-            this.go(client, 'LoadingTorrents/AddingTorrents')
-        }
+        // Normal start and add torrents
+        this.go(client, 'LoadingTorrents/AddingTorrents')
 
       },
       connectingToBitcoinP2PNetworkFailure: function (client, err) {

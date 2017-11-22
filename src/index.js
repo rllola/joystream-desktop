@@ -17,7 +17,6 @@ import ReactDOM from 'react-dom'
 
 import Application from './core/Application'
 import UiStore from './core/UiStore'
-import OnBoardingStore from './core/OnboardingStore'
 
 /**
  * Some components use react-tap-event-plugin to listen for touch events because onClick is not
@@ -31,10 +30,8 @@ injectTapEventPlugin()
 
 const application = new Application()
 const uiStore = new UiStore(application.store)
-const onBoardingStore = new OnBoardingStore(application.store,
-  () => { application.stop() })
 
-function render (store, uiStore, onBoardingStore) {
+function render (store, uiStore) {
 
   // NB: We have to re-require Application every time, or else this won't work
   const ApplicationScene = require('./scenes/Application').default
@@ -44,24 +41,24 @@ function render (store, uiStore, onBoardingStore) {
 
     ReactDOM.render(
       <AppContainer>
-        <ApplicationScene store={store} uiStore={uiStore} onBoardingStore={onBoardingStore} />
+        <ApplicationScene store={store} uiStore={uiStore} />
       </AppContainer>
       ,
       document.getElementById('root')
     )
   } else {
     ReactDOM.render(
-      <ApplicationScene store={store} uiStore={uiStore} onBoardingStore={onBoardingStore} />,
+      <ApplicationScene store={store} uiStore={uiStore} />,
       document.getElementById('root')
     )
   }
 }
 
 if (module.hot) {
-  module.hot.accept(render.bind(null, application.store, uiStore, onBoardingStore))
+  module.hot.accept(render.bind(null, application.store, uiStore))
 }
 
-render(application.store, uiStore, onBoardingStore)
+render(application.store, uiStore)
 
 var config = require('./config')
 
@@ -76,9 +73,9 @@ application.start(config)
 // be triggered yet another time
 window.onbeforeunload = function(e) {
 
-    if (application.store.firstTimeRunning) {
+    if (uiStore.onBoardingStore) {
       // Showing onBoarding departure screen if we have the on boarding
-      onBoardingStore.displayShutdownMessage()
+      uiStore.onBoardingStore.displayShutdownMessage()
     } else  {
       // Tell state machine
       application.onBeforeUnloadMainWindow(e)

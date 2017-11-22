@@ -323,6 +323,11 @@ class ApplicationStore extends EventEmitter {
     this._handlers.addTorrentFile(torrentFileName)
   }
 
+  // Stop the application
+  stop () {
+    this._handlers.stop()
+  }
+
   //  Changing Scenes
   moveToScene (destinationScene) {
     this._handlers.moveToScene(destinationScene)

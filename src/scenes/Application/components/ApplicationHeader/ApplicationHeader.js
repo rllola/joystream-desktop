@@ -45,7 +45,6 @@ function getStyle (props) {
 }
 
 const ApplicationHeader = observer((props) => {
-  console.log(props)
   var style = getStyle(props)
 
   var buttonColorProps = {
@@ -116,8 +115,8 @@ const ApplicationHeader = observer((props) => {
           disabled
           {...buttonColorProps} />
 
-        { props.app.firstTimeRunning &&
-          props.onboardingStore.state === OnboardingStore.State.DisabledFeaturesExplanation
+        { props.uiStore.onBoardingStore &&
+          props.uiStore.onBoardingStore.state === OnboardingStore.State.DisabledFeaturesExplanation
           ? <ExplainerTip
             title='To be enabled'
             explainerTop={60}
@@ -126,7 +125,7 @@ const ApplicationHeader = observer((props) => {
             circleLeft={-240}
             zIndex={2}
             buttonTitle='Ok'
-            buttonClick={() => { props.onboardingStore.disabledFeaturesExplanationAccepted() }} >
+            buttonClick={() => { props.uiStore.onBoardingStore.disabledFeaturesExplanationAccepted() }} >
               The wallet, live, new and publish tabs are disabled for now, they will be enabled as we roll out these features. Stay tuned for updates !
             </ExplainerTip>
           : null }
@@ -142,8 +141,8 @@ const ApplicationHeader = observer((props) => {
         backgroundColor={props.baseColor}
         balanceColor={props.balanceColor}
         subtitleColor={props.faceColor}>
-        { props.app.firstTimeRunning &&
-          props.onboardingStore.state === OnboardingStore.State.BalanceExplanation
+        { props.uiStore.onBoardingStore &&
+          props.uiStore.onBoardingStore.state === OnboardingStore.State.BalanceExplanation
           ? <ExplainerTip
             title='Your wallet'
             explainerTop={30}
@@ -152,7 +151,7 @@ const ApplicationHeader = observer((props) => {
             circleLeft={-85}
             zIndex={2}
             buttonTitle='Ok'
-            buttonClick={() => { props.onboardingStore.balanceExplanationAccepted() }} >
+            buttonClick={() => { props.uiStore.onBoardingStore.balanceExplanationAccepted() }} >
             <div style={{ width: '400px' }}>
               <Section title='Testnet coins'
                 text={
@@ -170,6 +169,7 @@ const ApplicationHeader = observer((props) => {
 ApplicationHeader.propTypes = {
   height: PropTypes.string.isRequired,
   app: PropTypes.object.isRequired,
+  uiStore: PropTypes.object.isRequired,
   baseColor: PropTypes.string,
   attentionColor: PropTypes.string,
   accentColor: PropTypes.string.isRequired,

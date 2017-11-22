@@ -17,7 +17,6 @@ const NavigationFrame = observer((props) => {
       <ApplicationHeader
         app={props.app}
         uiStore={props.uiStore}
-        onboardingStore={props.onboardingStore}
         height={'90px'}
         accentColor={UI_CONSTANTS.primaryColor} />
       {props.children}
@@ -27,8 +26,7 @@ const NavigationFrame = observer((props) => {
 
 NavigationFrame.propTypes = {
   app: PropTypes.object.isRequired,
-  uiStore: PropTypes.object.isRequired,
-  onboardingStore: PropTypes.object.isRequired
+  uiStore: PropTypes.object.isRequired
 }
 
 export default NavigationFrame

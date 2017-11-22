@@ -14,7 +14,7 @@ function ApplicationSettings() {
 
 ApplicationSettings.prototype.isFirstTimeRun = function () {
     // Read whether its a first time run, if no key is set, we pretend it is
-    return this.electronConfigStore.get(FIRST_TIME_RUN_KEY, true)
+    return process.env.FORCE_ONBOARDING || this.electronConfigStore.get(FIRST_TIME_RUN_KEY, true)
 }
 
 ApplicationSettings.prototype.setIsFirstTimeRun = function(firstTimeRun) {
