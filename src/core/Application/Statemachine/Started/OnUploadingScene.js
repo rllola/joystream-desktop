@@ -16,18 +16,6 @@ var OnUploadingScene = new BaseMachine({
     states: {
         idle: {
 
-            downloading_scene_selected: function (client) {
-                this.go(client, '../OnDownloadingScene')
-            },
-
-            completed_scene_selected: function (client) {
-                this.go(client, '../OnCompletedScene')
-            },
-
-            community_scene_selected: function (client) {
-                this.go(client, '../OnCommunityScene')
-            },
-
             startTorrentUploadFlow : function (client) {
 
                 this.transition(client, 'UserSelectingTorrentFileOrRawContent')
@@ -35,7 +23,7 @@ var OnUploadingScene = new BaseMachine({
                 // quick hack to trigger new input
                 this.handle(client, 'hasTorrentFile')
             },
-            
+
             startTorrentUploadFlowWithTorrentFile : function (client, files) {
 
                 if(files && files.length > 0)
