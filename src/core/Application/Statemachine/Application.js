@@ -11,6 +11,7 @@ const Common = require('./Common')
 const Doorbell = require('../../Doorbell')
 const exampleTorrents = require('../../../constants').EXAMPLE_TORRENTS
 const fs = require('fs')
+const magnet = require('magnet-uri')
 
 var ApplicationStateMachine = new BaseMachine({
   namespace: 'Application',
@@ -167,7 +168,14 @@ var ApplicationStateMachine = new BaseMachine({
       },
 
       startDownloadWithTorrentFileFromMagnetUri: function (client, magnetUri) {
-        console.log('Add magnet URI collected from the magnet protocol')
+
+        var parsed = magnet.decode(magnetUri)
+
+        // Make sure torrent is not already added
+        if(client.torrents.has(parsed.infoHash)) {
+          console.log('TorrentAlreadyAdded')
+          return
+        }
 
         let settings = Common.getSettingsFromMagnetUri(magnetUri, client.directories.defaultSavePath())
 
