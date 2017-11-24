@@ -18,6 +18,7 @@ class TorrentRow extends Component {
 
   render (props) {
     return (
+      // Duplicated element see uploading TorrentRow
       <Row className={this.props.toolbarVisibilityStatus === ToolbarVisibilityType.OnHover ? 'row-managed-toolbar-visiblity' : ''} backgroundColor={this.props.backgroundColor}>
         <NameField name={this.props.torrent.name} />
         <IsUploading uploading={this.props.torrent.canEndUploading} />
