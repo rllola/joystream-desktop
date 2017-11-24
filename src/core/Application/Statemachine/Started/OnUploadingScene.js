@@ -18,6 +18,8 @@ var OnUploadingScene = new BaseMachine({
 
             startTorrentUploadFlow : function (client) {
 
+                console.log('Clicked !')
+
                 this.transition(client, 'UserSelectingTorrentFileOrRawContent')
 
                 // quick hack to trigger new input
