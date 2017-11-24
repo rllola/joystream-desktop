@@ -5,7 +5,6 @@ const SPVNode = require('./spvnode')
 const Session = require('joystream-node').Session
 const faucet = require('./faucet')
 
-const ApplicationSettings = require('../ApplicationSettings').ApplicationSettings
 const TorrentsStorage = require('../../db').default
 const Torrent = require('../Torrent/Torrent').default
 const TorrentStore = require('../Torrent/TorrentStore').default
@@ -35,6 +34,8 @@ class Application extends EventEmitter {
     // handlers
     {
       removeTorrent: this.removeTorrent.bind(this),
+      addTorrentFile: this.addTorrentFile.bind(this),
+      stop: this.stop.bind(this),
       moveToScene: this.moveToScene.bind(this),
       startDownloadWithTorrentFileFromFilePicker: this.startDownloadWithTorrentFileFromFilePicker.bind(this),
       startDownloadWithTorrentFileFromDragAndDrop: this.startDownloadWithTorrentFileFromDragAndDrop.bind(this),
@@ -115,6 +116,10 @@ class Application extends EventEmitter {
 
   removeTorrent (infoHash, deleteData) {
       this._process('removeTorrent', infoHash, deleteData)
+  }
+
+  addTorrentFile (torrentFileName) {
+      this._process('addTorrentFile', torrentFileName)
   }
 
   startDownloadWithTorrentFileFromFilePicker() {
@@ -198,16 +203,12 @@ class ApplicationStatemachineClient {
   constructor (applicationStore) {
     this.store = applicationStore
 
-    this.forceOnboardingFlow = process.env.FORCE_ONBOARDING
-
     this.eventEmitter = new EventEmitter()
 
     this.factories = {
       spvnode: factory(SPVNode),
 
       directories: factory(Directories),
-
-      applicationSettings: factory(ApplicationSettings),
 
       session: factory(Session),
 

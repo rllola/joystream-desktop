@@ -49,9 +49,12 @@ class Application extends Component {
         <Provider uiConstantsStore={UI_CONSTANTS}>
           <div style={styles.innerRoot}>
 
-            <WelcomeScreen store={this.props.store} />
-
-            <DepartureScreen store={this.props.store} />
+            { this.props.uiStore.onBoardingStore
+              ? <WelcomeScreen onBoardingStore={this.props.uiStore.onBoardingStore} />
+              : null }
+            { this.props.uiStore.onBoardingStore
+              ? <DepartureScreen onBoardingStore={this.props.uiStore.onBoardingStore} />
+              : null }
 
             <ApplicationStatusBar store={this.props.store} />
 
@@ -121,7 +124,7 @@ class Application extends Component {
 
       case State.Started:
         return (
-          <NavigationFrame app={this.props.store} uiStore={this.props.uiStore}>
+          <NavigationFrame app={this.props.store} uiStore={this.props.uiStore} >
             { this.renderActiveScene() }
           </NavigationFrame>
         )

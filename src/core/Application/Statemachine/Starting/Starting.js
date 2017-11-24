@@ -5,8 +5,6 @@
 const BaseMachine = require('../../../BaseMachine')
 const LoadingTorrents = require('./LoadingTorrents')
 const constants = require('../../../../constants')
-
-const OnboardingStore = require('../../../OnboardingStore')
 const packageFile = require('../../../../../package.json')
 
 var Starting = new BaseMachine({
@@ -164,33 +162,14 @@ var Starting = new BaseMachine({
       },
       connectingToBitcoinP2PNetworkSuccess: function (client) {
 
+        // Does this need to happen inside the state machine ?
+
         // Version migration
         migrate(packageFile.version, client.applicationSettings)
 
-        // If we are running for the first time
-        if(client.forceOnboardingFlow || client.applicationSettings.isFirstTimeRun()) {
 
-          // Mark us as now having run
-          client.applicationSettings.setIsFirstTimeRun(false)
-
-          // Create onboarding store
-          client.onboardingStore = new OnboardingStore(
-              OnboardingStore.State.WelcomeScreen,
-              () => { client.processStateMachineInput('addExampleTorrents') },
-              () => { client.processStateMachineInput('stop')}
-          )
-
-          // Make it available on the application store
-          client.store.setOnboardingStore(client.onboardingStore)
-
-          // Start
-          this.go(client, '../Started')
-
-        } else {
-
-            // Normal start and add torrents
-            this.go(client, 'LoadingTorrents/AddingTorrents')
-        }
+        // Normal start and add torrents
+        this.go(client, 'LoadingTorrents/AddingTorrents')
 
       },
       connectingToBitcoinP2PNetworkFailure: function (client, err) {

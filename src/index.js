@@ -48,7 +48,7 @@ function render (store, uiStore) {
     )
   } else {
     ReactDOM.render(
-      <ApplicationScene store={store} />,
+      <ApplicationScene store={store} uiStore={uiStore} />,
       document.getElementById('root')
     )
   }
@@ -73,8 +73,14 @@ application.start(config)
 // be triggered yet another time
 window.onbeforeunload = function(e) {
 
-    // Tell state machine
-    application.onBeforeUnloadMainWindow(e)
+    if (uiStore.onBoardingStore) {
+      // Showing onBoarding departure screen if we have the on boarding
+      uiStore.onBoardingStore.displayShutdownMessage()
+    } else  {
+      // Tell state machine
+      application.onBeforeUnloadMainWindow(e)
+    }
+
 
     return
 }
