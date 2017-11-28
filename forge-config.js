@@ -99,7 +99,7 @@ module.exports = {
   },
   "github_repository": {
     "owner": "JoyStream",
-    "name": "joystream-electron",
+    "name": "joystream-desktop",
     "draft": true,
     "prerelease": false
   },
