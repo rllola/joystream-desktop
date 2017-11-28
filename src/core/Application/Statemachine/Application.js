@@ -12,6 +12,7 @@ const Doorbell = require('../../Doorbell')
 const exampleTorrents = require('../../../constants').EXAMPLE_TORRENTS
 const fs = require('fs')
 const magnet = require('magnet-uri')
+const debugApplication = require('debug')('application')
 
 var ApplicationStateMachine = new BaseMachine({
   namespace: 'Application',
@@ -23,6 +24,7 @@ var ApplicationStateMachine = new BaseMachine({
   states: {
     NotStarted: {
       start: function (client, config) {
+        debugApplication('Not started')
         client.config = config
         client.services = {}
         client.torrents = new Map()
@@ -65,6 +67,7 @@ var ApplicationStateMachine = new BaseMachine({
       _child: Started,
 
       _onEnter: function (client) {
+        debugApplication('The application has started')
         // listen for changes in wallet balance
         client.services.wallet.on('balance', (balance) => {
           client.processStateMachineInput('walletBalanceUpdated', balance)
@@ -79,6 +82,7 @@ var ApplicationStateMachine = new BaseMachine({
         // Do we have queued torrent that need to be loaded ?
         let magnetUri = Common.hasMagnetUri()
         if (magnetUri) {
+          debugApplication('We are adding a magnet uri !')
           client.processStateMachineInput('startDownloadWithTorrentFileFromMagnetUri', magnetUri)
         }
       },
@@ -169,15 +173,20 @@ var ApplicationStateMachine = new BaseMachine({
 
       startDownloadWithTorrentFileFromMagnetUri: function (client, magnetUri) {
 
+        debugApplication('Adding torrent with magnet URI!')
+
         var parsed = magnet.decode(magnetUri)
 
         // Make sure torrent is not already added
         if(client.torrents.has(parsed.infoHash)) {
           console.log('TorrentAlreadyAdded')
+          debugApplication('Torrent already added!')
           return
         }
 
         let settings = Common.getSettingsFromMagnetUri(magnetUri, client.directories.defaultSavePath())
+
+        debugApplication('Settings with magnet URI successfully initialized. Readdy to add the torrent.')
 
         Common.addTorrent(client, settings)
 
