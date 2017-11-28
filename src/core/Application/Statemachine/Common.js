@@ -80,8 +80,11 @@ function addTorrent(client, settings) {
     let params = {
         name: settings.name,
         savePath: settings.savePath,
-        ti: settings.metadata,
-        url: settings.url
+        ti: settings.metadata
+    }
+
+    if (settings.url) {
+      params.url = settings.url
     }
 
     // joystream-node decoder doesn't correctly check if resumeData propery is undefined, it only checks
