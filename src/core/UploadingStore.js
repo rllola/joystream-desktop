@@ -1,6 +1,7 @@
 import { observable, action } from 'mobx'
 import { TorrentInfo } from 'joystream-node'
 import { remote } from 'electron'
+import TorrentStatemachine from './Torrent/Statemachine'
 
 const UploadingState = {
   InitState: 0,
@@ -116,7 +117,7 @@ class UploadingStore {
       }
     }
 
-    console.log(settings)
+    this.torrentWithBadSavePathDuringStartUploadFlow = settings
 
     this.applicationStore.addTorrent(settings)
 
@@ -136,6 +137,15 @@ class UploadingStore {
   }
 
   exitStartUploadingFlow () {
+    this.setState(UploadingState.InitState)
+  }
+
+  dropDownloadClicked () {
+    this.applicationStore.removeTorrent(this.torrentWithBadSavePathDuringStartUploadFlow.infoHash, false)
+    this.setState(UploadingState.InitState)
+  }
+
+  keepDownloadingClicked () {
     this.setState(UploadingState.InitState)
   }
 

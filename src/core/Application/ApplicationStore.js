@@ -38,17 +38,6 @@ class ApplicationStore extends EventEmitter {
    */
   @observable spending
 
-  // Start upoading flow
-
-  /**
-   * {String} Path to torrent file currently part of start uploading flow
-   */
-  @observable startUploadingTorrentFile
-
-  /**
-   * {TorrentStore} Torrent store for torrent with bad save path during start upload flow
-   */
-  @observable torrentWithBadSavePathDuringStartUploadFlow
 
   /**
    * {Boolean} Blockchain has fully synced
@@ -86,11 +75,6 @@ class ApplicationStore extends EventEmitter {
     this.setRevenue(revenue)
     this.setSpending(spending)
 
-    // Temporary default setting, since changing constuctor signature is
-    // currntly an annoyance
-    this.setStartUploadingTorrentFile(null)
-    this.setTorrentWithBadSavePathDuringStartUploadFlow(null)
-
     this.setSpvChainSynced(false)
     this.setSpvChainSyncProgress(0)
     this.setSpvChainHeight(0)
@@ -123,16 +107,6 @@ class ApplicationStore extends EventEmitter {
   @action.bound
   setSpending (spending) {
     this.spending = spending
-  }
-
-  @action.bound
-  setStartUploadingTorrentFile (torrentFile) {
-    this.startUploadingTorrentFile = torrentFile
-  }
-
-  @action.bound
-  setTorrentWithBadSavePathDuringStartUploadFlow (torrentStore) {
-    this.torrentWithBadSavePathDuringStartUploadFlow = torrentStore
   }
 
   @action.bound
@@ -314,12 +288,13 @@ class ApplicationStore extends EventEmitter {
   }
 
   hasTorrent (infoHash) {
+    let hasTorrent = false
     this.torrents.forEach(function (torrent) {
       if (torrent.infoHash === infoHash) {
-        return true
+        hasTorrent = true
       }
     })
-    return false
+    return hasTorrent
   }
 
   // Remove Torrent from session
@@ -373,32 +348,12 @@ class ApplicationStore extends EventEmitter {
 
   // upload flow
 
-  startTorrentUploadFlow () {
-    this._handlers.startTorrentUploadFlow()
-  }
-
-  startTorrentUploadFlowWithTorrentFile (files) {
-    this._handlers.startTorrentUploadFlowWithTorrentFile(files)
-  }
-
-  exitStartUploadingFlow () {
-    this._handlers.exitStartUploadingFlow()
-  }
-
   hasTorrentFile () {
     this._handlers.hasTorrentFile()
   }
 
   hasRawContent () {
     this._handlers.hasRawContent()
-  }
-
-  keepDownloadingClicked () {
-    this._handlers.keepDownloadingClicked()
-  }
-
-  dropDownloadClicked () {
-    this._handlers.dropDownloadClicked()
   }
 
   // On Boarding

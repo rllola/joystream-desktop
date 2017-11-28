@@ -46,15 +46,8 @@ class Application extends EventEmitter {
       retryPickingTorrentFile: this.retryPickingTorrentFile.bind(this),
 
       /// Uploading scene
-      startTorrentUploadFlow: this.startTorrentUploadFlow.bind(this),
-      startTorrentUploadFlowWithTorrentFile: this.startTorrentUploadFlowWithTorrentFile.bind(this),
-      exitStartUploadingFlow: this.exitStartUploadingFlow.bind(this),
       hasTorrentFile: this.hasTorrentFile.bind(this),
       hasRawContent: this.hasRawContent.bind(this),
-      chooseSavePathButtonClicked : this.chooseSavePathButtonClicked.bind(this),
-      useTorrentFilePathButtonClicked : this.useTorrentFilePathButtonClicked.bind(this),
-      keepDownloadingClicked: this.keepDownloadingClicked.bind(this),
-      dropDownloadClicked: this.dropDownloadClicked.bind(this),
 
     })
 
@@ -138,21 +131,7 @@ class Application extends EventEmitter {
       this._process('retryPickingTorrentFile')
   }
 
-  /// Uploading scene
-
-  startTorrentUploadFlow() {
-    this._process('startTorrentUploadFlow')
-  }
-
-  startTorrentUploadFlowWithTorrentFile(torrentFile) {
-    this._process('startTorrentUploadFlowWithTorrentFile', torrentFile)
-  }
-
   //// Start upload flow
-
-  exitStartUploadingFlow() {
-    this._process('exitStartUploadingFlow')
-  }
 
   hasTorrentFile() {
     this._process('hasTorrentFile')
@@ -161,22 +140,6 @@ class Application extends EventEmitter {
   hasRawContent() {
     this._process('hasRawContent')
 
-  }
-
-  chooseSavePathButtonClicked() {
-    this._process('chooseSavePathButtonClicked')
-  }
-
-  useTorrentFilePathButtonClicked() {
-    this._process('useTorrentFilePathButtonClicked')
-  }
-
-  keepDownloadingClicked() {
-    this._process('keepDownloadingClicked')
-  }
-
-  dropDownloadClicked() {
-    this._process('dropDownloadClicked')
   }
 
 }

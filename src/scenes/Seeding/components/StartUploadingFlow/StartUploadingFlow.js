@@ -39,7 +39,7 @@ const StartUploadingFlow = observer((props) => {
       fullScreenDialogContent = <LoadingTorrentForUploading {...props} />
       break
     case UploadingStore.State.TellUserAboutIncompleteDownload:
-      fullScreenDialogContent = <IncompleteDownloadWarning store={props.store} />
+      fullScreenDialogContent = <IncompleteDownloadWarning uploadingStore={props.uploadingStore} />
       break
     default:
       fullScreenDialogContent = null
