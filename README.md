@@ -26,11 +26,14 @@ To build the application from source you will need to have a development setup o
 - CMake (minimum version 3.1 for support of CMAKE_CXX_STANDARD variable)
 - python2 + pip
 - [Homebrew](https://brew.sh/)  - only for Mac
-- [Conan](https://www.conan.io/downloads) C/C++ package manager
+- [Conan](https://www.conan.io/downloads) C/C++ package manager (v0.28.1)
 
 Follow [instruction in node-gyp readme](https://github.com/nodejs/node-gyp) for setting up a compiler toolchain for your platform.
 
 Configuring conan:
+
+Please use conan v0.28.1 (newer versions broke the recipes and will need to be updated)
+
 ```
 # Add JoyStream conan repository
 conan remote add joystream https://api.bintray.com/conan/joystream/joystream True
