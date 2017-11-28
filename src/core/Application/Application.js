@@ -35,6 +35,7 @@ class Application extends EventEmitter {
     {
       removeTorrent: this.removeTorrent.bind(this),
       addTorrentFile: this.addTorrentFile.bind(this),
+      addTorrent: this.addTorrent.bind(this),
       stop: this.stop.bind(this),
 
       startDownloadWithTorrentFileFromFilePicker: this.startDownloadWithTorrentFileFromFilePicker.bind(this),
@@ -111,6 +112,10 @@ class Application extends EventEmitter {
 
   addTorrentFile (torrentFileName) {
       this._process('addTorrentFile', torrentFileName)
+  }
+
+  addTorrent (settings) {
+      this._process('addTorrent', settings)
   }
 
   startDownloadWithTorrentFileFromFilePicker() {

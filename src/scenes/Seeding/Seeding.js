@@ -15,7 +15,6 @@ import {
 
 import TorrentTable from './TorrentTable'
 import StartUploadingFlow from './components/StartUploadingFlow'
-import {remote} from 'electron'
 
 function getStyles (props) {
   return {
@@ -30,19 +29,7 @@ function getStyles (props) {
 @observer
 class Seeding extends Component {
   startUplodingClicked = () => {
-    let filesPicked = remote.dialog.showOpenDialog({
-      title: 'Pick torrent file',
-      filters: [
-        {name: 'Torrent file', extensions: ['torrent']},
-        {name: 'All Files', extensions: ['*']}
-      ],
-      properties: ['openFile']}
-    )
-    // If the user did no pick any files, then we are done
-    if (!filesPicked || filesPicked.length === 0) {
-      this.setState(UploadingState.InitState)
-      return
-    }
+    this.props.uiStore.uploadingStore.uploadTorrentFile()
   }
 
   render () {
@@ -80,7 +67,7 @@ class Seeding extends Component {
 
         <TorrentTable torrents={this.props.store.torrentsUploading} store={this.props.store} />
 
-        <StartUploadingFlow store={this.props.store} />
+        <StartUploadingFlow store={this.props.store} uploadingStore={this.props.uiStore.uploadingStore} />
 
       </div>
     )

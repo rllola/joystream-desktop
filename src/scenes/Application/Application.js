@@ -95,6 +95,7 @@ class Application extends Component {
       case Scene.Uploading:
         return <Seeding
           store={this.props.store}
+          uiStore={this.props.uiStore}
           {...middleSectionColorProps} />
 
       case Scene.Completed:

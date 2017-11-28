@@ -2,10 +2,12 @@
  * Created by bedeho on 28/09/17.
  */
 
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import path from 'path'
+import { remote } from 'electron'
 
+import UploadingStore from '../../../../core/UploadingStore'
 import {InnerDialogHeading, TransparentButton} from '../../../../components/FullScreenDialog'
 import ElevatedAutoLitButton from '../../../../components/ElevatedAutoLitButton'
 
@@ -44,45 +46,69 @@ function getStyles (props) {
   }
 }
 
-const UserPickingSavePath = (props) => {
-  let styles = getStyles(props)
-  let torrentFilePath = path.dirname(props.store.startUploadingTorrentFile)
+class UserPickingSavePath extends Component {
+  handleChooseFolderClicked () {
+    let folderPicked = remote.dialog.showOpenDialog({
+      title: 'Pick folder with torrent data',
+      properties: ['openDirectory']}
+    )
 
-  return (
-    <InnerDialogHeading title='Download folder'>
-      <div style={styles.container}>
+    if (!folderPicked || folderPicked.length === 0) {
+      // this.setState(UploadingStore.State.InitState)
+      return
+    }
 
-        <div style={styles.subtitle}>
-          Seeding requires that you already have the torrent data.
-        </div>
+    // StartUpload
+    this.props.uploadingStore.startUpload(folderPicked[0])
+  }
 
-        <div style={styles.buttonContainer}>
+  handleUseTorrentFilePathClicked () {
+    let torrentFilePath = path.dirname(this.props.uploadingStore.startUploadingTorrentFile)
 
-          <TransparentButton label='Choose folder'
-            onClick={() => { props.store.chooseSavePathButtonClicked() }} />
+    // StartUpload
+    this.props.uploadingStore.startUpload(torrentFilePath)
+  }
 
-          <div style={styles.buttonSpacer}>
-            <span>or</span>
+  render () {
+    let styles = getStyles(this.props)
+    let torrentFilePath = path.dirname(this.props.uploadingStore.startUploadingTorrentFile)
+
+    return (
+      <InnerDialogHeading title='Download folder'>
+        <div style={styles.container}>
+
+          <div style={styles.subtitle}>
+            Seeding requires that you already have the torrent data.
           </div>
 
-          <ElevatedAutoLitButton title={<div>Use torrent file folder</div>}
-            onClick={() => { props.store.useTorrentFilePathButtonClicked() }}
-            hue={212}
-            saturation={100}>
+          <div style={styles.buttonContainer}>
 
-            <div style={styles.minorLabel}>
-              {torrentFilePath}
+            <TransparentButton label='Choose folder'
+              onClick={this.handleChooseFolderClicked.bind(this)} />
+
+            <div style={styles.buttonSpacer}>
+              <span>or</span>
             </div>
-          </ElevatedAutoLitButton>
 
+            <ElevatedAutoLitButton title={<div>Use torrent file folder</div>}
+              onClick={this.handleUseTorrentFilePathClicked.bind(this)}
+              hue={212}
+              saturation={100}>
+
+              <div style={styles.minorLabel}>
+                {torrentFilePath}
+              </div>
+            </ElevatedAutoLitButton>
+
+          </div>
         </div>
-      </div>
-    </InnerDialogHeading>
-  )
+      </InnerDialogHeading>
+    )
+  }
 }
 
 UserPickingSavePath.propTypes = {
-  store: PropTypes.object.isRequired
+  uploadingStore: PropTypes.object.isRequired
 }
 
 export default UserPickingSavePath

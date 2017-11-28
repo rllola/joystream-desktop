@@ -313,6 +313,15 @@ class ApplicationStore extends EventEmitter {
     this.torrentTerminatingProgress = progress
   }
 
+  hasTorrent (infoHash) {
+    this.torrents.forEach(function (torrent) {
+      if (torrent.infoHash === infoHash) {
+        return true
+      }
+    })
+    return false
+  }
+
   // Remove Torrent from session
   removeTorrent (infoHash, deleteData) {
     this._handlers.removeTorrent(infoHash, deleteData)
@@ -321,6 +330,11 @@ class ApplicationStore extends EventEmitter {
   // Add a torrent to the session with a torrent file
   addTorrentFile (torrentFileName) {
     this._handlers.addTorrentFile(torrentFileName)
+  }
+
+  // Add a torrent to the session with a torrent file
+  addTorrent (settings) {
+    this._handlers.addTorrent(settings)
   }
 
   // Stop the application
@@ -377,14 +391,6 @@ class ApplicationStore extends EventEmitter {
 
   hasRawContent () {
     this._handlers.hasRawContent()
-  }
-
-  chooseSavePathButtonClicked () {
-    this._handlers.chooseSavePathButtonClicked()
-  }
-
-  useTorrentFilePathButtonClicked () {
-    this._handlers.useTorrentFilePathButtonClicked()
   }
 
   keepDownloadingClicked () {

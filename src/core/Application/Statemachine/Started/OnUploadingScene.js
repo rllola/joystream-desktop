@@ -10,15 +10,12 @@ import {remote} from 'electron'
 const TorrentInfo = require('joystream-node').TorrentInfo
 import DeepInitialState from '../../../../core/Torrent/Statemachine/DeepInitialState'
 
-
 var OnUploadingScene = new BaseMachine({
     initialState: 'idle',
     states: {
         idle: {
 
             startTorrentUploadFlow : function (client) {
-
-                console.log('Clicked !')
 
                 this.transition(client, 'UserSelectingTorrentFileOrRawContent')
 
