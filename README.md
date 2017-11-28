@@ -33,6 +33,10 @@ Follow [instruction in node-gyp readme](https://github.com/nodejs/node-gyp) for 
 Configuring conan:
 
 Please use conan v0.28.1 (newer versions broke the recipes and will need to be updated)
+To install specific version of conan:
+```
+pip install "conan==0.28.1"
+```
 
 ```
 # Add JoyStream conan repository
