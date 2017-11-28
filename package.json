@@ -30,7 +30,7 @@
     "url": "https://joystream.co"
   },
   "bugs": {
-    "url": "https://github.com/JoyStream/joystream-electron/issues"
+    "url": "https://github.com/JoyStream/joystream-desktop/issues"
   },
   "license": "MIT",
   "devDependencies": {
