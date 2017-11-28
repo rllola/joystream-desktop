@@ -89,6 +89,7 @@ class UploadingStore {
 
     this.torrentInfoToBeUploaded = torrentInfo
 
+<<<<<<< 7feb58375fbfcfae05ab9ed9617c5e531353f252
     this.settorrentFilePathSelected(filesPicked[0])
 
     this.setState(UploadingState.UserPickingSavePath)
@@ -148,6 +149,56 @@ class UploadingStore {
   }
 
   keepDownloadingClicked () {
+=======
+    this.setStartUploadingTorrentFile(filesPicked[0])
+
+    this.setState(UploadingState.UserPickingSavePath)
+  }
+
+  startUpload (defaultSavePath) {
+    let terms = {
+      minPrice: 20,
+      minLock: 1,
+      maxNumberOfSellers: 5,
+      minContractFeePerKb: 2000,
+      settlementFee: 2000
+    }
+
+    const infoHash = this.torrentInfoToBeUploaded.infoHash()
+
+    let settings = {
+      infoHash: infoHash,
+      metadata: this.torrentInfoToBeUploaded,
+      resumeData: null,
+      name: this.torrentInfoToBeUploaded.name() || infoHash,
+      savePath: defaultSavePath,
+      deepInitialState: TorrentStatemachine.DeepInitialState.UPLOADING.STARTED,
+      extensionSettings: {
+        sellerTerms: terms
+      }
+    }
+
+    console.log(settings)
+
+    this.applicationStore.addTorrent(settings)
+
+    // We need a promise here
+  }
+
+  acceptTorrentFileWasInvalid () {
+    this.setState(UploadingState.InitState)
+  }
+
+  retryPickingTorrentFile () {
+    console.log('Not sure what to do...')
+  }
+
+  acceptTorrentWasAlreadyAdded () {
+    this.setState(UploadingState.InitState)
+  }
+
+  exitStartUploadingFlow () {
+>>>>>>> WIP
     this.setState(UploadingState.InitState)
   }
 

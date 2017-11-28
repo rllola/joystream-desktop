@@ -356,6 +356,17 @@ class ApplicationStore extends EventEmitter {
     this._handlers.hasRawContent()
   }
 
+<<<<<<< 7feb58375fbfcfae05ab9ed9617c5e531353f252
+=======
+  keepDownloadingClicked () {
+    this._handlers.keepDownloadingClicked()
+  }
+
+  dropDownloadClicked () {
+    this._handlers.dropDownloadClicked()
+  }
+
+>>>>>>> WIP
   // On Boarding
   onBoardingFinished () {
     this._handlers.onBoardingFinished()

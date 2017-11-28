@@ -58,6 +58,8 @@ function addTorrent(client, settings) {
         var resumeData = Buffer.from(settings.resumeData, 'base64')
     }
 
+    console.log(settings.extensionSettings)
+
     coreTorrent.startLoading(infoHash, settings.name, settings.savePath, resumeData, settings.metadata, settings.deepInitialState, settings.extensionSettings)
 
     client.torrents.set(infoHash, coreTorrent)
