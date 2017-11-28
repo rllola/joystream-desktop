@@ -178,7 +178,7 @@ class UploadingStore {
       }
     }
 
-    console.log(settings)
+    this.torrentWithBadSavePathDuringStartUploadFlow = settings
 
     this.applicationStore.addTorrent(settings)
 
@@ -199,6 +199,15 @@ class UploadingStore {
 
   exitStartUploadingFlow () {
 >>>>>>> WIP
+    this.setState(UploadingState.InitState)
+  }
+
+  dropDownloadClicked () {
+    this.applicationStore.removeTorrent(this.torrentWithBadSavePathDuringStartUploadFlow.infoHash, false)
+    this.setState(UploadingState.InitState)
+  }
+
+  keepDownloadingClicked () {
     this.setState(UploadingState.InitState)
   }
 
