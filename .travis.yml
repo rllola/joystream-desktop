@@ -6,6 +6,9 @@ node_js:
 os:
   - osx
   - linux
+
+osx_image: xcode7.3
+
 addons:
   apt:
     sources:
