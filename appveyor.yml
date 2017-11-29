@@ -33,7 +33,7 @@ install:
   - conan remote add joystream https://api.bintray.com/conan/joystream/joystream True
 
 build_script:
-  - npm install --no-optional
+  - npm install
   - mkdir C:\Users\appveyor\.electron-gyp
   - mklink /J C:\Users\appveyor\.electron-gyp\.conan C:\Users\appveyor\.conan
   - npm run rebuild
