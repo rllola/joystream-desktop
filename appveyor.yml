@@ -12,12 +12,14 @@ environment:
   ELECTRON_FORGE_ELECTRON_WINSTALLER_CONFIG_CERTIFICATE_FILE: value
   # Password to decrypt code signing cert
   ELECTRON_FORGE_ELECTRON_WINSTALLER_CONFIG_CERTIFICATE_PASSWORD: value
+  # Node version
+  nodejs_version: "7"
 
 init:
   - git config --global core.autocrlf input
 
 install:
-  - ps: Install-Product node 7 x86
+  - ps: Install-Product node $env:nodejs_version $env:platform
   - ps: $fileContent = "-----BEGIN RSA PRIVATE KEY-----`n"
   - ps: $fileContent += $env:priv_key.Replace(' ', "`n")
   - ps: $fileContent += "`n-----END RSA PRIVATE KEY-----`n"
