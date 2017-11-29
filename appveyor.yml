@@ -1,5 +1,5 @@
 platform:
-  - x86
+  - x64
 
 environment:
   # Githib deploy ssh key
@@ -20,10 +20,10 @@ init:
 
 install:
   - ps: Install-Product node $env:nodejs_version $env:platform
-  - ps: $fileContent = "-----BEGIN RSA PRIVATE KEY-----`n"
-  - ps: $fileContent += $env:priv_key.Replace(' ', "`n")
-  - ps: $fileContent += "`n-----END RSA PRIVATE KEY-----`n"
-  - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
+  # - ps: $fileContent = "-----BEGIN RSA PRIVATE KEY-----`n"
+  # - ps: $fileContent += $env:priv_key.Replace(' ', "`n")
+  # - ps: $fileContent += "`n-----END RSA PRIVATE KEY-----`n"
+  # - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
   - ps: Start-FileDownload $env:CODE_SIGN_CERT_URL -FileName $env:ELECTRON_FORGE_ELECTRON_WINSTALLER_CONFIG_CERTIFICATE_FILE
   # use npm@4.6.1 due to issues between npm5 and postinstall-build module behaviour
   # https://github.com/exogen/postinstall-build/issues/29
