@@ -1,7 +1,7 @@
 {
   "name": "joystream",
   "productName": "Joystream",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "A new BitTorrent client, with faster speeds, streaming and paid seeding.",
   "homepage": "https://joystream.co",
   "main": "src/main.js",
@@ -30,7 +30,7 @@
     "url": "https://joystream.co"
   },
   "bugs": {
-    "url": "https://github.com/JoyStream/joystream-electron/issues"
+    "url": "https://github.com/JoyStream/joystream-desktop/issues"
   },
   "license": "MIT",
   "devDependencies": {
