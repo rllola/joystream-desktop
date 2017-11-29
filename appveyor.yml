@@ -39,6 +39,7 @@ build_script:
   - npm run rebuild
 
 deploy_script:
+  - npm run make
   - npm run publish
 
 test: on
