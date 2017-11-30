@@ -3,6 +3,7 @@ import Scene from './Scene'
 import { ApplicationSettings } from './ApplicationSettings'
 import OnBoardingStore from './OnboardingStore'
 import UploadingStore from './UploadingStore'
+import DownloadingStore from './DownloadingStore'
 
 class UiStore {
 
@@ -42,6 +43,7 @@ class UiStore {
     }
 
     this.uploadingStore = new UploadingStore(applicationStore)
+    this.DownloadingStore = new DownloadingStore(applicationStore)
 
     // observable initialization
     this.numberCompletedInBackground = numberCompletedInBackground
