@@ -1,35 +1,31 @@
 /**
  * Created by bedeho on 03/08/17.
  */
-import React, { Component } from 'react'
+import React from 'react'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
 import {
-    InvalidTorrentFileAlertDialog,
-    TorrentAlreadyAddedAlertDialog} from '../../../../components/AlertDialog'
+  InvalidTorrentFileAlertDialog,
+  TorrentAlreadyAddedAlertDialog} from '../../../../components/AlertDialog'
 
 const StartDownloadingFlow = observer((props) => {
+  return (
+    <div>
+      <InvalidTorrentFileAlertDialog
+        open={props.store.state === 'Started.OnDownloadingScene.TorrentFileWasInvalid'}
+        onAcceptClicked={() => { props.store.acceptTorrentFileWasInvalid() }}
+        onRetryClicked={() => { props.store.retryPickingTorrentFile() }} />
 
-    return (
-        <div>
-            <InvalidTorrentFileAlertDialog store={props.store}
-                                           open={props.store.state == "Started.OnDownloadingScene.TorrentFileWasInvalid"}
-                                           onAcceptClicked={() => { props.store.acceptTorrentFileWasInvalid() }}
-                                           onRetryClicked={() => { props.store.retryPickingTorrentFile() }}
-            />
-            <TorrentAlreadyAddedAlertDialog store={props.store}
-                                            open={props.store.state == "Started.OnDownloadingScene.TorrentAlreadyAdded"}
-                                            onOkClicked={() => { props.store.acceptTorrentWasAlreadyAdded()} }
-
-            />
-        </div>
-    )
-
+      <TorrentAlreadyAddedAlertDialog
+        open={props.store.state === 'Started.OnDownloadingScene.TorrentAlreadyAdded'}
+        onOkClicked={() => { props.store.acceptTorrentWasAlreadyAdded() }} />
+    </div>
+  )
 })
 
 StartDownloadingFlow.propTypes = {
-    store : PropTypes.object.isRequired
+  store: PropTypes.object.isRequired
 }
 
 module.exports = StartDownloadingFlow
