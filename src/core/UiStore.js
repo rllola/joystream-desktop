@@ -43,7 +43,7 @@ class UiStore {
     }
 
     this.uploadingStore = new UploadingStore(applicationStore)
-    this.DownloadingStore = new DownloadingStore(applicationStore)
+    this.downloadingStore = new DownloadingStore(applicationStore)
 
     // observable initialization
     this.numberCompletedInBackground = numberCompletedInBackground

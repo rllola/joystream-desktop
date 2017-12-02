@@ -85,11 +85,9 @@ class Application extends Component {
           torrents={this.props.store.torrentsDownloading}
           spending={this.props.store.totalSpent}
           downloadSpeed={this.props.store.totalDownloadSpeed}
-          onStartDownloadClicked={() => { this.props.store.startDownloadWithTorrentFileFromFilePicker() }}
-          onStartDownloadDrop={(files) => { this.props.store.startDownloadWithTorrentFileFromDragAndDrop(files) }}
-          state={this.props.store.state}
           torrentsBeingLoaded={this.props.store.torrentsBeingLoaded}
           store={this.props.store}
+          downloadingStore={this.props.uiStore.downloadingStore}
           {...middleSectionColorProps} />
 
       case Scene.Uploading:

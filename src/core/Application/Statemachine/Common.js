@@ -37,6 +37,7 @@ function addTorrent(client, settings) {
     // When torrent cannot be added to libtorrent session
     coreTorrent.on('enter-Loading.FailedAdding', function (data) {
         console.log('Catastrophic failure, failed adding torrent.')
+        console.log(data)
         assert(false)
     })
 

@@ -322,28 +322,6 @@ class ApplicationStore extends EventEmitter {
     this._handlers.moveToScene(destinationScene)
   }
 
-  // Downloading scene events
-
-  startDownloadWithTorrentFileFromFilePicker () {
-    this._handlers.startDownloadWithTorrentFileFromFilePicker()
-  }
-
-  startDownloadWithTorrentFileFromDragAndDrop (files) {
-    this._handlers.startDownloadWithTorrentFileFromDragAndDrop(files)
-  }
-
-  acceptTorrentWasAlreadyAdded () {
-    this._handlers.acceptTorrentWasAlreadyAdded()
-  }
-
-  acceptTorrentFileWasInvalid () {
-    this._handlers.acceptTorrentFileWasInvalid()
-  }
-
-  retryPickingTorrentFile () {
-    this._handlers.retryPickingTorrentFile()
-  }
-
   // Uploading scene events
 
   // upload flow

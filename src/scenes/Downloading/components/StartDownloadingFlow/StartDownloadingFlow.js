@@ -5,27 +5,30 @@ import React from 'react'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
+import DownloadingStore from '../../../../core/DownloadingStore'
+
 import {
   InvalidTorrentFileAlertDialog,
   TorrentAlreadyAddedAlertDialog} from '../../../../components/AlertDialog'
 
 const StartDownloadingFlow = observer((props) => {
+  console.log(props.downloadingStore.state)
   return (
     <div>
       <InvalidTorrentFileAlertDialog
-        open={props.store.state === 'Started.OnDownloadingScene.TorrentFileWasInvalid'}
-        onAcceptClicked={() => { props.store.acceptTorrentFileWasInvalid() }}
-        onRetryClicked={() => { props.store.retryPickingTorrentFile() }} />
+        open={props.downloadingStore.state === DownloadingStore.State.TorrentFileWasInvalid}
+        onAcceptClicked={() => { props.downloadingStore.acceptTorrentFileWasInvalid() }}
+        onRetryClicked={() => { props.downloadingStore.retryPickingTorrentFile() }} />
 
       <TorrentAlreadyAddedAlertDialog
-        open={props.store.state === 'Started.OnDownloadingScene.TorrentAlreadyAdded'}
-        onOkClicked={() => { props.store.acceptTorrentWasAlreadyAdded() }} />
+        open={props.downloadingStore.state === DownloadingStore.State.TorrentAlreadyAdded}
+        onOkClicked={() => { props.downloadingStore.acceptTorrentWasAlreadyAdded() }} />
     </div>
   )
 })
 
 StartDownloadingFlow.propTypes = {
-  store: PropTypes.object.isRequired
+  downloadingStore: PropTypes.object.isRequired
 }
 
 module.exports = StartDownloadingFlow

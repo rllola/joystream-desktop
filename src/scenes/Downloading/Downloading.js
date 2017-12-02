@@ -41,7 +41,7 @@ const Downloading = observer((props) => {
         <Toolbar>
           <ToolbarButton
             title='Start downloading'
-            onClick={props.onStartDownloadClicked} />
+            onClick={() => { props.downloadingStore.startDownloadWithTorrentFileFromFilePicker() }} />
         </Toolbar>
 
         <MaxFlexSpacer />
@@ -66,9 +66,9 @@ const Downloading = observer((props) => {
       <TorrentTable
         torrents={props.torrents}
         store={props.store}
-        onStartDownloadDrop={props.onStartDownloadDrop} />
+        onStartDownloadDrop={props.downloadingStore.startDownloadWithTorrentFileFromDragAndDrop} />
 
-      <StartDownloadingFlow store={props.store} />
+      <StartDownloadingFlow downloadingStore={props.downloadingStore} />
     </div>
   )
 })
@@ -77,9 +77,9 @@ Downloading.propTypes = {
   torrents: PropTypes.any.isRequired,
   spending: PropTypes.number.isRequired,
   downloadSpeed: PropTypes.number.isRequired,
-  onStartDownloadClicked: PropTypes.func.isRequired,
-  onStartDownloadDrop: PropTypes.func.isRequired,
   torrentsBeingLoaded: PropTypes.array.isRequired,
+  store: PropTypes.object.isRequired,
+  downloadingStore: PropTypes.object.isRequired,
 
   middleSectionBaseColor: PropTypes.string.isRequired,
   middleSectionDarkBaseColor: PropTypes.string.isRequired,
