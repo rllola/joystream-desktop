@@ -25,7 +25,7 @@ class UploadingStore {
   /**
    * {String} Path to torrent file currently part of start uploading flow
    */
-  @observable startUploadingTorrentFile
+  @observable torrentFilePathSelected
 
   constructor (applicationStore, state = UploadingState.InitState) {
     this.applicationStore = applicationStore
@@ -53,8 +53,8 @@ class UploadingStore {
   }
 
   @action.bound
-  setStartUploadingTorrentFile (torrentFile) {
-    this.startUploadingTorrentFile = torrentFile
+  settorrentFilePathSelected (torrentFile) {
+    this.torrentFilePathSelected = torrentFile
   }
 
   uploadTorrentFile () {
@@ -89,7 +89,7 @@ class UploadingStore {
 
     this.torrentInfoToBeUploaded = torrentInfo
 
-    this.setStartUploadingTorrentFile(filesPicked[0])
+    this.settorrentFilePathSelected(filesPicked[0])
 
     this.setState(UploadingState.UserPickingSavePath)
   }

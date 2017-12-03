@@ -63,7 +63,7 @@ class UserPickingSavePath extends Component {
   }
 
   handleUseTorrentFilePathClicked () {
-    let torrentFilePath = path.dirname(this.props.uploadingStore.startUploadingTorrentFile)
+    let torrentFilePath = path.dirname(this.props.uploadingStore.torrentFilePathSelected)
 
     // StartUpload
     this.props.uploadingStore.startUpload(torrentFilePath)
@@ -71,7 +71,7 @@ class UserPickingSavePath extends Component {
 
   render () {
     let styles = getStyles(this.props)
-    let torrentFilePath = path.dirname(this.props.uploadingStore.startUploadingTorrentFile)
+    let torrentFilePath = path.dirname(this.props.uploadingStore.torrentFilePathSelected)
 
     return (
       <InnerDialogHeading title='Download folder'>
