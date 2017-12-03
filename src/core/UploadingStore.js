@@ -129,7 +129,9 @@ class UploadingStore {
   }
 
   retryPickingTorrentFile () {
-    console.log('Not sure what to do...')
+    this.setState(UploadingState.InitState)
+
+    this.uploadTorrentFile()
   }
 
   acceptTorrentWasAlreadyAdded () {
