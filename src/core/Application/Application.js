@@ -36,7 +36,7 @@ class Application extends EventEmitter {
       removeTorrent: this.removeTorrent.bind(this),
       addTorrentFile: this.addTorrentFile.bind(this),
       stop: this.stop.bind(this),
-      moveToScene: this.moveToScene.bind(this),
+
       startDownloadWithTorrentFileFromFilePicker: this.startDownloadWithTorrentFileFromFilePicker.bind(this),
       startDownloadWithTorrentFileFromDragAndDrop: this.startDownloadWithTorrentFileFromDragAndDrop.bind(this),
 
@@ -55,8 +55,6 @@ class Application extends EventEmitter {
       keepDownloadingClicked: this.keepDownloadingClicked.bind(this),
       dropDownloadClicked: this.dropDownloadClicked.bind(this),
 
-      /// Onboarding scene
-      onBoardingFinished: this.onBoardingFinished.bind(this)
     })
 
     var client = new ApplicationStatemachineClient(this.store)
@@ -87,13 +85,6 @@ class Application extends EventEmitter {
 
     // trigger initial state of machine
     this.currentState()
-  }
-
-  moveToScene (s) {
-    if (s === Scene.Downloading) return this._process('downloading_scene_selected')
-    if (s === Scene.Uploading) return this._process('uploading_scene_selected')
-    if (s === Scene.Completed) return this._process('completed_scene_selected')
-    if (s === Scene.Community) return this._process('community_scene_selected')
   }
 
   start (config) {
@@ -181,12 +172,6 @@ class Application extends EventEmitter {
 
   dropDownloadClicked() {
     this._process('dropDownloadClicked')
-  }
-
-  //// Onboarding flow
-
-  onBoardingFinished () {
-    this._process('onBoardingFinished')
   }
 
 }
