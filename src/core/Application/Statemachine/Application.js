@@ -163,11 +163,11 @@ var ApplicationStateMachine = new BaseMachine({
         torrentStm.once('loaded', (deepInitialState) => {
 
           if (deepInitialState === DeepInitialState.UPLOADING.STARTED) {
-            // client.processStateMachineInput('started', torrentStm)
-            client.store.emit('loadedSuccessfully')
+            client.processStateMachineInput('loadedSuccessfully', torrentStm)
+            // client.store.emit('loadedSuccessfully')
           } else {
-            // client.processStateMachineInput('failedStartUploadDueToIncompleteDownload', torrentStm)
-            client.store.emit('failedStartUploadDueToIncompleteDownload')
+            client.processStateMachineInput('failedStartUploadDueToIncompleteDownload', torrentStm)
+            // client.store.emit('failedStartUploadDueToIncompleteDownload')
           }
         })
 
@@ -176,6 +176,14 @@ var ApplicationStateMachine = new BaseMachine({
 
       torrentAdded: function (client, err, torrent, coreTorrent) {
         coreTorrent.addTorrentResult(err, torrent)
+      },
+
+      loadedSuccessfully: function (client, coreTorrent) {
+        client.store.emit('loadedSuccessfully')
+      },
+
+      failedStartUploadDueToIncompleteDownload: function (client, coreTorrent) {
+        client.store.emit('failedStartUploadDueToIncompleteDownload')
       }
 
     },
