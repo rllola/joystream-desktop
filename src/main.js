@@ -6,6 +6,7 @@ const isDev = require('electron-is-dev')
 const updater = require('./updater')
 const protocol = require('./protocol')
 
+import handleSquirrelEvent from './handle-squirel-events'
 import {enableLiveReload} from 'electron-compile'
 
 
@@ -126,12 +127,10 @@ function createWindow () {
     // Maximize window
     win.maximize()
 
-    // Handle squirrel event. Avoid calling for updates when install
-    if(require('electron-squirrel-startup')) {
-      console.log('Squirrel events handle')
-      app.quit()
-      // Hack because app.quit() is not immediate
-      process.exit(0)
+    // this should be placed at top of main.js to handle setup events quickly
+    if (handleSquirrelEvent()) {
+      // squirrel event handled and app will exit in 1000ms, so don't do anything else
+      return
     }
     // Check for updates
     win.webContents.once("did-frame-finish-load", function (event) {
