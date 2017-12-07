@@ -172,6 +172,10 @@ var ApplicationStateMachine = new BaseMachine({
         })
 
         client.store.emit('loadingTorrentForUploading')
+      },
+
+      torrentAdded: function (client, err, torrent, coreTorrent) {
+        coreTorrent.addTorrentResult(err, torrent)
       }
 
     },
