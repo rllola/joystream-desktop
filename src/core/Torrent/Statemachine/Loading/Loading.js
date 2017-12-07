@@ -188,6 +188,8 @@ var Loading = new BaseMachine({
 
                     } else { // isUploading
 
+                      console.log(client.sellerTerms)
+
                         client.toSellMode(client.sellerTerms)
 
                         if(!Common.isStopped(client.deepInitialState))

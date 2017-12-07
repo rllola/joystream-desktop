@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
@@ -26,46 +26,53 @@ function getStyles (props) {
   }
 }
 
-const Seeding = observer((props) => {
-  let styles = getStyles(props)
-
-  let labelColorProps = {
-    backgroundColorRight: props.middleSectionHighlightColor,
-    backgroundColorLeft: props.middleSectionDarkBaseColor
+@observer
+class Seeding extends Component {
+  startUplodingClicked = () => {
+    this.props.uiStore.uploadingStore.uploadTorrentFile()
   }
 
-  return (
-    <div style={styles.root}>
-      <MiddleSection backgroundColor={props.middleSectionBaseColor}>
-        <Toolbar>
-          <ToolbarButton title='Start uploading'
-            onClick={() => { props.store.startTorrentUploadFlow() }} />
-        </Toolbar>
+  render () {
+    let styles = getStyles(this.props)
 
-        <MaxFlexSpacer />
+    let labelColorProps = {
+      backgroundColorRight: this.props.middleSectionHighlightColor,
+      backgroundColorLeft: this.props.middleSectionDarkBaseColor
+    }
 
-        <LabelContainer>
-          <TorrentCountLabel count={props.store.torrentsUploading.length}
-            {...labelColorProps} />
+    return (
+      <div style={styles.root}>
+        <MiddleSection backgroundColor={this.props.middleSectionBaseColor}>
+          <Toolbar>
+            <ToolbarButton title='Start uploading'
+              onClick={this.startUplodingClicked} />
+          </Toolbar>
 
-          <CurrencyLabel labelText={'REVENUE'}
-            satoshies={props.store.totalRevenue}
-            {...labelColorProps} />
+          <MaxFlexSpacer />
 
-          <BandwidthLabel labelText={'UPLOAD SPEED'}
-            bytesPerSecond={props.store.totalUploadSpeed}
-            {...labelColorProps} />
+          <LabelContainer>
+            <TorrentCountLabel count={this.props.store.torrentsUploading.length}
+              {...labelColorProps} />
 
-        </LabelContainer>
-      </MiddleSection>
+            <CurrencyLabel labelText={'REVENUE'}
+              satoshies={this.props.store.totalRevenue}
+              {...labelColorProps} />
 
-      <TorrentTable torrents={props.store.torrentsUploading} store={props.store} />
+            <BandwidthLabel labelText={'UPLOAD SPEED'}
+              bytesPerSecond={this.props.store.totalUploadSpeed}
+              {...labelColorProps} />
 
-      <StartUploadingFlow store={props.store} />
+          </LabelContainer>
+        </MiddleSection>
 
-    </div>
-  )
-})
+        <TorrentTable torrents={this.props.store.torrentsUploading} store={this.props.store} />
+
+        <StartUploadingFlow store={this.props.store} uploadingStore={this.props.uiStore.uploadingStore} />
+
+      </div>
+    )
+  }
+}
 
 Seeding.propTypes = {
   store: PropTypes.object.isRequired,

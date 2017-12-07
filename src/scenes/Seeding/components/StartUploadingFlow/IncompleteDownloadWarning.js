@@ -58,7 +58,7 @@ function getStyles (props) {
 const IncompleteDownloadWarning = (props) => {
   let styles = getStyles(props)
 
-  let savePath = props.store.torrentWithBadSavePathDuringStartUploadFlow.savePath
+  let savePath = props.uploadingStore.torrentWithBadSavePathDuringStartUploadFlow.savePath
 
   return (
     <InnerDialogHeading title='Missing download'>
@@ -75,14 +75,14 @@ const IncompleteDownloadWarning = (props) => {
         <div style={styles.buttonContainer}>
 
           <TransparentButton label='Drop download'
-            onClick={() => { props.store.dropDownloadClicked() }} />
+            onClick={() => { props.uploadingStore.dropDownloadClicked() }} />
 
           <div style={styles.buttonSpacer}>
             <span>or</span>
           </div>
 
           <ElevatedAutoLitButton title='Ok, keep going'
-            onClick={() => { props.store.keepDownloadingClicked() }}
+            onClick={() => { props.uploadingStore.keepDownloadingClicked() }}
             hue={212}
             saturation={100} />
 
@@ -103,7 +103,7 @@ saturation={100}
 */
 
 IncompleteDownloadWarning.propTypes = {
-  store: PropTypes.object.isRequired
+  uploadingStore: PropTypes.object.isRequired
 }
 
 export default IncompleteDownloadWarning

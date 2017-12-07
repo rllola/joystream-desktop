@@ -98,8 +98,7 @@ function addTorrent(client, settings) {
 
     client.services.session.addTorrent(params, function (err, torrent) {
         // Is this needed ?
-        //client.processStateMachineInput('torrentAdded', err, torrent, coreTorrent)
-        coreTorrent.addTorrentResult(err, torrent)
+        client.processStateMachineInput('torrentAdded', err, torrent, coreTorrent)
     })
 
     // Return core torrent, typically so user can setup their own context

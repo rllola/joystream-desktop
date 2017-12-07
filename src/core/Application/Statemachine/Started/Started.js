@@ -3,8 +3,6 @@
  */
 const BaseMachine = require('../../../BaseMachine')
 const OnDownloadingScene = require('./OnDownloadingScene')
-const OnUploadingScene = require('./OnUploadingScene')
-
 
 var Started = new BaseMachine({
     namespace: "Started",
@@ -15,11 +13,6 @@ var Started = new BaseMachine({
     states: {
       OnDownloadingScene: {
         _child: OnDownloadingScene,
-
-      },
-
-      OnUploadingScene: {
-        _child: OnUploadingScene,
 
       }
 

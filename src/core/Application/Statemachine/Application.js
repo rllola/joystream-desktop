@@ -11,6 +11,8 @@ const Common = require('./Common')
 const Doorbell = require('../../Doorbell')
 const fs = require('fs')
 
+import DeepInitialState from '../../../core/Torrent/Statemachine/DeepInitialState'
+
 var ApplicationStateMachine = new BaseMachine({
   namespace: 'Application',
   initialState: 'NotStarted',
@@ -133,7 +135,7 @@ var ApplicationStateMachine = new BaseMachine({
         client.store.setSpvChainSynced(false)
       },
 
-      addTorrentFile (client, torrentFileName) {
+      addTorrentFile: function (client, torrentFileName) {
         let torrentInfo
 
         try {
@@ -148,6 +150,40 @@ var ApplicationStateMachine = new BaseMachine({
 
         // and start adding torrent
         Common.addTorrent(client, settings)
+      },
+
+      addTorrent: function (client, settings) {
+
+        let torrentStm = Common.addTorrent(client, settings)
+
+        // -----
+
+        // When loading either succeeds, or fails due to no complete download,
+        // we detect this and process event
+        torrentStm.once('loaded', (deepInitialState) => {
+
+          if (deepInitialState === DeepInitialState.UPLOADING.STARTED) {
+            client.processStateMachineInput('loadedSuccessfully', torrentStm)
+            // client.store.emit('loadedSuccessfully')
+          } else {
+            client.processStateMachineInput('failedStartUploadDueToIncompleteDownload', torrentStm)
+            // client.store.emit('failedStartUploadDueToIncompleteDownload')
+          }
+        })
+
+        client.store.emit('loadingTorrentForUploading')
+      },
+
+      torrentAdded: function (client, err, torrent, coreTorrent) {
+        coreTorrent.addTorrentResult(err, torrent)
+      },
+
+      loadedSuccessfully: function (client, coreTorrent) {
+        client.store.emit('loadedSuccessfully')
+      },
+
+      failedStartUploadDueToIncompleteDownload: function (client, coreTorrent) {
+        client.store.emit('failedStartUploadDueToIncompleteDownload')
       }
 
     },
