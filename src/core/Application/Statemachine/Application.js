@@ -4,7 +4,6 @@
 
 const BaseMachine = require('../../BaseMachine')
 const Starting = require('./Starting/Starting')
-const Started = require('./Started/Started')
 const Stopping = require('./Stopping/Stopping')
 const TorrentInfo = require('joystream-node').TorrentInfo
 const Common = require('./Common')
@@ -62,8 +61,6 @@ var ApplicationStateMachine = new BaseMachine({
     },
 
     Started: {
-      _child: Started,
-
       _onEnter: function (client) {
         // listen for changes in wallet balance
         client.services.wallet.on('balance', (balance) => {
