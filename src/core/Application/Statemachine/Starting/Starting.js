@@ -5,8 +5,6 @@
 const BaseMachine = require('../../../BaseMachine')
 const LoadingTorrents = require('./LoadingTorrents')
 const constants = require('../../../../constants')
-
-const OnboardingStore = require('../../../OnboardingStore')
 const packageFile = require('../../../../../package.json')
 
 const debugApplication = require('debug')('application:starting')
@@ -73,7 +71,7 @@ var Starting = new BaseMachine({
           }, constants.POST_TORRENT_UPDATES_INTERVAL)
 
           // Setup electron-config store
-          client.applicationSettings = client.factories.applicationSettings()
+          // client.applicationSettings = client.factories.applicationSettings()
 
           // Get a function to call for openning the database store
           client.services.openDatabase = client.factories.db(client.directories.databasePath())
@@ -188,33 +186,15 @@ var Starting = new BaseMachine({
       connectingToBitcoinP2PNetworkSuccess: function (client) {
         debugApplication('Starting: Bitcoin P2P network sucessfully connected')
 
+        // Does this need to happen inside the state machine ?
+
         // Version migration
-        migrate(packageFile.version, client.applicationSettings)
+        // Need to do that in UiStore...
+        // migrate(packageFile.version, client.applicationSettings)
 
-        // If we are running for the first time
-        if(client.forceOnboardingFlow || client.applicationSettings.isFirstTimeRun()) {
 
-          // Mark us as now having run
-          client.applicationSettings.setIsFirstTimeRun(false)
-
-          // Create onboarding store
-          client.onboardingStore = new OnboardingStore(
-              OnboardingStore.State.WelcomeScreen,
-              () => { client.processStateMachineInput('addExampleTorrents') },
-              () => { client.processStateMachineInput('stop')}
-          )
-
-          // Make it available on the application store
-          client.store.setOnboardingStore(client.onboardingStore)
-
-          // Start
-          this.go(client, '../Started')
-
-        } else {
-
-            // Normal start and add torrents
-            this.go(client, 'LoadingTorrents/AddingTorrents')
-        }
+        // Normal start and add torrents
+        this.go(client, 'LoadingTorrents/AddingTorrents')
 
       },
       connectingToBitcoinP2PNetworkFailure: function (client, err) {

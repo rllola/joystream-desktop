@@ -9,7 +9,6 @@ const Stopping = require('./Stopping/Stopping')
 const TorrentInfo = require('joystream-node').TorrentInfo
 const Common = require('./Common')
 const Doorbell = require('../../Doorbell')
-const exampleTorrents = require('../../../constants').EXAMPLE_TORRENTS
 const fs = require('fs')
 const magnet = require('magnet-uri')
 const debugApplication = require('debug')('application')
@@ -145,30 +144,21 @@ var ApplicationStateMachine = new BaseMachine({
         client.store.setSpvChainSynced(false)
       },
 
-      addExampleTorrents: function (client) {
+      addTorrentFile (client, torrentFileName) {
+        let torrentInfo
 
-          for (var i = 0; i < exampleTorrents.length; i++) {
+        try {
+            const data = fs.readFileSync(torrentFileName)
+            torrentInfo = new TorrentInfo(data)
+        } catch (e) {
+            console.log('Failed to load torrent file: ' + torrentFileName)
+            console.log(e)
+        }
 
-              // Load torrent file
-              let torrentFileName = exampleTorrents[i]
+        let settings = Common.getStartingDownloadSettings(torrentInfo, client.directories.defaultSavePath())
 
-              let torrentInfo
-
-              try {
-                  const data = fs.readFileSync(torrentFileName)
-                  torrentInfo = new TorrentInfo(data)
-              } catch (e) {
-                  console.log('Failed to load torrent file: ' + torrentFileName)
-                  console.log(e)
-                  continue
-              }
-
-              let settings = Common.getStartingDownloadSettings(torrentInfo, client.directories.defaultSavePath())
-
-              // and start adding torrent
-              Common.addTorrent(client, settings)
-          }
-
+        // and start adding torrent
+        Common.addTorrent(client, settings)
       },
 
       startDownloadWithTorrentFileFromMagnetUri: function (client, magnetUri) {
@@ -189,7 +179,6 @@ var ApplicationStateMachine = new BaseMachine({
         debugApplication('Settings with magnet URI successfully initialized. Readdy to add the torrent.')
 
         Common.addTorrent(client, settings)
-
       }
 
     },
@@ -211,14 +200,8 @@ function beginStopping(machine, client, event) {
 
     blockMainWindowUnload(event)
 
-    // When onboarding is enabled,
-    if(client.onboardingStore) {
-
-      // we display shutdown message
-      client.onboardingStore.displayShutdownMessage()
-
-    } else // Directly initiate stopping
-        machine.handle(client, 'stop')
+    // Directly initiate stopping
+    machine.handle(client, 'stop')
 
 }
 

@@ -1,10 +1,9 @@
 // Application mobx store
+import { observable, action, computed } from 'mobx'
+import { EventEmitter } from 'events'
+import State from '../State'
 
-import {observable, action, runInAction, computed} from 'mobx'
-
-import Scene from './Scene'
-
-class ApplicationStore {
+class ApplicationStore extends EventEmitter {
 
   /**
    * {String} Composite state description for application state machine
@@ -18,12 +17,6 @@ class ApplicationStore {
 
   // Will be set to a TorrentStore which is the last torrent being added to the session
   @observable newTorrentBeingAdded = null
-
-  /**
-   * {Number} Number of torrents completed while the
-   * user was not on the Completed scene.
-   */
-  @observable numberCompletedInBackground
 
   /**
    * {Number} Number of unconfirmed satoshies in wallet
@@ -45,8 +38,7 @@ class ApplicationStore {
    */
   @observable spending
 
-
-  /// Start upoading flow
+  // Start upoading flow
 
   /**
    * {String} Path to torrent file currently part of start uploading flow
@@ -74,22 +66,21 @@ class ApplicationStore {
   @observable spvChainHeight
 
   /*
-   * {OnboardingStore} Store for onboarding state
+   * {Boolean} First time running the appliction
    */
-  @observable onboardingStore
+  @observable firstTimeRunning = false
 
   constructor (state,
                torrents,
-               numberCompletedInBackground,
                unconfirmedBalance,
                confirmedBalance,
                revenue,
                spending,
                handlers) {
+    super()
 
     this.setState(state)
     this.torrents = torrents
-    this.setNumberCompletedInBackground(numberCompletedInBackground)
     this.setUnconfirmedBalance(unconfirmedBalance)
     this.setConfirmedBalance(confirmedBalance)
     this.setRevenue(revenue)
@@ -99,7 +90,6 @@ class ApplicationStore {
     // currntly an annoyance
     this.setStartUploadingTorrentFile(null)
     this.setTorrentWithBadSavePathDuringStartUploadFlow(null)
-    this.setOnboardingStore(null)
 
     this.setSpvChainSynced(false)
     this.setSpvChainSyncProgress(0)
@@ -116,37 +106,32 @@ class ApplicationStore {
   }
 
   @action.bound
-  setNumberCompletedInBackground(numberCompletedInBackground) {
-      this.numberCompletedInBackground = numberCompletedInBackground
-  }
-
-  @action.bound
-  setUnconfirmedBalance(unconfirmedBalance) {
+  setUnconfirmedBalance (unconfirmedBalance) {
     this.unconfirmedBalance = unconfirmedBalance
   }
 
   @action.bound
-  setConfirmedBalance(confirmedBalance) {
+  setConfirmedBalance (confirmedBalance) {
     this.confirmedBalance = confirmedBalance
   }
 
   @action.bound
-  setRevenue(revenue) {
+  setRevenue (revenue) {
     this.revenue = revenue
   }
 
   @action.bound
-  setSpending(spending) {
+  setSpending (spending) {
     this.spending = spending
   }
 
   @action.bound
-  setStartUploadingTorrentFile(torrentFile) {
+  setStartUploadingTorrentFile (torrentFile) {
     this.startUploadingTorrentFile = torrentFile
   }
 
   @action.bound
-  setTorrentWithBadSavePathDuringStartUploadFlow(torrentStore) {
+  setTorrentWithBadSavePathDuringStartUploadFlow (torrentStore) {
     this.torrentWithBadSavePathDuringStartUploadFlow = torrentStore
   }
 
@@ -157,7 +142,6 @@ class ApplicationStore {
 
   @action.bound
   setSpvChainSyncProgress (progress) {
-
     this.spvChainSyncProgress = progress
     console.log('Sync Progress:', this.spvChainSyncProgress)
   }
@@ -165,36 +149,29 @@ class ApplicationStore {
   @action.bound
   setSpvChainHeight (height) {
     this.spvChainHeight = height
-    //console.log('Sync Height:', this.spvChainHeight)
+    // console.log('Sync Height:', this.spvChainHeight)
   }
 
   @action.bound
-  setOnboardingStore(store) {
-    this.onboardingStore = store
+  setFirstTimeRunning (firstTimeRunning) {
+    this.firstTimeRunning = firstTimeRunning
   }
 
-  /// UI values
+  // UI values
 
   @computed get
-  activeScene () {
-
-    if (!this.state)
-      return Scene.NotStarted
-    else if (this.state.startsWith('Started.OnCompletedScene'))
-      return Scene.Completed
-    else if (this.state.startsWith('Started.OnDownloadingScene'))
-      return Scene.Downloading
-    else if (this.state.startsWith('Started.OnUploadingScene'))
-      return Scene.Uploading
-    else if(this.state.startsWith('Started.OnCommunityScene'))
-      return Scene.Community
-    else if (this.state.startsWith('Starting')) // Notice that 'Starting.LoadingTorrents' is covered above
-      return Scene.Loading
-    else if (this.state.startsWith('Stopping'))
-      return Scene.ShuttingDown
-    else if (this.state.startsWith('NotStarted'))
-      return Scene.NotStarted
-
+  currentState () {
+    if (!this.state) {
+      return State.NotStarted
+    } else if (this.state.startsWith('Started')) {
+      return State.Started
+    } else if (this.state.startsWith('Starting')) {
+      return State.Loading
+    } else if (this.state.startsWith('Stopping')) {
+      return State.ShuttingDown
+    } else if (this.state.startsWith('NotStarted')) {
+      return State.NotStarted
+    }
   }
 
   @computed get
@@ -222,7 +199,7 @@ class ApplicationStore {
   }
 
   @computed get
-  numberOfTorrentsCompleted() {
+  numberOfTorrentsCompleted () {
     return this.torrentsCompleted.length
   }
 
@@ -234,72 +211,66 @@ class ApplicationStore {
   }
 
   @computed get
-  numberOfTorrentsUploading() {
+  numberOfTorrentsUploading () {
     return this.torrentsUploading.length
   }
 
-  @computed get torrentsBeingLoaded() {
+  @computed get torrentsBeingLoaded () {
     return this.torrents.filter(function (torrent) {
-        return torrent.isLoading
+      return torrent.isLoading
     })
   }
 
   @computed get
-  torrentsFullyLoadedPercentage() {
-    return 100*(1 - (this.torrentsBeingLoaded.length/this.torrents.length))
+  torrentsFullyLoadedPercentage () {
+    return 100 * (1 - (this.torrentsBeingLoaded.length / this.torrents.length))
   }
 
   @computed get
-  startingTorrentCheckingProgressPercentage() {
-
+  startingTorrentCheckingProgressPercentage () {
     // Compute total size
-    let totalSize = this.torrents.reduce(function(accumulator, torrent) {
+    let totalSize = this.torrents.reduce(function (accumulator, torrent) {
       return accumulator + torrent.totalSize
     }, 0)
 
     // Computed total checked size
-    let totalCheckedSize = this.torrents.reduce(function(accumulator, torrent) {
-
-      let checkedSize = torrent.totalSize * (torrent.isLoading ? torrent.progress/100 : 1)
-
+    let totalCheckedSize = this.torrents.reduce(function (accumulator, torrent) {
+      let checkedSize = torrent.totalSize * (torrent.isLoading ? torrent.progress / 100 : 1)
       return accumulator + checkedSize
-
     }, 0)
 
-    return totalCheckedSize*100/totalSize
+    return totalCheckedSize / totalSize * 100
   }
 
   @computed get
-  torrentsBeingTerminated() {
-
+  torrentsBeingTerminated () {
     return this.torrents.filter(function (torrent) {
-        return torrent.isTerminating
+      return torrent.isTerminating
     })
   }
 
   @computed get
-  terminatingTorrentsProgressPercentage() {
-    return this.torrentsBeingTerminated*100/this.torrents.length
+  terminatingTorrentsProgressPercentage () {
+    return this.torrentsBeingTerminated * 100 / this.torrents.length
   }
 
   @computed get
-  totalDownloadSpeed() {
-    return this.torrents.reduce(function(accumulator, torrent) {
-        return accumulator + torrent.downloadSpeed
-    },0)
+  totalDownloadSpeed () {
+    return this.torrents.reduce(function (accumulator, torrent) {
+      return accumulator + torrent.downloadSpeed
+    }, 0)
   }
 
   @computed get
-  totalUploadSpeed() {
-    return this.torrents.reduce(function(accumulator, torrent) {
+  totalUploadSpeed () {
+    return this.torrents.reduce(function (accumulator, torrent) {
       return accumulator + torrent.uploadSpeed
-    },0)
+    }, 0)
   }
 
   @computed get
   activeMediaPlayerStore () {
-
-    for ( var i = 0; i < this.torrents.length; i++) {
+    for (var i = 0; i < this.torrents.length; i++) {
       if (this.torrents[i].activeMediaPlayerStore) {
         return this.torrents[i].activeMediaPlayerStore
       }
@@ -310,7 +281,7 @@ class ApplicationStore {
   @computed get
   totalSpent () {
     var total = 0
-    for (var i= 0; i< this.torrents.length; i++) {
+    for (var i = 0; i < this.torrents.length; i++) {
       total += this.torrents[i].totalSpent
     }
     return total
@@ -319,12 +290,11 @@ class ApplicationStore {
   @computed get
   totalRevenue () {
     var total = 0
-    for (var i= 0; i< this.torrents.length; i++) {
+    for (var i = 0; i < this.torrents.length; i++) {
       total += this.torrents[i].totalRevenue
     }
     return total
   }
-
 
   @action.bound
   torrentRemoved (infoHash) {
@@ -348,93 +318,87 @@ class ApplicationStore {
     this._handlers.removeTorrent(infoHash, deleteData)
   }
 
+  // Add a torrent to the session with a torrent file
+  addTorrentFile (torrentFileName) {
+    this._handlers.addTorrentFile(torrentFileName)
+  }
+
+  // Stop the application
+  stop () {
+    this._handlers.stop()
+  }
+
   //  Changing Scenes
   moveToScene (destinationScene) {
     this._handlers.moveToScene(destinationScene)
   }
 
-  /// Downloading scene events
+  // Downloading scene events
 
-  startDownloadWithTorrentFileFromFilePicker() {
+  startDownloadWithTorrentFileFromFilePicker () {
     this._handlers.startDownloadWithTorrentFileFromFilePicker()
   }
 
-  startDownloadWithTorrentFileFromDragAndDrop(files) {
+  startDownloadWithTorrentFileFromDragAndDrop (files) {
     this._handlers.startDownloadWithTorrentFileFromDragAndDrop(files)
   }
 
-  acceptTorrentWasAlreadyAdded() {
+  acceptTorrentWasAlreadyAdded () {
     this._handlers.acceptTorrentWasAlreadyAdded()
   }
 
-  acceptTorrentFileWasInvalid() {
+  acceptTorrentFileWasInvalid () {
     this._handlers.acceptTorrentFileWasInvalid()
   }
 
-  retryPickingTorrentFile() {
-      this._handlers.retryPickingTorrentFile()
+  retryPickingTorrentFile () {
+    this._handlers.retryPickingTorrentFile()
   }
 
-  /// Uploading scene events
+  // Uploading scene events
 
   // upload flow
 
-  startTorrentUploadFlow() {
+  startTorrentUploadFlow () {
     this._handlers.startTorrentUploadFlow()
   }
 
-  startTorrentUploadFlowWithTorrentFile(files) {
+  startTorrentUploadFlowWithTorrentFile (files) {
     this._handlers.startTorrentUploadFlowWithTorrentFile(files)
   }
 
-  exitStartUploadingFlow() {
+  exitStartUploadingFlow () {
     this._handlers.exitStartUploadingFlow()
   }
 
-  hasTorrentFile() {
+  hasTorrentFile () {
     this._handlers.hasTorrentFile()
   }
 
-  hasRawContent() {
+  hasRawContent () {
     this._handlers.hasRawContent()
   }
 
-  chooseSavePathButtonClicked() {
+  chooseSavePathButtonClicked () {
     this._handlers.chooseSavePathButtonClicked()
   }
 
-  useTorrentFilePathButtonClicked() {
+  useTorrentFilePathButtonClicked () {
     this._handlers.useTorrentFilePathButtonClicked()
   }
 
-  keepDownloadingClicked() {
+  keepDownloadingClicked () {
     this._handlers.keepDownloadingClicked()
   }
 
-  dropDownloadClicked() {
+  dropDownloadClicked () {
     this._handlers.dropDownloadClicked()
-
   }
 
   // On Boarding
   onBoardingFinished () {
     this._handlers.onBoardingFinished()
   }
-
-  /// Community scene
-
-  telegramClicked() {
-    this._handlers.telegramClicked()
-  }
-
-  slackClicked() {
-    this._handlers.slackClicked()
-  }
-
-  redditClicked() {
-    this._handlers.redditClicked()
-  }
-
 }
 
 export default ApplicationStore
