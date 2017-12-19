@@ -14,10 +14,6 @@ import {enableLiveReload} from 'electron-compile'
 // be closed automatically when the JavaScript object is garbage collected.
 let win = null
 
-// Set Menu application from menu.js
-const menu = Menu.buildFromTemplate(template)
-Menu.setApplicationMenu(menu)
-
 // This method makes your application a Single Instance Application -
 // instead of allowing multiple instances of your app to run,
 // this will ensure that only a single instance of your app is running
@@ -111,6 +107,11 @@ function createWindow () {
       backgroundColor: '#1C262B', // same as rgb(28, 38, 43)
       show : true
   })
+
+  // Set Menu application from menu.js
+  // Need to be created after win has been initialized
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
 
   /**
   // Delay actually showing window until we are ready to show
