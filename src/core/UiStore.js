@@ -1,6 +1,5 @@
 import { observable, action } from 'mobx'
 import Scene from './Scene'
-import ApplicationSettings from './ApplicationSettings'
 import OnBoardingStore from './OnboardingStore'
 import UploadingStore from './UploadingStore'
 import DownloadingStore from './DownloadingStore'
@@ -28,8 +27,6 @@ class UiStore {
     // We need applicatioStore to listen to event
     this.applicationStore = applicationStore
 
-    this.applicationSettings = new ApplicationSettings()
-
     // set listeners
     /* TEMPORARY
     * We should not listen for applicationStore event but for all the torrents
@@ -38,7 +35,7 @@ class UiStore {
     this.applicationStore.on('torrentFinished', this._torrentFinished.bind(this))
 
     // Create onBoarding store if it is the first time running the app
-    if (this.applicationSettings.isFirstTimeRun()) {
+    if (this.applicationStore.applicationSettings.isFirstTimeRun()) {
       this.onBoardingStore = new OnBoardingStore(applicationStore)
     }
 

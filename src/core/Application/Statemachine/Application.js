@@ -207,7 +207,9 @@ var ApplicationStateMachine = new BaseMachine({
           return
         }
 
-        let settings = Common.getSettingsFromMagnetUri(magnetUri, client.directories.defaultSavePath())
+        let savePath = client.store.applicationSettings.getDownloadFolder() || client.directories.defaultSavePath()
+
+        let settings = Common.getSettingsFromMagnetUri(magnetUri, savePath)
 
         debugApplication('Settings with magnet URI successfully initialized. Readdy to add the torrent.')
 
