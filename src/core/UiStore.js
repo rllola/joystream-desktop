@@ -1,6 +1,6 @@
 import { observable, action } from 'mobx'
 import Scene from './Scene'
-import { ApplicationSettings } from './ApplicationSettings'
+import ApplicationSettings from './ApplicationSettings'
 import OnBoardingStore from './OnboardingStore'
 import UploadingStore from './UploadingStore'
 import DownloadingStore from './DownloadingStore'
