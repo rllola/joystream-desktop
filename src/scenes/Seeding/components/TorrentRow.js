@@ -6,15 +6,14 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 
-import { Row } from '../../components/Table'
+import { Row } from '../../../components/Table'
 import { NameField,
          StatusField,
          BytesPerSecondField,
          BitcoinValueField,
-         PeerCountField} from '../../components/RowFields'
-import TorrentToolbar from './TorrentToolbar'
-import AbsolutePositionChildren from '../../components/AbsolutePositionChildren/AbsolutePositionChildren'
-import ToolbarVisibilityType from '../../utils/ToolbarVisibilityState'
+         PeerCountField} from '../../../components/RowFields'
+import TorrentToolbar from '../TorrentToolbar'
+import AbsolutePositionChildren from '../../../components/AbsolutePositionChildren/AbsolutePositionChildren'
 
 @observer
 class TorrentRow extends Component {
@@ -25,11 +24,33 @@ class TorrentRow extends Component {
    * toolbarVisible {bool} - whether the toolbar for this row is currently visible
    */
 
+  constructor () {
+    super()
+
+    this.state = {
+      hover: false
+    }
+  }
+
+  onMouseEnterHandler () {
+    this.setState({hover: true})
+  }
+
+  onMouseLeaveHandler () {
+    this.setState({hover: false})
+  }
+
   render (props) {
+    const mouseEvents = {
+      onMouseEnter: this.onMouseEnterHandler.bind(this),
+      onMouseLeave: this.onMouseLeaveHandler.bind(this)
+    }
     return (
       // Duplicated element see completed TorrentRow
-      <Row className={this.props.toolbarVisibilityStatus === ToolbarVisibilityType.OnHover ? 'row-managed-toolbar-visiblity' : ''}
-        backgroundColor={this.props.backgroundColor}>
+      <Row
+        className={this.state.hover ? 'row-managed-toolbar-visiblity' : ''}
+        backgroundColor={this.props.backgroundColor}
+        mouseEvents={mouseEvents} >
 
         <NameField name={this.props.torrent.name} />
 
@@ -43,27 +64,19 @@ class TorrentRow extends Component {
 
         <PeerCountField count={this.props.torrent.numberOfBuyers} />
 
-        { this.getRenderedToolbar() }
+        { this.state.hover
+        ? <AbsolutePositionChildren left={-250} top={3}>
+          <TorrentToolbar torrent={this.props.torrent} store={this.props.store} />
+        </AbsolutePositionChildren>
+        : null }
 
       </Row>
-    )
-  }
-
-  getRenderedToolbar () {
-    return (
-      this.props.toolbarVisibilityStatus !== ToolbarVisibilityType.Hidden
-      ? <AbsolutePositionChildren left={-250} top={3}>
-        <TorrentToolbar {...this.props.toolbarProps} torrent={this.props.torrent} store={this.props.store} />
-      </AbsolutePositionChildren>
-      : null
     )
   }
 }
 
 TorrentRow.propTypes = {
   torrent: PropTypes.object.isRequired, // hould we here _require_ a TorrentStore?
-  toolbarVisibilityStatus: PropTypes.oneOf(Object.values(ToolbarVisibilityType)).isRequired,
-  toolbarProps: PropTypes.object, // later use shape?
   store: PropTypes.object.isRequired
 }
 
