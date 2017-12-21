@@ -1,14 +1,12 @@
-const electron = require('electron')
 const {app, BrowserWindow, ipcMain, crashReporter, Menu} = require('electron')
 const path = require('path')
 const url = require('url')
 const isDev = require('electron-is-dev')
 const updater = require('./updater')
 const protocol = require('./protocol')
-const {template} = require('./menu')
 
+import { createTemplate } from './menu'
 import {enableLiveReload} from 'electron-compile'
-
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -107,6 +105,8 @@ function createWindow () {
       backgroundColor: '#1C262B', // same as rgb(28, 38, 43)
       show : true
   })
+
+  var template = createTemplate(win)
 
   // Set Menu application from menu.js
   // Need to be created after win has been initialized

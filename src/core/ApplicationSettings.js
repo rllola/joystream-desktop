@@ -2,6 +2,7 @@
  * Created by bedeho on 05/10/2017.
  */
 import ElectronConfig from 'electron-config'
+import { ipcRenderer, shell } from 'electron'
 
 const FIRST_TIME_RUN_KEY = 'firstTimeRun' // Whether
 const LAST_VERSION_OF_APP_RUN_KEY = 'lastVersionOfAppRun'
@@ -10,6 +11,8 @@ const DOWNLOAD_FOLDER = 'downloadFolder'
 class ApplicationSettings {
   constructor () {
     this._electronConfigStore = new ElectronConfig()
+
+    ipcRenderer.on('openPreferences', this.openInEditor.bind(this))
   }
 
   isFirstTimeRun () {
@@ -22,7 +25,7 @@ class ApplicationSettings {
   }
 
   lastVersionOfAppRun () {
-    this._electronConfigStore.get(LAST_VERSION_OF_APP_RUN_KEY)
+    return this._electronConfigStore.get(LAST_VERSION_OF_APP_RUN_KEY)
   }
 
   setLastVersionOfAppRun (version) {
@@ -30,7 +33,7 @@ class ApplicationSettings {
   }
 
   getDownloadFolder () {
-    this._electronConfigStore.get(DOWNLOAD_FOLDER)
+    return this._electronConfigStore.get(DOWNLOAD_FOLDER)
   }
 
   setDownloadFolder (downloadFolder) {
@@ -38,7 +41,7 @@ class ApplicationSettings {
   }
 
   openInEditor () {
-    this._electronConfigStore.openInEditor()
+    shell.openItem(this._electronConfigStore.path)
   }
 
 }
