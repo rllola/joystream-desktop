@@ -46,6 +46,7 @@ function addTorrent(client, settings) {
     coreTorrent.on('enter-Loading.FailedAdding', function (data) {
       debugApplicationAddTorrent('Failed adding :', data)
         console.log('Catastrophic failure, failed adding torrent.')
+        console.log(data)
         assert(false)
     })
 
@@ -118,8 +119,7 @@ function addTorrent(client, settings) {
         debugApplicationAddTorrent('Torrent %s added', settings.name)
 
         // Is this needed ?
-        //client.processStateMachineInput('torrentAdded', err, torrent, coreTorrent)
-        coreTorrent.addTorrentResult(err, torrent)
+        client.processStateMachineInput('torrentAdded', err, torrent, coreTorrent)
     })
 
     // Return core torrent, typically so user can setup their own context

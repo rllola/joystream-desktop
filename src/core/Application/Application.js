@@ -36,9 +36,9 @@ class Application extends EventEmitter {
     {
       removeTorrent: this.removeTorrent.bind(this),
       addTorrentFile: this.addTorrentFile.bind(this),
+      addTorrent: this.addTorrent.bind(this),
       stop: this.stop.bind(this),
-      moveToScene: this.moveToScene.bind(this),
-      startDownloadWithTorrentFileFromMagnetUri: this.startDownloadWithTorrentFileFromMagnetUri.bind(this),
+      
       startDownloadWithTorrentFileFromFilePicker: this.startDownloadWithTorrentFileFromFilePicker.bind(this),
       startDownloadWithTorrentFileFromDragAndDrop: this.startDownloadWithTorrentFileFromDragAndDrop.bind(this),
 
@@ -47,18 +47,9 @@ class Application extends EventEmitter {
       retryPickingTorrentFile: this.retryPickingTorrentFile.bind(this),
 
       /// Uploading scene
-      startTorrentUploadFlow: this.startTorrentUploadFlow.bind(this),
-      startTorrentUploadFlowWithTorrentFile: this.startTorrentUploadFlowWithTorrentFile.bind(this),
-      exitStartUploadingFlow: this.exitStartUploadingFlow.bind(this),
       hasTorrentFile: this.hasTorrentFile.bind(this),
       hasRawContent: this.hasRawContent.bind(this),
-      chooseSavePathButtonClicked : this.chooseSavePathButtonClicked.bind(this),
-      useTorrentFilePathButtonClicked : this.useTorrentFilePathButtonClicked.bind(this),
-      keepDownloadingClicked: this.keepDownloadingClicked.bind(this),
-      dropDownloadClicked: this.dropDownloadClicked.bind(this),
 
-      /// Onboarding scene
-      onBoardingFinished: this.onBoardingFinished.bind(this)
     })
 
     var client = new ApplicationStatemachineClient(this.store)
@@ -91,13 +82,6 @@ class Application extends EventEmitter {
     this.currentState()
   }
 
-  moveToScene (s) {
-    if (s === Scene.Downloading) return this._process('downloading_scene_selected')
-    if (s === Scene.Uploading) return this._process('uploading_scene_selected')
-    if (s === Scene.Completed) return this._process('completed_scene_selected')
-    if (s === Scene.Community) return this._process('community_scene_selected')
-  }
-
   start (config) {
     this._process('start', config)
   }
@@ -124,8 +108,8 @@ class Application extends EventEmitter {
       this._process('addTorrentFile', torrentFileName)
   }
 
-  startDownloadWithTorrentFileFromMagnetUri () {
-    this._process('startDownloadWithTorrentFileFromMagnetUri')
+  addTorrent (settings) {
+      this._process('addTorrent', settings)
   }
 
   startDownloadWithTorrentFileFromFilePicker() {
@@ -148,21 +132,7 @@ class Application extends EventEmitter {
       this._process('retryPickingTorrentFile')
   }
 
-  /// Uploading scene
-
-  startTorrentUploadFlow() {
-    this._process('startTorrentUploadFlow')
-  }
-
-  startTorrentUploadFlowWithTorrentFile(torrentFile) {
-    this._process('startTorrentUploadFlowWithTorrentFile', torrentFile)
-  }
-
   //// Start upload flow
-
-  exitStartUploadingFlow() {
-    this._process('exitStartUploadingFlow')
-  }
 
   hasTorrentFile() {
     this._process('hasTorrentFile')
@@ -171,28 +141,6 @@ class Application extends EventEmitter {
   hasRawContent() {
     this._process('hasRawContent')
 
-  }
-
-  chooseSavePathButtonClicked() {
-    this._process('chooseSavePathButtonClicked')
-  }
-
-  useTorrentFilePathButtonClicked() {
-    this._process('useTorrentFilePathButtonClicked')
-  }
-
-  keepDownloadingClicked() {
-    this._process('keepDownloadingClicked')
-  }
-
-  dropDownloadClicked() {
-    this._process('dropDownloadClicked')
-  }
-
-  //// Onboarding flow
-
-  onBoardingFinished () {
-    this._process('onBoardingFinished')
   }
 
 }

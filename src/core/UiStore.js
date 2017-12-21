@@ -2,6 +2,9 @@ import { observable, action } from 'mobx'
 import Scene from './Scene'
 import { ApplicationSettings } from './ApplicationSettings'
 import OnBoardingStore from './OnboardingStore'
+import UploadingStore from './UploadingStore'
+import DownloadingStore from './DownloadingStore'
+
 class UiStore {
 
   /**
@@ -38,6 +41,9 @@ class UiStore {
     if (this.applicationSettings.isFirstTimeRun()) {
       this.onBoardingStore = new OnBoardingStore(applicationStore)
     }
+
+    this.uploadingStore = new UploadingStore(applicationStore)
+    this.downloadingStore = new DownloadingStore(applicationStore)
 
     // observable initialization
     this.numberCompletedInBackground = numberCompletedInBackground
