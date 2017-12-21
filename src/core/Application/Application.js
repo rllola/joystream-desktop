@@ -22,6 +22,7 @@ const assert = require('assert')
 const process = require('process')
 
 import UiStore from '../UiStore'
+const isDev = require('electron-is-dev')
 
 class Application extends EventEmitter {
 
@@ -78,7 +79,7 @@ class Application extends EventEmitter {
     }
 
     // expose client in dev mode to help in debugging
-    if (process.env.NODE_ENV === 'development') {
+    if (isDev) {
       this._client = client
     }
 

@@ -45,6 +45,7 @@
     "chai": "^4.0.2",
     "cmake-js": "^3.4.1",
     "electron-forge": "^4.1.2",
+    "devtron": "^1.4.0",
     "electron-mocha": "3.5.0",
     "electron-prebuilt-compile": "1.6.14",
     "mobx-react-devtools": "^4.2.11",

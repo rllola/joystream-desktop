@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { Provider, observer } from 'mobx-react'
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-const isDev = require('electron-is-dev')
 
 import Scene from '../../core/Scene'
 import State from '../../core/State'
@@ -22,6 +21,7 @@ import Seeding from '../Seeding'
 import Completed from '../Completed'
 import Community from '../Community'
 import VideoPlayerScene from '../VideoPlayer'
+import isDev from 'electron-is-dev'
 
 // import Wallet from '../Wallet'
 import { WelcomeScreen, DepartureScreen } from '../OnBoarding'
