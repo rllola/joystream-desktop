@@ -2,6 +2,7 @@
 import { observable, action, computed } from 'mobx'
 import { EventEmitter } from 'events'
 import State from '../State'
+import ApplicationSettings from '../ApplicationSettings'
 
 class ApplicationStore extends EventEmitter {
 
@@ -78,6 +79,9 @@ class ApplicationStore extends EventEmitter {
     this.setSpvChainSynced(false)
     this.setSpvChainSyncProgress(0)
     this.setSpvChainHeight(0)
+
+    // Temporary, will move to UIStore when refactoring
+    this.applicationSettings = new ApplicationSettings()
 
     // callbacks to make on user actions
     // (provided by the core application, which will submit them to statemachine as inputs)

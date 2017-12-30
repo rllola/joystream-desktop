@@ -29,6 +29,13 @@ var Starting = new BaseMachine({
           // Ensure we have the directories we need
           client.directories.create()
 
+          let downloadFolder = client.store.applicationSettings.getDownloadFolder()
+
+          // If we don't have a defaultSavePath already registered we add it to electron config
+          if (!downloadFolder) {
+            client.store.applicationSettings.setDownloadFolder(client.directories.defaultSavePath())
+          }
+
           client.services.spvnode = client.factories.spvnode(
             client.config.network,
             client.config.logLevel,
