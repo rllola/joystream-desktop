@@ -1,5 +1,8 @@
+import { createVersionWindow } from './info-version'
 
 function createTemplate (win) {
+  const versionWindow = createVersionWindow()
+
   const template = [
     {
       label: 'Edit',
@@ -29,6 +32,10 @@ function createTemplate (win) {
         {
           label: 'Learn More',
           click () { require('electron').shell.openExternal('http://joystream.co/') }
+        },
+        {
+          label: 'Version',
+          click () { versionWindow.show() }
         }
       ]
     }
