@@ -1,6 +1,6 @@
 import http from 'http'
 import fs from 'fs'
-import pump from 'pump'
+import mime from 'mime'
 
 const PORT = 8888
 const HOST = 'localhost'
@@ -11,8 +11,12 @@ class StreamServer {
 
     this.server = http.createServer(function (req, res) {
 
-      console.log(torrentFile)
       var total = torrentFile.size
+
+      res.setHeader('Content-Type', mime.getType(torrentFile.name))
+
+      // Support range-requests
+      res.setHeader('Accept-Ranges', 'bytes')
 
       // meaning client (browser) has moved the forward/back slider
       // which has sent this request back to this server logic ... cool
@@ -29,13 +33,13 @@ class StreamServer {
         console.log('RANGE: ' + start + ' - ' + end + ' = ' + chunksize)
 
         var stream = torrentFile.createReadStream({start: start, end: end})
-        res.writeHead(206, { 'Content-Range': 'bytes ' + start + '-' + end + '/' + total, 'Accept-Ranges': 'bytes', 'Content-Length': chunksize, 'Content-Type': 'video/mp4' })
-        pump(stream.pipe(res))
+        res.writeHead(206, { 'Content-Range': 'bytes ' + start + '-' + end + '/' + total, 'Content-Length': chunksize })
+        stream.pipe(res)
 
       } else {
         console.log('ALL: ' + total)
-        res.writeHead(200, { 'Content-Length': total, 'Content-Type': 'video/mp4' })
-        pump(torrentFile.createReadStream().pipe(res))
+        res.writeHead(200, { 'Content-Length': total })
+        torrentFile.createReadStream().pipe(res)
       }
     })
   }

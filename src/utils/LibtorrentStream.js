@@ -105,7 +105,6 @@ const NORMAL_PRIORITY = 4
    }
 
    _onPieceFinished (pieceIndex) {
-     console.log('On Piece Finished !')
 
      if (pieceIndex === this._piece) {
        this._torrent.handle.readPiece(pieceIndex)
@@ -113,7 +112,6 @@ const NORMAL_PRIORITY = 4
    }
 
    _onReadPiece (piece, err) {
-     console.log('On Read Piece !')
 
      if (piece.index === this._piece) {
 
@@ -151,7 +149,7 @@ const NORMAL_PRIORITY = 4
 
    // `size` is optional.
   _read (size) {
-    console.log('Read !')
+    console.log('Read piece : ', this._piece)
     // We don't have no more piece to read...
     if (this._missing === 0) return
     if (!this._torrent.handle.havePiece(this._piece)) {
