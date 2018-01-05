@@ -26,6 +26,8 @@ const NORMAL_PRIORITY = 4
    constructor (torrent, fileIndex, opts) {
      super(opts)
 
+     console.log('Yeah !')
+
      this.destroyed = false
      this._torrent = torrent
 
@@ -103,12 +105,16 @@ const NORMAL_PRIORITY = 4
    }
 
    _onPieceFinished (pieceIndex) {
+     console.log('On Piece Finished !')
+
      if (pieceIndex === this._piece) {
        this._torrent.handle.readPiece(pieceIndex)
      }
    }
 
    _onReadPiece (piece, err) {
+     console.log('On Read Piece !')
+
      if (piece.index === this._piece) {
 
        // If has been destroyed while waiting for piece we do nothing.
@@ -145,6 +151,7 @@ const NORMAL_PRIORITY = 4
 
    // `size` is optional.
   _read (size) {
+    console.log('Read !')
     // We don't have no more piece to read...
     if (this._missing === 0) return
     if (!this._torrent.handle.havePiece(this._piece)) {
@@ -157,6 +164,8 @@ const NORMAL_PRIORITY = 4
   }
 
   _destroy (err, onclose) {
+    console.log('Destroy !')
+
     if (this.destroyed) return
     this.destroyed = true
 

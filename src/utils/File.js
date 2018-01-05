@@ -15,6 +15,7 @@ class File {
       this.path = path.format({dir:this.torrent.handle.savePath(), base: fileStorage.filePath(fileIndex)})
       this.fileIndex = fileIndex
       this.completed = completed
+      this.size = fileStorage.fileSize(fileIndex)
     }
 
     /**

@@ -27,9 +27,9 @@ class VideoPlayer extends Component {
         autoplay : this.props.mediaPlayerStore.autoPlay
     }
 
-    render.render(this.props.mediaPlayerStore.file, '#' + VIDEO_ELEMENT_ID, opts, (err, elem) => {
+    /*render.render(this.props.mediaPlayerStore.file, '#' + VIDEO_ELEMENT_ID, opts, (err, elem) => {
       if (err) return console.error(err.message)
-    })
+    })*/
   }
 
   handleMouseEnter () {

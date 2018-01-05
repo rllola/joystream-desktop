@@ -245,6 +245,7 @@ class MediaPlayerStore {
 
         if(this.playbackTimeAvailable < this._loadedTimeRequiredForPlayback)
             videoDOMElement.pause()
+
     }
 
     @action.bound

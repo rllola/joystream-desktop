@@ -84,6 +84,7 @@
     "open": "0.0.5",
     "popper.js": "^1.12.5",
     "prop-types": "^15.5.8",
+    "pump": "^2.0.0",
     "qrcode-react": "^0.1.12",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
