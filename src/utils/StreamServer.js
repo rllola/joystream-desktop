@@ -47,6 +47,10 @@ class StreamServer {
   start () {
     this.server.listen(PORT, HOST)
   }
+
+  close () {
+    this.server.close()
+  }
 }
 
 export default StreamServer

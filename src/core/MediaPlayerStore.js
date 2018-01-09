@@ -3,6 +3,7 @@
  */
 
 import {observable, action, runInAction, computed} from 'mobx'
+import StreamServer from '../utils/StreamServer'
 
 /**
  * Video state: WIP!!
@@ -137,6 +138,10 @@ class MediaPlayerStore {
         this._powerSavingBlocker = powerSavingBlocker
         this._showDoorbellWidget = showDoorbellWidget
 
+        this.streamServer = new StreamServer(file)
+        // Should not go here
+        this.streamServer.start()
+
         //this.setVideoIsPlaying(false)
 
         // Size of the window prior to resize,
@@ -236,6 +241,8 @@ class MediaPlayerStore {
     @action.bound
     play(videoDOMElement) {
 
+      console.log(videoDOMElement.controlsList)
+
         this.setMostRecentEventName('play')
 
         return
@@ -290,6 +297,8 @@ class MediaPlayerStore {
 
         // Show doorbell again
         this._showDoorbellWidget()
+
+        this.streamServer.close()
     }
 
     @computed get
@@ -302,8 +311,6 @@ class MediaPlayerStore {
         else
             return 0
     }
-
-
 }
 
 function playbackTimeAvailable(currentTime, timeRanges) {

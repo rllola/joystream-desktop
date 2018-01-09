@@ -11,8 +11,6 @@ var Doorbell = require('../../../Doorbell')
 var File = require('../../../../utils/File').default
 var MediaPlayerStore = require('../../../MediaPlayerStore')
 
-import StreamServer from '../../../../utils/StreamServer'
-
 var Active = new BaseMachine({
 
     initialState: "Uninitialized",
@@ -33,6 +31,7 @@ var Active = new BaseMachine({
 
             play: function (client, fileIndex) {
 
+                // TODO: It is UI related. Need to be removed
                 startMediaPlayer(client, fileIndex, false)
             },
         },
@@ -42,6 +41,7 @@ var Active = new BaseMachine({
 
             play: function (client, fileIndex) {
 
+                // TODO: It is UI related. Need to be removed.
                 startMediaPlayer(client, fileIndex, true)
             },
         }
@@ -55,18 +55,12 @@ function startMediaPlayer(client, fileIndex, completed) {
     // Hide feedback in player
     Doorbell.hide()
 
-    console.log('startMediaPlayer')
-
     // Create store for player
     let mediaSourceType = completed ? MediaPlayerStore.MEDIA_SOURCE_TYPE.DISK : MediaPlayerStore.MEDIA_SOURCE_TYPE.STREAMING_TORRENT
     const loadedSecondsRequiredForPlayback = 10
     let autoPlay = true
 
-    console.log(file)
-    var streamServer = new StreamServer(file)
-    streamServer.start()
-
-    /*let store = new MediaPlayerStore(mediaSourceType,
+    let store = new MediaPlayerStore(mediaSourceType,
                                     client.store,
                                     file,
                                     loadedSecondsRequiredForPlayback,
@@ -78,7 +72,7 @@ function startMediaPlayer(client, fileIndex, completed) {
 
 
     // and set on torrent store
-    client.store.setActiveMediaPlayerStore(store)*/
+    client.store.setActiveMediaPlayerStore(store)
 }
 
 var electron = require('electron')
