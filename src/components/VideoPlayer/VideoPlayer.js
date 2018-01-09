@@ -94,7 +94,6 @@ class VideoPlayer extends Component {
                onError={() => { this.props.mediaPlayerStore.errorOccured(getVideoDOMElement()) }}
                style={videoStyle}
                controls
-               controlsList='nodownload' {/* Only workin chrome 58 :( */}
         />
 
       </div>

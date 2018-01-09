@@ -1,15 +1,21 @@
 import http from 'http'
 import fs from 'fs'
 import mime from 'mime'
+import debug from 'debug'
 
 const PORT = 8888
 const HOST = 'localhost'
 
+const logStreamServer= debug('StreamServer')
 
 class StreamServer {
   constructor (torrentFile) {
 
+    logStreamServer('Create new stream server')
+
     this.server = http.createServer(function (req, res) {
+
+      logStreamServer('Connection started')
 
       var total = torrentFile.size
 
@@ -45,10 +51,12 @@ class StreamServer {
   }
 
   start () {
+    logStreamServer('Start server')
     this.server.listen(PORT, HOST)
   }
 
   close () {
+    logStreamServer('Close server')
     this.server.close()
   }
 }

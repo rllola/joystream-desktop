@@ -1,10 +1,13 @@
 import { Readable } from 'stream'
 import assert from 'assert'
+import debug from 'debug'
 
 // Libtorrent highest piece priority value.
 const HIGH_PRIORITY = 7
 // Libtorrent default piece priority value.
 const NORMAL_PRIORITY = 4
+
+const logLibtorrentStream = debug('LibtorrentStream')
 
 /**
  * LibtorrentStream is a Readable object that fetch and/or wait for libtorrent
@@ -26,7 +29,7 @@ const NORMAL_PRIORITY = 4
    constructor (torrent, fileIndex, opts) {
      super(opts)
 
-     console.log('Yeah !')
+     logLibtorrentStream('LibtorrentStream created')
 
      this.destroyed = false
      this._torrent = torrent
@@ -105,6 +108,7 @@ const NORMAL_PRIORITY = 4
    }
 
    _onPieceFinished (pieceIndex) {
+     logLibtorrentStream('Piece finished downloaded : ', pieceIndex)
 
      if (pieceIndex === this._piece) {
        this._torrent.handle.readPiece(pieceIndex)
@@ -112,6 +116,7 @@ const NORMAL_PRIORITY = 4
    }
 
    _onReadPiece (piece, err) {
+     logLibtorrentStream('We have received piece : ', piece.index)
 
      if (piece.index === this._piece) {
 
@@ -149,7 +154,8 @@ const NORMAL_PRIORITY = 4
 
    // `size` is optional.
   _read (size) {
-    console.log('Read piece : ', this._piece)
+    logLibtorrentStream('Read piece : ', this._piece)
+
     // We don't have no more piece to read...
     if (this._missing === 0) return
     if (!this._torrent.handle.havePiece(this._piece)) {
@@ -162,7 +168,7 @@ const NORMAL_PRIORITY = 4
   }
 
   _destroy (err, onclose) {
-    console.log('Destroy !')
+    logLibtorrentStream('Destroy !')
 
     if (this.destroyed) return
     this.destroyed = true
@@ -188,9 +194,10 @@ const NORMAL_PRIORITY = 4
   // Needed for compatibility with media-render. It will be called if ReadableStream
   // need to be destroyed.
   destroy (onclose) {
+    logLibtorrentStream('Destroy !')
+
     this._destroy(null, onclose)
   }
-
  }
 
 export default LibtorrentStream
