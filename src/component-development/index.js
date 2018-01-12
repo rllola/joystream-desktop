@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom'
  * Isolated application store just for powering components
  */
 import ApplicationStore from '../core/Application/ApplicationStore'
-import Scene from '../core/Application/Scene'
+import Scene from '../core/Scene'
 
 var applicationStore = new ApplicationStore(
     'Started.OnDownloadingScene',
