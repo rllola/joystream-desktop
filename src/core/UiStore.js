@@ -3,6 +3,7 @@ import Scene from './Scene'
 import OnBoardingStore from './OnboardingStore'
 import UploadingStore from './UploadingStore'
 import DownloadingStore from './DownloadingStore'
+import NotificationStore from './NotificationStore'
 
 class UiStore {
 
@@ -38,6 +39,9 @@ class UiStore {
     if (this.applicationStore.applicationSettings.isFirstTimeRun()) {
       this.onBoardingStore = new OnBoardingStore(applicationStore)
     }
+
+    // Will manage the NotificationStack
+    this.notificationStore = new NotificationStore()
 
     this.uploadingStore = new UploadingStore(applicationStore)
     this.downloadingStore = new DownloadingStore(applicationStore)

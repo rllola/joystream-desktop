@@ -26,6 +26,8 @@ import isDev from 'electron-is-dev'
 // import Wallet from '../Wallet'
 import { WelcomeScreen, DepartureScreen } from '../OnBoarding'
 
+import { NotificationStack } from 'react-notification'
+
 let MobxReactDevTools = isDev ? require('mobx-react-devtools').default : null
 
 function getStyles (props) {
@@ -125,6 +127,12 @@ class Application extends Component {
         return (
           <NavigationFrame app={this.props.store} uiStore={this.props.uiStore} >
             { this.renderActiveScene() }
+            <NotificationStack
+              notifications={this.props.uiStore.notificationStore.notificationsArray}
+              onDismiss={ (notification) => {
+                console.log('Dismiss')
+              }}
+            />
           </NavigationFrame>
         )
 
