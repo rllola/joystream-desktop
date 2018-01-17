@@ -10,6 +10,8 @@ import State from '../../core/State'
 import NavigationFrame from './components/NavigationFrame'
 import ApplicationStatusBar from './components/ApplicationStatusBar'
 
+import Notifications from '../../components/Notifications'
+
 import {UI_CONSTANTS} from '../../constants'
 
 // Our scenes
@@ -25,8 +27,6 @@ import isDev from 'electron-is-dev'
 
 // import Wallet from '../Wallet'
 import { WelcomeScreen, DepartureScreen } from '../OnBoarding'
-
-import { NotificationStack } from 'react-notification'
 
 let MobxReactDevTools = isDev ? require('mobx-react-devtools').default : null
 
@@ -127,12 +127,7 @@ class Application extends Component {
         return (
           <NavigationFrame app={this.props.store} uiStore={this.props.uiStore} >
             { this.renderActiveScene() }
-            <NotificationStack
-              notifications={this.props.uiStore.notificationStore.notificationsArray}
-              onDismiss={ (notification) => {
-                console.log('Dismiss')
-              }}
-            />
+            <Notifications notificationStore={this.props.uiStore.notificationStore}/>
           </NavigationFrame>
         )
 
