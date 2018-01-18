@@ -1,16 +1,19 @@
-const {app, BrowserWindow, ipcMain, crashReporter, Menu} = require('electron')
+const {app, BrowserWindow, ipcMain, crashReporter} = require('electron')
 const path = require('path')
 const url = require('url')
 const isDev = require('electron-is-dev')
 const updater = require('./updater')
 const protocol = require('./protocol')
 
-import { createTemplate } from './menu'
+import { createTray } from './tray'
 import {enableLiveReload} from 'electron-compile'
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win = null
+
+// Our tray icon
+let tray = null
 
 // This method makes your application a Single Instance Application -
 // instead of allowing multiple instances of your app to run,
@@ -82,6 +85,8 @@ ipcMain.on('power-save-blocker', (event, arg) => {
 
 function createWindow () {
 
+  var runInBackground = true
+
     // Not really usefull for now :)
     protocol.init()
 
@@ -106,12 +111,8 @@ function createWindow () {
       show : true
   })
 
-  var template = createTemplate(win)
-
-  // Set Menu application from menu.js
-  // Need to be created after win has been initialized
-  const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
+  // Generate tray for our application
+  tray = createTray(win)
 
   /**
   // Delay actually showing window until we are ready to show
@@ -167,6 +168,20 @@ function createWindow () {
     companyName: "joystream",
     submitURL: "https://joystream.sp.backtrace.io:6098/post?format=minidump&token=55e469c9e2258e7fd1b47a8ebd4bdc4ddc16b7521b18d3c34941fe186f660ca8",
     uploadToServer: true
+  })
+
+  win.on('close', function (event) {
+    if (runInBackground) {
+      event.preventDefault()
+      win.hide()
+    }
+  })
+
+  // Need to destroy this window before attempting quitting otherwise this will
+  // be prevented because we are intercepting the "close" event and stopping it.
+  app.on('before-quit', function () {
+    // NB: Hackerman way
+    runInBackground = false
   })
 
   // Emitted when the window is closed.

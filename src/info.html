@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>JoyStream</title>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css" />
+
+  </head>
+  <body>
+
+    <div style="margin-top: 20%;" class="text-center">
+      <img src="./assets/img/logo-color.svg"/>
+      <br/>
+      <br/>
+      <span id="version"></span>
+    </div>
+
+    <script>window.$ = window.jQuery = require('jquery')</script>
+    <script>window.Tether = require('tether')</script>
+    <script>window.Popper = require('popper.js')</script>
+    <script type="application/javascript" src="../node_modules/bootstrap/dist/js/bootstrap.js"></script>
+    <script type="application/javascript">
+      const APP_VERSION = require('../package.json').version
+      $('#version').html(APP_VERSION)
+    </script>
+  </body>
+</html>
